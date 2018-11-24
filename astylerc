@@ -1,0 +1,75 @@
+# Refer to http://astyle.sourceforge.net/astyle.html for more detail
+
+--style=allman
+# int Foo(bool isBar)
+# {
+#     if (isBar)
+#     {
+#         bar();
+#         return 1;
+#     }
+#     else
+#         return 0;
+# }
+
+--indent=spaces=4
+
+--indent-switches
+# switch (foo)
+# {
+#     case 1:
+#         a += 1;
+#         break;
+# 
+#     case 2:
+#     {
+#         a += 2;
+#         break;
+#     }
+# }
+
+--indent-namespaces
+# namespace foospace
+# {
+#     class Foo
+#     {
+#         public:
+#             Foo();
+#             virtual ~Foo();
+#     };
+# }
+
+--break-blocks
+# Pad empty lines around header blocks (e.g. 'if', 'for', 'while'...).
+# isFoo = true;
+# 
+# if (isFoo) {
+#     bar();
+# } else {
+#     anotherBar();
+# }
+# 
+# isBar = false;
+
+--pad-oper
+# Insert space padding around operators
+# if (foo == 2)
+#     a = bar((b - c) * a, d--);
+
+--pad-header
+# Insert space padding between a header (e.g. 'if', 'for', 'while'...) and the following paren
+# if (isFoo((a+2), b))
+#     bar(a, b);
+
+--align-pointer=type
+# char* foo1;
+# char& foo2;
+# String^ s1;
+
+--add-brackets
+# Add brackets to unbracketed one line conditional statements (e.g. 'if', 'for', 'while'...).
+
+--close-templates
+# Stack<int,List<int>> stack1;
+
+--lineend=linux
