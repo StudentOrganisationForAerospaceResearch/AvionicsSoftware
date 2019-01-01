@@ -22,13 +22,15 @@
 uint16_t readCalibrationCoefficient(const uint8_t PROM_READ_CMD);
 
 //
-// Constants
+// Constants (Could these be replaced with #define?)
 //
 
-static const int READ_BAROMETER_PERIOD = 20;    // Sampling delay set to 50 Hz to match high frequency logging
+static const int READ_BAROMETER_PERIOD		= 20;    // Sampling delay set to 50 Hz to match high frequency logging
+static const int TEMP_VERY_LOW				= -1500;
+static const int TEMP_LOW					= 2000;
 
-static const int CMD_SIZE = 1;
-static const int CMD_TIMEOUT = 150;
+static const int CMD_SIZE					= 1;
+static const int CMD_TIMEOUT				= 150;
 
 static const uint8_t ADC_D1_512_CONV_CMD	= 0x42;
 static const uint8_t ADC_D2_512_CONV_CMD	= 0x52;
@@ -178,25 +180,40 @@ void readBarometerTask(void const* arg)
 		// Calculate First-Order Temperature and Pressure
 		//
 
-		// Old code (Haven't deleted just in case new code doesn't work (something something version control)... although it should work)
-		/*
-        double dT	= temperatureReading - c5Tref * pow(2, 8);
-        double temp	= 2000 + dT * c6Tempsens / pow(2, 23);
-        double off	= c2Off * pow(2, 17) + dT * c4Tco / pow(2, 6);
-        double sens	= c1Sens * pow(2, 16) + dT * c3Tcs / pow(2, 7);
-
-		// PRESSURE AND TEMPERATURE WERE NOT DIVIDED BY 100 IN ORDER TO KEEP DECIMAL PLACES - IN ACCORDANCE WITH THE DATA SHEET \\
-
-        double pressure		= (pressureReading * sens / pow(2, 21) - off) / pow(2, 15); // need to divide P by 100 to get mbar
-        double temperature	= (temp); // need to divide T by 100 to get degrees Celcius
-		*/
-
-		// New code
+		// Equations provided by MS5607-02BA03 data sheet
+		
 		int32_t dT		= temperatureReading - (c5Tref << 8);
-        int32_t temp	= 2000 + ((dT * c6Tempsens) >> 23);
+        int32_t temp	= 2000 + ((dT * c6Tempsens) >> 23);					// Divide this value by 100 to get degrees Celcius
         int32_t off		= (c2Off << 17) + ((dT * c4Tco) >> 6);
         int32_t sens	= (c1Sens << 16) + ((dT * c3Tcs) >> 7);
-        int32_t p		= ((pressureReading * sens) >> 21) - off) >> 15;
+        int32_t p		= ((pressureReading * sens) >> 21) - off) >> 15;	// Divide this value by 100 to get millibars
+
+		//
+		// Calculate Second-Order Temperature and Pressure
+		//
+
+		// Equations provided by MS5607-02BA03 data sheet
+
+		if (temp < TEMP_LOW)	// If the temperature is below 20°C
+		{
+			int32_t t2		= (dT * dT) >> 31;
+			int32_t off2	= 61 * (((temp - 2000) * (temp - 2000)) >> 4);
+			int32_t sens2	= 2 * ((temp - 2000) * (temp - 2000));
+
+			if (temp < TEMP_VERY_LOW)	// If the temperature is below -15°C
+			{
+				off2	= off2 + (15 * ((temp + 1500) * (temp + 1500)));
+				sens2	= sens2 + (8 * ((temp + 1500) * (temp + 1500)));
+			}
+
+			temp	= temp - t2;
+			off		= off - off2;
+			sens	= sens - sens2;
+		}
+
+		//
+		// Store Data
+		//
 
 		// Check if the mutex is available
         if (osMutexWait(data->mutex_, 0) != osOK)
@@ -209,6 +226,9 @@ void readBarometerTask(void const* arg)
         data->pressure_		= p;
         data->temperature_	= temp;
         osMutexRelease(data->mutex_);
+
+		// PRESSURE AND TEMPERATURE VALUES ARE STORED AT 100x VALUE TO MAINTAIN 2 DECIMAL POINTS OF PRECISION AS AN INTEGER
+		// E.x. The value 1234 should be interpreted as 12.34
     }
 }
 
