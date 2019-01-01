@@ -76,25 +76,25 @@ void readBarometerTask(void const* arg)
 	 */
 
 	// Variables
-    BarometerData* data			= (BarometerData*) arg;
-    uint32_t prevWakeTime		= osKernelSysTick();
+	BarometerData* data			= (BarometerData*) arg;
+	uint32_t prevWakeTime		= osKernelSysTick();
 	uint32_t pressureReading	= 0;   	// Stores a 24 bit value
 	uint32_t temperatureReading	= 0;	// Stores a 24 bit value
 	uint8_t dataInBuffer;
 
 	// Reset the barometer
-    HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi2, &RESET_CMD, CMD_SIZE, CMD_TIMEOUT);
-    osDelay(3);	// 2.8ms reload after Reset command
-    HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(&hspi2, &RESET_CMD, CMD_SIZE, CMD_TIMEOUT);
+	osDelay(3);	// 2.8ms reload after Reset command
+	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
-    // Read PROM for calibration offsets
-    uint16_t c1Sens		= readCalibrationCoefficient(PROM_READ_SENS_CMD);
-    uint16_t c2Off		= readCalibrationCoefficient(PROM_READ_OFF_CMD);
-    uint16_t c3Tcs		= readCalibrationCoefficient(PROM_READ_TCS_CMD);
-    uint16_t c4Tco		= readCalibrationCoefficient(PROM_READ_TCO_CMD);
-    uint16_t c5Tref		= readCalibrationCoefficient(PROM_READ_TREF_CMD);
-    uint16_t c6Tempsens	= readCalibrationCoefficient(PROM_READ_TEMPSENS_CMD);
+	// Read PROM for calibration offsets
+	uint16_t c1Sens		= readCalibrationCoefficient(PROM_READ_SENS_CMD);
+	uint16_t c2Off		= readCalibrationCoefficient(PROM_READ_OFF_CMD);
+	uint16_t c3Tcs		= readCalibrationCoefficient(PROM_READ_TCS_CMD);
+	uint16_t c4Tco		= readCalibrationCoefficient(PROM_READ_TCO_CMD);
+	uint16_t c5Tref		= readCalibrationCoefficient(PROM_READ_TREF_CMD);
+	uint16_t c6Tempsens	= readCalibrationCoefficient(PROM_READ_TEMPSENS_CMD);
 
 	/**
 	 * Repeatedly read digital pressure and temperature.
@@ -103,90 +103,90 @@ void readBarometerTask(void const* arg)
 	 *
 	 * Restricted to 50Hz.
 	 */
-    while(1)
-    {
+	while(1)
+	{
 		// Delay so that the loop operates at 50Hz
-        osDelayUntil(&prevWakeTime, READ_BAROMETER_PERIOD);
+		osDelayUntil(&prevWakeTime, READ_BAROMETER_PERIOD);
 
 		//
-        // Read Digital Pressure (D1)
+		// Read Digital Pressure (D1)
 		//
 
 		// Tell the barometer to convert the pressure to a digital value with an OSR of 512
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-        HAL_SPI_Transmit(&hspi2, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+		HAL_SPI_Transmit(&hspi2, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
-        osDelay(2); // 1.17ms max conversion time for OSR 512
+		osDelay(2); // 1.17ms max conversion time for OSR 512
 
 		// Read the pressure value
 
 		// Chip select to start a new command
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
 		// Tell the chip we want to read from the adc
-        HAL_SPI_Transmit(&hspi2, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
+		HAL_SPI_Transmit(&hspi2, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
 		// Read the first byte (bits 23-16)
-        HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-        pressureReading = dataInBuffer << 16;
+		HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+		pressureReading = dataInBuffer << 16;
 
 		// Read the second byte (bits 15-8)
-        HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-        pressureReading += dataInBuffer << 8;
+		HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+		pressureReading += dataInBuffer << 8;
 
 		// Read the third byte (bits 7-0)
-        HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-        pressureReading += dataInBuffer;
+		HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+		pressureReading += dataInBuffer;
 
 		// Release chip select to end the command
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
 		//
 		// Read Digital Temperature (D2)
 		//
 
 		// Tell the barometer to convert the temperature to a digital value with an OSR of 512
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-        HAL_SPI_Transmit(&hspi2, &ADC_D2_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+		HAL_SPI_Transmit(&hspi2, &ADC_D2_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
-        osDelay(2); // 1.17ms max conversion time for OSR 512
+		osDelay(2); // 1.17ms max conversion time for OSR 512
 
 		// Read the temperature value
 
 		// Chip select to start a new command
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
 		// Tell the chip we want to read from the adc
-        HAL_SPI_Transmit(&hspi2, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
+		HAL_SPI_Transmit(&hspi2, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
 		// Read the first byte (bits 23-16)
-        HAL_SPI_TransmitReceive(&hspi2, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-        temperatureReading = dataInBuffer << 16;
+		HAL_SPI_TransmitReceive(&hspi2, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+		temperatureReading = dataInBuffer << 16;
 
 		// Read the second byte (bits 15-8)
-        HAL_SPI_TransmitReceive(&hspi2, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-        temperatureReading += dataInBuffer << 8;
+		HAL_SPI_TransmitReceive(&hspi2, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+		temperatureReading += dataInBuffer << 8;
 
 		// Read the third byte (bits 7-0)
-        HAL_SPI_TransmitReceive(&hspi2, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-        temperatureReading += dataInBuffer;
+		HAL_SPI_TransmitReceive(&hspi2, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+		temperatureReading += dataInBuffer;
 
 		// Release chip select to end the command
-        HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
 		//
 		// Calculate First-Order Temperature and Pressure
 		//
 
 		// Equations provided by MS5607-02BA03 data sheet
-		
+
 		int32_t dT		= temperatureReading - (c5Tref << 8);
-        int32_t temp	= 2000 + ((dT * c6Tempsens) >> 23);					// Divide this value by 100 to get degrees Celcius
-        int32_t off		= (c2Off << 17) + ((dT * c4Tco) >> 6);
-        int32_t sens	= (c1Sens << 16) + ((dT * c3Tcs) >> 7);
-        int32_t p		= ((pressureReading * sens) >> 21) - off) >> 15;	// Divide this value by 100 to get millibars
+		int32_t temp	= 2000 + ((dT * c6Tempsens) >> 23);					// Divide this value by 100 to get degrees Celcius
+		int32_t off		= (c2Off << 17) + ((dT * c4Tco) >> 6);
+		int32_t sens	= (c1Sens << 16) + ((dT * c3Tcs) >> 7);
+		int32_t p		= ((pressureReading * sens) >> 21) - off) >> 15;	// Divide this value by 100 to get millibars
 
 		//
 		// Calculate Second-Order Temperature and Pressure
@@ -216,20 +216,20 @@ void readBarometerTask(void const* arg)
 		//
 
 		// Check if the mutex is available
-        if (osMutexWait(data->mutex_, 0) != osOK)
-        {
+		if (osMutexWait(data->mutex_, 0) != osOK)
+		{
 			// Loop and get new values if the mutex was taken
-            continue;
-        }
+			continue;
+		}
 
 		// Assign new values if mutex was available
-        data->pressure_		= p;
-        data->temperature_	= temp;
-        osMutexRelease(data->mutex_);
+		data->pressure_		= p;
+		data->temperature_	= temp;
+		osMutexRelease(data->mutex_);
 
 		// PRESSURE AND TEMPERATURE VALUES ARE STORED AT 100x VALUE TO MAINTAIN 2 DECIMAL POINTS OF PRECISION AS AN INTEGER
 		// E.x. The value 1234 should be interpreted as 12.34
-    }
+	}
 }
 
 /**
@@ -241,30 +241,30 @@ void readBarometerTask(void const* arg)
 uint16_t readCalibrationCoefficient(const uint8_t PROM_READ_CMD)
 {
 	// Variables
-    uint16_t	coefficient;
-    uint8_t		dataInBuffer;
+	uint16_t	coefficient;
+	uint8_t		dataInBuffer;
 
 	//
 	// Read Coefficient
 	//
 
 	// Chip select to start a new command
-    HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
 	// Tell the chip we want to read from PROM
-    HAL_SPI_Transmit(&hspi2, &PROM_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
+	HAL_SPI_Transmit(&hspi2, &PROM_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
 	// Read the first byte (bits 15-8)
-    HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-    coefficient = dataInBuffer << 8;
+	HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+	coefficient = dataInBuffer << 8;
 
 	// Read the second byte (bits 7-0)
-    HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-    coefficient += dataInBuffer;
+	HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+	coefficient += dataInBuffer;
 
 	// Release chip select to end the command
-    HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
 	// Return the read coefficient
-    return coefficient;
+	return coefficient;
 }
