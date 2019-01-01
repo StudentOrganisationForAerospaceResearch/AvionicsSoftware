@@ -186,7 +186,7 @@ void readBarometerTask(void const* arg)
 		int32_t temp	= 2000 + ((dT * c6Tempsens) >> 23);					// Divide this value by 100 to get degrees Celcius
 		int32_t off		= (c2Off << 17) + ((dT * c4Tco) >> 6);
 		int32_t sens	= (c1Sens << 16) + ((dT * c3Tcs) >> 7);
-		int32_t p		= ((pressureReading * sens) >> 21) - off) >> 15;	// Divide this value by 100 to get millibars
+		int32_t p		= (((pressureReading * sens) >> 21) - off) >> 15;	// Divide this value by 100 to get millibars
 
 		//
 		// Calculate Second-Order Temperature and Pressure
