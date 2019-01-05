@@ -99,6 +99,8 @@ static osThreadId logDataTaskHandle;
 static osThreadId transmitDataTaskHandle;
 // Special abort thread
 static osThreadId abortPhaseTaskHandle;
+// Public mutex
+osMutexId flightPhaseMutex;
 
 static const uint8_t LAUNCH_CMD_BYTE = 0x20;
 static const uint8_t ABORT_CMD_BYTE = 0x2F;

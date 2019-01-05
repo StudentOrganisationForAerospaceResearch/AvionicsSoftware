@@ -4,6 +4,8 @@ static FlightPhase currentFlightPhase = PRELAUNCH;
 
 static const int FLIGHT_MUTEX_RETRIES = 10;
 
+osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
+
 void newFlightPhase(FlightPhase newPhase)
 {
     if (newPhase <= getCurrentFlightPhase())

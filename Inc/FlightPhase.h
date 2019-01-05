@@ -1,10 +1,21 @@
+/**
+  ******************************************************************************
+  * File Name          : FlightPhase.h
+  ******************************************************************************
+*/
+
 #pragma once
 
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 
-osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
+/* Macros --------------------------------------------------------------------*/
 
+/* Externs -------------------------------------------------------------------*/
+extern osMutexId flightPhaseMutex;
+
+/* Structs -------------------------------------------------------------------*/
 typedef enum
 {
     PRELAUNCH,
@@ -15,6 +26,7 @@ typedef enum
     ABORT
 } FlightPhase;
 
+/* Prototypes ----------------------------------------------------------------*/
 void newFlightPhase(FlightPhase newPhase);
 FlightPhase getCurrentFlightPhase();
 void resetFlightPhase();
