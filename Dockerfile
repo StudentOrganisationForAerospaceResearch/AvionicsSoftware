@@ -50,6 +50,7 @@ RUN tar -zxvf astyle
 WORKDIR /astyle/build/gcc
 RUN make release
 RUN make install
+
 WORKDIR /
 
 RUN echo 'alias flash="st-flash write ./build/AvionicsSoftware.bin 0x8000000"' >> ~/.bashrc
