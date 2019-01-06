@@ -1,3 +1,11 @@
+/**
+  ******************************************************************************
+  * File Name          : ReadCombustionChamberPressure.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -8,16 +16,20 @@
 #include "Data.h"
 #include "Utils.h"
 
+/* Macros --------------------------------------------------------------------*/
 #define QUEUE_SIZE 5
 
-static int READ_COMBUSTION_CHAMBER_PRESSURE_PERIOD = 80;
-
+/* Constants -----------------------------------------------------------------*/
 static const int COMBUSTION_CHAMBER_ADC_POLL_TIMEOUT = 50;
 static const double R1 = 100;    // Resistor values in kOhms
 static const double R2 = 133;
+static const int READ_COMBUSTION_CHAMBER_PRESSURE_PERIOD = 80;
 
-static uint16_t combustionChamberValuesQueue[QUEUE_SIZE] = {0};
+/* Variables -----------------------------------------------------------------*/
 
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 void readCombustionChamberPressureTask(void const* arg)
 {
     CombustionChamberPressureData* data = (CombustionChamberPressureData* ) arg;
@@ -26,6 +38,8 @@ void readCombustionChamberPressureTask(void const* arg)
     double vo = 0;  // The voltage across the 133k resistor
     double vi = 0;  // The pressure sensor output
     double chamberPressure = 0;
+
+    static uint16_t combustionChamberValuesQueue[QUEUE_SIZE] = {0};
 
     int combustionChamberQueueIndex = 0;
 

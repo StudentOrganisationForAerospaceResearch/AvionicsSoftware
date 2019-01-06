@@ -1,3 +1,11 @@
+/**
+  ******************************************************************************
+  * File Name          : MonitorForEmergencyShutoff.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -6,8 +14,16 @@
 #include "FlightPhase.h"
 #include "Data.h"
 
+/* Macros --------------------------------------------------------------------*/
+
+/* Constants -----------------------------------------------------------------*/
 static const int MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD = 1000;
 
+/* Variables -----------------------------------------------------------------*/
+
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 void monitorForEmergencyShutoffTask(void const* arg)
 {
     uint32_t prevWakeTime = osKernelSysTick();

@@ -1,3 +1,11 @@
+/**
+  ******************************************************************************
+  * File Name          : TransmitData.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -7,16 +15,7 @@
 #include "FlightPhase.h"
 #include "Data.h"
 
-static const int TRANSMIT_DATA_PERIOD = 500;
-
-static const int8_t IMU_HEADER_BYTE = 0x31;
-static const int8_t BAROMETER_HEADER_BYTE = 0x32;
-static const int8_t GPS_HEADER_BYTE = 0x33;
-static const int8_t OXIDIZER_TANK_HEADER_BYTE = 0x34;
-static const int8_t COMBUSTION_CHAMBER_HEADER_BYTE = 0x35;
-static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x36;
-static const int8_t VENT_VALVE_STATUS_HEADER_BYTE = 0x37;
-
+/* Macros --------------------------------------------------------------------*/
 #define IMU_SERIAL_MSG_SIZE (41)
 #define BAROMETER_SERIAL_MSG_SIZE (13)
 #define GPS_SERIAL_MSG_SIZE (21)
@@ -25,8 +24,22 @@ static const int8_t VENT_VALVE_STATUS_HEADER_BYTE = 0x37;
 #define FLIGHT_PHASE_SERIAL_MSG_SIZE (6)
 #define VENT_VALVE_STATUS_SERIAL_MSG_SIZE (6)
 
+/* Constants -----------------------------------------------------------------*/
+static const int TRANSMIT_DATA_PERIOD = 500;
+static const int8_t IMU_HEADER_BYTE = 0x31;
+static const int8_t BAROMETER_HEADER_BYTE = 0x32;
+static const int8_t GPS_HEADER_BYTE = 0x33;
+static const int8_t OXIDIZER_TANK_HEADER_BYTE = 0x34;
+static const int8_t COMBUSTION_CHAMBER_HEADER_BYTE = 0x35;
+static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x36;
+static const int8_t VENT_VALVE_STATUS_HEADER_BYTE = 0x37;
 static const uint8_t UART_TIMEOUT = 100;
 
+/* Variables -----------------------------------------------------------------*/
+
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 void transmitImuData(AllData* data)
 {
     int32_t accelX = -1;

@@ -1,3 +1,11 @@
+/**
+  ******************************************************************************
+  * File Name          : ReadOxidizerTankPressure.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -8,14 +16,18 @@
 #include "Data.h"
 #include "Utils.h"
 
+/* Macros --------------------------------------------------------------------*/
 #define QUEUE_SIZE 5
 
-static int READ_OXIDIZER_TANK_PRESSURE_PERIOD = 80;
-
+/* Constants -----------------------------------------------------------------*/
+static const int READ_OXIDIZER_TANK_PRESSURE_PERIOD = 80;
 static const int OXIDIZER_TANK_POLL_TIMEOUT = 50;
 
-static uint16_t oxidizerTankValuesQueue[QUEUE_SIZE] = {0};
+/* Variables -----------------------------------------------------------------*/
 
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 void readOxidizerTankPressureTask(void const* arg)
 {
     OxidizerTankPressureData* data = (OxidizerTankPressureData* ) arg;
@@ -25,6 +37,7 @@ void readOxidizerTankPressureTask(void const* arg)
     double vi = 0;  // The original pressure sensor output
     double tankPressure = 0;
 
+    static uint16_t oxidizerTankValuesQueue[QUEUE_SIZE] = {0};
     int oxidizerTankQueueIndex = 0;
 
     HAL_ADC_Start(&hadc2);  // Enables ADC and starts conversion of regular channels

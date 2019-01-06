@@ -1,15 +1,19 @@
+/**
+  ******************************************************************************
+  * File Name          : ReadAccelGyroMagnetism.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
 #include "ReadAccelGyroMagnetism.h"
-
 #include "Data.h"
 
-static int READ_ACCEL_GYRO_MAGNETISM = 20;
-
-static const int CMD_TIMEOUT = 150;
-
+/* Macros --------------------------------------------------------------------*/
 #define READ_CMD_MASK 0x80
 #define WRITE_CMD_MASK 0x00
 #define ACCEL_GYRO_MASK 0x00
@@ -30,6 +34,10 @@ static const int CMD_TIMEOUT = 150;
 #define GYRO_SENSITIVITY 8.75  // Unit is mdps/LSB
 #define MAGENTO_SENSITIVITY 0.14 // Unit is mgauss/LSB
 
+/* Constants -----------------------------------------------------------------*/
+static const int READ_ACCEL_GYRO_MAGNETISM = 20;
+static const int CMD_TIMEOUT = 150;
+
 // Full Commands
 static const uint8_t ACTIVATE_GYRO_ACCEL_CMD = G1_CTRL_REGISTER_ADDR | WRITE_CMD_MASK;
 // 011 00 0 00 -> ODR 119, 245 DPS
@@ -49,6 +57,11 @@ static const uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ
 // static const uint8_t READ_WHOAMI_CMD = WHOAMI_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 // static const uint8_t READ_WHOAMIM_CMD = WHOAMIM_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
 
+/* Variables -----------------------------------------------------------------*/
+
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 void readAccelGyroMagnetismTask(void const* arg)
 {
     AccelGyroMagnetismData* data = (AccelGyroMagnetismData*) arg;

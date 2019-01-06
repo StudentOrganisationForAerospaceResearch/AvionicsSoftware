@@ -1,3 +1,11 @@
+/**
+  ******************************************************************************
+  * File Name          : AbortPhase.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -6,9 +14,17 @@
 #include "FlightPhase.h"
 #include "ValveControl.h"
 
+/* Macros --------------------------------------------------------------------*/
+
+/* Constants -----------------------------------------------------------------*/
 static const int ABORT_PHASE_TASK_PERIOD = 50;
 static const int ABORT_INJECTION_DELAY = 5 * 60 * 1000; // 5 minutes
 
+/* Variables -----------------------------------------------------------------*/
+
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 void abortPhaseTask(void const* arg)
 {
     uint32_t prevWakeTime = osKernelSysTick();

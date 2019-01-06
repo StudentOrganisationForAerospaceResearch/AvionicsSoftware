@@ -1,3 +1,11 @@
+/**
+  ******************************************************************************
+  * File Name          : EngineControl.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -7,6 +15,9 @@
 #include "Data.h"
 #include "ValveControl.h"
 
+/* Macros --------------------------------------------------------------------*/
+
+/* Constants -----------------------------------------------------------------*/
 static const int PRELAUNCH_PHASE_PERIOD = 50;
 static const int BURN_DURATION = 10000;
 static const int POST_BURN_PERIOD = 1000;
@@ -14,6 +25,11 @@ static const int POST_BURN_PERIOD = 1000;
 static const int POST_BURN_REOPEN_INJECTION_VALVE_DURATION = 20 * 60 * 1000; // 20 minutes
 static const int MAX_TANK_PRESSURE = 820000; // 820 psi, 5660 kPa, 25 deg C at saturation
 
+/* Variables -----------------------------------------------------------------*/
+
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 /**
  * This routine keeps the injection valve closed during prelaunch.
  * This routine exits when the current flight phase is no longer PRELAUNCH.

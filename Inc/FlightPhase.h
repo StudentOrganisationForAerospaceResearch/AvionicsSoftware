@@ -16,6 +16,7 @@
 extern osMutexId flightPhaseMutex;
 
 /* Structs -------------------------------------------------------------------*/
+// Required by AbortPhase.c and FlightPhase.h function prototypes
 typedef enum
 {
     PRELAUNCH,

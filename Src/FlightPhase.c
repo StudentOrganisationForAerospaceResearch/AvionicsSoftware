@@ -1,11 +1,24 @@
+/**
+  ******************************************************************************
+  * File Name          : FlightPhase.c
+  * Description        : Code for...
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
 #include "FlightPhase.h"
 
-static FlightPhase currentFlightPhase = PRELAUNCH;
+/* Macros --------------------------------------------------------------------*/
 
+/* Constants -----------------------------------------------------------------*/
 static const int FLIGHT_MUTEX_RETRIES = 10;
 
-osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
+/* Variables -----------------------------------------------------------------*/
+static FlightPhase currentFlightPhase = PRELAUNCH;
 
+/* Structs -------------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
 void newFlightPhase(FlightPhase newPhase)
 {
     if (newPhase <= getCurrentFlightPhase())
