@@ -1,4 +1,5 @@
 FROM ubuntu:18.10
+ENV USER=root
 
 # Set the initial working directory
 WORKDIR /
@@ -27,7 +28,6 @@ WORKDIR /
 RUN git clone https://github.com/adamgreen/gcc4mbed.git
 WORKDIR /gcc4mbed
 RUN ./linux_install
-
 ENV PATH="/gcc4mbed/gcc-arm-none-eabi/bin:${PATH}"
 
 WORKDIR /
@@ -36,19 +36,25 @@ RUN git clone https://github.com/texane/stlink.git
 WORKDIR /stlink
 RUN make release
 RUN make debug
-
 WORKDIR /stlink/build
 RUN cmake -DCMAKE_BUILD_TYPE=Debug ..
 RUN make
-
 WORKDIR /stlink/build/Release
-
 RUN make install
-
 ENV PATH="/stlink/build:${PATH}"
+
+WORKDIR /
+
+RUN wget 'https://s3-us-west-2.amazonaws.com/ucsolarteam.hostedfiles/astyle'
+RUN tar -zxvf astyle
+WORKDIR /astyle/build/gcc
+RUN make release
+RUN make install
+WORKDIR /
 
 RUN echo 'alias flash="st-flash write ./build/AvionicsSoftware.bin 0x8000000"' >> ~/.bashrc
 RUN echo 'alias erase="st-flash erase"' >> ~/.bashrc
 Run echo 'alias clean="rm -r build"' >> ~/.bashrc
+Run echo 'alias format="./format.sh"' >> ~/.bashrc
 
 WORKDIR /AvionicsSoftware
