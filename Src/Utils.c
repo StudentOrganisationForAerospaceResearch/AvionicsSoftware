@@ -9,6 +9,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
+
 #include "Utils.h"
 
 /* Macros --------------------------------------------------------------------*/

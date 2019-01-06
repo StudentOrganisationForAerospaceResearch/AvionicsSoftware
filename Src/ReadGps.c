@@ -11,7 +11,6 @@
 #include "cmsis_os.h"
 
 #include "ReadGps.h"
-
 #include "Data.h"
 
 /* Macros --------------------------------------------------------------------*/
