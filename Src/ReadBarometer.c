@@ -226,8 +226,8 @@ void readBarometerTask(void const* arg)
 
 /**
  * This function reads and returns a 16-bit coefficient from the barometer.
- * @param   PROM_READ_CMD   The command to send in order to read the desired coefficient.
- *                          See the data sheet for the commands.
+ * @param   PROM_READ_CMD   The command to send in order to read the desired
+ *                          coefficient. See the data sheet for the commands.
  * @return                  The read coefficient.
  */
 uint16_t readCalibrationCoefficient(const uint8_t PROM_READ_CMD)
