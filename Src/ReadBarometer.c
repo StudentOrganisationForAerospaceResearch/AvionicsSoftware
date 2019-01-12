@@ -22,7 +22,7 @@
 uint16_t readCalibrationCoefficient(const uint8_t PROM_READ_CMD);
 
 //
-// Constants (Could these be replaced with #define?)
+// Constants
 //
 
 static const int READ_BAROMETER_PERIOD      = 20;    // Sampling delay set to 50 Hz to match high frequency logging
@@ -184,8 +184,8 @@ void readBarometerTask(void const* arg)
 
         int32_t dT      = temperatureReading - (c5Tref << 8);
         int32_t temp    = 2000 + ((dT * c6Tempsens) >> 23);                 // Divide this value by 100 to get degrees Celcius
-        int32_t off     = (c2Off << 17) + ((dT * c4Tco) >> 6);
-        int32_t sens    = (c1Sens << 16) + ((dT * c3Tcs) >> 7);
+        int64_t off     = (c2Off << 17) + ((dT * c4Tco) >> 6);
+        int64_t sens    = (c1Sens << 16) + ((dT * c3Tcs) >> 7);
         int32_t p       = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
 
         //
