@@ -108,7 +108,7 @@ void readBarometerTask(void const* arg)
      *
      * Restricted to 50Hz.
      */
-    while(1)
+    while (1)
     {
         // Delay so that the loop operates at 50Hz
         osDelayUntil(&prevWakeTime, READ_BAROMETER_PERIOD);
