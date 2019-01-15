@@ -19,13 +19,13 @@
 
 /* Macros --------------------------------------------------------------------*/
 
-#define READ_BAROMETER_PERIOD   20  // Sampling delay set to 50 Hz to match high frequency logging
-#define TEMP_VERY_LOW           -1500
-#define TEMP_LOW                2000
-#define CMD_SIZE                1
-#define CMD_TIMEOUT             150
-
 /* Constants -----------------------------------------------------------------*/
+
+static const int READ_BAROMETER_PERIOD      = 20;   // Sampling delay set to 50 Hz to match high frequency logging
+static const int TEMP_LOW                   = 2000;
+static const int TEMP_VERY_LOW              = -1500;
+static const int CMD_SIZE                   = 1;
+static const int CMD_TIMEOUT                = 150;
 
 static const uint8_t ADC_D1_512_CONV_CMD    = 0x42;
 static const uint8_t ADC_D2_512_CONV_CMD    = 0x52;
@@ -108,7 +108,7 @@ void readBarometerTask(void const* arg)
      *
      * Restricted to 50Hz.
      */
-    while (1)
+    for (;;)
     {
         // Delay so that the loop operates at 50Hz
         osDelayUntil(&prevWakeTime, READ_BAROMETER_PERIOD);
