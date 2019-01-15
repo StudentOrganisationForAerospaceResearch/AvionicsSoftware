@@ -3,7 +3,9 @@
   * File Name          : ReadBarometer.c
   * Description        : This file contains constants and functions designed to
   *                      obtain accurate pressure and temperature readings from
-  *                      the MS5607-02BA03 barometer on the board.
+  *                      the MS5607-02BA03 barometer on the flight board. A
+  *                      thread task is included that will constantly loop,
+  *                      reading and updating the passed BarometerData struct.
   ******************************************************************************
 */
 
@@ -21,7 +23,7 @@
 
 /* Constants -----------------------------------------------------------------*/
 
-static const int READ_BAROMETER_PERIOD      = 20;   // Sampling delay set to 50 Hz to match high frequency logging
+static const int READ_BAROMETER_PERIOD      = 20;
 static const int TEMP_LOW                   = 2000;
 static const int TEMP_VERY_LOW              = -1500;
 static const int CMD_SIZE                   = 1;
@@ -52,6 +54,8 @@ uint16_t readCalibrationCoefficient(const uint8_t PROM_READ_CMD);
 /**
  * This function is to be used as a thread task that reads and updates
  * pressure and temperature readings from the barometer.
+ *
+ * @param   arg A pointer to the BarometerData struct that will be updated.
  */
 void readBarometerTask(void const* arg)
 {
@@ -105,12 +109,9 @@ void readBarometerTask(void const* arg)
      * Repeatedly read digital pressure and temperature.
      * Convert these values into their calibrated counterparts.
      * Finally, update the data globally if the mutex is available.
-     *
-     * Restricted to 50Hz.
      */
     for (;;)
     {
-        // Delay so that the loop operates at 50Hz
         osDelayUntil(&prevWakeTime, READ_BAROMETER_PERIOD);
 
         /* Read Digital Pressure (D1) ----------------------------------------*/
@@ -122,12 +123,8 @@ void readBarometerTask(void const* arg)
 
         osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
 
-        // Read the pressure value
-
-        // Chip select to start a new command
         HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-        // Tell the chip we want to read from the adc
         HAL_SPI_Transmit(&hspi2, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
         // Read the first byte (bits 23-16)
@@ -142,7 +139,6 @@ void readBarometerTask(void const* arg)
         HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
         pressureReading += dataInBuffer;
 
-        // Release chip select to end the command
         HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
         /* Read Digital Temperature (D2) -------------------------------------*/
@@ -154,12 +150,8 @@ void readBarometerTask(void const* arg)
 
         osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
 
-        // Read the temperature value
-
-        // Chip select to start a new command
         HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-        // Tell the chip we want to read from the adc
         HAL_SPI_Transmit(&hspi2, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
         // Read the first byte (bits 23-16)
@@ -174,12 +166,9 @@ void readBarometerTask(void const* arg)
         HAL_SPI_TransmitReceive(&hspi2, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
         temperatureReading += dataInBuffer;
 
-        // Release chip select to end the command
         HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
         /* Calculate First-Order Temperature and Pressure --------------------*/
-
-        // Equations provided by MS5607-02BA03 data sheet
 
         int32_t dT      = temperatureReading - (c5Tref << 8);
         int32_t temp    = 2000 + ((dT * c6Tempsens) >> 23);                 // Divide this value by 100 to get degrees Celcius
@@ -188,8 +177,6 @@ void readBarometerTask(void const* arg)
         int32_t p       = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
 
         /* Calculate Second-Order Temperature and Pressure -------------------*/
-
-        // Equations provided by MS5607-02BA03 data sheet
 
         if (temp < TEMP_LOW)    // If the temperature is below 20°C
         {
@@ -212,11 +199,12 @@ void readBarometerTask(void const* arg)
 
         if (osMutexWait(data->mutex_, 0) == osOK)
         {
-            // Assign new values if mutex was available
             data->pressure_     = p;
             data->temperature_  = temp;
             osMutexRelease(data->mutex_);
         }
+
+        // All equations provided by MS5607-02BA03 data sheet
 
         // PRESSURE AND TEMPERATURE VALUES ARE STORED AT 100x VALUE TO MAINTAIN
         // 2 DECIMAL POINTS OF PRECISION AS AN INTEGER!
@@ -232,16 +220,11 @@ void readBarometerTask(void const* arg)
  */
 uint16_t readCalibrationCoefficient(const uint8_t PROM_READ_CMD)
 {
-    // Variables
-    uint16_t    coefficient;
-    uint8_t     dataInBuffer;
+    uint16_t coefficient;
+    uint8_t dataInBuffer;
 
-    /* Read Coefficient ------------------------------------------------------*/
-
-    // Chip select to start a new command
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-    // Tell the chip we want to read from PROM
     HAL_SPI_Transmit(&hspi2, &PROM_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
     // Read the first byte (bits 15-8)
@@ -252,9 +235,7 @@ uint16_t readCalibrationCoefficient(const uint8_t PROM_READ_CMD)
     HAL_SPI_TransmitReceive(&hspi2, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     coefficient += dataInBuffer;
 
-    // Release chip select to end the command
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
-    // Return the read coefficient
     return coefficient;
 }
