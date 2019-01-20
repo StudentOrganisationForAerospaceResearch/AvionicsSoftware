@@ -194,6 +194,8 @@ void readBarometerTask(void const* arg)
             off     = off   - off2;
             sens    = sens  - sens2;
         }
+     
+        p   = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
 
         /* Store Data --------------------------------------------------------*/
 
