@@ -171,10 +171,11 @@ void readBarometerTask(void const* arg)
         /* Calculate First-Order Temperature and Pressure --------------------*/
 
         int32_t dT      = temperatureReading - (c5Tref << 8);
-        int32_t temp    = 2000 + ((dT * c6Tempsens) >> 23);                 // Divide this value by 100 to get degrees Celcius
+        int32_t temp    = 2000 + ((dT * c6Tempsens) >> 23); // Divide this value by 100 to get degrees Celcius
         int64_t off     = (c2Off << 17) + ((dT * c4Tco) >> 6);
         int64_t sens    = (c1Sens << 16) + ((dT * c3Tcs) >> 7);
-        int32_t p       = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
+        // int32_t p    = (((pressureReading * sens) >> 21) - off) >> 15;
+        // Uncomment this line to get first-order pressure
 
         /* Calculate Second-Order Temperature and Pressure -------------------*/
 
@@ -195,7 +196,7 @@ void readBarometerTask(void const* arg)
             sens    = sens  - sens2;
         }
      
-        p   = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
+        int32_t p   = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
 
         /* Store Data --------------------------------------------------------*/
 
