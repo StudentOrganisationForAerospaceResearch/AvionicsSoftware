@@ -9,6 +9,7 @@
 #include "LogData.h"
 #include "Data.h"
 #include "FlightPhase.h"
+#include "SoftwareVersion.h"
 
 static int SLOW_LOG_DATA_PERIOD = 1000;
 static int FAST_LOG_DATA_PERIOD = 50;
@@ -81,7 +82,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     sprintf(
         buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d\n",
+        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d,%d\n",
         accelX,
         accelY,
         accelZ,
@@ -99,7 +100,8 @@ void buildLogEntry(AllData* data, char* buffer)
         latitude,
         longitude,
         oxidizerTankPressure,
-        getCurrentFlightPhase()
+        getCurrentFlightPhase(),
+        SOFTWARE_VERSION
     );
 }
 
@@ -123,7 +125,7 @@ void lowFrequencyLogToSdRoutine(AllData* data, char* buffer, FlightPhase entryPh
         {
             HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
 
-            if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
+            if (f_open(&file, "SD:AvionicsSoftware.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
             {
                 f_puts(buffer, &file);
                 f_close(&file);
@@ -176,7 +178,7 @@ void highFrequencyLogToSdRoutine(AllData* data, char* buffer)
 
         buildLogEntry(data, buffer);
 
-        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
+        if (f_open(&file, "SD:AvionicsSoftware.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
         {
             f_puts(buffer, &file);
             f_close(&file); // close to save the file
@@ -211,14 +213,15 @@ void logDataTask(void const* arg)
         "latitude,"
         "longitude,"
         "oxidizerTankPressure,"
-        "currentFlightPhase\n"
+        "currentFlightPhase,"
+        "softwareVersion\n"
     );
 
     if (f_mount(&fatfs, "SD:", 1) == FR_OK)
     {
         HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
 
-        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
+        if (f_open(&file, "SD:AvionicsSoftware.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
         {
             f_puts(buffer, &file);
             f_close(&file);
