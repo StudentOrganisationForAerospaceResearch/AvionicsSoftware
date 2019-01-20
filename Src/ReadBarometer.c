@@ -168,14 +168,12 @@ void readBarometerTask(void const* arg)
 
         HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
-        /* Calculate First-Order Temperature and Pressure --------------------*/
+        /* Calculate First-Order Temperature and Parameters ------------------*/
 
         int32_t dT      = temperatureReading - (c5Tref << 8);
         int32_t temp    = 2000 + ((dT * c6Tempsens) >> 23); // Divide this value by 100 to get degrees Celcius
         int64_t off     = (c2Off << 17) + ((dT * c4Tco) >> 6);
         int64_t sens    = (c1Sens << 16) + ((dT * c3Tcs) >> 7);
-        // int32_t p    = (((pressureReading * sens) >> 21) - off) >> 15;
-        // Uncomment this line to get first-order pressure
 
         /* Calculate Second-Order Temperature and Pressure -------------------*/
 
