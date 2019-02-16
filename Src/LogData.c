@@ -170,7 +170,7 @@ void highFrequencyLogToSdRoutine(AllData* data, char* buffer)
                 flightPhase != COAST &&
                 flightPhase != DROGUE_DESCENT)
         {
-            // done important phases, unmont card and exit high frequency logging
+            // done important phases, unmount card and exit high frequency logging
             break;
         }
 
@@ -191,6 +191,7 @@ void logDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
     char buffer[256];
+    char c;
 
     sprintf(
         buffer,
@@ -218,11 +219,35 @@ void logDataTask(void const* arg)
     {
         HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
 
-        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
-        {
-            f_puts(buffer, &file);
-            f_close(&file);
-        }
+        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
+			{
+				f_open(&file, "SD:VanderAvionics.csv", FA_CREATE_NEW);
+				c = getc(&file);
+				if(c == EOF)
+				{
+					f_puts(buffer, &file);
+				}
+				f_close(&file);
+			} else {
+				uint8_t exists = 0;
+				uint8_t index;
+				for(index = 1;!exists;index++)
+				{
+					char fileName[21];
+					snprintf(fileName, "SD:VanderAvionics", index,".csv");
+					if(f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
+					{
+						f_open(&file, fileName, FA_CREATE_NEW);
+						c = getc(&file);
+							if(c == EOF)
+							{
+								f_puts(buffer, &file);
+							}
+						f_close(&file);
+						exists = 1;
+					}
+				}
+			}
 
         f_mount(NULL, "SD:", 1);
         HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
