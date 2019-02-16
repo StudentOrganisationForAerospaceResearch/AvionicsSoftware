@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * File Name          : ReadBarometer.c
+  * File Name          : ParachutesControl.c
   * Description        : This file contains constants and functions designed to
-  *                      obtain accurate pressure and temperature readings from
-  *                      the MS5607-02BA03 barometer on the flight board. A
-  *                      thread task is included that will constantly loop,
-  *                      reading and updating the passed BarometerData struct.
+  *                      detect the apogee of the rocket's tragectory, and
+  *                      release the appropriate parachutes (drouge and main)
+  *                      at the right time to prevent the rocket from becoming
+  *                      a ballistic missile.
   ******************************************************************************
 */
 
