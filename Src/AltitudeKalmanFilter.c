@@ -1,3 +1,14 @@
+/**
+  ******************************************************************************
+  * File Name          : AltitudeKalmanFilter.c
+  * Description        : This file contains an implementation of a Kalman filter
+  *                      designed to obtain accurate altitude readings from both
+  *                      the accelerometer and barometer on board the rocket.
+  ******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
+
 #include <math.h>
 
 #include "stm32f4xx.h"
@@ -7,7 +18,12 @@
 #include "AltitudeKalmanFilter.h"
 #include "Data.h"
 
-static const int SEA_LEVEL_PRESSURE = 101421.93903699999; //TODO: THIS NEEDS TO BE UPDATED AND RECORDED ON LAUNCH DAY
+/* Macros --------------------------------------------------------------------*/
+
+/* Constants -----------------------------------------------------------------*/
+
+static const int SEA_LEVEL_PRESSURE = 101421.93903699999;
+// TODO: THIS NEEDS TO BE UPDATED AND RECORDED ON LAUNCH DAY
 
 static const double KALMAN_GAIN[][2] =
 {
@@ -16,6 +32,23 @@ static const double KALMAN_GAIN[][2] =
     {0.000273178915, 0.618030079}
 };
 
+/* Variables -----------------------------------------------------------------*/
+
+/* Structs -------------------------------------------------------------------*/
+
+/* Prototypes ----------------------------------------------------------------*/
+
+/* Functions -----------------------------------------------------------------*/
+
+/**
+ * Reads the acceleration from the passed IMU data struct, and provides the magnitude.
+ *
+ * Params:
+ *   data 			- (AccelGyroMagnetismData*) Pointer to the IMU struct to be read from.
+ *
+ * Returns:
+ *   accelMagnitude	- (int32_t) The magnitude of the read acceleration.
+ */
 int32_t readAccel(AccelGyroMagnetismData* data)
 {
     if (osMutexWait(data->mutex_, 0) != osOK)
@@ -38,6 +71,15 @@ int32_t readAccel(AccelGyroMagnetismData* data)
     return accelMagnitude;
 }
 
+/**
+ * Reads the pressure from the passed barometer data struct.
+ *
+ * Params:
+ *   data 		- (BarometerData*) Pointer to the barometer struct to be read from.
+ *
+ * Returns:
+ *   pressure 	- (int32_t) The read pressure.
+ */
 int32_t readPressure(BarometerData* data)
 {
     if (osMutexWait(data->mutex_, 0) != osOK)
@@ -56,13 +98,13 @@ int32_t readPressure(BarometerData* data)
  * converts them into a prediction of the rocket's current state.
  *
  * Params:
- *   oldState - (KalmanStateVector) Past altitude, velocity and acceleration
- *   currentAccel - (double) Measured acceleration
- *   currentAltitude - (double) Measured altitude
- *   dt - (double) Time since last step. In ms.
+ *   oldState 			- (KalmanStateVector) Past altitude, velocity and acceleration
+ *   currentAccel 		- (double) Measured acceleration
+ *   currentAltitude 	- (double) Measured altitude
+ *   dt 				- (double) Time since last step. In ms.
  *
  * Returns:
- *   newState - (KalmanStateVector) Current altitude, velocity and acceleration
+ *   newState 			- (KalmanStateVector) Current altitude, velocity and acceleration
  */
 struct KalmanStateVector filterSensors(
     struct KalmanStateVector oldState,
