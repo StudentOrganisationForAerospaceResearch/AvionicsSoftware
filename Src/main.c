@@ -66,6 +66,7 @@
 #include "AbortPhase.h"
 #include "Data.h"
 #include "FlightPhase.h"
+#include "CobsDecode.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -99,6 +100,7 @@ static osThreadId logDataTaskHandle;
 static osThreadId transmitDataTaskHandle;
 // Special abort thread
 static osThreadId abortPhaseTaskHandle;
+static osThreadId cobsDecodeTaskHandle;
 
 static const uint8_t LAUNCH_CMD_BYTE = 0x20;
 static const uint8_t ABORT_CMD_BYTE = 0x2F;
@@ -176,6 +178,8 @@ int main(void)
     // data primitive structs
     AccelGyroMagnetismData* accelGyroMagnetismData =
         malloc(sizeof(AccelGyroMagnetismData));
+    CobsData* cobsData =
+    	malloc(sizeof(CobsData));
     BarometerData* barometerData =
         malloc(sizeof(BarometerData));
     CombustionChamberPressureData* combustionChamberPressureData =
@@ -196,6 +200,10 @@ int main(void)
     accelGyroMagnetismData->magnetoX_ = -7;
     accelGyroMagnetismData->magnetoY_ = -8;
     accelGyroMagnetismData->magnetoZ_ = -9;
+
+    cobsData->firstZero = 0;
+    cobsData->parseData = 0;
+    cobsData->rxIndex = 0;
 
     osMutexDef(BAROMETER_DATA_MUTEX);
     barometerData->mutex_ = osMutexCreate(osMutex(BAROMETER_DATA_MUTEX));
@@ -266,6 +274,16 @@ int main(void)
     );
     readAccelGyroMagnetismTaskHandle =
         osThreadCreate(osThread(readAccelGyroMagnetismThread), accelGyroMagnetismData);
+
+    osThreadDef(
+    	cobsDecodeThread,
+		cobsDecodeTask,
+		osPriorityNormal,
+		1,
+		configMINIMAL_STACK_SIZE
+	);
+    cobsDecodeTaskHandle =
+    		osThreadCreate(osThread(cobsDecodeThread),cobsData);
 
     osThreadDef(
         readBarometerThread,
