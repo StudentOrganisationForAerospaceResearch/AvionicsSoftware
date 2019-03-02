@@ -51,26 +51,26 @@ C_SOURCES = \
   Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
   Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
   Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
-  Src/AbortPhase.c \
-  Src/EngineControl.c \
-  Src/FlightPhase.c \
-  Src/freertos.c \
-  Src/LogData.c \
+  Src/Common/AbortPhase.c \
+  Src/Common/EngineControl.c \
+  Src/Common/FlightPhase.c \
+  Src/Common/freertos.c \
+  Src/Common/LogData.c \
   Src/main.c \
-  Src/MonitorForEmergencyShutoff.c \
-  Src/ParachutesControl.c \
-  Src/ReadAccelGyroMagnetism.c \
-  Src/ReadBarometer.c \
-  Src/ReadCombustionChamberPressure.c \
-  Src/ReadGps.c \
-  Src/ValveControl.c \
-  Src/ReadOxidizerTankPressure.c \
+  Src/Common/MonitorForEmergencyShutoff.c \
+  Src/Common/ParachutesControl.c \
+  Src/Common/ReadAccelGyroMagnetism.c \
+  Src/Common/ReadBarometer.c \
+  Src/Common/ReadCombustionChamberPressure.c \
+  Src/Common/ReadGps.c \
+  Src/Common/ValveControl.c \
+  Src/Common/ReadOxidizerTankPressure.c \
   Src/stm32f4xx_hal_msp.c \
-  Src/stm32f4xx_hal_timebase_TIM.c \
+  Src/stm32f4xx_hal_timebase_tim.c \
   Src/stm32f4xx_it.c \
   Src/system_stm32f4xx.c \
-  Src/TransmitData.c \
-  Src/Utils.c \
+  Src/Common/TransmitData.c \
+  Src/Common/Utils.c \
   tm_fatfs/Src/ccsbcs.c \
   tm_fatfs/Src/diskio.c \
   tm_fatfs/Src/fatfs_sd.c \
@@ -108,10 +108,12 @@ C_INCLUDES += -IDrivers/CMSIS/Include
 C_INCLUDES += -IDrivers/STM32F4xx_HAL_Driver/Inc
 C_INCLUDES += -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy
 C_INCLUDES += -IInc
+C_INCLUDES += -IInc/Common
 C_INCLUDES += -IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
 C_INCLUDES += -IMiddlewares/Third_Party/FreeRTOS/Source/include
 C_INCLUDES += -IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 C_INCLUDES += -ISrc
+C_INCLUDES += -ISrc/Common
 C_INCLUDES += -Itm_fatfs/Inc
 # compile gcc flags
 ASFLAGS = -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections

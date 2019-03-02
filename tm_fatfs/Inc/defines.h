@@ -31,9 +31,9 @@
 /* Put your global defines for all libraries here used in your project */
 #define STM32F4xx
 #define FATFS_USE_SDIO 0
-#define FATFS_SPI SPI3
+#define FATFS_SPI SPI1
 #define FATFS_SPI_PINSPACK TM_SPI_PinsPack_2
-#define FATFS_CS_PORT GPIOD
-#define FATFS_CS_PIN GPIO_PIN_2
+#define FATFS_CS_PORT GPIOC
+#define FATFS_CS_PIN GPIO_PIN_4
 
 #endif
