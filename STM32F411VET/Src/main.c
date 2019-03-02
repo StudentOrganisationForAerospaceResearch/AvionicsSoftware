@@ -55,6 +55,7 @@ osThreadId defaultTaskHandle;
 // Storing data
 static osThreadId logDataTaskHandle;
 // Special abort thread
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
