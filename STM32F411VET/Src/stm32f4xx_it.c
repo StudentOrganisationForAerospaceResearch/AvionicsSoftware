@@ -33,7 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
- 
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -64,7 +64,7 @@ extern TIM_HandleTypeDef htim1;
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M4 Processor Interruption and Exception Handlers          */ 
+/*           Cortex-M4 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 
 /******************************************************************************/
@@ -79,12 +79,12 @@ extern TIM_HandleTypeDef htim1;
   */
 void TIM1_UP_TIM10_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
+    /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
 
-  /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
-  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
+    /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
+    /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 
-  /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+    /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
