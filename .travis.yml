@@ -20,5 +20,8 @@ before_script:
 script:
     - make
     - "! (astyle 'Inc/*.h' 'Src/*.c' -r --dry-run --options=astylerc | grep Formatted)"
+    - (cd STM32F411VET)
+    - make
+    - "! (astyle 'Inc/*.h' 'Src/*.c' -r --dry-run --options=astylerc | grep Formatted)"
 
 language: c
