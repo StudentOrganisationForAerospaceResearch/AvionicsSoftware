@@ -99,7 +99,7 @@ C_INCLUDES += -IMiddlewares/Third_Party/FreeRTOS/Source/include
 C_INCLUDES += -IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 C_INCLUDES += -ISrc
 C_INCLUDES += -I../Inc/Common
-C_INCLUDES += -I../Source/Common
+C_INCLUDES += -I../Src/Common
 C_INCLUDES += -Itm_fatfs/Inc
 # compile gcc flags
 ASFLAGS = -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
