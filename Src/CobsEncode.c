@@ -6,6 +6,12 @@
 /* Externs --------------------------------------------------*/
 #include "CobsEncode.h"
 
+/**
+ * Adds a delimiter byte at the end of the encoded data done by stuffData and calls it as well
+ * @param *dataToEncode is the source pointer
+ * @param length is the anticipated length of the destination array (frameData)
+ * @param *frameData is the destination array
+ */
 unsigned int frameData(unsigned char *dataToEncode, unsigned long length, unsigned char *frameData)
 {
     unsigned int lengthOfFramedData = stuffData(dataToEncode, length, frameData);
@@ -14,6 +20,12 @@ unsigned int frameData(unsigned char *dataToEncode, unsigned long length, unsign
     return lengthOfFramedData;
 }
 
+/**
+ * Performs encoding using Consistent Overhead Byte Stuffing (COBS)
+ * @param *dataToEncode is the source pointer
+ * @param length is the anticipated length of the destination array (frameData)
+ * @param *frameData is the destination array
+ */
 unsigned int stuffData(unsigned char *dataToEncode, unsigned long length, unsigned char *encodedData)
 {
     unsigned int lengthOfEncodedData = length + 1;
