@@ -14,7 +14,6 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
-#include "math.h"
 
 #include "ReadBarometer.h"
 #include "Data.h"
@@ -97,7 +96,7 @@ void readBarometerTask(void const* arg)
     osDelay(3); // 2.8ms reload after Reset command
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
-    // Read PROM for calibration offsets
+    // Read PROM for calibration coefficients
     uint16_t c1Sens     = readCalibrationCoefficient(PROM_READ_SENS_CMD);
     uint16_t c2Off      = readCalibrationCoefficient(PROM_READ_OFF_CMD);
     uint16_t c3Tcs      = readCalibrationCoefficient(PROM_READ_TCS_CMD);
@@ -170,10 +169,11 @@ void readBarometerTask(void const* arg)
 
         /* Calculate First-Order Temperature and Parameters ------------------*/
 
+        // Calibration coefficients need to be type cast to int64_t to avoid overflow during intermediate calculations
         int32_t dT      = temperatureReading - (c5Tref << 8);
-        int32_t temp    = 2000 + ((dT * c6Tempsens) >> 23); // Divide this value by 100 to get degrees Celcius
-        int64_t off     = (c2Off << 17) + ((dT * c4Tco) >> 6);
-        int64_t sens    = (c1Sens << 16) + ((dT * c3Tcs) >> 7);
+        int32_t temp    = 2000 + ((dT * (int64_t) c6Tempsens) >> 23); // Divide this value by 100 to get degrees Celsius
+        int64_t off     = ((int64_t) c2Off << 17) + ((dT * (int64_t) c4Tco) >> 6);
+        int64_t sens    = ((int64_t) c1Sens << 16) + ((dT * (int64_t) c3Tcs) >> 7);
 
         /* Calculate Second-Order Temperature and Pressure -------------------*/
 
@@ -181,7 +181,7 @@ void readBarometerTask(void const* arg)
         {
             int32_t t2      = (dT * dT) >> 31;
             int32_t off2    = 61 * (((temp - 2000) * (temp - 2000)) >> 4);
-            int32_t sens2   = 2 * ((temp - 2000) * (temp - 2000));
+            int64_t sens2   = 2 * ((temp - 2000) * (temp - 2000));
 
             if (temp < TEMP_VERY_LOW)   // If the temperature is below -15°C
             {
@@ -194,7 +194,7 @@ void readBarometerTask(void const* arg)
             sens    = sens  - sens2;
         }
 
-        int32_t p   = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
+        int32_t p   = ((((pressureReading * sens) >> 21) - off) >> 15);   // Divide this value by 100 to get millibars
 
         /* Store Data --------------------------------------------------------*/
 
