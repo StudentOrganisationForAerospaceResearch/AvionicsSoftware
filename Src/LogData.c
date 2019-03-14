@@ -220,6 +220,7 @@ void logDataTask(void const* arg)
     {
         if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
         {
+            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
             f_open(&file, "SD:VanderAvionics.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
             f_puts(buffer, &file);
             f_close(&file);
@@ -234,8 +235,8 @@ void logDataTask(void const* arg)
 
                 if (f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
                 {
-                    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
                     HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
+                    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
 
                     if (f_size(&file) == 0)
                     {
