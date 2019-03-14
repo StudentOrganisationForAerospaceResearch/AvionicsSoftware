@@ -217,60 +217,66 @@ void logDataTask(void const* arg)
     );
 
     if (f_mount(&fatfs, "SD:", 1) == FR_OK)
+    {
+        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
         {
-    		if(f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
-    		{
-    			f_open(&file, "SD:VanderAvionics.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
-				f_puts(buffer, &file);
-				f_close(&file);
-    		} else {
-    			uint8_t fileExists = 1;
-				for(uint8_t index = 1;fileExists;index++)
-				{
-					sprintf(fileName, "SD:VanderAvionics%i.csv", index);
-					if(f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
-					{
-						f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
-						HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-							if(f_size(&file) == 0)
-							{
-								f_puts(buffer, &file);
-							}
-						f_close(&file);
-						fileExists = 0;
-					}
-				}
-    		}
-
-            f_mount(NULL, "SD:", 1);
-            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
+            f_open(&file, "SD:VanderAvionics.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
+            f_puts(buffer, &file);
+            f_close(&file);
         }
-
-        for (;;)
+        else
         {
-            switch (getCurrentFlightPhase())
+            uint8_t fileExists = 1;
+
+            for (uint8_t index = 1; fileExists; index++)
             {
-                case PRELAUNCH:
-                    lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
-                    break;
+                sprintf(fileName, "SD:VanderAvionics%i.csv", index);
 
-                case BURN:
-                case COAST:
-                case DROGUE_DESCENT:
-                    highFrequencyLogToSdRoutine(data, buffer);
-                    break;
+                if (f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
+                {
+                    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
+                    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
 
-                case MAIN_DESCENT:
-                    lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
-                    break;
+                    if (f_size(&file) == 0)
+                    {
+                        f_puts(buffer, &file);
+                    }
 
-                case ABORT:
-                    lowFrequencyLogToSdRoutine(data, buffer, ABORT);
-                    break;
-
-                default:
-                    lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
-                    break;
+                    f_close(&file);
+                    fileExists = 0;
+                }
             }
         }
+
+        f_mount(NULL, "SD:", 1);
+        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
     }
+
+    for (;;)
+    {
+        switch (getCurrentFlightPhase())
+        {
+            case PRELAUNCH:
+                lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
+                break;
+
+            case BURN:
+            case COAST:
+            case DROGUE_DESCENT:
+                highFrequencyLogToSdRoutine(data, buffer);
+                break;
+
+            case MAIN_DESCENT:
+                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
+                break;
+
+            case ABORT:
+                lowFrequencyLogToSdRoutine(data, buffer, ABORT);
+                break;
+
+            default:
+                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
+                break;
+        }
+    }
+}
