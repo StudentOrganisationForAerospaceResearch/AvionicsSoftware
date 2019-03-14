@@ -179,8 +179,8 @@ void readBarometerTask(void const* arg)
 
         if (temp < TEMP_LOW)    // If the temperature is below 20°C
         {
-            int32_t t2      = (dT * dT) >> 31;
-            int32_t off2    = 61 * (((temp - 2000) * (temp - 2000)) >> 4);
+            int32_t t2      = ((int64_t) dT * dT) >> 31;
+            int64_t off2    = 61 * (((temp - 2000) * (temp - 2000)) >> 4);
             int64_t sens2   = 2 * ((temp - 2000) * (temp - 2000));
 
             if (temp < TEMP_VERY_LOW)   // If the temperature is below -15°C
@@ -194,7 +194,7 @@ void readBarometerTask(void const* arg)
             sens    = sens  - sens2;
         }
 
-        int32_t p   = ((((pressureReading * sens) >> 21) - off) >> 15);   // Divide this value by 100 to get millibars
+        int32_t p   = (((pressureReading * sens) >> 21) - off) >> 15;   // Divide this value by 100 to get millibars
 
         /* Store Data --------------------------------------------------------*/
 
