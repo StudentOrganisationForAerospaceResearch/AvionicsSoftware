@@ -16,6 +16,13 @@ static int FAST_LOG_DATA_PERIOD = 50;
 static FATFS fatfs;
 static FIL file;
 
+<<<<<<< Updated upstream
+=======
+int containsHeader = 0;
+
+char fileName[32];
+
+>>>>>>> Stashed changes
 void buildLogEntry(AllData* data, char* buffer)
 {
 
@@ -230,29 +237,55 @@ void logDataTask(void const* arg)
 
     for (;;)
     {
-        switch (getCurrentFlightPhase())
-        {
-            case PRELAUNCH:
-                lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
-                break;
+        checkForHeader();
+        if(containsHeader == 1){
+            switch (getCurrentFlightPhase())
+            {
+                case PRELAUNCH:
+                    lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
+                    break;
 
-            case BURN:
-            case COAST:
-            case DROGUE_DESCENT:
-                highFrequencyLogToSdRoutine(data, buffer);
-                break;
+                case BURN:
+                case COAST:
+                case DROGUE_DESCENT:
+                    highFrequencyLogToSdRoutine(data, buffer);
+                    break;
 
-            case MAIN_DESCENT:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
-                break;
+                case MAIN_DESCENT:
+                    lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
+                    break;
 
-            case ABORT:
-                lowFrequencyLogToSdRoutine(data, buffer, ABORT);
-                break;
+                case ABORT:
+                    lowFrequencyLogToSdRoutine(data, buffer, ABORT);
+                    break;
 
-            default:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
-                break;
+                default:
+                    lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
+                    break;
+            }    
+        }else if(containsHeader ==  0){
+            //Open file
+            f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
+            //Write header
+            f_puts(buffer, &file);
+            //Make sure header is written to file
+            checkForHeader();
         }
     }
+}
+
+//This function checks if there's a header
+void checkForHeader(){
+    //open file again then read if theres a header
+    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
+    //if the file is empty, keep trying to write header.
+    if(f_size(&file) == 0){
+        containsHeader = 0;
+    //if file is not empty, then the header is there.
+    //enter the switch statement to write rest of file.
+    }else{
+        containsHeader = 1;
+    }
+    //close the file
+    f_close(&file);
 }
