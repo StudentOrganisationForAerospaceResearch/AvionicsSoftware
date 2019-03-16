@@ -102,7 +102,7 @@ void buildLogEntry(AllData* data, char* buffer)
         longitude,
         oxidizerTankPressure,
         getCurrentFlightPhase(),
-		HAL_GetTick()
+	HAL_GetTick()
     );
 }
 
@@ -207,15 +207,15 @@ void logDataTask(void const* arg)
         "magnetoY,"
         "magnetoZ,"
         "pressure,"
-        "temperature,"
-        "combustionChamberPressure,"
+        "temperature(100C),"
+        "combustionChamberPressure(1000psi),"
         "altitude,"
-        "epochTimeMsec,"
+        "epochTime(ms),"
         "latitude,"
         "longitude,"
-        "oxidizerTankPressure,"
+        "oxidizerTankPressure(1000psi),"
         "currentFlightPhase,"
-		"elapsedTime\n"
+		"elapsedTime(ms)\n"
     );
 
     if (f_mount(&fatfs, "SD:", 1) == FR_OK)
