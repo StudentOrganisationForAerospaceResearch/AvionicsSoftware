@@ -112,6 +112,7 @@ uint8_t resetAvionicsCmdReceived = 0;
 
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
 static const int FLIGHT_PHASE_BLINK_FREQ = 100;
+CobsData* cobsData;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -178,8 +179,6 @@ int main(void)
     // data primitive structs
     AccelGyroMagnetismData* accelGyroMagnetismData =
         malloc(sizeof(AccelGyroMagnetismData));
-    CobsData* cobsData =
-    	malloc(sizeof(CobsData));
     BarometerData* barometerData =
         malloc(sizeof(BarometerData));
     CombustionChamberPressureData* combustionChamberPressureData =
@@ -201,9 +200,6 @@ int main(void)
     accelGyroMagnetismData->magnetoY_ = -8;
     accelGyroMagnetismData->magnetoZ_ = -9;
 
-    cobsData->firstZero = 0;
-    cobsData->parseData = 0;
-    cobsData->rxIndex = 0;
 
     osMutexDef(BAROMETER_DATA_MUTEX);
     barometerData->mutex_ = osMutexCreate(osMutex(BAROMETER_DATA_MUTEX));
@@ -224,6 +220,12 @@ int main(void)
     osMutexDef(OXIDIZER_TANK_PRESSURE_DATA_MUTEX);
     oxidizerTankPressureData->mutex_ = osMutexCreate(osMutex(OXIDIZER_TANK_PRESSURE_DATA_MUTEX));
     oxidizerTankPressureData->pressure_ = -17;
+
+    cobsData =
+    		malloc(sizeof(CobsData));
+    cobsData->parseData = 0;
+    cobsData->rxIndex = 0;
+    cobsData->firstZero = 0;
 
     // data containers
     AllData* allData =
@@ -809,8 +811,27 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
             resetAvionicsCmdReceived = 1;
         }
     }
-
+    else if(huart->Instance == USART1) {
+    		if(!cobsData->parseData) {
+    			if(cobsData->firstZero) {
+    				if(cobsData->rxIndex >= sizeof(cobsData->rxBuffer)) {
+    					cobsData->parseData = 1;
+    				}
+    				else {
+    					cobsData->rxIndex++;
+    					HAL_UART_Receive_IT(&huart2,&cobsData->rxBuffer[cobsData->rxIndex],1);
+    				}
+    			}
+    			else {
+    				if(cobsData->rxBuffer[cobsData->rxIndex] == 0) {
+    					cobsData->firstZero =1;
+    				}
+    				HAL_UART_Receive_IT(&huart2,&cobsData->rxBuffer[cobsData->rxIndex],1);
+    			}
+    		}
+    	}
 }
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */

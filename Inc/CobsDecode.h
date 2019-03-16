@@ -8,3 +8,4 @@ void cobsDecodeTask(void const* arg);
 extern UART_HandleTypeDef huart2;
 
 void COBS_Process(CobsData* cobsData);
+void callback2(UART_HandleTypeDef* huart);
