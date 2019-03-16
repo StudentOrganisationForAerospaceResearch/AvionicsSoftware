@@ -83,7 +83,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     sprintf(
         buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d\n",
+        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d,%ld\n",
         accelX,
         accelY,
         accelZ,
@@ -101,7 +101,8 @@ void buildLogEntry(AllData* data, char* buffer)
         latitude,
         longitude,
         oxidizerTankPressure,
-        getCurrentFlightPhase()
+        getCurrentFlightPhase(),
+		HAL_GetTick()
     );
 }
 
@@ -213,71 +214,65 @@ void logDataTask(void const* arg)
         "latitude,"
         "longitude,"
         "oxidizerTankPressure,"
-        "currentFlightPhase\n"
+        "currentFlightPhase,"
+		"elapsedTime\n"
     );
 
     if (f_mount(&fatfs, "SD:", 1) == FR_OK)
-    {
-        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
         {
-            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-            f_open(&file, "SD:VanderAvionics.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
-            f_puts(buffer, &file);
-            f_close(&file);
+    		if(f_open(&file, "SD:VanderAvionics1.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
+    		{
+    			f_open(&file, "SD:VanderAvionics1.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
+				f_puts(buffer, &file);
+				f_close(&file);
+    		} else {
+    			uint8_t fileExists = 1;
+				for(uint8_t index = 2;fileExists;index++)
+				{
+					sprintf(fileName, "SD:VanderAvionics%i.csv", index);
+					if(f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
+					{
+						f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
+						HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
+							if(f_size(&file) == 0)
+							{
+								f_puts(buffer, &file);
+							}
+						f_close(&file);
+						fileExists = 0;
+					}
+				}
+    		}
+
+            f_mount(NULL, "SD:", 1);
+            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
         }
-        else
+
+        for (;;)
         {
-            uint8_t fileExists = 1;
-
-            for (uint8_t index = 1; fileExists; index++)
+            switch (getCurrentFlightPhase())
             {
-                sprintf(fileName, "SD:VanderAvionics%i.csv", index);
+                case PRELAUNCH:
+                    lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
+                    break;
 
-                if (f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
-                {
-                    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-                    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
+                case BURN:
+                case COAST:
+                case DROGUE_DESCENT:
+                    highFrequencyLogToSdRoutine(data, buffer);
+                    break;
 
-                    if (f_size(&file) == 0)
-                    {
-                        f_puts(buffer, &file);
-                    }
+                case MAIN_DESCENT:
+                    lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
+                    break;
 
-                    f_close(&file);
-                    fileExists = 0;
-                }
+                case ABORT:
+                    lowFrequencyLogToSdRoutine(data, buffer, ABORT);
+                    break;
+
+                default:
+                    lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
+                    break;
             }
         }
-
-        f_mount(NULL, "SD:", 1);
-        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
     }
-
-    for (;;)
-    {
-        switch (getCurrentFlightPhase())
-        {
-            case PRELAUNCH:
-                lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
-                break;
-
-            case BURN:
-            case COAST:
-            case DROGUE_DESCENT:
-                highFrequencyLogToSdRoutine(data, buffer);
-                break;
-
-            case MAIN_DESCENT:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
-                break;
-
-            case ABORT:
-                lowFrequencyLogToSdRoutine(data, buffer, ABORT);
-                break;
-
-            default:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
-                break;
-        }
-    }
-}
