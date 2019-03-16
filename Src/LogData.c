@@ -16,13 +16,10 @@ static int FAST_LOG_DATA_PERIOD = 50;
 static FATFS fatfs;
 static FIL file;
 
-<<<<<<< Updated upstream
-=======
-int containsHeader = 0;
+static int containsHeader = 0;
 
 char fileName[32];
 
->>>>>>> Stashed changes
 void buildLogEntry(AllData* data, char* buffer)
 {
 
