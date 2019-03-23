@@ -66,7 +66,7 @@
 #include "AbortPhase.h"
 #include "Data.h"
 #include "FlightPhase.h"
-#include "CobsDecode.h"
+//#include "CobsDecode.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -221,12 +221,13 @@ int main(void)
     oxidizerTankPressureData->mutex_ = osMutexCreate(osMutex(OXIDIZER_TANK_PRESSURE_DATA_MUTEX));
     oxidizerTankPressureData->pressure_ = -17;
 
+    /*
     cobsData =
     		malloc(sizeof(CobsData));
     cobsData->parseData = 0;
     cobsData->rxIndex = 0;
     cobsData->firstZero = 0;
-
+	*/
     // data containers
     AllData* allData =
         malloc(sizeof(AllData));
@@ -811,6 +812,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
             resetAvionicsCmdReceived = 1;
         }
     }
+    /**
     else if(huart->Instance == USART1) {
     		if(!cobsData->parseData) {
     			if(cobsData->firstZero) {
@@ -830,6 +832,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
     			}
     		}
     	}
+    	*/
 }
 
 /* USER CODE END 4 */

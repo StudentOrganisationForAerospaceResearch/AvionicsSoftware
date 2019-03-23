@@ -23,7 +23,7 @@
  * @param len is the length of the source (*dataToEncode) array
  * @param *frameData is the destination pointer
  */
-unsigned int frameData(unsigned char *dataToEncode, unsigned long length, unsigned char *frameData);
+unsigned int frameData(uint8_t *dataToEncode, unsigned long length, uint8_t *frameData);
 /**
  * Performs the actual data stuffing on the arrays
  * @param *dataToEncode is the source pointer
@@ -31,4 +31,4 @@ unsigned int frameData(unsigned char *dataToEncode, unsigned long length, unsign
  * @param *encodedData is the size of the destination array
  * @return returns the length of encoded data
  */
-unsigned int stuffData(unsigned char *dataToEncode, unsigned long length, unsigned char *encodedData);
+unsigned int stuffData(uint8_t *dataToEncode, unsigned long length, uint8_t *encodedData);

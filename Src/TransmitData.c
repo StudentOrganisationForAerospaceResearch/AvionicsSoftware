@@ -6,6 +6,8 @@
 #include "Utils.h"
 #include "FlightPhase.h"
 #include "Data.h"
+#include "CobsEncode.h"
+#include "CobsEncode.c"
 
 static const int TRANSMIT_DATA_PERIOD = 500;
 
@@ -256,5 +258,20 @@ void transmitDataTask(void const* arg)
         transmitFlightPhaseData(data);
         transmitVentValveStatus();
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
+        testCobsData();
     }
+}
+
+void testCobsData() {
+    //uint8_t ventValveStatus = ventValveIsOpen;
+
+    uint8_t dataBuffer [] = {0x20, 0x41, 0x00, 0x22, 0x15, 0x17, 0x00, 0x39, 0x21, 0x05};
+    uint8_t destBuffer[sizeof(dataBuffer) + 2];
+    frameData(dataBuffer,sizeof(dataBuffer),destBuffer);
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    {
+        HAL_UART_Transmit(&huart2, &destBuffer, sizeof(destBuffer), UART_TIMEOUT); // Launch Systems
+    }
+
+    HAL_UART_Transmit(&huart1, &destBuffer, sizeof(destBuffer), UART_TIMEOUT);  // Radio
 }
