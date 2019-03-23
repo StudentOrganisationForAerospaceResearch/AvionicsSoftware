@@ -234,7 +234,6 @@ void logDataTask(void const* arg)
 
     for (;;)
     {
-        checkForHeader();
         if(containsHeader == 1){
             switch (getCurrentFlightPhase())
             {
@@ -261,28 +260,17 @@ void logDataTask(void const* arg)
                     break;
             }    
         }else if(containsHeader ==  0){
-            //Open file
+            //open the file
             f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
-            //Write header
-            f_puts(buffer, &file);
-            //Make sure header is written to file
-            checkForHeader();
+            //if the file is empty, write a header
+            if(f_size(&file) == 0){
+                f_puts(buffer, &file);
+            //if there's something in the file, go to the switch statement
+            }else if(f_size(&file) == 1){
+                containsHeader == 1;
+            }
+            //close the file
+            f_close(&file);
         }
     }
-}
-
-//This function checks if there's a header
-void checkForHeader(){
-    //open file again then read if theres a header
-    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
-    //if the file is empty, keep trying to write header.
-    if(f_size(&file) == 0){
-        containsHeader = 0;
-    //if file is not empty, then the header is there.
-    //enter the switch statement to write rest of file.
-    }else{
-        containsHeader = 1;
-    }
-    //close the file
-    f_close(&file);
 }
