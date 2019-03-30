@@ -29,8 +29,11 @@
 // Pressure at spaceport america in 100*millibars on May 27, 2018
 static const int MAIN_DEPLOYMENT_ALTITUDE = 457 + 1401; // Units in meters. Equivalent of 15000 ft + altitude of spaceport america.
 static const int MONITOR_FOR_PARACHUTES_PERIOD = 200;
+static const int NUM_DESCENTS_TO_TRIGGER_DROUGE = 3;
 
 /* Variables -----------------------------------------------------------------*/
+
+static int numDescents = 0;
 
 /* Structs -------------------------------------------------------------------*/
 
@@ -47,10 +50,10 @@ static const int MONITOR_FOR_PARACHUTES_PERIOD = 200;
  * Returns:
  *   - (int32_t) 1 if apogee has been reached, 0 if not.
  */
-int32_t detectApogee(struct KalmanStateVector state)
+int32_t detectApogee()
 {
-    // Monitor for when to deploy drogue chute. Simple velocity tolerance, looking for a minimum.
-    if (state.velocity < 25)
+    // Monitor for when to deploy drogue chute. Looking for a certain number of descents
+    if (numDescents >= NUM_DESCENTS_TO_TRIGGER_DROUGE)
     {
         return 1;
     }
@@ -150,7 +153,7 @@ void parachutesControlBurnRoutine(
             continue;
         }
 
-        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        state = filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
     }
 }
 
@@ -185,9 +188,20 @@ void parachutesControlCoastRoutine(
             continue;
         }
 
-        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        double oldAltitude = state.altitude;
 
-        if (detectApogee(state))
+        state = filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+
+        if (state.altitude < oldAltitude)
+        {
+        	numDescents++;
+        }
+        else
+        {
+        	numDescents = 0;
+        }
+
+        if (detectApogee())
         {
             ejectDrogueParachute();
             newFlightPhase(DROGUE_DESCENT);
@@ -228,7 +242,7 @@ void parachutesControlDrogueDescentRoutine(
             continue;
         }
 
-        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        state = filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
 
         // detect 4600 ft above sea level and eject main parachute
         if (detectMainDeploymentAltitude(state))
