@@ -46,14 +46,8 @@ static const uint8_t ACTIVATE_MAGNETO_DATA = 0x80;
 static const uint8_t READ_GYRO_X_G_LOW_CMD = GYRO_X_G_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 static const uint8_t READ_ACCEL_X_LOW_CMD = ACCEL_X_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 static const uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
+// static const uint8_t READ_WHOAMI_CMD = WHOAMI_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 
-/**
- * Reads the accelerometer, gyroscope and magnetism data
- * First writes the pin to the Chip Select GPIO Port
- * Also transmits data through SPI
- * @param *arg
- *
- */
 void readAccelGyroMagnetismTask(void const* arg)
 {
     AccelGyroMagnetismData* data = (AccelGyroMagnetismData*) arg;

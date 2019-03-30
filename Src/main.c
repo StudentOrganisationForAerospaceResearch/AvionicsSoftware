@@ -111,7 +111,6 @@ uint8_t resetAvionicsCmdReceived = 0;
 
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
 static const int FLIGHT_PHASE_BLINK_FREQ = 100;
-CobsData* cobsData;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
