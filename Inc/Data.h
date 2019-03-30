@@ -4,11 +4,11 @@
 
 typedef struct
 {
-	uint8_t parseData;
-	uint8_t rxIndex;
-	uint8_t rxBuffer[12];
-	uint8_t dest[10];
-	uint8_t firstZero;
+    uint8_t parseData;
+    uint8_t rxIndex;
+    uint8_t rxBuffer[12];
+    uint8_t dest[10];
+    uint8_t firstZero;
 } CobsData;
 
 typedef struct

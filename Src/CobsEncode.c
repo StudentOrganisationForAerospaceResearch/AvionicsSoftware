@@ -12,7 +12,7 @@
  * @param length is the anticipated length of the destination array (frameData)
  * @param *frameData is the destination array
  */
-unsigned int frameData(uint8_t *dataToEncode, unsigned long length, uint8_t *frameData)
+unsigned int frameData(uint8_t* dataToEncode, unsigned long length, uint8_t* frameData)
 {
     unsigned int lengthOfFramedData = stuffData(dataToEncode, length, frameData);
     //adds the delimiter byte at the end
@@ -26,11 +26,11 @@ unsigned int frameData(uint8_t *dataToEncode, unsigned long length, uint8_t *fra
  * @param length is the anticipated length of the destination array (frameData)
  * @param *frameData is the destination array
  */
-unsigned int stuffData(uint8_t *dataToEncode, unsigned long length, uint8_t *encodedData)
+unsigned int stuffData(uint8_t* dataToEncode, unsigned long length, uint8_t* encodedData)
 {
     unsigned int lengthOfEncodedData = length + 1;
-    unsigned char *end = dataToEncode + length;
-    unsigned char *code_ptr = encodedData++;
+    unsigned char* end = dataToEncode + length;
+    unsigned char* code_ptr = encodedData++;
     unsigned char code = 0x01;
 
     while (dataToEncode < end)

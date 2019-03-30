@@ -228,7 +228,7 @@ int main(void)
     cobsData->parseData = 0;
     cobsData->rxIndex = 0;
     cobsData->firstZero = 0;
-	*/
+    */
     // data containers
     AllData* allData =
         malloc(sizeof(AllData));
@@ -279,15 +279,15 @@ int main(void)
     readAccelGyroMagnetismTaskHandle =
         osThreadCreate(osThread(readAccelGyroMagnetismThread), accelGyroMagnetismData);
 
-	//    osThreadDef(
-	//    	cobsEncodeThread,
-	//		cobsEncodeTask,
-	//		osPriorityNormal,
-	//		1,
-	//		configMINIMAL_STACK_SIZE
-	//	);
-	//    cobsEncodeTaskHandle =
-	//    		osThreadCreate(osThread(cobsEncodeThread),cobsData);
+    //    osThreadDef(
+    //    	cobsEncodeThread,
+    //		cobsEncodeTask,
+    //		osPriorityNormal,
+    //		1,
+    //		configMINIMAL_STACK_SIZE
+    //	);
+    //    cobsEncodeTaskHandle =
+    //    		osThreadCreate(osThread(cobsEncodeThread),cobsData);
 
     osThreadDef(
         readBarometerThread,
@@ -813,6 +813,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
             resetAvionicsCmdReceived = 1;
         }
     }
+
     /**
     else if(huart->Instance == USART1) {
     		if(!cobsData->parseData) {

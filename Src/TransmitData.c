@@ -262,12 +262,14 @@ void transmitDataTask(void const* arg)
     }
 }
 
-void testCobsData() {
+void testCobsData()
+{
     //uint8_t ventValveStatus = ventValveIsOpen;
 
     uint8_t dataBuffer [] = {0x20, 0x41, 0x00, 0x22, 0x15, 0x17, 0x00, 0x39, 0x21, 0x05};
     uint8_t destBuffer[sizeof(dataBuffer) + 2];
-    frameData(dataBuffer,sizeof(dataBuffer),destBuffer);
+    frameData(dataBuffer, sizeof(dataBuffer), destBuffer);
+
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
     {
         HAL_UART_Transmit(&huart2, &destBuffer, sizeof(destBuffer), UART_TIMEOUT); // Launch Systems
