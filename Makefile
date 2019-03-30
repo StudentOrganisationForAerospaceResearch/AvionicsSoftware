@@ -52,7 +52,7 @@ C_SOURCES = \
   Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
   Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
   Src/AbortPhase.c \
-  Src/CobsDecode.c \
+  Src/CobsEncode.c \
   Src/EngineControl.c \
   Src/FlightPhase.c \
   Src/freertos.c \

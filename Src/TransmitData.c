@@ -7,7 +7,6 @@
 #include "FlightPhase.h"
 #include "Data.h"
 #include "CobsEncode.h"
-#include "CobsEncode.c"
 
 static const int TRANSMIT_DATA_PERIOD = 500;
 
