@@ -170,7 +170,7 @@ void readBarometerTask(void const* arg)
         /* Calculate First-Order Temperature and Parameters ------------------*/
 
         // Calibration coefficients need to be type cast to int64_t to avoid overflow during intermediate calculations
-        int32_t dT      = temperatureReading - (c5Tref << 8);
+        int32_t dT      = temperatureReading - ((int32_t) c5Tref << 8);
         int32_t temp    = 2000 + ((dT * (int64_t) c6Tempsens) >> 23); // Divide this value by 100 to get degrees Celsius
         int64_t off     = ((int64_t) c2Off << 17) + ((dT * (int64_t) c4Tco) >> 6);
         int64_t sens    = ((int64_t) c1Sens << 16) + ((dT * (int64_t) c3Tcs) >> 7);
@@ -180,13 +180,13 @@ void readBarometerTask(void const* arg)
         if (temp < TEMP_LOW)    // If the temperature is below 20°C
         {
             int32_t t2      = ((int64_t) dT * dT) >> 31;
-            int64_t off2    = 61 * (((temp - 2000) * (temp - 2000)) >> 4);
-            int64_t sens2   = 2 * ((temp - 2000) * (temp - 2000));
+            int64_t off2    = 61 * (((int64_t) (temp - 2000) * (temp - 2000)) >> 4);
+            int64_t sens2   = 2 * ((int64_t) (temp - 2000) * (temp - 2000));
 
             if (temp < TEMP_VERY_LOW)   // If the temperature is below -15°C
             {
-                off2    = off2 + (15 * ((temp + 1500) * (temp + 1500)));
-                sens2   = sens2 + (8 * ((temp + 1500) * (temp + 1500)));
+                off2    = off2 + (15 * ((int64_t) (temp + 1500) * (temp + 1500)));
+                sens2   = sens2 + (8 * ((int64_t) (temp + 1500) * (temp + 1500)));
             }
 
             temp    = temp  - t2;
