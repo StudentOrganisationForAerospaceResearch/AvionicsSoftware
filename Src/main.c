@@ -66,6 +66,7 @@
 #include "AbortPhase.h"
 #include "Data.h"
 #include "FlightPhase.h"
+#include "CobsEncode.h"
 //#include "CobsDecode.h"
 /* USER CODE END Includes */
 
@@ -100,7 +101,7 @@ static osThreadId logDataTaskHandle;
 static osThreadId transmitDataTaskHandle;
 // Special abort thread
 static osThreadId abortPhaseTaskHandle;
-static osThreadId cobsDecodeTaskHandle;
+//static osThreadId cobsEncodeTaskHandle;
 
 static const uint8_t LAUNCH_CMD_BYTE = 0x20;
 static const uint8_t ABORT_CMD_BYTE = 0x2F;
@@ -278,15 +279,15 @@ int main(void)
     readAccelGyroMagnetismTaskHandle =
         osThreadCreate(osThread(readAccelGyroMagnetismThread), accelGyroMagnetismData);
 
-    osThreadDef(
-    	cobsDecodeThread,
-		cobsDecodeTask,
-		osPriorityNormal,
-		1,
-		configMINIMAL_STACK_SIZE
-	);
-    cobsDecodeTaskHandle =
-    		osThreadCreate(osThread(cobsDecodeThread),cobsData);
+	//    osThreadDef(
+	//    	cobsEncodeThread,
+	//		cobsEncodeTask,
+	//		osPriorityNormal,
+	//		1,
+	//		configMINIMAL_STACK_SIZE
+	//	);
+	//    cobsEncodeTaskHandle =
+	//    		osThreadCreate(osThread(cobsEncodeThread),cobsData);
 
     osThreadDef(
         readBarometerThread,
