@@ -271,8 +271,8 @@ void testCobsData()
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
     {
-        HAL_UART_Transmit(&huart2, &destBuffer, sizeof(destBuffer), UART_TIMEOUT); // Launch Systems
+        HAL_UART_Transmit(&huart1, &destBuffer, sizeof(destBuffer), UART_TIMEOUT); // Launch Systems
     }
 
-    HAL_UART_Transmit(&huart1, &destBuffer, sizeof(destBuffer), UART_TIMEOUT);  // Radio
+    HAL_UART_Transmit(&huart4, &destBuffer, sizeof(destBuffer), UART_TIMEOUT);  // Radio
 }

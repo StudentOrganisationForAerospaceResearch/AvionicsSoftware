@@ -37,7 +37,9 @@ unsigned int stuffData(uint8_t* dataToEncode, unsigned long length, uint8_t* enc
     {
         if (*dataToEncode == 0)
         {
-            FINISH_BLOCK(code);
+        	*code_ptr = code;
+        	code_ptr = encodedData++;
+        	code = 0x01;
         }
         else
         {
@@ -46,14 +48,18 @@ unsigned int stuffData(uint8_t* dataToEncode, unsigned long length, uint8_t* enc
 
             if (code == 0xFF)
             {
-                FINISH_BLOCK(code);
+            	*code_ptr = code;
+            	code_ptr = encodedData++;
+            	code = 0x01;
             }
         }
 
         dataToEncode++;
     }
 
-    FINISH_BLOCK(code);
+    *code_ptr = code;
+    code_ptr = encodedData++;
+    code = 0x01;
     return lengthOfEncodedData;
 }
 

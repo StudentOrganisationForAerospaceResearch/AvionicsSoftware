@@ -9,12 +9,6 @@
 /* Macros --------------------------------------------------*/
 #define START (0xFFFF)
 #define XOR_OUT (0xFFFF)
-#define FINISH_BLOCK(X)           \
-    {                             \
-        *code_ptr = (X);          \
-        code_ptr = encodedData++; \
-        code = 0x01;              \
-    }
 
 /* Prototypes -----------------------------------------------*/
 /**
