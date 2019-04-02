@@ -217,7 +217,7 @@ void logDataTask(void const* arg)
         "longitude,"
         "oxidizerTankPressure(1000psi),"
         "currentFlightPhase,"
-        "elapsedTime(ms)",
+        "elapsedTime(ms),"
         "softwareVersion\n"
     );
 
