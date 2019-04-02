@@ -695,6 +695,8 @@ static void MX_USART3_UART_Init(void)
         * Output
         * EVENT_OUT
         * EXTI
+        * Free pins are configured automatically as Analog (this feature is enabled through
+        * the Code Generation settings)
 */
 static void MX_GPIO_Init(void)
 {
@@ -709,30 +711,25 @@ static void MX_GPIO_Init(void)
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOC, UNUSED_PIN_Pin | UNUSED_PINC14_Pin | UNUSED_PINC15_Pin | UNUSED_PINC0_Pin
-                      | UNUSED_PINC1_Pin | UNUSED_PINC2_Pin | MAG_CS_Pin | LED1_Pin
-                      | BARO_CS_Pin | DROGUE_PARACHUTE_Pin | MAIN_PARACHUTE_Pin | UNUSED_PINC9_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin | PROPULSION3_VALVE_Pin | VENT_VALVE_Pin | INJECTION_VALVE_Pin
+                      | SD1_CS_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin | UNUSED_PINA8_Pin | UNUSED_PINA9_Pin | UNUSED_PINA10_Pin
-                      | VENT_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOC, MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | DROGUE_PARACHUTE_Pin
+                      | MAIN_PARACHUTE_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOB, LED2_Pin | UNUSED_PINB12_Pin | UNUSED_PINB4_Pin | FAN_CTRL_Pin
-                      | UNUSED_PINB8_Pin | UNUSED_PINB9_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, LED2_Pin | ACCEL_CS_Pin | FAN_CTRL_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(SD2_CS_GPIO_Port, SD2_CS_Pin, GPIO_PIN_RESET);
 
-    /*Configure GPIO pins : UNUSED_PIN_Pin UNUSED_PINC14_Pin UNUSED_PINC15_Pin UNUSED_PINC0_Pin
-                             UNUSED_PINC1_Pin UNUSED_PINC2_Pin MAG_CS_Pin LED1_Pin
-                             BARO_CS_Pin DROGUE_PARACHUTE_Pin MAIN_PARACHUTE_Pin UNUSED_PINC9_Pin */
-    GPIO_InitStruct.Pin = UNUSED_PIN_Pin | UNUSED_PINC14_Pin | UNUSED_PINC15_Pin | UNUSED_PINC0_Pin
-                          | UNUSED_PINC1_Pin | UNUSED_PINC2_Pin | MAG_CS_Pin | LED1_Pin
-                          | BARO_CS_Pin | DROGUE_PARACHUTE_Pin | MAIN_PARACHUTE_Pin | UNUSED_PINC9_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    /*Configure GPIO pins : PC13 PC14 PC15 PC0
+                             PC1 PC2 PC9 */
+    GPIO_InitStruct.Pin = GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15 | GPIO_PIN_0
+                          | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     /*Configure GPIO pin : LAUNCH_Pin */
@@ -741,23 +738,36 @@ static void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(LAUNCH_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : IMU_CS_Pin UNUSED_PINA8_Pin UNUSED_PINA9_Pin UNUSED_PINA10_Pin
-                             VENT_VALVE_Pin INJECTION_VALVE_Pin SD1_CS_Pin */
-    GPIO_InitStruct.Pin = IMU_CS_Pin | UNUSED_PINA8_Pin | UNUSED_PINA9_Pin | UNUSED_PINA10_Pin
-                          | VENT_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin;
+    /*Configure GPIO pins : IMU_CS_Pin PROPULSION3_VALVE_Pin VENT_VALVE_Pin INJECTION_VALVE_Pin
+                             SD1_CS_Pin */
+    GPIO_InitStruct.Pin = IMU_CS_Pin | PROPULSION3_VALVE_Pin | VENT_VALVE_Pin | INJECTION_VALVE_Pin
+                          | SD1_CS_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : LED2_Pin UNUSED_PINB12_Pin UNUSED_PINB4_Pin FAN_CTRL_Pin
-                             UNUSED_PINB8_Pin UNUSED_PINB9_Pin */
-    GPIO_InitStruct.Pin = LED2_Pin | UNUSED_PINB12_Pin | UNUSED_PINB4_Pin | FAN_CTRL_Pin
-                          | UNUSED_PINB8_Pin | UNUSED_PINB9_Pin;
+    /*Configure GPIO pins : MAG_CS_Pin LED1_Pin BARO_CS_Pin DROGUE_PARACHUTE_Pin
+                             MAIN_PARACHUTE_Pin */
+    GPIO_InitStruct.Pin = MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | DROGUE_PARACHUTE_Pin
+                          | MAIN_PARACHUTE_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : LED2_Pin ACCEL_CS_Pin FAN_CTRL_Pin */
+    GPIO_InitStruct.Pin = LED2_Pin | ACCEL_CS_Pin | FAN_CTRL_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : PA8 PA9 */
+    GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /*Configure GPIO pin : SD2_CS_Pin */
     GPIO_InitStruct.Pin = SD2_CS_Pin;
@@ -765,6 +775,12 @@ static void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(SD2_CS_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : PB4 PB8 PB9 */
+    GPIO_InitStruct.Pin = GPIO_PIN_4 | GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
