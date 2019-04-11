@@ -37,9 +37,9 @@ unsigned int stuffData(uint8_t* dataToEncode, unsigned long length, uint8_t* enc
     {
         if (*dataToEncode == 0)
         {
-        	*code_ptr = code;
-        	code_ptr = encodedData++;
-        	code = 0x01;
+            *code_ptr = code;
+            code_ptr = encodedData++;
+            code = 0x01;
         }
         else
         {
@@ -48,9 +48,9 @@ unsigned int stuffData(uint8_t* dataToEncode, unsigned long length, uint8_t* enc
 
             if (code == 0xFF)
             {
-            	*code_ptr = code;
-            	code_ptr = encodedData++;
-            	code = 0x01;
+                *code_ptr = code;
+                code_ptr = encodedData++;
+                code = 0x01;
             }
         }
 
