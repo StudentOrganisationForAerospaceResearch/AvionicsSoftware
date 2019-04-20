@@ -16,6 +16,7 @@ static const int8_t OXIDIZER_TANK_HEADER_BYTE = 0x34;
 static const int8_t COMBUSTION_CHAMBER_HEADER_BYTE = 0x35;
 static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x36;
 static const int8_t VENT_VALVE_STATUS_HEADER_BYTE = 0x37;
+static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38;
 
 #define IMU_SERIAL_MSG_SIZE (41)
 #define BAROMETER_SERIAL_MSG_SIZE (13)
@@ -239,6 +240,26 @@ void transmitVentValveStatus()
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
 }
 
+void transmitInjectionValveStatus()
+{
+    uint8_t injectionValveStatus = injectionValveIsOpen;
+
+    uint8_t buffer [] = {INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         (uint8_t) ((injectionValveStatus)),
+                         0x00
+                        };
+
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    {
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Launch Systems
+    }
+
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+}
+
 void transmitDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
@@ -255,6 +276,7 @@ void transmitDataTask(void const* arg)
         transmitCombustionChamberData(data);
         transmitFlightPhaseData(data);
         transmitVentValveStatus();
+        transmitInjectionValveStatus();
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }

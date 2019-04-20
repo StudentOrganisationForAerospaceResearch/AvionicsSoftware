@@ -66,6 +66,7 @@
 #include "AbortPhase.h"
 #include "Data.h"
 #include "FlightPhase.h"
+#include "ValveControl.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -106,6 +107,9 @@ static const uint8_t PULSE_VENT_VALVE = 0x24;
 static const uint8_t ABORT_CMD_BYTE = 0x2F;
 static const uint8_t RESET_AVIONICS_CMD_BYTE = 0x4F;
 static const uint8_t HEARTBEAT_BYTE = 0x46;
+static const uint8_t OPEN_INJECTION_VALVE = 0x2A;
+static const uint8_t CLOSE_INJECTION_VALVE = 0x2B;
+
 uint8_t launchSystemsRxChar = 0;
 uint8_t systemIsArmed = 0;
 uint8_t launchCmdReceived = 0;
@@ -828,6 +832,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         else if (launchSystemsRxChar == HEARTBEAT_BYTE)
         {
             heartbeatTimer = HEARTBEAT_TIMEOUT;
+        }
+        else if (launchSystemsRxChar == OPEN_INJECTION_VALVE)
+        {
+            openInjectionValve();
+        }
+        else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE)
+        {
+            closeInjectionValve();
         }
     }
 
