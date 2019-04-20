@@ -8,11 +8,31 @@
 #include "ValveControl.h"
 
 static const int PRELAUNCH_PHASE_PERIOD = 50;
-static const int BURN_DURATION = 10000;
+static const int BURN_DURATION = 11000;
 static const int POST_BURN_PERIOD = 1000;
 
-static const int POST_BURN_REOPEN_INJECTION_VALVE_DURATION = 20 * 60 * 1000; // 20 minutes
+static const int POST_BURN_REOPEN_INJECTION_VALVE_DURATION = 10 * 60 * 1000; // 10 minutes
 static const int MAX_TANK_PRESSURE = 820000; // 820 psi, 5660 kPa, 25 deg C at saturation
+static const int PRELAUNCH_VENT_PULSE_DURATION = 2 * 1000; // 2 seconds
+
+int8_t oxidizerTankIsOverPressure(OxidizerTankPressureData* data)
+{
+    int32_t tankPressure = -1;
+
+    if (osMutexWait(data->mutex_, 0) == osOK)
+    {
+        // read tank pressure
+        tankPressure = data->pressure_;
+        osMutexRelease(data->mutex_);
+    }
+
+    if (tankPressure > MAX_TANK_PRESSURE)
+    {
+        return 1;
+    }
+
+    return 0;
+}
 
 /**
  * This routine keeps the injection valve closed during prelaunch.
@@ -21,50 +41,43 @@ static const int MAX_TANK_PRESSURE = 820000; // 820 psi, 5660 kPa, 25 deg C at s
 void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 {
     uint32_t prevWakeTime = osKernelSysTick();
-    int32_t tankPressure = -1;
-    int32_t durationVentValveControlled = 0;
+
+    // If 0, no venting
+    // If non 0, vent for that much more time
+    int32_t ventPulseCounter = 0;
+    closeInjectionValve();
 
     for (;;)
     {
         osDelayUntil(&prevWakeTime, PRELAUNCH_PHASE_PERIOD);
-        // Assume valve is closed
-        // closeInjectionValve();
 
-        // Vent tank if over pressure
-        if (osMutexWait(data->mutex_, 0) == osOK)
+        closeInjectionValve();
+
+        // handle request
+        if (pulseVentValveRequested)
         {
-            // read tank pressure
-            tankPressure = data->pressure_;
-            osMutexRelease(data->mutex_);
-
-            // open or close valve based on tank pressure
-            // also do not open valve if it's been open for too long
-            // otherwise the vent valve will break
-            if (tankPressure > MAX_TANK_PRESSURE)
-            {
-                if (durationVentValveControlled < MAX_DURATION_VENT_VALVE_OPEN)
-                {
-                    // open vent valve
-                    durationVentValveControlled += PRELAUNCH_PHASE_PERIOD;
-                    openVentValve();
-                }
-                else if (durationVentValveControlled <
-                         (MAX_DURATION_VENT_VALVE_OPEN + REQUIRED_DURATION_VENT_VALVE_CLOSED))
-                {
-                    // vent valve has been open for more than max time it can be open
-                    durationVentValveControlled += PRELAUNCH_PHASE_PERIOD;
-                    closeVentValve();
-                }
-                else
-                {
-                    // vent valve has closed to reset itself as long as is necessary
-                    openVentValve();
-                    durationVentValveControlled = 0;
-                }
-            }
+            ventPulseCounter = PRELAUNCH_VENT_PULSE_DURATION;
+            pulseVentValveRequested = 0; // request has been dealt with
         }
 
-        if (launchCmdReceived != 0)
+        // if not already venting, check if over pressure
+        if (ventPulseCounter <= 0)
+        {
+            closeVentValve(); // close vent valve if not venting
+
+            if (oxidizerTankIsOverPressure(data))
+            {
+                ventPulseCounter = PRELAUNCH_VENT_PULSE_DURATION;
+            }
+        }
+        else
+        {
+            // venting is requested, continue venting process
+            openVentValve();
+            ventPulseCounter -= PRELAUNCH_PHASE_PERIOD;
+        }
+
+        if (launchCmdReceived >= 2 && systemIsArmed)
         {
             newFlightPhase(BURN);
         }
@@ -83,6 +96,7 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
  */
 void engineControlBurnRoutine()
 {
+    closeVentValve();
     openInjectionValve();
     osDelay(BURN_DURATION);
     newFlightPhase(COAST);

@@ -16,6 +16,8 @@ void monitorForEmergencyShutoffTask(void const* arg)
     FlightPhase phase = PRELAUNCH;
     int32_t magnetoZ = -1;
 
+    heartbeatTimer = HEARTBEAT_TIMEOUT;
+
     for (;;)
     {
         osDelayUntil(&prevWakeTime, MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD);
@@ -31,7 +33,9 @@ void monitorForEmergencyShutoffTask(void const* arg)
         switch (getCurrentFlightPhase())
         {
             case PRELAUNCH:
-                if (abortCmdReceived)
+                heartbeatTimer -= MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD;
+
+                if (prelaunchChecks())
                 {
                     newFlightPhase(ABORT);
                 }
@@ -56,3 +60,18 @@ void monitorForEmergencyShutoffTask(void const* arg)
     }
 }
 
+// return 0 for everything ok
+int prelaunchChecks()
+{
+    if (abortCmdReceived)
+    {
+        return 1;
+    }
+
+    if (heartbeatTimer <= 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
