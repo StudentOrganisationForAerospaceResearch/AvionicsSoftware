@@ -58,18 +58,6 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define UNUSED_PIN_Pin GPIO_PIN_13
-#define UNUSED_PIN_GPIO_Port GPIOC
-#define UNUSED_PINC14_Pin GPIO_PIN_14
-#define UNUSED_PINC14_GPIO_Port GPIOC
-#define UNUSED_PINC15_Pin GPIO_PIN_15
-#define UNUSED_PINC15_GPIO_Port GPIOC
-#define UNUSED_PINC0_Pin GPIO_PIN_0
-#define UNUSED_PINC0_GPIO_Port GPIOC
-#define UNUSED_PINC1_Pin GPIO_PIN_1
-#define UNUSED_PINC1_GPIO_Port GPIOC
-#define UNUSED_PINC2_Pin GPIO_PIN_2
-#define UNUSED_PINC2_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_3
 #define LAUNCH_GPIO_Port GPIOC
 #define GPS_UART_TX_Pin GPIO_PIN_0
@@ -98,8 +86,8 @@
 #define OXIDIZER_TANK_ADC_GPIO_Port GPIOB
 #define LED2_Pin GPIO_PIN_2
 #define LED2_GPIO_Port GPIOB
-#define UNUSED_PINB12_Pin GPIO_PIN_12
-#define UNUSED_PINB12_GPIO_Port GPIOB
+#define ACCEL_CS_Pin GPIO_PIN_12
+#define ACCEL_CS_GPIO_Port GPIOB
 #define BARO_SPI_SCK_Pin GPIO_PIN_13
 #define BARO_SPI_SCK_GPIO_Port GPIOB
 #define BARO_SPI_MISO_Pin GPIO_PIN_14
@@ -112,14 +100,8 @@
 #define DROGUE_PARACHUTE_GPIO_Port GPIOC
 #define MAIN_PARACHUTE_Pin GPIO_PIN_8
 #define MAIN_PARACHUTE_GPIO_Port GPIOC
-#define UNUSED_PINC9_Pin GPIO_PIN_9
-#define UNUSED_PINC9_GPIO_Port GPIOC
-#define UNUSED_PINA8_Pin GPIO_PIN_8
-#define UNUSED_PINA8_GPIO_Port GPIOA
-#define UNUSED_PINA9_Pin GPIO_PIN_9
-#define UNUSED_PINA9_GPIO_Port GPIOA
-#define UNUSED_PINA10_Pin GPIO_PIN_10
-#define UNUSED_PINA10_GPIO_Port GPIOA
+#define PROPULSION3_VALVE_Pin GPIO_PIN_10
+#define PROPULSION3_VALVE_GPIO_Port GPIOA
 #define VENT_VALVE_Pin GPIO_PIN_11
 #define VENT_VALVE_GPIO_Port GPIOA
 #define INJECTION_VALVE_Pin GPIO_PIN_12
@@ -134,18 +116,12 @@
 #define SD_SPI_MOSI_GPIO_Port GPIOC
 #define SD2_CS_Pin GPIO_PIN_2
 #define SD2_CS_GPIO_Port GPIOD
-#define UNUSED_PINB4_Pin GPIO_PIN_4
-#define UNUSED_PINB4_GPIO_Port GPIOB
 #define FAN_CTRL_Pin GPIO_PIN_5
 #define FAN_CTRL_GPIO_Port GPIOB
 #define RADIO_UART_TX_Pin GPIO_PIN_6
 #define RADIO_UART_TX_GPIO_Port GPIOB
 #define RADIO_UART_RX_Pin GPIO_PIN_7
 #define RADIO_UART_RX_GPIO_Port GPIOB
-#define UNUSED_PINB8_Pin GPIO_PIN_8
-#define UNUSED_PINB8_GPIO_Port GPIOB
-#define UNUSED_PINB9_Pin GPIO_PIN_9
-#define UNUSED_PINB9_GPIO_Port GPIOB
 
 /* ########################## Assert Selection ############################## */
 /**
