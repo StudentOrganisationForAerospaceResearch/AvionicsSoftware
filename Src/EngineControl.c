@@ -8,31 +8,10 @@
 #include "ValveControl.h"
 
 static const int PRELAUNCH_PHASE_PERIOD = 50;
-static const int BURN_DURATION = 11000;
+static const int BURN_DURATION = 12000;
 static const int POST_BURN_PERIOD = 1000;
 
 static const int POST_BURN_REOPEN_INJECTION_VALVE_DURATION = 10 * 60 * 1000; // 10 minutes
-static const int MAX_TANK_PRESSURE = 820000; // 820 psi, 5660 kPa, 25 deg C at saturation
-static const int PRELAUNCH_VENT_PULSE_DURATION = 2 * 1000; // 2 seconds
-
-int8_t oxidizerTankIsOverPressure(OxidizerTankPressureData* data)
-{
-    int32_t tankPressure = -1;
-
-    if (osMutexWait(data->mutex_, 0) == osOK)
-    {
-        // read tank pressure
-        tankPressure = data->pressure_;
-        osMutexRelease(data->mutex_);
-    }
-
-    if (tankPressure > MAX_TANK_PRESSURE)
-    {
-        return 1;
-    }
-
-    return 0;
-}
 
 /**
  * This routine keeps the injection valve closed during prelaunch.
@@ -41,10 +20,8 @@ int8_t oxidizerTankIsOverPressure(OxidizerTankPressureData* data)
 void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 {
     uint32_t prevWakeTime = osKernelSysTick();
+    uint32_t pulseVentCounter = 0;
 
-    // If 0, no venting
-    // If non 0, vent for that much more time
-    int32_t ventPulseCounter = 0;
     closeInjectionValve();
 
     for (;;)
@@ -53,28 +30,68 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 
         closeInjectionValve();
 
-        // handle request
-        if (pulseVentValveRequested)
-        {
-            ventPulseCounter = PRELAUNCH_VENT_PULSE_DURATION;
-            pulseVentValveRequested = 0; // request has been dealt with
-        }
+        int32_t oxidizerTankPressure = -1;
 
-        // if not already venting, check if over pressure
-        if (ventPulseCounter <= 0)
-        {
-            closeVentValve(); // close vent valve if not venting
+        // Pulse vent valve
+        pulseVentCounter += PRELAUNCH_PHASE_PERIOD;
 
-            if (oxidizerTankIsOverPressure(data))
+        if (osMutexWait(data->mutex_, 0) == osOK)
+        {
+            // read tank pressure
+        	oxidizerTankPressure = data->pressure_;
+            osMutexRelease(data->mutex_);
+
+            if(oxidizerTankPressure >= 825)
             {
-                ventPulseCounter = PRELAUNCH_VENT_PULSE_DURATION;
+                if (pulseVentCounter <= PRELAUNCH_VALVE_PULSE_MAX_TIME)
+                {
+                    openUpperVentValve();
+                }
+                else if (pulseVentCounter <= 2*PRELAUNCH_VALVE_PULSE_MAX_TIME)
+                {
+                    closeUpperVentValve();
+                }
+            }
+            else if(oxidizerTankPressure >= 850)
+            {
+                if (pulseVentCounter <= PRELAUNCH_VALVE_PULSE_MAX_TIME)
+                {
+                    openLowerVentValve();
+                }
+                else if (pulseVentCounter <= 2*PRELAUNCH_VALVE_PULSE_MAX_TIME)
+                {
+                    closeLowerVentValve();
+                }
+            }
+            else if(oxidizerTankPressure >= 875)
+            {
+                if (pulseVentCounter <= PRELAUNCH_VALVE_PULSE_MAX_TIME)
+                {
+                    openUpperVentValve();
+                    openLowerVentValve();
+                }
+                else if (pulseVentCounter <= 2*PRELAUNCH_VALVE_PULSE_MAX_TIME)
+                {
+                    closeUpperVentValve();
+                    closeLowerVentValve();
+                }
+            }
+            else if(oxidizerTankPressure >= 950)
+            {
+                newFlightPhase(ABORT);
+            }
+            else
+            {
+                pulseVentCounter = 0;
             }
         }
-        else
+        // If pressure mutex is already in use, we still need to make sure the valves are not open
+        // for more than PRELAUNCH_VALVE_PULSE_MAX_TIME
+        else if(pulseVentCounter >= PRELAUNCH_VALVE_PULSE_MAX_TIME)
         {
-            // venting is requested, continue venting process
-            openVentValve();
-            ventPulseCounter -= PRELAUNCH_PHASE_PERIOD;
+            closeUpperVentValve();
+            closeLowerVentValve();
+            pulseVentCounter = 0;
         }
 
         if (launchCmdReceived >= 2 && systemIsArmed)
@@ -96,7 +113,7 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
  */
 void engineControlBurnRoutine()
 {
-    closeVentValve();
+    closeUpperVentValve();
     openInjectionValve();
     osDelay(BURN_DURATION);
     newFlightPhase(COAST);
@@ -110,6 +127,7 @@ void engineControlPostBurnRoutine()
 {
     uint32_t prevWakeTime = osKernelSysTick();
     uint32_t timeInPostBurn = 0;
+    uint32_t pulseVentCounter = 0;
 
     for (;;)
     {
@@ -130,7 +148,22 @@ void engineControlPostBurnRoutine()
         }
         else
         {
-            openInjectionValve();
+            pulseVentCounter += POST_BURN_PERIOD;
+
+            if (pulseVentCounter <= POST_BURN_VALVE_PULSE_MAX_TIME)
+            {
+                openUpperVentValve();
+                openLowerVentValve();
+            }
+            else if (pulseVentCounter <= 2*POST_BURN_VALVE_PULSE_MAX_TIME)
+            {
+                closeUpperVentValve();
+                closeLowerVentValve();
+            }
+            else
+            {
+                pulseVentCounter = 0;
+            }            
         }
     }
 }

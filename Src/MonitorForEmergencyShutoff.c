@@ -12,11 +12,11 @@ void monitorForEmergencyShutoffTask(void const* arg)
 {
     uint32_t prevWakeTime = osKernelSysTick();
 
-    AccelGyroMagnetismData* data = (AccelGyroMagnetismData*) arg;
+    // AccelGyroMagnetismData* data = (AccelGyroMagnetismData*) arg;
     FlightPhase phase = PRELAUNCH;
-    int32_t magnetoZ = -1;
+    // int32_t magnetoZ = -1;
 
-    heartbeatTimer = HEARTBEAT_TIMEOUT;
+    heartbeatTimer = HEARTBEAT_TIMEOUT; // Timer counts down to 0
 
     for (;;)
     {
@@ -24,11 +24,11 @@ void monitorForEmergencyShutoffTask(void const* arg)
 
         phase = getCurrentFlightPhase();
 
-        if (osMutexWait(data->mutex_, 0) == osOK)
-        {
-            magnetoZ = data->magnetoZ_;
-            osMutexRelease(data->mutex_);
-        }
+        // if (osMutexWait(data->mutex_, 0) == osOK)
+        // {
+        //     magnetoZ = data->magnetoZ_;
+        //     osMutexRelease(data->mutex_);
+        // }
 
         switch (getCurrentFlightPhase())
         {
@@ -60,7 +60,7 @@ void monitorForEmergencyShutoffTask(void const* arg)
     }
 }
 
-// return 0 for everything ok
+// Return 0 for everything ok
 int prelaunchChecks()
 {
     if (abortCmdReceived)
@@ -68,6 +68,7 @@ int prelaunchChecks()
         return 1;
     }
 
+    // If heartbeatTimer reaches 0, no heartbeat was received for HEARTBEAT_TIMEOUT
     if (heartbeatTimer <= 0)
     {
         return 1;

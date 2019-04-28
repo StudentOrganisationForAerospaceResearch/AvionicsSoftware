@@ -220,9 +220,9 @@ void transmitFlightPhaseData(AllData* data)
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
 }
 
-void transmitVentValveStatus()
+void transmitUpperVentValveStatus()
 {
-    uint8_t ventValveStatus = ventValveIsOpen;
+    uint8_t ventValveStatus = upperVentValveIsOpen;
 
     uint8_t buffer [] = {VENT_VALVE_STATUS_HEADER_BYTE,
                          VENT_VALVE_STATUS_HEADER_BYTE,
@@ -260,6 +260,26 @@ void transmitInjectionValveStatus()
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
 }
 
+void transmitLowerVentValveStatus()
+{
+    uint8_t ventValveStatus = lowerVentValveIsOpen;
+
+    uint8_t buffer [] = {VENT_VALVE_STATUS_HEADER_BYTE,
+                         VENT_VALVE_STATUS_HEADER_BYTE,
+                         VENT_VALVE_STATUS_HEADER_BYTE,
+                         VENT_VALVE_STATUS_HEADER_BYTE,
+                         (uint8_t) ((ventValveStatus)),
+                         0x00
+                        };
+
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    {
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Launch Systems
+    }
+
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+}
+
 void transmitDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
@@ -275,8 +295,9 @@ void transmitDataTask(void const* arg)
         transmitOxidizerTankData(data);
         transmitCombustionChamberData(data);
         transmitFlightPhaseData(data);
-        transmitVentValveStatus();
+        transmitUpperVentValveStatus();
         transmitInjectionValveStatus();
+        transmitLowerVentValveStatus();
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }
