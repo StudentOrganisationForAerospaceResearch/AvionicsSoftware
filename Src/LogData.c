@@ -12,9 +12,12 @@
 
 static int SLOW_LOG_DATA_PERIOD = 1000;
 static int FAST_LOG_DATA_PERIOD = 50;
+static uint8_t softwareVersion = 100;
 
 static FATFS fatfs;
 static FIL file;
+
+char fileName[32];
 
 void buildLogEntry(AllData* data, char* buffer)
 {
@@ -81,7 +84,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     sprintf(
         buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d\n",
+        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d,%ld,%d\n",
         accelX,
         accelY,
         accelZ,
@@ -99,7 +102,9 @@ void buildLogEntry(AllData* data, char* buffer)
         latitude,
         longitude,
         oxidizerTankPressure,
-        getCurrentFlightPhase()
+        getCurrentFlightPhase(),
+        HAL_GetTick(),
+        softwareVersion
     );
 }
 
@@ -123,7 +128,7 @@ void lowFrequencyLogToSdRoutine(AllData* data, char* buffer, FlightPhase entryPh
         {
             HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
 
-            if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
+            if (f_open(&file, fileName, FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
             {
                 f_puts(buffer, &file);
                 f_close(&file);
@@ -170,13 +175,13 @@ void highFrequencyLogToSdRoutine(AllData* data, char* buffer)
                 flightPhase != COAST &&
                 flightPhase != DROGUE_DESCENT)
         {
-            // done important phases, unmont card and exit high frequency logging
+            // done important phases, unmount card and exit high frequency logging
             break;
         }
 
         buildLogEntry(data, buffer);
 
-        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
+        if (f_open(&file, fileName, FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
         {
             f_puts(buffer, &file);
             f_close(&file); // close to save the file
@@ -204,24 +209,48 @@ void logDataTask(void const* arg)
         "magnetoY,"
         "magnetoZ,"
         "pressure,"
-        "temperature,"
-        "combustionChamberPressure,"
+        "temperature(100C),"
+        "combustionChamberPressure(1000psi),"
         "altitude,"
-        "epochTimeMsec,"
+        "epochTime(ms),"
         "latitude,"
         "longitude,"
-        "oxidizerTankPressure,"
-        "currentFlightPhase\n"
+        "oxidizerTankPressure(1000psi),"
+        "currentFlightPhase,"
+        "elapsedTime(ms),"
+        "softwareVersion\n"
     );
 
     if (f_mount(&fatfs, "SD:", 1) == FR_OK)
     {
-        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-
-        if (f_open(&file, "SD:VanderAvionics.csv", FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
+        if (f_open(&file, "SD:AvionicsData1.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
         {
+            f_open(&file, "SD:AvionicsData1.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
             f_puts(buffer, &file);
             f_close(&file);
+        }
+        else
+        {
+            uint8_t fileExists = 1;
+
+            for (uint8_t index = 2; fileExists; index++)
+            {
+                sprintf(fileName, "SD:AvionicsData%i.csv", index);
+
+                if (f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
+                {
+                    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
+                    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
+
+                    if (f_size(&file) == 0)
+                    {
+                        f_puts(buffer, &file);
+                    }
+
+                    f_close(&file);
+                    fileExists = 0;
+                }
+            }
         }
 
         f_mount(NULL, "SD:", 1);
