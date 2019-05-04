@@ -221,26 +221,6 @@ void transmitFlightPhaseData(AllData* data)
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
 }
 
-void transmitUpperVentValveStatus()
-{
-    uint8_t ventValveStatus = upperVentValveIsOpen;
-
-    uint8_t buffer [] = {UPPER_VALVE_STATUS_HEADER_BYTE,
-    					 UPPER_VALVE_STATUS_HEADER_BYTE,
-						 UPPER_VALVE_STATUS_HEADER_BYTE,
-						 UPPER_VALVE_STATUS_HEADER_BYTE,
-                         (uint8_t) ((ventValveStatus)),
-                         0x00
-                        };
-
-    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
-    {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Launch Systems
-    }
-
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
-}
-
 void transmitInjectionValveStatus()
 {
     uint8_t injectionValveStatus = injectionValveIsOpen;
