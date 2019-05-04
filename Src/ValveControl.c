@@ -8,13 +8,6 @@ int upperVentValveIsOpen = 0;
 int injectionValveIsOpen = 0;
 int lowerVentValveIsOpen = 0;
 
-void openUpperVentValve()
-{
-    // Powered is open
-    HAL_GPIO_WritePin(VENT_VALVE_GPIO_Port, VENT_VALVE_Pin, GPIO_PIN_SET);
-    upperVentValveIsOpen = 1;
-}
-
 void closeUpperVentValve()
 {
     // Unpowered is closed

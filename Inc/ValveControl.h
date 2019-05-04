@@ -1,6 +1,5 @@
 #pragma once
 
-void openUpperVentValve();
 void closeUpperVentValve();
 void openInjectionValve();
 void closeInjectionValve();
