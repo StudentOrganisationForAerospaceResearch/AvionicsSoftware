@@ -40,7 +40,7 @@ void readOxidizerTankPressureTask(void const* arg)
 
         uint16_t adcRead = averageArray(oxidizerTankValuesQueue, QUEUE_SIZE);
 
-        vo = 3.3 / pow(2, 12) * adcRead;    // Calculate voltage from the 12 bit ADC reading
+        vo = 3.3 / (pow(2, 12) - 1) * adcRead;    // Calculate voltage from the 12 bit ADC reading
 
         // Since the voltage output of the pressure sensor is very small ( below 0.1V ), an opamp was used to amplify
         // the voltage to be more accuractely read by the ADC. See AndromedaV2 PCB schematic for details.
