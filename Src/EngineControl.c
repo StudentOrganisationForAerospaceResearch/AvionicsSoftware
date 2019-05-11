@@ -11,7 +11,7 @@ static const int PRELAUNCH_PHASE_PERIOD = 50;
 static const int BURN_DURATION = 12000;
 static const int POST_BURN_PERIOD = 1000;
 
-static const int POST_BURN_REOPEN_INJECTION_VALVE_DURATION = 10 * 60 * 1000; // 10 minutes
+static const int POST_BURN_REOPEN_LOWER_VENT_VALVE_DURATION = 10 * 60 * 1000; // 10 minutes
 
 /**
  * This routine keeps the injection valve closed during prelaunch.
@@ -20,7 +20,6 @@ static const int POST_BURN_REOPEN_INJECTION_VALVE_DURATION = 10 * 60 * 1000; // 
 void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 {
     uint32_t prevWakeTime = osKernelSysTick();
-    uint32_t pulseVentCounter = 0;
 
     closeInjectionValve();
 
@@ -32,66 +31,16 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 
         int32_t oxidizerTankPressure = -1;
 
-        // Pulse vent valve
-        pulseVentCounter += PRELAUNCH_PHASE_PERIOD;
-
         if (osMutexWait(data->mutex_, 0) == osOK)
         {
             // read tank pressure
         	oxidizerTankPressure = data->pressure_;
             osMutexRelease(data->mutex_);
-
-            if(oxidizerTankPressure >= 825)
-            {
-                if (pulseVentCounter <= PRELAUNCH_VALVE_PULSE_MAX_TIME)
-                {
-                    openUpperVentValve();
-                }
-                else if (pulseVentCounter <= 2*PRELAUNCH_VALVE_PULSE_MAX_TIME)
-                {
-                    closeUpperVentValve();
-                }
-            }
-            else if(oxidizerTankPressure >= 850)
-            {
-                if (pulseVentCounter <= PRELAUNCH_VALVE_PULSE_MAX_TIME)
-                {
-                    openLowerVentValve();
-                }
-                else if (pulseVentCounter <= 2*PRELAUNCH_VALVE_PULSE_MAX_TIME)
-                {
-                    closeLowerVentValve();
-                }
-            }
-            else if(oxidizerTankPressure >= 875)
-            {
-                if (pulseVentCounter <= PRELAUNCH_VALVE_PULSE_MAX_TIME)
-                {
-                    openUpperVentValve();
-                    openLowerVentValve();
-                }
-                else if (pulseVentCounter <= 2*PRELAUNCH_VALVE_PULSE_MAX_TIME)
-                {
-                    closeUpperVentValve();
-                    closeLowerVentValve();
-                }
-            }
-            else if(oxidizerTankPressure >= 950)
+            
+            if(oxidizerTankPressure >= 850 * 1000)
             {
                 newFlightPhase(ABORT);
             }
-            else
-            {
-                pulseVentCounter = 0;
-            }
-        }
-        // If pressure mutex is already in use, we still need to make sure the valves are not open
-        // for more than PRELAUNCH_VALVE_PULSE_MAX_TIME
-        else if(pulseVentCounter >= PRELAUNCH_VALVE_PULSE_MAX_TIME)
-        {
-            closeUpperVentValve();
-            closeLowerVentValve();
-            pulseVentCounter = 0;
         }
 
         if (launchCmdReceived >= 2 && systemIsArmed)
@@ -113,7 +62,7 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
  */
 void engineControlBurnRoutine()
 {
-    closeUpperVentValve();
+    closeLowerVentValve();
     openInjectionValve();
     osDelay(BURN_DURATION);
     newFlightPhase(COAST);
@@ -127,7 +76,6 @@ void engineControlPostBurnRoutine()
 {
     uint32_t prevWakeTime = osKernelSysTick();
     uint32_t timeInPostBurn = 0;
-    uint32_t pulseVentCounter = 0;
 
     for (;;)
     {
@@ -142,28 +90,14 @@ void engineControlPostBurnRoutine()
         // requires 49 days to overflow, not handling this case
         timeInPostBurn += POST_BURN_PERIOD;
 
-        if (timeInPostBurn < POST_BURN_REOPEN_INJECTION_VALVE_DURATION)
+        if (timeInPostBurn < POST_BURN_REOPEN_LOWER_VENT_VALVE_DURATION)
         {
             closeInjectionValve();
+            openLowerVentValve();
         }
         else
         {
-            pulseVentCounter += POST_BURN_PERIOD;
-
-            if (pulseVentCounter <= POST_BURN_VALVE_PULSE_MAX_TIME)
-            {
-                openUpperVentValve();
-                openLowerVentValve();
-            }
-            else if (pulseVentCounter <= 2*POST_BURN_VALVE_PULSE_MAX_TIME)
-            {
-                closeUpperVentValve();
-                closeLowerVentValve();
-            }
-            else
-            {
-                pulseVentCounter = 0;
-            }            
+            closeLowerVentValve();
         }
     }
 }
