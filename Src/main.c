@@ -72,6 +72,7 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
+ADC_HandleTypeDef hadc3;
 
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
@@ -132,6 +133,7 @@ static void MX_SPI2_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
+static void MX_ADC3_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -179,6 +181,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_UART4_Init();
+  MX_ADC3_Init();
   /* USER CODE BEGIN 2 */
     // Data primitive structs
     AccelGyroMagnetismData* accelGyroMagnetismData =
@@ -251,9 +254,6 @@ int main(void)
   /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
     HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
-
-    // Turn on fan
-    HAL_GPIO_WritePin(FAN_CTRL_GPIO_Port, FAN_CTRL_Pin, 1);
 
   /* USER CODE END RTOS_TIMERS */
 
@@ -536,6 +536,43 @@ static void MX_ADC2_Init(void)
 
 }
 
+/* ADC3 init function */
+static void MX_ADC3_Init(void)
+{
+
+  ADC_ChannelConfTypeDef sConfig;
+
+    /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+    */
+  hadc3.Instance = ADC3;
+  hadc3.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc3.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc3.Init.ScanConvMode = DISABLE;
+  hadc3.Init.ContinuousConvMode = ENABLE;
+  hadc3.Init.DiscontinuousConvMode = DISABLE;
+  hadc3.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc3.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc3.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc3.Init.NbrOfConversion = 1;
+  hadc3.Init.DMAContinuousRequests = DISABLE;
+  hadc3.Init.EOCSelection = ADC_EOC_SEQ_CONV;
+  if (HAL_ADC_Init(&hadc3) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
+  sConfig.Channel = ADC_CHANNEL_10;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* SPI1 init function */
 static void MX_SPI1_Init(void)
 {
@@ -687,7 +724,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin|PROPULSION3_VALVE_Pin|VENT_VALVE_Pin|INJECTION_VALVE_Pin 
+  HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin|PROPULSION3_VALVE_Pin|LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin 
                           |SD1_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -695,15 +732,15 @@ static void MX_GPIO_Init(void)
                           |MAIN_PARACHUTE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED2_Pin|ACCEL_CS_Pin|FAN_CTRL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED2_Pin|ACCEL_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SD2_CS_GPIO_Port, SD2_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(UPPER_VENT_VALVE_GPIO_Port, UPPER_VENT_VALVE_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PC13 PC14 PC15 PC0 
-                           PC1 PC2 PC9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_0 
-                          |GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_9;
+  /*Configure GPIO pins : PC13 PC14 PC15 PC1 
+                           PC2 PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_1 
+                          |GPIO_PIN_2|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -714,9 +751,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(LAUNCH_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : IMU_CS_Pin PROPULSION3_VALVE_Pin VENT_VALVE_Pin INJECTION_VALVE_Pin 
+  /*Configure GPIO pins : IMU_CS_Pin PROPULSION3_VALVE_Pin LOWER_VENT_VALVE_Pin INJECTION_VALVE_Pin 
                            SD1_CS_Pin */
-  GPIO_InitStruct.Pin = IMU_CS_Pin|PROPULSION3_VALVE_Pin|VENT_VALVE_Pin|INJECTION_VALVE_Pin 
+  GPIO_InitStruct.Pin = IMU_CS_Pin|PROPULSION3_VALVE_Pin|LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin 
                           |SD1_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -732,17 +769,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED2_Pin ACCEL_CS_Pin FAN_CTRL_Pin */
-  GPIO_InitStruct.Pin = LED2_Pin|ACCEL_CS_Pin|FAN_CTRL_Pin;
+  /*Configure GPIO pins : LED2_Pin ACCEL_CS_Pin */
+  GPIO_InitStruct.Pin = LED2_Pin|ACCEL_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB10 PB11 PB4 PB8 
-                           PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_4|GPIO_PIN_8 
-                          |GPIO_PIN_9;
+  /*Configure GPIO pins : PB10 PB11 PB4 PB5 
+                           PB8 PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_4|GPIO_PIN_5 
+                          |GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -753,12 +790,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SD2_CS_Pin */
-  GPIO_InitStruct.Pin = SD2_CS_Pin;
+  /*Configure GPIO pin : UPPER_VENT_VALVE_Pin */
+  GPIO_InitStruct.Pin = UPPER_VENT_VALVE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(SD2_CS_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(UPPER_VENT_VALVE_GPIO_Port, &GPIO_InitStruct);
 
 }
 

@@ -274,7 +274,6 @@ void transmitDataTask(void const* arg)
         transmitOxidizerTankData(data);
         transmitCombustionChamberData(data);
         transmitFlightPhaseData(data);
-        transmitUpperVentValveStatus();
         transmitInjectionValveStatus();
         transmitLowerVentValveStatus();
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);

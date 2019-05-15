@@ -28,6 +28,7 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
         osDelayUntil(&prevWakeTime, PRELAUNCH_PHASE_PERIOD);
 
         closeInjectionValve();
+        closeLowerVentValve();
 
         int32_t oxidizerTankPressure = -1;
 
@@ -37,10 +38,10 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
         	oxidizerTankPressure = data->pressure_;
             osMutexRelease(data->mutex_);
             
-            if(oxidizerTankPressure >= 850 * 1000)
-            {
-                newFlightPhase(ABORT);
-            }
+           if(oxidizerTankPressure >= 850 * 1000)
+           {
+               newFlightPhase(ABORT);
+           }
         }
 
         if (launchCmdReceived >= 2 && systemIsArmed)
@@ -93,11 +94,12 @@ void engineControlPostBurnRoutine()
         if (timeInPostBurn < POST_BURN_REOPEN_LOWER_VENT_VALVE_DURATION)
         {
             closeInjectionValve();
-            openLowerVentValve();
+            closeLowerVentValve();
         }
         else
         {
-            closeLowerVentValve();
+            closeInjectionValve();
+        	openLowerVentValve();
         }
     }
 }
