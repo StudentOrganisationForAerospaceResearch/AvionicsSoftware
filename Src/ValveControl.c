@@ -32,5 +32,5 @@ void openLowerVentValve()
 void closeLowerVentValve()
 {
     HAL_GPIO_WritePin(LOWER_VENT_VALVE_GPIO_Port, LOWER_VENT_VALVE_Pin, GPIO_PIN_SET);    //Temporary pin until we change to using new board
-    lowerVentValveIsOpen = 0;  
+    lowerVentValveIsOpen = 0;
 }

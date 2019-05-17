@@ -35,13 +35,13 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
         if (osMutexWait(data->mutex_, 0) == osOK)
         {
             // read tank pressure
-        	oxidizerTankPressure = data->pressure_;
+            oxidizerTankPressure = data->pressure_;
             osMutexRelease(data->mutex_);
-            
-           if(oxidizerTankPressure >= 850 * 1000)
-           {
-               newFlightPhase(ABORT);
-           }
+
+            if (oxidizerTankPressure >= 850 * 1000)
+            {
+                newFlightPhase(ABORT);
+            }
         }
 
         if (launchCmdReceived >= 2 && systemIsArmed)
@@ -99,7 +99,7 @@ void engineControlPostBurnRoutine()
         else
         {
             closeInjectionValve();
-        	openLowerVentValve();
+            openLowerVentValve();
         }
     }
 }
