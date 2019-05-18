@@ -12,7 +12,10 @@ typedef enum
     COAST,
     DROGUE_DESCENT,
     MAIN_DESCENT,
-    ABORT
+    ABORT_RECEIVED_COMMAND,
+    ABORT_COMMUNICATION_ERROR,
+    ABORT_OXIDIZER_PRESSURE,
+    ABORT_UNSPECIFIED_REASON
 } FlightPhase;
 
 void newFlightPhase(FlightPhase newPhase);
