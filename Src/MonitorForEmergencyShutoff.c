@@ -36,9 +36,14 @@ void monitorForEmergencyShutoffTask(void const* arg)
             case PRELAUNCH:
                 heartbeatTimer -= MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD;
 
-                if (prelaunchChecks())
+				int prelaunchCheckStatus = prelaunchChecks();
+                if (prelaunchCheckStatus == 1)
                 {
-                    newFlightPhase(ABORT);
+                    newFlightPhase(ABORT_COMMAND_RECEIVED);
+                }
+				else if (prelaunchCheckStatus == 2)
+                {
+                    newFlightPhase(ABORT_COMMUNICATION_ERROR);
                 }
 
                 break;
@@ -46,7 +51,7 @@ void monitorForEmergencyShutoffTask(void const* arg)
             case BURN:
                 if (burnChecks())
                 {
-                    newFlightPhase(ABORT);
+                    newFlightPhase(ABORT_COMMAND_RECEIVED);
                 }
 
                 // check if not right side up
@@ -77,7 +82,7 @@ int prelaunchChecks()
     // If heartbeatTimer reaches 0, no heartbeat was received for HEARTBEAT_TIMEOUT
     if (heartbeatTimer <= 0)
     {
-        return 1;
+        return 2;
     }
 
     return 0;

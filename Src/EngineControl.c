@@ -40,7 +40,7 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 
             if (oxidizerTankPressure >= 850 * 1000)
             {
-                newFlightPhase(ABORT);
+                newFlightPhase(ABORT_OXIDIZER_PRESSURE);
             }
         }
 
