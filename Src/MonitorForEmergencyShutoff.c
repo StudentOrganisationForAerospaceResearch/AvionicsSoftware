@@ -5,6 +5,7 @@
 #include "MonitorForEmergencyShutoff.h"
 #include "FlightPhase.h"
 #include "Data.h"
+#include "ValveControl.h"
 
 static const int MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD = 1000;
 
@@ -43,6 +44,10 @@ void monitorForEmergencyShutoffTask(void const* arg)
                 break;
 
             case BURN:
+                if (burnChecks())
+                {
+                    newFlightPhase(ABORT);
+                }
                 // check if not right side up
                 // if ()
                 // {
@@ -74,5 +79,16 @@ int prelaunchChecks()
         return 1;
     }
 
+    return 0;
+}
+
+// Return 0 for everything ok
+int burnChecks()
+{
+    if (abortCmdReceived)
+    {
+        closeInjectionValve();
+        return 1;
+    }
     return 0;
 }

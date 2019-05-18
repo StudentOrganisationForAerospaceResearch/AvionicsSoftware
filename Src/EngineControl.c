@@ -71,7 +71,8 @@ void engineControlBurnRoutine()
 }
 
 /**
- * This routine is the final phase.
+ * This routine closes all valves and changes to the PostLaunchRoutine 
+ * after 10 mins passed since COAST started.
  */
 void engineControlPostBurnRoutine()
 {
@@ -98,9 +99,31 @@ void engineControlPostBurnRoutine()
         }
         else
         {
-            closeInjectionValve();
-            openLowerVentValve();
+            newFlightPhase(POSTLAUNCH);
         }
+    }
+}
+
+/**
+ * This routine is the final phase.
+ */
+void engineControlPostLaunchRoutine()
+{
+        uint32_t prevWakeTime = osKernelSysTick();
+    uint32_t timeInPostBurn = 0;
+
+    for (;;)
+    {
+        osDelayUntil(&prevWakeTime, POST_BURN_PERIOD);
+        FlightPhase phase = getCurrentFlightPhase();
+
+        if (phase != POSTLAUNCH)
+        {
+            return;
+        }
+
+        closeInjectionValve();
+        openLowerVentValve();
     }
 }
 
@@ -124,6 +147,10 @@ void engineControlTask(void const* arg)
             case DROGUE_DESCENT:
             case MAIN_DESCENT:
                 engineControlPostBurnRoutine();
+                break;
+
+            case POSTLAUNCH:
+                engineControlPostLaunchRoutine();
                 break;
 
             case ABORT:
