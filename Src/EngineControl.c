@@ -71,7 +71,7 @@ void engineControlBurnRoutine()
 }
 
 /**
- * This routine closes all valves and changes to the PostLaunchRoutine 
+ * This routine closes all valves and changes to the PostLaunchRoutine
  * after 10 mins passed since COAST started.
  */
 void engineControlPostBurnRoutine()
@@ -109,7 +109,7 @@ void engineControlPostBurnRoutine()
  */
 void engineControlPostLaunchRoutine()
 {
-        uint32_t prevWakeTime = osKernelSysTick();
+    uint32_t prevWakeTime = osKernelSysTick();
     uint32_t timeInPostBurn = 0;
 
     for (;;)

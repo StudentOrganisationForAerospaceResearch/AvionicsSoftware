@@ -48,6 +48,7 @@ void monitorForEmergencyShutoffTask(void const* arg)
                 {
                     newFlightPhase(ABORT);
                 }
+
                 // check if not right side up
                 // if ()
                 // {
@@ -90,5 +91,6 @@ int burnChecks()
         closeInjectionValve();
         return 1;
     }
+
     return 0;
 }
