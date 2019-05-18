@@ -194,11 +194,11 @@ void parachutesControlCoastRoutine(
 
         if (state.altitude < oldAltitude)
         {
-        	numDescents++;
+            numDescents++;
         }
         else
         {
-        	numDescents = 0;
+            numDescents = 0;
         }
 
         if (detectApogee())
