@@ -267,6 +267,7 @@ void logDataTask(void const* arg)
             case DROGUE_DESCENT:
                 highFrequencyLogToSdRoutine(data, buffer);
                 break;
+
             default:
                 lowFrequencyLogToSdRoutine(data, buffer);
                 break;

@@ -153,7 +153,7 @@ void engineControlTask(void const* arg)
                 engineControlPostLaunchRoutine();
                 break;
 
-			// All aborts fall through here because they all do the same thing in each case
+            // All aborts fall through here because they all do the same thing in each case
             case ABORT_COMMAND_RECEIVED:
             case ABORT_OXIDIZER_PRESSURE:
             case ABORT_UNSPECIFIED_REASON:
