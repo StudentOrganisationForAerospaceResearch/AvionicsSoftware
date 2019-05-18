@@ -847,14 +847,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         }
         else if (launchSystemsRxChar == OPEN_INJECTION_VALVE)
         {
-            if (ABORT == getCurrentFlightPhase())
+            if (IS_ABORT_PHASE)
             {
                 openInjectionValve();
             }
         }
         else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE)
         {
-            if (ABORT == getCurrentFlightPhase())
+            if (IS_ABORT_PHASE)
             {
                 closeInjectionValve();
             }

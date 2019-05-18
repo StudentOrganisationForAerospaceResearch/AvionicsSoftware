@@ -62,9 +62,6 @@ void monitorForEmergencyShutoffTask(void const* arg)
                 // }
                 break;
 
-            case DROGUE_DESCENT:
-            case MAIN_DESCENT:
-            case ABORT:
             default:
                 // do nothing
                 break;
