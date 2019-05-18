@@ -10,7 +10,7 @@
 
 #define QUEUE_SIZE 5
 
-static int READ_OXIDIZER_TANK_PRESSURE_PERIOD = 80;
+static int READ_OXIDIZER_TANK_PRESSURE_PERIOD = 50;
 
 static const int OXIDIZER_TANK_POLL_TIMEOUT = 50;
 
@@ -48,7 +48,7 @@ void readOxidizerTankPressureTask(void const* arg)
 
         // The pressure sensor is ratiometric. The pressure is 0 psi when the voltage is 0V, and is 1000
         // psi when the voltage is 0.1V. The equation is derived from this information.
-        tankPressure = vi * 1000 / 0.1;  // Tank pressure in psi
+        tankPressure = vi * 1000 / 0.1;  // Tank pressure in 1000*psi
 
         oxidizerTankQueueIndex %= QUEUE_SIZE;
 

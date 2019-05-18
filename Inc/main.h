@@ -58,6 +58,8 @@
 
 /* Private define ------------------------------------------------------------*/
 
+#define BATT_SENSE_ADC_Pin GPIO_PIN_0
+#define BATT_SENSE_ADC_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_3
 #define LAUNCH_GPIO_Port GPIOC
 #define GPS_UART_TX_Pin GPIO_PIN_0
@@ -102,8 +104,8 @@
 #define MAIN_PARACHUTE_GPIO_Port GPIOC
 #define PROPULSION3_VALVE_Pin GPIO_PIN_10
 #define PROPULSION3_VALVE_GPIO_Port GPIOA
-#define VENT_VALVE_Pin GPIO_PIN_11
-#define VENT_VALVE_GPIO_Port GPIOA
+#define LOWER_VENT_VALVE_Pin GPIO_PIN_11
+#define LOWER_VENT_VALVE_GPIO_Port GPIOA
 #define INJECTION_VALVE_Pin GPIO_PIN_12
 #define INJECTION_VALVE_GPIO_Port GPIOA
 #define SD1_CS_Pin GPIO_PIN_15
@@ -114,10 +116,8 @@
 #define SD_SPI_MISO_GPIO_Port GPIOC
 #define SD_SPI_MOSI_Pin GPIO_PIN_12
 #define SD_SPI_MOSI_GPIO_Port GPIOC
-#define SD2_CS_Pin GPIO_PIN_2
-#define SD2_CS_GPIO_Port GPIOD
-#define FAN_CTRL_Pin GPIO_PIN_5
-#define FAN_CTRL_GPIO_Port GPIOB
+#define UPPER_VENT_VALVE_Pin GPIO_PIN_2
+#define UPPER_VENT_VALVE_GPIO_Port GPIOD
 #define RADIO_UART_TX_Pin GPIO_PIN_6
 #define RADIO_UART_TX_GPIO_Port GPIOB
 #define RADIO_UART_RX_Pin GPIO_PIN_7

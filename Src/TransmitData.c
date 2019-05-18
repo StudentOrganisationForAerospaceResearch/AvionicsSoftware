@@ -15,7 +15,8 @@ static const int8_t GPS_HEADER_BYTE = 0x33;
 static const int8_t OXIDIZER_TANK_HEADER_BYTE = 0x34;
 static const int8_t COMBUSTION_CHAMBER_HEADER_BYTE = 0x35;
 static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x36;
-static const int8_t VENT_VALVE_STATUS_HEADER_BYTE = 0x37;
+static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38;
+static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 
 #define IMU_SERIAL_MSG_SIZE (41)
 #define BAROMETER_SERIAL_MSG_SIZE (13)
@@ -23,7 +24,6 @@ static const int8_t VENT_VALVE_STATUS_HEADER_BYTE = 0x37;
 #define OXIDIZER_TANK_SERIAL_MSG_SIZE (9)
 #define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (9)
 #define FLIGHT_PHASE_SERIAL_MSG_SIZE (6)
-#define VENT_VALVE_STATUS_SERIAL_MSG_SIZE (6)
 
 static const uint8_t UART_TIMEOUT = 100;
 
@@ -219,14 +219,34 @@ void transmitFlightPhaseData(AllData* data)
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
 }
 
-void transmitVentValveStatus()
+void transmitInjectionValveStatus()
 {
-    uint8_t ventValveStatus = ventValveIsOpen;
+    uint8_t injectionValveStatus = injectionValveIsOpen;
 
-    uint8_t buffer [] = {VENT_VALVE_STATUS_HEADER_BYTE,
-                         VENT_VALVE_STATUS_HEADER_BYTE,
-                         VENT_VALVE_STATUS_HEADER_BYTE,
-                         VENT_VALVE_STATUS_HEADER_BYTE,
+    uint8_t buffer [] = {INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         (uint8_t) ((injectionValveStatus)),
+                         0x00
+                        };
+
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    {
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Launch Systems
+    }
+
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+}
+
+void transmitLowerVentValveStatus()
+{
+    uint8_t ventValveStatus = lowerVentValveIsOpen;
+
+    uint8_t buffer [] = {LOWER_VALVE_STATUS_HEADER_BYTE,
+                         LOWER_VALVE_STATUS_HEADER_BYTE,
+                         LOWER_VALVE_STATUS_HEADER_BYTE,
+                         LOWER_VALVE_STATUS_HEADER_BYTE,
                          (uint8_t) ((ventValveStatus)),
                          0x00
                         };
@@ -254,7 +274,8 @@ void transmitDataTask(void const* arg)
         transmitOxidizerTankData(data);
         transmitCombustionChamberData(data);
         transmitFlightPhaseData(data);
-        transmitVentValveStatus();
+        transmitInjectionValveStatus();
+        transmitLowerVentValveStatus();
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }

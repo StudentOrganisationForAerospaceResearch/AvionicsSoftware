@@ -12,6 +12,7 @@ typedef enum
     COAST,
     DROGUE_DESCENT,
     MAIN_DESCENT,
+    POSTLAUNCH,
     ABORT
 } FlightPhase;
 

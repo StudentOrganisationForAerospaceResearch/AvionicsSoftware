@@ -6,7 +6,7 @@
 
 #include "Data.h"
 
-static int READ_ACCEL_GYRO_MAGNETISM = 20;
+static int READ_ACCEL_GYRO_MAGNETISM = 25;
 
 static const int CMD_TIMEOUT = 150;
 

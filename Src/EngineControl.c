@@ -8,11 +8,10 @@
 #include "ValveControl.h"
 
 static const int PRELAUNCH_PHASE_PERIOD = 50;
-static const int BURN_DURATION = 10000;
+static const int BURN_DURATION = 12000;
 static const int POST_BURN_PERIOD = 1000;
 
-static const int POST_BURN_REOPEN_INJECTION_VALVE_DURATION = 20 * 60 * 1000; // 20 minutes
-static const int MAX_TANK_PRESSURE = 820000; // 820 psi, 5660 kPa, 25 deg C at saturation
+static const int POST_BURN_REOPEN_LOWER_VENT_VALVE_DURATION = 10 * 60 * 1000; // 10 minutes
 
 /**
  * This routine keeps the injection valve closed during prelaunch.
@@ -21,50 +20,31 @@ static const int MAX_TANK_PRESSURE = 820000; // 820 psi, 5660 kPa, 25 deg C at s
 void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 {
     uint32_t prevWakeTime = osKernelSysTick();
-    int32_t tankPressure = -1;
-    int32_t durationVentValveControlled = 0;
+
+    closeInjectionValve();
 
     for (;;)
     {
         osDelayUntil(&prevWakeTime, PRELAUNCH_PHASE_PERIOD);
-        // Assume valve is closed
-        // closeInjectionValve();
 
-        // Vent tank if over pressure
+        closeInjectionValve();
+        closeLowerVentValve();
+
+        int32_t oxidizerTankPressure = -1;
+
         if (osMutexWait(data->mutex_, 0) == osOK)
         {
             // read tank pressure
-            tankPressure = data->pressure_;
+            oxidizerTankPressure = data->pressure_;
             osMutexRelease(data->mutex_);
 
-            // open or close valve based on tank pressure
-            // also do not open valve if it's been open for too long
-            // otherwise the vent valve will break
-            if (tankPressure > MAX_TANK_PRESSURE)
+            if (oxidizerTankPressure >= 850 * 1000)
             {
-                if (durationVentValveControlled < MAX_DURATION_VENT_VALVE_OPEN)
-                {
-                    // open vent valve
-                    durationVentValveControlled += PRELAUNCH_PHASE_PERIOD;
-                    openVentValve();
-                }
-                else if (durationVentValveControlled <
-                         (MAX_DURATION_VENT_VALVE_OPEN + REQUIRED_DURATION_VENT_VALVE_CLOSED))
-                {
-                    // vent valve has been open for more than max time it can be open
-                    durationVentValveControlled += PRELAUNCH_PHASE_PERIOD;
-                    closeVentValve();
-                }
-                else
-                {
-                    // vent valve has closed to reset itself as long as is necessary
-                    openVentValve();
-                    durationVentValveControlled = 0;
-                }
+                newFlightPhase(ABORT);
             }
         }
 
-        if (launchCmdReceived != 0)
+        if (launchCmdReceived >= 2 && systemIsArmed)
         {
             newFlightPhase(BURN);
         }
@@ -83,6 +63,7 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
  */
 void engineControlBurnRoutine()
 {
+    closeLowerVentValve();
     openInjectionValve();
     osDelay(BURN_DURATION);
     newFlightPhase(COAST);
@@ -90,7 +71,8 @@ void engineControlBurnRoutine()
 }
 
 /**
- * This routine is the final phase.
+ * This routine closes all valves and changes to the PostLaunchRoutine
+ * after 10 mins passed since COAST started.
  */
 void engineControlPostBurnRoutine()
 {
@@ -110,14 +92,38 @@ void engineControlPostBurnRoutine()
         // requires 49 days to overflow, not handling this case
         timeInPostBurn += POST_BURN_PERIOD;
 
-        if (timeInPostBurn < POST_BURN_REOPEN_INJECTION_VALVE_DURATION)
+        if (timeInPostBurn < POST_BURN_REOPEN_LOWER_VENT_VALVE_DURATION)
         {
             closeInjectionValve();
+            closeLowerVentValve();
         }
         else
         {
-            openInjectionValve();
+            newFlightPhase(POSTLAUNCH);
         }
+    }
+}
+
+/**
+ * This routine is the final phase.
+ */
+void engineControlPostLaunchRoutine()
+{
+    uint32_t prevWakeTime = osKernelSysTick();
+    uint32_t timeInPostBurn = 0;
+
+    for (;;)
+    {
+        osDelayUntil(&prevWakeTime, POST_BURN_PERIOD);
+        FlightPhase phase = getCurrentFlightPhase();
+
+        if (phase != POSTLAUNCH)
+        {
+            return;
+        }
+
+        closeInjectionValve();
+        openLowerVentValve();
     }
 }
 
@@ -141,6 +147,10 @@ void engineControlTask(void const* arg)
             case DROGUE_DESCENT:
             case MAIN_DESCENT:
                 engineControlPostBurnRoutine();
+                break;
+
+            case POSTLAUNCH:
+                engineControlPostLaunchRoutine();
                 break;
 
             case ABORT:
