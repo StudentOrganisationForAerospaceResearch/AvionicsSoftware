@@ -40,7 +40,7 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 
             if (oxidizerTankPressure >= 850 * 1000)
             {
-                newFlightPhase(ABORT);
+                newFlightPhase(ABORT_OXIDIZER_PRESSURE);
             }
         }
 
@@ -153,7 +153,11 @@ void engineControlTask(void const* arg)
                 engineControlPostLaunchRoutine();
                 break;
 
-            case ABORT:
+            // All aborts fall through here because they all do the same thing in each case
+            case ABORT_COMMAND_RECEIVED:
+            case ABORT_OXIDIZER_PRESSURE:
+            case ABORT_UNSPECIFIED_REASON:
+            case ABORT_COMMUNICATION_ERROR:
 
                 // Do nothing and let other code do what needs to be done
                 osDelay(PRELAUNCH_PHASE_PERIOD);

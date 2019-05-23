@@ -16,7 +16,7 @@ void abortPhaseTask(void const* arg)
     {
         osDelayUntil(&prevWakeTime, ABORT_PHASE_TASK_PERIOD);
 
-        if (getCurrentFlightPhase() != ABORT)
+        if (!IS_ABORT_PHASE)
         {
             // Do nothing if not in abort
             resetAvionicsCmdReceived = 0;

@@ -379,7 +379,10 @@ void parachutesControlTask(void const* arg)
                 parachutesControlMainDescentRoutine();
                 break;
 
-            case ABORT:
+            case ABORT_COMMAND_RECEIVED:
+            case ABORT_OXIDIZER_PRESSURE:
+            case ABORT_UNSPECIFIED_REASON:
+            case ABORT_COMMUNICATION_ERROR:
                 // do nothing
                 osDelay(MONITOR_FOR_PARACHUTES_PERIOD);
                 break;

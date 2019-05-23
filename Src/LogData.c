@@ -108,9 +108,10 @@ void buildLogEntry(AllData* data, char* buffer)
     );
 }
 
-void lowFrequencyLogToSdRoutine(AllData* data, char* buffer, FlightPhase entryPhase)
+void lowFrequencyLogToSdRoutine(AllData* data, char* buffer)
 {
     uint32_t prevWakeTime = osKernelSysTick();
+    FlightPhase entryPhase = getCurrentFlightPhase();
 
     for (;;)
     {
@@ -261,26 +262,14 @@ void logDataTask(void const* arg)
     {
         switch (getCurrentFlightPhase())
         {
-            case PRELAUNCH:
-                lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
-                break;
-
             case BURN:
             case COAST:
             case DROGUE_DESCENT:
                 highFrequencyLogToSdRoutine(data, buffer);
                 break;
 
-            case MAIN_DESCENT:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
-                break;
-
-            case ABORT:
-                lowFrequencyLogToSdRoutine(data, buffer, ABORT);
-                break;
-
             default:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
+                lowFrequencyLogToSdRoutine(data, buffer);
                 break;
         }
     }
