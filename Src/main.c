@@ -737,23 +737,22 @@ static void MX_GPIO_Init(void)
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin | PROPULSION3_VALVE_Pin | LOWER_VENT_VALVE_Pin | INJECTION_VALVE_Pin
-                      | SD1_CS_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin | PROPULSION_3_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOC, MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | DROGUE_PARACHUTE_Pin
-                      | MAIN_PARACHUTE_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOC, MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | MUX_POWER_TEMP_Pin
+                      | MAIN_PARACHUTE_Pin | DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOB, LED2_Pin | ACCEL_CS_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(UPPER_VENT_VALVE_GPIO_Port, UPPER_VENT_VALVE_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LOWER_VENT_VALVE_GPIO_Port, LOWER_VENT_VALVE_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pins : PC13 PC14 PC15 PC1
-                             PC2 PC9 */
+                             PC2 */
     GPIO_InitStruct.Pin = GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15 | GPIO_PIN_1
-                          | GPIO_PIN_2 | GPIO_PIN_9;
+                          | GPIO_PIN_2;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -764,19 +763,17 @@ static void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(LAUNCH_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : IMU_CS_Pin PROPULSION3_VALVE_Pin LOWER_VENT_VALVE_Pin INJECTION_VALVE_Pin
-                             SD1_CS_Pin */
-    GPIO_InitStruct.Pin = IMU_CS_Pin | PROPULSION3_VALVE_Pin | LOWER_VENT_VALVE_Pin | INJECTION_VALVE_Pin
-                          | SD1_CS_Pin;
+    /*Configure GPIO pins : IMU_CS_Pin PROPULSION_3_VALVE_Pin INJECTION_VALVE_Pin SD1_CS_Pin */
+    GPIO_InitStruct.Pin = IMU_CS_Pin | PROPULSION_3_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : MAG_CS_Pin LED1_Pin BARO_CS_Pin DROGUE_PARACHUTE_Pin
-                             MAIN_PARACHUTE_Pin */
-    GPIO_InitStruct.Pin = MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | DROGUE_PARACHUTE_Pin
-                          | MAIN_PARACHUTE_Pin;
+    /*Configure GPIO pins : MAG_CS_Pin LED1_Pin BARO_CS_Pin MUX_POWER_TEMP_Pin
+                             MAIN_PARACHUTE_Pin DROGUE_PARACHUTE_TEMP_Pin */
+    GPIO_InitStruct.Pin = MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | MUX_POWER_TEMP_Pin
+                          | MAIN_PARACHUTE_Pin | DROGUE_PARACHUTE_TEMP_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -797,18 +794,18 @@ static void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : PA8 PA9 */
-    GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9;
+    /*Configure GPIO pins : PA8 PA9 PA10 */
+    GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : UPPER_VENT_VALVE_Pin */
-    GPIO_InitStruct.Pin = UPPER_VENT_VALVE_Pin;
+    /*Configure GPIO pin : LOWER_VENT_VALVE_Pin */
+    GPIO_InitStruct.Pin = LOWER_VENT_VALVE_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(UPPER_VENT_VALVE_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(LOWER_VENT_VALVE_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -876,6 +873,7 @@ void StartDefaultTask(void const* argument)
 
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
+    HAL_GPIO_WritePin(MUX_POWER_TEMP_GPIO_Port, MUX_POWER_TEMP_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, 0);
 
     for (;;)

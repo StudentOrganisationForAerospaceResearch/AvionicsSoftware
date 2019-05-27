@@ -166,12 +166,12 @@ int32_t detectMainDeploymentAltitude(struct KalmanStateVector state)
 
 void ejectDrogueParachute()
 {
-    HAL_GPIO_WritePin(DROGUE_PARACHUTE_GPIO_Port, DROGUE_PARACHUTE_Pin, GPIO_PIN_SET);  // high signal causes high current to ignite e-match
+    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_SET);  // high signal causes high current to ignite e-match
 }
 
 void closeDrogueParachute()
 {
-    HAL_GPIO_WritePin(DROGUE_PARACHUTE_GPIO_Port, DROGUE_PARACHUTE_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_RESET);
 }
 
 void ejectMainParachute()
