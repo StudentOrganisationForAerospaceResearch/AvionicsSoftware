@@ -350,6 +350,7 @@ void parachutesControlTask(void const* arg)
         switch (getCurrentFlightPhase())
         {
             case PRELAUNCH:
+            case ARM:
                 parachutesControlPrelaunchRoutine();
                 break;
 

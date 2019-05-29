@@ -136,6 +136,7 @@ void engineControlTask(void const* arg)
         switch (getCurrentFlightPhase())
         {
             case PRELAUNCH:
+            case ARM:
                 engineControlPrelaunchRoutine(data);
                 break;
 
