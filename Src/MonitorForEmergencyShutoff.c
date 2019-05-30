@@ -33,7 +33,10 @@ void monitorForEmergencyShutoffTask(void const* arg)
 
         switch (getCurrentFlightPhase())
         {
+            // Fallthrough because umbilical is still supposed to be connected during these flight phases.
+            // This means that an ABORT command can be received or a communication error could happen.
             case PRELAUNCH:
+            case ARM:
                 heartbeatTimer -= MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD;
 
                 int prelaunchCheckStatus = prelaunchChecks();
@@ -49,8 +52,16 @@ void monitorForEmergencyShutoffTask(void const* arg)
 
                 break;
 
+            // Fallthrough because the umbilical should be disconnected during these flight phases.
+            // This means that a communication error is not a valid way to get to ABORT. The only
+            // way the ABORT command can be received is if the rocket fails to take off and the
+            // umbilical does not disconnect.
             case BURN:
-                if (burnChecks())
+            case COAST:
+            case DROGUE_DESCENT:
+            case MAIN_DESCENT:
+            case POST_FLIGHT:
+                if (postArmChecks())
                 {
                     newFlightPhase(ABORT_COMMAND_RECEIVED);
                 }
@@ -87,7 +98,7 @@ int prelaunchChecks()
 }
 
 // Return 0 for everything ok
-int burnChecks()
+int postArmChecks()
 {
     if (abortCmdReceived)
     {

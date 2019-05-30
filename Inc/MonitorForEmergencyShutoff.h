@@ -6,4 +6,4 @@ extern int32_t heartbeatTimer;
 
 void monitorForEmergencyShutoffTask(void const* arg);
 int prelaunchChecks();
-int burnChecks();
+int postArmChecks();

@@ -12,7 +12,7 @@
 
 static int SLOW_LOG_DATA_PERIOD = 1000;
 static int FAST_LOG_DATA_PERIOD = 50;
-static uint8_t softwareVersion = 101;
+static uint8_t softwareVersion = 102;
 
 static FATFS fatfs;
 static FIL file;

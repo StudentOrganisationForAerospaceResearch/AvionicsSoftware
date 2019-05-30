@@ -31,7 +31,6 @@ void abortPhaseTask(void const* arg)
                 // Reset global variables
                 closeLowerVentValve();
                 launchCmdReceived = 0;
-                systemIsArmed = 0;
                 abortCmdReceived = 0;
                 resetAvionicsCmdReceived = 0;
                 heartbeatTimer = HEARTBEAT_TIMEOUT;

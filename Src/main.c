@@ -110,7 +110,6 @@ static const uint8_t OPEN_INJECTION_VALVE = 0x2A;
 static const uint8_t CLOSE_INJECTION_VALVE = 0x2B;
 
 uint8_t launchSystemsRxChar = 0;
-uint8_t systemIsArmed = 0;
 uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
@@ -821,14 +820,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
     {
         if (launchSystemsRxChar == LAUNCH_CMD_BYTE)
         {
-            if (systemIsArmed)
+            if (ARM == getCurrentFlightPhase())
             {
                 launchCmdReceived++;
             }
         }
         else if (launchSystemsRxChar == ARM_CMD_BYTE)
         {
-            systemIsArmed = 1;
+            if (PRELAUNCH == getCurrentFlightPhase())
+            {
+                newFlightPhase(ARM);
+            }
         }
         else if (launchSystemsRxChar == ABORT_CMD_BYTE)
         {

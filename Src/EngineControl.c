@@ -44,12 +44,12 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
             }
         }
 
-        if (launchCmdReceived >= 2 && systemIsArmed)
+        if (launchCmdReceived >= 2 && ARM == getCurrentFlightPhase())
         {
             newFlightPhase(BURN);
         }
 
-        if (getCurrentFlightPhase() != PRELAUNCH)
+        if (PRELAUNCH != getCurrentFlightPhase() && ARM != getCurrentFlightPhase())
         {
             return;
         }
@@ -71,7 +71,7 @@ void engineControlBurnRoutine()
 }
 
 /**
- * This routine closes all valves and changes to the PostLaunchRoutine
+ * This routine closes all valves and changes to the PostFlightRoutine
  * after 10 mins passed since COAST started.
  */
 void engineControlPostBurnRoutine()
@@ -99,7 +99,7 @@ void engineControlPostBurnRoutine()
         }
         else
         {
-            newFlightPhase(POSTLAUNCH);
+            newFlightPhase(POST_FLIGHT);
         }
     }
 }
@@ -107,7 +107,7 @@ void engineControlPostBurnRoutine()
 /**
  * This routine is the final phase.
  */
-void engineControlPostLaunchRoutine()
+void engineControlPostFlightRoutine()
 {
     uint32_t prevWakeTime = osKernelSysTick();
     uint32_t timeInPostBurn = 0;
@@ -117,7 +117,7 @@ void engineControlPostLaunchRoutine()
         osDelayUntil(&prevWakeTime, POST_BURN_PERIOD);
         FlightPhase phase = getCurrentFlightPhase();
 
-        if (phase != POSTLAUNCH)
+        if (phase != POST_FLIGHT)
         {
             return;
         }
@@ -136,6 +136,7 @@ void engineControlTask(void const* arg)
         switch (getCurrentFlightPhase())
         {
             case PRELAUNCH:
+            case ARM:
                 engineControlPrelaunchRoutine(data);
                 break;
 
@@ -149,8 +150,8 @@ void engineControlTask(void const* arg)
                 engineControlPostBurnRoutine();
                 break;
 
-            case POSTLAUNCH:
-                engineControlPostLaunchRoutine();
+            case POST_FLIGHT:
+                engineControlPostFlightRoutine();
                 break;
 
             // All aborts fall through here because they all do the same thing in each case
