@@ -114,7 +114,7 @@ uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
 
-const int32_t HEARTBEAT_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const int32_t HEARTBEAT_TIMEOUT = 3 * 60 * 1000; // 5 minutes
 int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmergencyShutoff thread
 
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
