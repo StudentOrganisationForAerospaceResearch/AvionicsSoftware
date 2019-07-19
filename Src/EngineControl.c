@@ -32,17 +32,17 @@ void engineControlPrelaunchRoutine(OxidizerTankPressureData* data)
 
         int32_t oxidizerTankPressure = -1;
 
-        if (osMutexWait(data->mutex_, 0) == osOK)
-        {
-            // read tank pressure
-            oxidizerTankPressure = data->pressure_;
-            osMutexRelease(data->mutex_);
+        // if (osMutexWait(data->mutex_, 0) == osOK)
+        // {
+        //     // read tank pressure
+        //     oxidizerTankPressure = data->pressure_;
+        //     osMutexRelease(data->mutex_);
 
-            if (oxidizerTankPressure >= 850 * 1000)
-            {
-                newFlightPhase(ABORT_OXIDIZER_PRESSURE);
-            }
-        }
+        //     if (oxidizerTankPressure >= 850 * 1000)
+        //     {
+        //         newFlightPhase(ABORT_OXIDIZER_PRESSURE);
+        //     }
+        // }
 
         if (launchCmdReceived >= 2 && ARM == getCurrentFlightPhase())
         {
