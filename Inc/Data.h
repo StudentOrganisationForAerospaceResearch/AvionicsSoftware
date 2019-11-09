@@ -32,11 +32,30 @@ typedef struct
 
 typedef struct
 {
-    osMutexId mutex_;
-    int32_t latitude_;
-    int32_t longitude_;
-    int32_t altitude_;
-    unsigned int epochTimeMsec_;
+uint32_t 	degrees_;
+uint32_t  	minutes_;
+char		direction_;
+int32_t		degrees_with_direction_;
+} LatLongType;
+
+typedef struct
+{
+int32_t altitude_;
+char		unit_;
+} AltitudeType;
+
+#define NMEA_MAX_LENGTH 82
+
+typedef struct
+{
+
+osMutexId  		mutex_;
+char        	buffer_ [NMEA_MAX_LENGTH+1];
+uint32_t    	time_;
+LatLongType 	latitude_;
+LatLongType 	longitude_;
+AltitudeType	antennaAltitude_;
+AltitudeType	geoidAltitude_;
 } GpsData;
 
 typedef struct

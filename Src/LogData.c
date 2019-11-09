@@ -67,14 +67,14 @@ void buildLogEntry(AllData* data, char* buffer)
         osMutexRelease(data->combustionChamberPressureData_->mutex_);
     }
 
-    if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
-    {
-        altitude = data->gpsData_->altitude_;
-        epochTimeMsec = data->gpsData_->epochTimeMsec_;
-        latitude = data->gpsData_->latitude_;
-        longitude = data->gpsData_->longitude_;
-        osMutexRelease(data->gpsData_->mutex_);
-    }
+//    if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
+//    {
+//        altitude = data->gpsData_->altitude_;
+//        epochTimeMsec = data->gpsData_->epochTimeMsec_;
+//        latitude = data->gpsData_->latitude_;
+//        longitude = data->gpsData_->longitude_;
+//        osMutexRelease(data->gpsData_->mutex_);
+//    }
 
     if (osMutexWait(data->oxidizerTankPressureData_->mutex_, 0) == osOK)
     {
