@@ -113,8 +113,6 @@ static const uint8_t OPEN_INJECTION_VALVE = 0x2A;
 static const uint8_t CLOSE_INJECTION_VALVE = 0x2B;
 
 uint8_t launchSystemsRxChar = 0;
-GpsData* gpsData;
-char test = 0;
 uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
@@ -125,7 +123,9 @@ int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmer
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
 static const int FLIGHT_PHASE_BLINK_FREQ = 100;
 
-int arrayNumber = 0;
+char dma_rx_buffer[NMEA_MAX_LENGTH + 1] = {0};
+GpsData* gpsData;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -199,7 +199,7 @@ int main(void)
     CombustionChamberPressureData* combustionChamberPressureData =
         malloc(sizeof(CombustionChamberPressureData));
     gpsData =
-        malloc(sizeof(GpsData));
+    	calloc(1, sizeof(GpsData));
     OxidizerTankPressureData* oxidizerTankPressureData =
         malloc(sizeof(OxidizerTankPressureData));
 
@@ -224,7 +224,6 @@ int main(void)
     combustionChamberPressureData->mutex_ = osMutexCreate(osMutex(COMBUSTION_CHAMBER_PRESSURE_DATA_MUTEX));
     combustionChamberPressureData->pressure_ = -12;
 
-//    memset(&gpsData, 0, sizeof(GpsData));
     osMutexDef(GPS_DATA_MUTEX);
     gpsData->mutex_ = osMutexCreate(osMutex(GPS_DATA_MUTEX));
 
@@ -874,52 +873,56 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 		static int start = 0;
 		char message[6] = "$GPGGA";
 
-		char rx = test;
-		if ((rx == '\r') || (rx == '\n')) // Is this an end-of-line condition, either will suffice?
+		for(int i = 0; i < NMEA_MAX_LENGTH + 1; i++)
 		{
-			if (rx_index != 0) // Line has some content?
+			char rx = dma_rx_buffer[i];
+			if ((rx == '\r') || (rx == '\n')) // Is this an end-of-line condition, either will suffice?
 			{
-				rx_buffer[rx_index++] = 0; // Add NUL if required down stream
-				if (osMutexWait(gpsData->mutex_, 0) == osOK)
+				if (rx_index != 0) // Line has some content?
 				{
-					memcpy(&gpsData->buffer_, &rx_buffer, rx_index); // Copy to queue from live dynamic receive buffer
-				}
-		        osMutexRelease(gpsData->mutex_);
-				rx_index = 0; // Reset content pointer
-				start = 0;
-			}
-		}
-		else
-		{
-			if ((rx == '$') || (rx_index == NMEA_MAX_LENGTH)) // If resync or overflows pull back to start
-			{
-				rx_index = 0;
-				start = 0;
-				rx_buffer[rx_index++] = rx; // Copy to buffer and increment
-			}
-			else if(start == 0)
-			{
-				if(rx_index >= 6)
-				{
-					start = 1;
-					rx_buffer[rx_index++] = rx; // Copy to buffer and increment
-				}
-				else if(rx== message[rx_index])
-				{
-					rx_buffer[rx_index++] = rx; // Copy to buffer and increment
-				}
-				else
-				{
-					rx_index = 0;
+					rx_buffer[rx_index++] = 0; // Add NUL if required down stream
+					if (osMutexWait(gpsData->mutex_, 0) == osOK)
+					{
+						memcpy(&gpsData->buffer_, &rx_buffer, rx_index); // Copy to queue from live dynamic receive buffer
+						gpsData->parse = 1;
+					}
+					osMutexRelease(gpsData->mutex_);
+					rx_index = 0; // Reset content pointer
 					start = 0;
 				}
 			}
 			else
 			{
-				rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+				if ((rx == '$') || (rx_index == NMEA_MAX_LENGTH)) // If resync or overflows pull back to start
+				{
+					rx_index = 0;
+					start = 0;
+					rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+				}
+				else if(start == 0)
+				{
+					if(rx_index >= 6)
+					{
+						start = 1;
+						rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+					}
+					else if(rx== message[rx_index])
+					{
+						rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+					}
+					else
+					{
+						rx_index = 0;
+						start = 0;
+					}
+				}
+				else
+				{
+					rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+				}
 			}
 		}
-	    HAL_UART_Receive_DMA(&huart4, &test, 1);
+	    HAL_UART_Receive_DMA(&huart4, (uint8_t *) &dma_rx_buffer, 80);
 	}
 }
 /* USER CODE END 4 */

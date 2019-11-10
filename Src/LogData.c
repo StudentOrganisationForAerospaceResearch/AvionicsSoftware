@@ -34,11 +34,21 @@ void buildLogEntry(AllData* data, char* buffer)
     int32_t pressure = -1;
     int32_t temperature = -1;
     int32_t combustionChamberPressure = -1;
-    int32_t altitude = -1;
-    int32_t epochTimeMsec = -1;
-    int32_t latitude = -1;
-    int32_t longitude = -1;
     int32_t oxidizerTankPressure = -1;
+    // GPS
+	uint32_t time = 0xFFFF;
+	uint32_t latitude_degrees = 0xFFFF;
+	uint32_t latitude_minutes = 0xFFFF;
+    char latitude_direction = 0xF;
+    int32_t latitude_degrees_with_direction = -1;
+	uint32_t longitude_degrees = 0xFFFF;
+	uint32_t longitude_minutes = 0xFFFF;
+    char longitude_direction = 0xF;
+    int32_t longitude_degrees_with_direction = -1;
+    int32_t antennaAltitude_altitude = -1;
+    char antennaAltitude_unit = 0xF;
+    int32_t geoidAltitude_altitude = -1;
+    char geoidAltitude_unit = 0xF;
 
     if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
     {
@@ -84,7 +94,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     sprintf(
         buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d,%ld,%d\n",
+        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%lu,%lu,%lu,%d,%ld,%lu,%lu,%d,%ld,%ld,%d,%ld,%d,%d,%ld,%d\n",
         accelX,
         accelY,
         accelZ,
@@ -97,11 +107,20 @@ void buildLogEntry(AllData* data, char* buffer)
         pressure,
         temperature,
         combustionChamberPressure,
-        altitude,
-        epochTimeMsec,
-        latitude,
-        longitude,
         oxidizerTankPressure,
+		time,
+		latitude_degrees,
+		latitude_minutes,
+		latitude_direction,
+	    latitude_degrees_with_direction,
+		longitude_degrees,
+		longitude_minutes,
+	    longitude_direction,
+	    longitude_degrees_with_direction,
+	    antennaAltitude_altitude,
+	    antennaAltitude_unit,
+	    geoidAltitude_altitude,
+	    geoidAltitude_unit,
         getCurrentFlightPhase(),
         HAL_GetTick(),
         softwareVersion
@@ -212,11 +231,20 @@ void logDataTask(void const* arg)
         "pressure,"
         "temperature(100C),"
         "combustionChamberPressure(1000psi),"
-        "altitude,"
-        "epochTime(ms),"
-        "latitude,"
-        "longitude,"
         "oxidizerTankPressure(1000psi),"
+		"GPS_time",
+		"GPS_latitude_degrees",
+		"GPS_latitude_minutes",
+		"GPS_latitude_direction",
+		"GPS_latitude_degrees_with_direction",
+		"GPS_longitude_degrees",
+		"GPS_longitude_minutes",
+		"GPS_longitude_direction",
+		"GPS_longitude_degrees_with_direction",
+		"GPS_antenna_altitude",
+		"GPS_antenna_altitude_unit",
+		"GPS_geoid_altitude",
+		"GPS_geoid_altitude_unit",
         "currentFlightPhase,"
         "elapsedTime(ms),"
         "softwareVersion\n"
