@@ -33,6 +33,7 @@ void readGpsTask(void const* arg)
 			// Returns first token
 			char* gps_item = strtok(data->buffer_, ",");
 			uint8_t counter = 0;
+			char direction;
 
 			// Keep printing tokens while one of the
 			// delimiters present in str[].
@@ -47,24 +48,31 @@ void readGpsTask(void const* arg)
 					case 2:
 					{
 						double latitude = (atof(gps_item));
-						data->latitude_.degrees_ = (uint32_t) latitude/100;
+						data->latitude_.degrees_ = (int32_t) latitude/100;
 						data->latitude_.minutes_ = (uint32_t) (latitude - data->latitude_.degrees_ * 100) * 100000;
 						break;
 					}
 					case 3:		// Unit
-						// if S, add a -
-						data->latitude_.direction_ = *gps_item;
+						direction = *gps_item;
+						if(direction == 'S')
+						{
+							data->latitude_.degrees_ *= -1;
+						}
 						break;
 					case 4:
 					{
 						double longitude = (atof(gps_item));
-						data->longitude_.degrees_ = (uint32_t) longitude/100;
+						data->longitude_.degrees_ = (int32_t) longitude/100;
 						data->longitude_.minutes_ = (uint32_t) (longitude - data->longitude_.degrees_ * 100) * 100000;
 						break;
 					}
 					case 5:		// Unit
 						// If W, add a -
-						data->longitude_.direction_ = *gps_item;
+						direction = *gps_item;
+						if(direction == 'W')
+						{
+							data->longitude_.degrees_ *= -1;
+						}
 						break;
 					case 9:
 					{

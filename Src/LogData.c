@@ -10,8 +10,8 @@
 #include "Data.h"
 #include "FlightPhase.h"
 
-static int SLOW_LOG_DATA_PERIOD = 1000;
-static int FAST_LOG_DATA_PERIOD = 50;
+static int SLOW_LOG_DATA_PERIOD = 700;
+static int FAST_LOG_DATA_PERIOD = 200;
 static uint8_t softwareVersion = 104;
 
 static FATFS fatfs;
@@ -37,18 +37,11 @@ void buildLogEntry(AllData* data, char* buffer)
     int32_t oxidizerTankPressure = -1;
     // GPS
 	uint32_t time = 0xFFFF;
-	uint32_t latitude_degrees = 0xFFFF;
+	int32_t latitude_degrees = -1;
 	uint32_t latitude_minutes = 0xFFFF;
-    char latitude_direction = 0xF;
-    int32_t latitude_degrees_with_direction = -1;
-	uint32_t longitude_degrees = 0xFFFF;
+	int32_t longitude_degrees = -1;
 	uint32_t longitude_minutes = 0xFFFF;
-    char longitude_direction = 0xF;
-    int32_t longitude_degrees_with_direction = -1;
-    int32_t antennaAltitude_altitude = -1;
-    char antennaAltitude_unit = 0xF;
-    int32_t geoidAltitude_altitude = -1;
-    char geoidAltitude_unit = 0xF;
+    int32_t altitude = -1;
 
     if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
     {
@@ -77,14 +70,23 @@ void buildLogEntry(AllData* data, char* buffer)
         osMutexRelease(data->combustionChamberPressureData_->mutex_);
     }
 
-//    if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
-//    {
-//        altitude = data->gpsData_->altitude_;
-//        epochTimeMsec = data->gpsData_->epochTimeMsec_;
-//        latitude = data->gpsData_->latitude_;
-//        longitude = data->gpsData_->longitude_;
-//        osMutexRelease(data->gpsData_->mutex_);
-//    }
+    if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
+    {
+    	if(data->gpsData_->parse == 0)
+    	{
+           	time = data->gpsData_->time_;
+
+    		latitude_degrees = data->gpsData_->latitude_.degrees_;
+    		latitude_minutes = data->gpsData_->latitude_.minutes_;
+
+    		longitude_degrees = data->gpsData_->longitude_.degrees_;
+    		longitude_minutes = data->gpsData_->longitude_.minutes_;
+
+    		// Subtract to get Height Above Ellipsoid (HAE)
+    		altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
+    	}
+		osMutexRelease(data->gpsData_->mutex_);
+    }
 
     if (osMutexWait(data->oxidizerTankPressureData_->mutex_, 0) == osOK)
     {
@@ -94,7 +96,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     sprintf(
         buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%lu,%lu,%lu,%d,%ld,%lu,%lu,%d,%ld,%ld,%d,%ld,%d,%d,%ld,%d\n",
+        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%lu,%ld,%lu,%ld,%lu,%ld,%d,%ld,%d\n",
         accelX,
         accelY,
         accelZ,
@@ -111,16 +113,9 @@ void buildLogEntry(AllData* data, char* buffer)
 		time,
 		latitude_degrees,
 		latitude_minutes,
-		latitude_direction,
-	    latitude_degrees_with_direction,
 		longitude_degrees,
 		longitude_minutes,
-	    longitude_direction,
-	    longitude_degrees_with_direction,
-	    antennaAltitude_altitude,
-	    antennaAltitude_unit,
-	    geoidAltitude_altitude,
-	    geoidAltitude_unit,
+	    altitude,
         getCurrentFlightPhase(),
         HAL_GetTick(),
         softwareVersion
@@ -215,7 +210,7 @@ void highFrequencyLogToSdRoutine(AllData* data, char* buffer)
 void logDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
-    char buffer[256];
+    char buffer[500];
 
     sprintf(
         buffer,
@@ -232,19 +227,12 @@ void logDataTask(void const* arg)
         "temperature(100C),"
         "combustionChamberPressure(1000psi),"
         "oxidizerTankPressure(1000psi),"
-		"GPS_time",
-		"GPS_latitude_degrees",
-		"GPS_latitude_minutes",
-		"GPS_latitude_direction",
-		"GPS_latitude_degrees_with_direction",
-		"GPS_longitude_degrees",
-		"GPS_longitude_minutes",
-		"GPS_longitude_direction",
-		"GPS_longitude_degrees_with_direction",
-		"GPS_antenna_altitude",
-		"GPS_antenna_altitude_unit",
-		"GPS_geoid_altitude",
-		"GPS_geoid_altitude_unit",
+		"GPS_time,"
+		"GPS_latitude_degrees,"
+		"GPS_latitude_minutes,"
+		"GPS_longitude_degrees,"
+		"GPS_longitude_minutes,"
+		"GPS_altitude,"
         "currentFlightPhase,"
         "elapsedTime(ms),"
         "softwareVersion\n"

@@ -35,10 +35,8 @@ typedef struct
 
 typedef struct
 {
-    uint32_t    degrees_;
-    uint32_t    minutes_;
-    char        direction_;
-    int32_t     degrees_with_direction_;
+    int32_t    degrees_;
+    int32_t    minutes_;
 } LatLongType;
 
 typedef struct
