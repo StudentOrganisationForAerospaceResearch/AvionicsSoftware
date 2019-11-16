@@ -48,7 +48,7 @@ typedef struct
 typedef struct
 {
     osMutexId       mutex_;
-    char            buffer_ [NMEA_MAX_LENGTH+1];
+    char            buffer_ [NMEA_MAX_LENGTH + 1];
     uint32_t        time_;
     LatLongType     latitude_;
     LatLongType     longitude_;

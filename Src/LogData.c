@@ -36,11 +36,11 @@ void buildLogEntry(AllData* data, char* buffer)
     int32_t combustionChamberPressure = -1;
     int32_t oxidizerTankPressure = -1;
     // GPS
-	uint32_t time = 0xFFFF;
-	int32_t latitude_degrees = -1;
-	uint32_t latitude_minutes = 0xFFFF;
-	int32_t longitude_degrees = -1;
-	uint32_t longitude_minutes = 0xFFFF;
+    uint32_t time = 0xFFFF;
+    int32_t latitude_degrees = -1;
+    uint32_t latitude_minutes = 0xFFFF;
+    int32_t longitude_degrees = -1;
+    uint32_t longitude_minutes = 0xFFFF;
     int32_t altitude = -1;
 
     if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
@@ -72,18 +72,18 @@ void buildLogEntry(AllData* data, char* buffer)
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-       	time = data->gpsData_->time_;
+        time = data->gpsData_->time_;
 
-		latitude_degrees = data->gpsData_->latitude_.degrees_;
-		latitude_minutes = data->gpsData_->latitude_.minutes_;
+        latitude_degrees = data->gpsData_->latitude_.degrees_;
+        latitude_minutes = data->gpsData_->latitude_.minutes_;
 
-		longitude_degrees = data->gpsData_->longitude_.degrees_;
-		longitude_minutes = data->gpsData_->longitude_.minutes_;
+        longitude_degrees = data->gpsData_->longitude_.degrees_;
+        longitude_minutes = data->gpsData_->longitude_.minutes_;
 
-		// Subtract to get Height Above Ellipsoid (HAE)
-		altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
+        // Subtract to get Height Above Ellipsoid (HAE)
+        altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
 
-		osMutexRelease(data->gpsData_->mutex_);
+        osMutexRelease(data->gpsData_->mutex_);
     }
 
     if (osMutexWait(data->oxidizerTankPressureData_->mutex_, 0) == osOK)
@@ -108,12 +108,12 @@ void buildLogEntry(AllData* data, char* buffer)
         temperature,
         combustionChamberPressure,
         oxidizerTankPressure,
-		time,
-		latitude_degrees,
-		latitude_minutes,
-		longitude_degrees,
-		longitude_minutes,
-	    altitude,
+        time,
+        latitude_degrees,
+        latitude_minutes,
+        longitude_degrees,
+        longitude_minutes,
+        altitude,
         getCurrentFlightPhase(),
         HAL_GetTick(),
         softwareVersion
@@ -225,12 +225,12 @@ void logDataTask(void const* arg)
         "temperature(100C),"
         "combustionChamberPressure(1000psi),"
         "oxidizerTankPressure(1000psi),"
-		"GPS_time,"
-		"GPS_latitude_degrees,"
-		"GPS_latitude_minutes,"
-		"GPS_longitude_degrees,"
-		"GPS_longitude_minutes,"
-		"GPS_altitude,"
+        "GPS_time,"
+        "GPS_latitude_degrees,"
+        "GPS_latitude_minutes,"
+        "GPS_longitude_degrees,"
+        "GPS_longitude_minutes,"
+        "GPS_altitude,"
         "currentFlightPhase,"
         "elapsedTime(ms),"
         "softwareVersion\n"

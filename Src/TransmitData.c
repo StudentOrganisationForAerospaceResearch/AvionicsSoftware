@@ -114,54 +114,54 @@ void transmitBarometerData(AllData* data)
 
 void transmitGpsData(AllData* data)
 {
-	uint32_t time = 0xFFFF;
-	int32_t latitude_degrees = -1;
-	uint32_t latitude_minutes = 0xFFFF;
-	int32_t longitude_degrees = -1;
-	uint32_t longitude_minutes = 0xFFFF;
+    uint32_t time = 0xFFFF;
+    int32_t latitude_degrees = -1;
+    uint32_t latitude_minutes = 0xFFFF;
+    int32_t longitude_degrees = -1;
+    uint32_t longitude_minutes = 0xFFFF;
     int32_t altitude = -1;
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-    	time = data->gpsData_->time_;
+        time = data->gpsData_->time_;
 
-    	latitude_degrees = data->gpsData_->latitude_.degrees_;
-    	latitude_minutes = data->gpsData_->latitude_.minutes_;
+        latitude_degrees = data->gpsData_->latitude_.degrees_;
+        latitude_minutes = data->gpsData_->latitude_.minutes_;
 
-    	longitude_degrees = data->gpsData_->longitude_.degrees_;
-    	longitude_minutes = data->gpsData_->longitude_.minutes_;
+        longitude_degrees = data->gpsData_->longitude_.degrees_;
+        longitude_minutes = data->gpsData_->longitude_.minutes_;
 
-		// Subtract to get Height Above Ellipsoid (HAE)
+        // Subtract to get Height Above Ellipsoid (HAE)
         altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
-        
+
         osMutexRelease(data->gpsData_->mutex_);
     }
 
     uint8_t buffer[GPS_SERIAL_MSG_SIZE] = {0};
 
-   buffer[0] = GPS_HEADER_BYTE;
-   buffer[1] = GPS_HEADER_BYTE;
-   buffer[2] = GPS_HEADER_BYTE;
-   buffer[3] = GPS_HEADER_BYTE;
-   // Does this need to be uint32toarray???
-   writeInt32ToArray(&buffer, 4, time);
+    buffer[0] = GPS_HEADER_BYTE;
+    buffer[1] = GPS_HEADER_BYTE;
+    buffer[2] = GPS_HEADER_BYTE;
+    buffer[3] = GPS_HEADER_BYTE;
+    // Does this need to be uint32toarray???
+    writeInt32ToArray(&buffer, 4, time);
 
-   writeInt32ToArray(&buffer, 8, latitude_degrees);
-   writeInt32ToArray(&buffer, 12, latitude_minutes);
+    writeInt32ToArray(&buffer, 8, latitude_degrees);
+    writeInt32ToArray(&buffer, 12, latitude_minutes);
 
-   writeInt32ToArray(&buffer, 16, longitude_degrees);
-   writeInt32ToArray(&buffer, 20, longitude_minutes);
+    writeInt32ToArray(&buffer, 16, longitude_degrees);
+    writeInt32ToArray(&buffer, 20, longitude_minutes);
 
-   writeInt32ToArray(&buffer, 24, altitude);
+    writeInt32ToArray(&buffer, 24, altitude);
 
-   buffer[GPS_SERIAL_MSG_SIZE - 1] = 0x00;
+    buffer[GPS_SERIAL_MSG_SIZE - 1] = 0x00;
 
-   if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
-   {
-       HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
-   }
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
+    {
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
+    }
 
-   HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
 }
 
 void transmitOxidizerTankData(AllData* data)
