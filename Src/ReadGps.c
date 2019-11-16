@@ -49,7 +49,7 @@ void readGpsTask(void const* arg)
 					{
 						double latitude = (atof(gps_item));
 						data->latitude_.degrees_ = (int32_t) latitude/100;
-						data->latitude_.minutes_ = (uint32_t) (latitude - data->latitude_.degrees_ * 100) * 100000;
+						data->latitude_.minutes_ = (uint32_t) ((latitude - data->latitude_.degrees_ * 100) * 100000);
 						break;
 					}
 					case 3:		// Unit
@@ -63,7 +63,7 @@ void readGpsTask(void const* arg)
 					{
 						double longitude = (atof(gps_item));
 						data->longitude_.degrees_ = (int32_t) longitude/100;
-						data->longitude_.minutes_ = (uint32_t) (longitude - data->longitude_.degrees_ * 100) * 100000;
+						data->longitude_.minutes_ = (uint32_t) ((longitude - data->longitude_.degrees_ * 100) * 100000);
 						break;
 					}
 					case 5:		// Unit

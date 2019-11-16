@@ -123,20 +123,17 @@ void transmitGpsData(AllData* data)
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-    	if(data->gpsData_->parse == 0)
-    	{
-        	time = data->gpsData_->time_;
+    	time = data->gpsData_->time_;
 
-        	latitude_degrees = data->gpsData_->latitude_.degrees_;
-        	latitude_minutes = data->gpsData_->latitude_.minutes_;
+    	latitude_degrees = data->gpsData_->latitude_.degrees_;
+    	latitude_minutes = data->gpsData_->latitude_.minutes_;
 
-        	longitude_degrees = data->gpsData_->longitude_.degrees_;
-        	longitude_minutes = data->gpsData_->longitude_.minutes_;
+    	longitude_degrees = data->gpsData_->longitude_.degrees_;
+    	longitude_minutes = data->gpsData_->longitude_.minutes_;
 
-    		// Subtract to get Height Above Ellipsoid (HAE)
-            altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
-
-    	}
+		// Subtract to get Height Above Ellipsoid (HAE)
+        altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
+        
         osMutexRelease(data->gpsData_->mutex_);
     }
 
