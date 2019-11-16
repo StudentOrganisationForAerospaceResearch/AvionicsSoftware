@@ -56,6 +56,7 @@ void readGpsTask(void const* arg)
                     }
 
                     case 3:		// Unit
+                    {
                         direction = *gps_item;
 
                         if (direction == 'S')
@@ -64,6 +65,7 @@ void readGpsTask(void const* arg)
                         }
 
                         break;
+                    }
 
                     case 4:
                     {
@@ -74,6 +76,7 @@ void readGpsTask(void const* arg)
                     }
 
                     case 5:		// Unit
+                    {
                         // If W, add a -
                         direction = *gps_item;
 
@@ -83,6 +86,7 @@ void readGpsTask(void const* arg)
                         }
 
                         break;
+                    }
 
                     case 9:
                     {
@@ -91,8 +95,10 @@ void readGpsTask(void const* arg)
                     }
 
                     case 10:	// Unit
+                    {
                         data->antennaAltitude_.unit_ = *gps_item;
                         break;
+                    }
 
                     case 11:
                     {
@@ -101,8 +107,10 @@ void readGpsTask(void const* arg)
                     }
 
                     case 12:	// Unit
+                    {
                         data->geoidAltitude_.unit_ = *gps_item;
                         break;
+                    }
 
                     default:
                         break;
