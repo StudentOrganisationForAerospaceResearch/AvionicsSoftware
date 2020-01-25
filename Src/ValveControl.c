@@ -4,23 +4,10 @@
 
 #include "ValveControl.h"
 
-int ventValveIsOpen = 0;
 int injectionValveIsOpen = 0;
+int lowerVentValveIsOpen = 0;
 
-void openVentValve()
-{
-    // Powered is open
-    HAL_GPIO_WritePin(VENT_VALVE_GPIO_Port, VENT_VALVE_Pin, GPIO_PIN_SET);
-    ventValveIsOpen = 1;
-}
-
-void closeVentValve()
-{
-    // Unpowered is closed
-    HAL_GPIO_WritePin(VENT_VALVE_GPIO_Port, VENT_VALVE_Pin, GPIO_PIN_RESET);
-    ventValveIsOpen = 0;
-}
-// High pulse is sent to change state of injection valve.
+// Injection Valve is Normally Closed (NC)
 void openInjectionValve()
 {
     // Powered is open
@@ -33,4 +20,17 @@ void closeInjectionValve()
     // Unpowered is closed
     HAL_GPIO_WritePin(INJECTION_VALVE_GPIO_Port, INJECTION_VALVE_Pin, GPIO_PIN_RESET);
     injectionValveIsOpen = 0;
+}
+
+// Lower vent valve is Normally Open (NO)
+void openLowerVentValve()
+{
+    HAL_GPIO_WritePin(LOWER_VENT_VALVE_GPIO_Port, LOWER_VENT_VALVE_Pin, GPIO_PIN_RESET);      //Temporary pin until we change to using new board
+    lowerVentValveIsOpen = 1;
+}
+
+void closeLowerVentValve()
+{
+    HAL_GPIO_WritePin(LOWER_VENT_VALVE_GPIO_Port, LOWER_VENT_VALVE_Pin, GPIO_PIN_SET);    //Temporary pin until we change to using new board
+    lowerVentValveIsOpen = 0;
 }

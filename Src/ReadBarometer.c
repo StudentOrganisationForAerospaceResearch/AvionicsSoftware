@@ -22,7 +22,7 @@
 
 /* Constants -----------------------------------------------------------------*/
 
-static const int READ_BAROMETER_PERIOD      = 20;
+static const int READ_BAROMETER_PERIOD      = 25;
 static const int TEMP_LOW                   = 2000;
 static const int TEMP_VERY_LOW              = -1500;
 static const int CMD_SIZE                   = 1;

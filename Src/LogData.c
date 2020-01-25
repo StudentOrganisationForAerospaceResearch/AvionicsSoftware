@@ -12,6 +12,7 @@
 
 static int SLOW_LOG_DATA_PERIOD = 1000;
 static int FAST_LOG_DATA_PERIOD = 50;
+static uint8_t softwareVersion = 104;
 
 static FATFS fatfs;
 static FIL file;
@@ -83,7 +84,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     sprintf(
         buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d,%ld\n",
+        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d,%ld,%d\n",
         accelX,
         accelY,
         accelZ,
@@ -102,13 +103,15 @@ void buildLogEntry(AllData* data, char* buffer)
         longitude,
         oxidizerTankPressure,
         getCurrentFlightPhase(),
-        HAL_GetTick()
+        HAL_GetTick(),
+        softwareVersion
     );
 }
 
-void lowFrequencyLogToSdRoutine(AllData* data, char* buffer, FlightPhase entryPhase)
+void lowFrequencyLogToSdRoutine(AllData* data, char* buffer)
 {
     uint32_t prevWakeTime = osKernelSysTick();
+    FlightPhase entryPhase = getCurrentFlightPhase();
 
     for (;;)
     {
@@ -215,14 +218,15 @@ void logDataTask(void const* arg)
         "longitude,"
         "oxidizerTankPressure(1000psi),"
         "currentFlightPhase,"
-        "elapsedTime(ms)\n"
+        "elapsedTime(ms),"
+        "softwareVersion\n"
     );
 
     if (f_mount(&fatfs, "SD:", 1) == FR_OK)
     {
-        if (f_open(&file, "SD:VanderAvionics1.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
+        if (f_open(&file, "SD:AvionicsData1.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
         {
-            f_open(&file, "SD:VanderAvionics1.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
+            f_open(&file, "SD:AvionicsData1.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
             f_puts(buffer, &file);
             f_close(&file);
         }
@@ -232,7 +236,7 @@ void logDataTask(void const* arg)
 
             for (uint8_t index = 2; fileExists; index++)
             {
-                sprintf(fileName, "SD:VanderAvionics%i.csv", index);
+                sprintf(fileName, "SD:AvionicsData%i.csv", index);
 
                 if (f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
                 {
@@ -258,26 +262,14 @@ void logDataTask(void const* arg)
     {
         switch (getCurrentFlightPhase())
         {
-            case PRELAUNCH:
-                lowFrequencyLogToSdRoutine(data, buffer, PRELAUNCH);
-                break;
-
             case BURN:
             case COAST:
             case DROGUE_DESCENT:
                 highFrequencyLogToSdRoutine(data, buffer);
                 break;
 
-            case MAIN_DESCENT:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT);
-                break;
-
-            case ABORT:
-                lowFrequencyLogToSdRoutine(data, buffer, ABORT);
-                break;
-
             default:
-                lowFrequencyLogToSdRoutine(data, buffer, MAIN_DESCENT); // won't work
+                lowFrequencyLogToSdRoutine(data, buffer);
                 break;
         }
     }

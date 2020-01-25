@@ -67,7 +67,7 @@ C_SOURCES = \
   Src/ValveControl.c \
   Src/ReadOxidizerTankPressure.c \
   Src/stm32f4xx_hal_msp.c \
-  Src/stm32f4xx_hal_timebase_TIM.c \
+  Src/stm32f4xx_hal_timebase_tim.c \
   Src/stm32f4xx_it.c \
   Src/system_stm32f4xx.c \
   Src/TransmitData.c \
