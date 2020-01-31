@@ -52,6 +52,7 @@ C_SOURCES = \
   Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
   Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
   Src/AbortPhase.c \
+  Src/AltitudeKalmanFilter.c \
   Src/EngineControl.c \
   Src/FlightPhase.c \
   Src/freertos.c \
@@ -66,7 +67,7 @@ C_SOURCES = \
   Src/ValveControl.c \
   Src/ReadOxidizerTankPressure.c \
   Src/stm32f4xx_hal_msp.c \
-  Src/stm32f4xx_hal_timebase_TIM.c \
+  Src/stm32f4xx_hal_timebase_tim.c \
   Src/stm32f4xx_it.c \
   Src/system_stm32f4xx.c \
   Src/TransmitData.c \
