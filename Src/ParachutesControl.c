@@ -32,10 +32,10 @@
 static const int MAIN_DEPLOYMENT_ALTITUDE = 457 + 1401; // Units in meters. Equivalent of 15000 ft + altitude of spaceport america.
 static const int MONITOR_FOR_PARACHUTES_PERIOD = 200;
 static const int NUM_DESCENTS_TO_TRIGGER_DROUGE = 3;
+static const int KALMAN_FILTER_MAIN_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
 /*
-
-***These are the old Consts before the KalmanFilter***
+***These are the old constants before the KalmanFilter file breakout***
 //TODO remove after everything works
 
 // Units in meters. Equivalent of 1500 ft + altitude of spaceport america.
@@ -43,25 +43,15 @@ static const int MAIN_DEPLOYMENT_ALTITUDE = 457 + SPACE_PORT_AMERICA_ALTITUDE_AB
 
 static const int MONITOR_FOR_PARACHUTES_PERIOD = 50;
 static const int KALMAN_FILTER_DROGUE_TIMEOUT = 2 * 60 * 1000; // 2 minutes
-static const int KALMAN_FILTER_MAIN_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+
 static const int PARACHUTE_PULSE_DURATION = 2 * 1000; // 2 seconds
-static const double KALMAN_GAIN[][2] =
-
-struct KalmanStateVector
-{
-    double altitude;
-    double velocity;
-    double acceleration;
-};
-
-static struct KalmanStateVector kalmanFilterState;
-}
-
 */
+
 
 /* Variables -----------------------------------------------------------------*/
 
 static int numDescents = 0;
+static struct KalmanStateVector kalmanFilterState;
 
 /* Structs -------------------------------------------------------------------*/
 
@@ -168,7 +158,8 @@ void parachutesControlPrelaunchRoutine()
  */
 void parachutesControlBurnRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
-    BarometerData* barometerData
+    BarometerData* barometerData,
+    struct KalmanStateVector state
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -207,7 +198,8 @@ void parachutesControlBurnRoutine(
  */
 void parachutesControlCoastRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
-    BarometerData* barometerData
+    BarometerData* barometerData,
+    struct KalmanStateVector state
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -262,7 +254,8 @@ void parachutesControlCoastRoutine(
  */
 void parachutesControlDrogueDescentRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
-    BarometerData* barometerData
+    BarometerData* barometerData,
+    struct KalmanStateVector state
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -273,11 +266,6 @@ void parachutesControlDrogueDescentRoutine(
         osDelayUntil(&prevWakeTime, MONITOR_FOR_PARACHUTES_PERIOD);
 
         elapsedTime += MONITOR_FOR_PARACHUTES_PERIOD;
-
-        if (elapsedTime > PARACHUTE_PULSE_DURATION)
-        {
-            closeDrogueParachute();
-        }
 
         int32_t currentAccel = readAccel(accelGyroMagnetismData);
         int32_t currentPressure = readPressure(barometerData);
