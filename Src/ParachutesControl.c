@@ -300,9 +300,7 @@ void parachutesControlDrogueDescentRoutine(
 void parachutesControlTask(void const* arg)
 {
     ParachutesControlData* data = (ParachutesControlData*) arg;
-    kalmanFilterState.altitude = SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL;
-    kalmanFilterState.velocity = 0;
-    kalmanFilterState.acceleration = 0;
+    struct KalmanStateVector state;
 
     for (;;)
     {
@@ -316,27 +314,30 @@ void parachutesControlTask(void const* arg)
             case BURN:
                 parachutesControlBurnRoutine(
                     data->accelGyroMagnetismData_,
-                    data->barometerData_
+                    data->barometerData_,
+                    state
                 );
                 break;
 
             case COAST:
                 parachutesControlCoastRoutine(
                     data->accelGyroMagnetismData_,
-                    data->barometerData_
+                    data->barometerData_,
+                    state
                 );
                 break;
 
             case DROGUE_DESCENT:
                 parachutesControlDrogueDescentRoutine(
                     data->accelGyroMagnetismData_,
-                    data->barometerData_
+                    data->barometerData_,
+                    state
                 );
 
                 break;
 
             case MAIN_DESCENT:
-                parachutesControlMainDescentRoutine();
+                //parachutesControlMainDescentRoutine();
                 break;
 
             case ABORT_COMMAND_RECEIVED:
