@@ -36,12 +36,12 @@ void buildLogEntry(AllData* data, char* buffer)
     int32_t combustionChamberPressure = -1;
     int32_t oxidizerTankPressure = -1;
     // GPS
-    uint32_t time = 0xFFFF;
-    int32_t latitude_degrees = -1;
-    uint32_t latitude_minutes = 0xFFFF;
-    int32_t longitude_degrees = -1;
-    uint32_t longitude_minutes = 0xFFFF;
-    int32_t altitude = -1;
+    static uint32_t time = 0xFFFF;
+    static int32_t latitude_degrees = -1;
+    static uint32_t latitude_minutes = 0xFFFF;
+    static int32_t longitude_degrees = -1;
+    static uint32_t longitude_minutes = 0xFFFF;
+    static int32_t altitude = -1;
 
     if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
     {
@@ -80,8 +80,7 @@ void buildLogEntry(AllData* data, char* buffer)
         longitude_degrees = data->gpsData_->longitude_.degrees_;
         longitude_minutes = data->gpsData_->longitude_.minutes_;
 
-        // Subtract to get Height Above Ellipsoid (HAE)
-        altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
+        altitude = data->gpsData_->totalAltitude_.altitude_;
 
         osMutexRelease(data->gpsData_->mutex_);
     }

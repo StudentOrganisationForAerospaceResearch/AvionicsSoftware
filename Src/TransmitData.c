@@ -24,7 +24,7 @@ static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 
 #define IMU_SERIAL_MSG_SIZE (41)
 #define BAROMETER_SERIAL_MSG_SIZE (13)
-#define GPS_SERIAL_MSG_SIZE (26)
+#define GPS_SERIAL_MSG_SIZE (29)
 #define OXIDIZER_TANK_SERIAL_MSG_SIZE (9)
 #define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (9)
 #define FLIGHT_PHASE_SERIAL_MSG_SIZE (6)
@@ -116,9 +116,9 @@ void transmitGpsData(AllData* data)
 {
     uint32_t time = 0xFFFF;
     int32_t latitude_degrees = -1;
-    uint32_t latitude_minutes = 0xFFFF;
+    int32_t latitude_minutes = 0xFFFF;
     int32_t longitude_degrees = -1;
-    uint32_t longitude_minutes = 0xFFFF;
+    int32_t longitude_minutes = 0xFFFF;
     int32_t altitude = -1;
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
@@ -131,8 +131,7 @@ void transmitGpsData(AllData* data)
         longitude_degrees = data->gpsData_->longitude_.degrees_;
         longitude_minutes = data->gpsData_->longitude_.minutes_;
 
-        // Subtract to get Height Above Ellipsoid (HAE)
-        altitude = data->gpsData_->antennaAltitude_.altitude_ - data->gpsData_->geoidAltitude_.altitude_;
+        altitude = data->gpsData_->totalAltitude_.altitude_;
 
         osMutexRelease(data->gpsData_->mutex_);
     }
@@ -143,7 +142,7 @@ void transmitGpsData(AllData* data)
     buffer[1] = GPS_HEADER_BYTE;
     buffer[2] = GPS_HEADER_BYTE;
     buffer[3] = GPS_HEADER_BYTE;
-    // Does this need to be uint32toarray???
+
     writeInt32ToArray(&buffer, 4, time);
 
     writeInt32ToArray(&buffer, 8, latitude_degrees);

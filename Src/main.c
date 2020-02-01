@@ -165,7 +165,8 @@ int main(void)
     /* MCU Configuration----------------------------------------------------------*/
 
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-    HAL_Init();
+
+	HAL_Init();
 
     /* USER CODE BEGIN Init */
 
@@ -881,60 +882,63 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
     }
     else if (huart->Instance == UART4)
     {
-        static char rx_buffer[NMEA_MAX_LENGTH + 1]; // Local holding buffer to build line, w/NUL
+        static char rx_buffer[NMEA_MAX_LENGTH + 1];
         static int rx_index = 0;
-        static int start = 0;
+        static int gpggaDetected = 0;
         char message[6] = "$GPGGA";
 
         for (int i = 0; i < NMEA_MAX_LENGTH + 1; i++)
         {
-            char rx = dma_rx_buffer[i];
+            char rx = dma_rx_buffer[i]; // Read 1 character
 
-            if ((rx == '\r') || (rx == '\n')) // Is this an end-of-line condition, either will suffice?
+            if ((rx == '\r') || (rx == '\n')) // End of line character has been reached
             {
-                if (rx_index != 0) // Line has some content?
+                if (rx_index != 0 && rx_buffer[0] == '$') // Check that buffer has content and that the message is valid
                 {
-                    rx_buffer[rx_index++] = 0; // Add NUL if required down stream
+                    rx_buffer[rx_index++] = 0;
 
                     if (osMutexWait(gpsData->mutex_, 0) == osOK)
                     {
-                        memcpy(&gpsData->buffer_, &rx_buffer, rx_index); // Copy to queue from live dynamic receive buffer
-                        gpsData->parse = 1;
+                        memcpy(&gpsData->buffer_, &rx_buffer, rx_index); // Copy to gps data buffer from rx_buffer
+                        gpsData->parseFlag_ = 1; // Data in gps data buffer is ready to be parsed
                     }
-
                     osMutexRelease(gpsData->mutex_);
-                    rx_index = 0; // Reset content pointer
-                    start = 0;
+
+                    // Reset back to initial values
+                    rx_index = 0;
+                    gpggaDetected = 0;
                 }
             }
             else
             {
-                if ((rx == '$') || (rx_index == NMEA_MAX_LENGTH)) // If resync or overflows pull back to start
+                if ((rx == '$') || (rx_index == NMEA_MAX_LENGTH)) // If start character received or end of rx buffer reached
                 {
+                    // Reset back to initial values
                     rx_index = 0;
-                    start = 0;
-                    rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+                    gpggaDetected = 0;
+                    rx_buffer[rx_index++] = rx;
                 }
-                else if (start == 0)
+                else if (gpggaDetected == 0)
                 {
-                    if (rx_index >= 6)
+                    if (rx_index >= 6) // If the first 6 characters follow $GPGGA, set gpggaDetected to 1
                     {
-                        start = 1;
-                        rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+                        gpggaDetected = 1;
+                        rx_buffer[rx_index++] = rx; // Contents of the rx_buffer will be $GPGGA at this point
                     }
-                    else if (rx == message[rx_index])
+                    else if (rx == message[rx_index]) // Check if the first 6 characters follow $GPGGA
                     {
-                        rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+                        rx_buffer[rx_index++] = rx;
                     }
                     else
                     {
+                        // If any of the first 6 characters does not follow $GPGGA, reset to initial values
                         rx_index = 0;
-                        start = 0;
+                        gpggaDetected = 0;
                     }
                 }
                 else
                 {
-                    rx_buffer[rx_index++] = rx; // Copy to buffer and increment
+                    rx_buffer[rx_index++] = rx; // Copy received characters to rx_buffer
                 }
             }
         }

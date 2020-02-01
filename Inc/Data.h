@@ -54,7 +54,8 @@ typedef struct
     LatLongType     longitude_;
     AltitudeType    antennaAltitude_;
     AltitudeType    geoidAltitude_;
-    int8_t			parse;
+    AltitudeType    totalAltitude_;
+    uint8_t         parseFlag_;
 } GpsData;
 
 typedef struct
