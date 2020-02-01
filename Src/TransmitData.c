@@ -259,6 +259,31 @@ void transmitLowerVentValveStatus()
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
 }
 
+static uint8_t is_ready = 1;
+void transmitStringTest()
+{
+
+    char buffer[] = "This is a really long string. Sending this will be complicated!\r\n";
+
+    if (is_ready == 1) {
+    	is_ready = 0;
+    	HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
+    	is_ready = 1;
+    }
+
+}
+
+void HAL_Replacement(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+{
+
+    char buffer[] = "HAL is dead!\r\n";
+
+	HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
+
+}
+
+#define HAL_UART_Transmit HAL_Replacement
+
 void transmitDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
@@ -266,16 +291,19 @@ void transmitDataTask(void const* arg)
 
     for (;;)
     {
-        osDelayUntil(&prevWakeTime, TRANSMIT_DATA_PERIOD);
+        osDelayUntil(&prevWakeTime, 2000);
 
-        transmitImuData(data);
-        transmitBarometerData(data);
-        transmitGpsData(data);
-        transmitOxidizerTankData(data);
-        transmitCombustionChamberData(data);
-        transmitFlightPhaseData(data);
-        transmitInjectionValveStatus();
-        transmitLowerVentValveStatus();
+//        transmitImuData(data);
+//        transmitBarometerData(data);
+//        transmitGpsData(data);
+//        transmitOxidizerTankData(data);
+//        transmitCombustionChamberData(data);
+//        transmitFlightPhaseData(data);
+//        transmitInjectionValveStatus();
+//        transmitLowerVentValveStatus();
+        transmitStringTest();
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
+        char buffer[] = "HAL is alive!\r\n";
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 }
