@@ -273,6 +273,16 @@ void transmitStringTest()
 
 }
 
+
+
+
+
+
+
+
+
+
+
 void HAL_Replacement(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
 {
 
@@ -282,17 +292,37 @@ void HAL_Replacement(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, u
 
 }
 
-#define HAL_UART_Transmit HAL_Replacement
+
+
+//#define HAL_UART_Transmit HAL_Replacement
+
+
 
 void transmitDataTask(void const* arg)
 {
-    AllData* data = (AllData*) arg;
-    uint32_t prevWakeTime = osKernelSysTick();
 
-    for (;;)
-    {
-        osDelayUntil(&prevWakeTime, 2000);
+	while (1) {
 
+		// Print the welcome message
+		char welcomeMsg[] = "\r\nWelcome! Please enter a command:\r\n";
+		HAL_UART_Transmit(&huart2, &welcomeMsg, sizeof(welcomeMsg), UART_TIMEOUT);
+
+		// Get a character
+		char rxChar = '\0';
+		HAL_UART_Receive(&huart2, &rxChar, 1, 30000);
+
+		// Print out the character
+		HAL_UART_Transmit(&huart2, &rxChar, sizeof(rxChar), UART_TIMEOUT);
+
+	}
+
+//    AllData* data = (AllData*) arg;
+//    uint32_t prevWakeTime = osKernelSysTick();
+//
+//    for (;;)
+//    {
+//        osDelayUntil(&prevWakeTime, 2000);
+//
 //        transmitImuData(data);
 //        transmitBarometerData(data);
 //        transmitGpsData(data);
@@ -301,9 +331,14 @@ void transmitDataTask(void const* arg)
 //        transmitFlightPhaseData(data);
 //        transmitInjectionValveStatus();
 //        transmitLowerVentValveStatus();
-        transmitStringTest();
-        HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
-        char buffer[] = "HAL is alive!\r\n";
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
-    }
+//
+//        HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
+//
+//        char buffer[] = "\r\nHAL is alive!\r\n";
+//        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);
+//
+//        HAL_UART_Transmit(&huart2, &launchSystemsRxChar, 1, UART_TIMEOUT);
+//
+//    }
+
 }
