@@ -166,7 +166,7 @@ int main(void)
 
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-	HAL_Init();
+    HAL_Init();
 
     /* USER CODE BEGIN Init */
 
@@ -902,6 +902,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
                         memcpy(&gpsData->buffer_, &rx_buffer, rx_index); // Copy to gps data buffer from rx_buffer
                         gpsData->parseFlag_ = 1; // Data in gps data buffer is ready to be parsed
                     }
+
                     osMutexRelease(gpsData->mutex_);
 
                     // Reset back to initial values

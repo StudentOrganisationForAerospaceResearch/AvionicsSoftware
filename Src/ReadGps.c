@@ -58,7 +58,7 @@ void readGpsTask(void const* arg)
                     case 3:	// Latitude direction
                     {
                         direction = *gps_item;
-                        
+
                         // N is represented as a positive value
                         // S is represented as a negative value
                         if (direction == 'S')
@@ -74,7 +74,7 @@ void readGpsTask(void const* arg)
                     {
                         double longitude = (atof(gps_item)); // DDMM.MMMMMM
                         data->longitude_.degrees_ = (int32_t) longitude / 100; // First 2 numbers are the longitude degrees
-                        data->longitude_.minutes_ = (uint32_t) ((longitude - data->longitude_.degrees_ * 100) * 100000); // Longitude minutes is multplied by 100000 
+                        data->longitude_.minutes_ = (uint32_t) ((longitude - data->longitude_.degrees_ * 100) * 100000); // Longitude minutes is multplied by 100000
                         break;
                     }
 
