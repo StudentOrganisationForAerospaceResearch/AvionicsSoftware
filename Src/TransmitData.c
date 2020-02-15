@@ -277,26 +277,286 @@ void transmitStringTest()
 
 
 
-
-
-
-
-
-
-void HAL_Replacement(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+//Struct to store all the variables of a specific HAL call
+typedef struct
 {
 
-    char buffer[] = "HAL is dead!\r\n";
+	//Keep track of what kind of element it is
+	char type; // a: transmit, b: togglePin, c: writePin, d: transmitReceive, e: Receive
 
-	HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
+	//HAL Transmit, Transmit Receive and Receive variables
+	uint16_t Size;
+	uint32_t Timeout;
+
+	UART_HandleTypeDef *huart;
+	uint8_t *pData;
+
+	SPI_HandleTypeDef *hspi;
+	uint8_t *pTxData;
+	uint8_t *pRxData;
+
+
+	//HAL TogglePin and WritePin Variables
+	GPIO_TypeDef* GPIOx;
+	uint16_t GPIO_Pin;
+	GPIO_PinState PinState;
+
+	//struct for the next node in the list
+	struct HALCall *next;
+
+} HALCall;
+
+//if 0 will not transmit any data, will just add any replaced HAL calls to the linked List
+static int transmitRealData = 0;
+//Start and end of the linked list
+static HALCall* listHead;
+static HALCall* listTail;
+
+//Print all elements of the linked list
+//Will have to change how the data is sent/printed once the python script works
+void printLinkedList()
+{
+	char msg[] = "\r\n\r\nList Currently Contains:";
+	HAL_UART_Transmit(&huart2, &msg, sizeof(msg), UART_TIMEOUT);
+
+	HALCall *listItem = listHead;
+	int i = 0;
+	while(listItem != NULL)
+	{
+
+		//Print the index of the list item
+		char msg[25];
+		sprintf(msg, "List Item: %d\r\n", i);
+		HAL_UART_Transmit(&huart2, &msg, sizeof(msg), UART_TIMEOUT);
+
+		printListItem(listItem);
+
+		listItem = listItem->next;
+
+		i++;
+	}
+}
+
+//Print the data contained within the specific list item
+void printListItem(HALCall* listItem)
+{
+	char data[100];
+
+	//if Transmit Call Print data
+	if (listItem->type == 'a')
+	{
+		sprintf(data, "HAL Transmit Call\r\nData Sent: %s\r\n", listItem->pData);
+		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+	}
+
+	//if TogglePin print the pin to toggle
+	else if (listItem->type == 'b')
+	{
+		sprintf(data, "HAL TogglePin Call\r\nPin Toggled: %d\r\n", listItem->GPIO_Pin);
+		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+	}
+
+	//if WritePin print the pin and write value
+	else if (listItem->type == 'c')
+	{
+		sprintf(data, "HAL WritePin Call\r\nPin: %d Not sure how to print write value\r\n", listItem->GPIO_Pin);
+		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+	}
+
+	//if TransmitReceive print data sent out
+	else if (listItem->type == 'd')
+	{
+		sprintf(data, "HAL TransmitReceive Call\r\nTransmit Data: %d\r\n", listItem->pTxData);
+		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+	}
+
+	//if Receive call not going to print anything
+	else if (listItem->type == 'e')
+	{
+		sprintf(data, "HAL Receive Call\r\nNothing to print?\r\n");
+		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+	}
+}
+
+//Enters the struct into the linked list
+void enterIntoList(HALCall* listItem)
+{
+	if(listHead == NULL)
+	{
+		listHead = listItem;
+		listTail = listItem;
+	}
+	else
+	{
+		listTail->next = listItem;
+		listTail = listItem;
+	}
+}
+
+//Create a struct for a Hall Transmit
+void createHALTransmitCall(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+{
+	//Dynamic memory allocation
+	HALCall *newCall = NULL;
+	newCall = (HALCall*) malloc(sizeof(HALCall));
+	newCall->type = 'a';
+	newCall->huart = huart;
+	newCall->pData = pData;
+	newCall->Size = Size;
+	newCall->Timeout = Timeout;
+	newCall->next = NULL;
+
+	enterIntoList(newCall);
 
 }
 
+//Replaces the HAL transmit function
+static inline void HALTransmitReplacement(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+{
 
+    if (transmitRealData)
+    {
+    	HAL_UART_Transmit(huart, pData, Size, Timeout); // Transmit the actual data
+    }
+    else
+    {
+    	createHALTransmitCall(huart, pData, Size, Timeout); //Create struct on the linked list
 
-//#define HAL_UART_Transmit HAL_Replacement
+    	//Test and print out list
+    	printLinkedList();
+    }
 
+}
 
+//Create a struct for a Hall TogglePin
+void createHALTogglePinCall(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+{
+	//Dynamic memory allocation
+	HALCall *newCall = NULL;
+	newCall = (HALCall*) malloc(sizeof(HALCall));
+	newCall->type = 'b';
+	newCall->GPIOx = GPIOx;
+	newCall->GPIO_Pin = GPIO_Pin;
+	newCall->next = NULL;
+
+	enterIntoList(newCall);
+
+}
+
+//Replaces HAL togglePin
+static inline void HALTogglePinReplacement(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+{
+
+    if (transmitRealData)
+    {
+    	HAL_GPIO_TogglePin(GPIOx, GPIO_Pin); // Toggle pin as normal
+    }
+    else
+    {
+    	createHALTogglePinCall(GPIOx, GPIO_Pin); //Create a struct on the linked list
+
+    }
+
+}
+
+//Create a struct for a Hall write Pin
+void createHALWritePinCall(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
+{
+	//Dynamic memory allocation
+	HALCall *newCall = NULL;
+	newCall = (HALCall*) malloc(sizeof(HALCall));
+	newCall->type = 'b';
+	newCall->GPIOx = GPIOx;
+	newCall->GPIO_Pin = GPIO_Pin;
+	newCall->PinState = PinState;
+	newCall->next = NULL;
+
+	enterIntoList(newCall);
+
+}
+
+//Replaces HAL write Pin
+static inline void HALWritePinReplacement(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
+{
+
+    if (transmitRealData)
+    {
+    	HAL_GPIO_WritePin(GPIOx, GPIO_Pin, PinState); // Toggle pin as normal
+    }
+    else
+    {
+    	createHALTogglePinCall(GPIOx, GPIO_Pin, PinState); //Create a struct in the linked list
+
+    }
+
+}
+
+//Create a struct for a Hall TransmitReceive
+void createHALTransmitReceiveCall(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
+{
+	//Dynamic memory allocation
+	HALCall *newCall = NULL;
+	newCall = (HALCall*) malloc(sizeof(HALCall));
+	newCall->type = 'd';
+	newCall->hspi = hspi;
+	newCall->pTxData = pTxData;
+	newCall->pRxData = pRxData;
+	newCall->Size = Size;
+	newCall->Timeout = Timeout;
+	newCall->next = NULL;
+
+	enterIntoList(newCall);
+
+	}
+
+//Replaces the HAL transmitReceive function
+static inline void HALTransmitReceiveReplacement(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
+{
+
+	if (transmitRealData)
+	{
+		HAL_SPI_TransmitReceive(hspi, pTxData, pRxData, Size, Timeout); // Transmit the actual data
+	}
+	else
+	{
+		createHALTransmitReceiveCall(hspi, pTxData, pRxData, Size, Timeout); //Create a struct in the linked list
+	}
+
+}
+
+//Create a struct for a Hall TransmitReceive
+void createHALReceiveCall(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+{
+	//Dynamic memory allocation
+	HALCall *newCall = NULL;
+	newCall = (HALCall*) malloc(sizeof(HALCall));
+	newCall->type = 'e';
+	newCall->hspi = hspi;
+	newCall->pData = pData;
+	newCall->Size = Size;
+	newCall->Timeout = Timeout;
+	newCall->next = NULL;
+
+	enterIntoList(newCall);
+
+}
+
+//Replaces the HAL transmitReceive function
+static inline void HALReceiveReplacement(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+{
+
+	if (transmitRealData)
+	{
+		HAL_SPI_Receive(hspi, pData, Size, Timeout); // Transmit the actual data
+	}
+	else
+	{
+		createHALReceiveCall(hspi, pData, Size, Timeout); //Create a struct in the linked list
+	}
+
+}
+
+#define HAL_UART_Transmit HALTransmitReplacement
 
 void transmitDataTask(void const* arg)
 {
@@ -312,7 +572,10 @@ void transmitDataTask(void const* arg)
 		HAL_UART_Receive(&huart2, &rxChar, 1, 30000);
 
 		// Print out the character
+		transmitRealData = rxChar%2;
 		HAL_UART_Transmit(&huart2, &rxChar, sizeof(rxChar), UART_TIMEOUT);
+
+
 
 	}
 
@@ -342,3 +605,9 @@ void transmitDataTask(void const* arg)
 //    }
 
 }
+
+
+
+
+
+
