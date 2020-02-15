@@ -301,18 +301,39 @@ void HAL_Replacement(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, u
 void transmitDataTask(void const* arg)
 {
 
+	char welcomeMsg[] = " -- SOAR Andromeda Dev Console -- \r\n> ";
+	HAL_UART_Transmit(&huart2, &welcomeMsg, sizeof(welcomeMsg), UART_TIMEOUT);
+
+	char rxChar = 0;
+	unsigned char cmdSize = 0;
+	char cmdStr[258];
+	char* cmd = &cmdStr[2];
+	cmdStr[0] = '\r';
+	cmdStr[1] = '\n';
+	cmd[0] = 0;
+
 	while (1) {
 
-		// Print the welcome message
-		char welcomeMsg[] = "\r\nWelcome! Please enter a command:\r\n";
-		HAL_UART_Transmit(&huart2, &welcomeMsg, sizeof(welcomeMsg), UART_TIMEOUT);
-
-		// Get a character
-		char rxChar = '\0';
 		HAL_UART_Receive(&huart2, &rxChar, 1, 30000);
-
-		// Print out the character
-		HAL_UART_Transmit(&huart2, &rxChar, sizeof(rxChar), UART_TIMEOUT);
+		if (rxChar == '\n' || rxChar == '\r') {
+			cmd[cmdSize++] = '\r';
+			cmd[cmdSize++] = '\n';
+			cmd[cmdSize++] = '>';
+			cmd[cmdSize++] = ' ';
+			cmd[cmdSize] = 0;
+			HAL_UART_Transmit(&huart2, &cmdStr, cmdSize + 2, UART_TIMEOUT);
+			cmdSize = 0;
+			cmd[0] = 0;
+		} else if (rxChar == 127) {
+			cmd[--cmdSize] = 0;
+			HAL_UART_Transmit(&huart2, 0x8, 1, UART_TIMEOUT);
+			rxChar = 0;
+		} else if (rxChar != 0) {
+			cmd[cmdSize++] = rxChar;
+			cmd[cmdSize] = 0;
+			HAL_UART_Transmit(&huart2, &rxChar, 1, UART_TIMEOUT);
+			rxChar = 0;
+		}
 
 	}
 
