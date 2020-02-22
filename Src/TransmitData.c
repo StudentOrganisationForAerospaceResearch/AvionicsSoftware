@@ -316,7 +316,7 @@ static HALCall* listTail;
 //Will have to change how the data is sent/printed once the python script works
 void printLinkedList()
 {
-	char msg[] = "\r\n\r\nList Currently Contains:";
+	char msg[] = "\r\n\r\nList Currently Contains:\r\n";
 	HAL_UART_Transmit(&huart2, &msg, sizeof(msg), UART_TIMEOUT);
 
 	HALCall *listItem = listHead;
@@ -324,57 +324,79 @@ void printLinkedList()
 	while(listItem != NULL)
 	{
 
-		//Print the index of the list item
-		char msg[25];
-		sprintf(msg, "List Item: %d\r\n", i);
-		HAL_UART_Transmit(&huart2, &msg, sizeof(msg), UART_TIMEOUT);
-
 		printListItem(listItem);
 
 		listItem = listItem->next;
 
 		i++;
 	}
+
+	char data[] = "End of the list\r\n\r\n";
+	HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+}
+
+//Return the address of the first item from the list and remove it, will have to de alocate the memory elsewhere
+HALCall* getFirstListItem()
+{
+	HALCall* firstItem = listHead;
+	listHead = firstItem->next;
+	return firstItem;
 }
 
 //Print the data contained within the specific list item
 void printListItem(HALCall* listItem)
 {
-	char data[100];
 
 	//if Transmit Call Print data
 	if (listItem->type == 'a')
 	{
-		sprintf(data, "HAL Transmit Call\r\nData Sent: %s\r\n", listItem->pData);
+		char data[] = "HAL Transmit Call\r\nData Sent: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+		HAL_UART_Transmit(&huart2, listItem->pData, listItem->Size, UART_TIMEOUT);
+		char newLine[] = "\r\n\r\n";
+		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
 	}
 
 	//if TogglePin print the pin to toggle
 	else if (listItem->type == 'b')
 	{
-		sprintf(data, "HAL TogglePin Call\r\nPin Toggled: %d\r\n", listItem->GPIO_Pin);
+		char data[] = "HAL Toggle Pin Call\r\nPin Toggled: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+		HAL_UART_Transmit(&huart2, listItem->GPIO_Pin, sizeof(listItem->GPIO_Pin), UART_TIMEOUT);
+		char newLine[] = "\r\n\r\n";
+		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
 	}
 
 	//if WritePin print the pin and write value
 	else if (listItem->type == 'c')
 	{
-		sprintf(data, "HAL WritePin Call\r\nPin: %d Not sure how to print write value\r\n", listItem->GPIO_Pin);
+		char data[] = "HAL Write Pin Call\r\nPin Written To: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+		HAL_UART_Transmit(&huart2, listItem->GPIO_Pin, sizeof(listItem->GPIO_Pin), UART_TIMEOUT);
+		char newLine[] = "\r\n\r\n";
+		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
 	}
 
 	//if TransmitReceive print data sent out
 	else if (listItem->type == 'd')
 	{
-		sprintf(data, "HAL TransmitReceive Call\r\nTransmit Data: %d\r\n", listItem->pTxData);
+		char data[] = "HAL Transmit Receive Call\r\nData Sent: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+		HAL_UART_Transmit(&huart2, listItem->pTxData, listItem->Size, UART_TIMEOUT);
+		char newLine[] = "\r\n\r\n";
+		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
 	}
 
 	//if Receive call not going to print anything
 	else if (listItem->type == 'e')
 	{
-		sprintf(data, "HAL Receive Call\r\nNothing to print?\r\n");
+		char data[] = "HAL Receive Call\r\n";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+
+		//HAL_UART_Transmit(&huart2, listItem->pData, listItem->Size, UART_TIMEOUT);
+
+		char newLine[] = "\r\n\r\n";
+		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
 	}
 }
 
@@ -393,6 +415,17 @@ void enterIntoList(HALCall* listItem)
 	}
 }
 
+//Copy the from string to the to string
+void copyString(uint8_t **to, uint8_t *from, uint16_t Size)
+{
+	*(to) = (uint8_t*) malloc(Size);
+
+	for (int i = 0; i < Size; i++)
+	{
+		(*(to))[i] = from[i];
+	}
+}
+
 //Create a struct for a Hall Transmit
 void createHALTransmitCall(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
 {
@@ -401,7 +434,9 @@ void createHALTransmitCall(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t S
 	newCall = (HALCall*) malloc(sizeof(HALCall));
 	newCall->type = 'a';
 	newCall->huart = huart;
-	newCall->pData = pData;
+
+	copyString(&(newCall->pData), pData, Size);
+
 	newCall->Size = Size;
 	newCall->Timeout = Timeout;
 	newCall->next = NULL;
@@ -420,10 +455,9 @@ static inline void HALTransmitReplacement(UART_HandleTypeDef *huart, uint8_t *pD
     }
     else
     {
-    	createHALTransmitCall(huart, pData, Size, Timeout); //Create struct on the linked list
+    	createHALTransmitCall(huart, pData, Size, Timeout); //Create struct and add it to the linked list
 
-    	//Test and print out list
-    	printLinkedList();
+    	printLinkedList(); //Print the linked list as a test
     }
 
 }
@@ -454,7 +488,6 @@ static inline void HALTogglePinReplacement(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pi
     else
     {
     	createHALTogglePinCall(GPIOx, GPIO_Pin); //Create a struct on the linked list
-
     }
 
 }
@@ -485,7 +518,7 @@ static inline void HALWritePinReplacement(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin
     }
     else
     {
-    	createHALTogglePinCall(GPIOx, GPIO_Pin, PinState); //Create a struct in the linked list
+    	createHALWritePinCall(GPIOx, GPIO_Pin, PinState); //Create a struct in the linked list
 
     }
 
@@ -499,8 +532,10 @@ void createHALTransmitReceiveCall(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uin
 	newCall = (HALCall*) malloc(sizeof(HALCall));
 	newCall->type = 'd';
 	newCall->hspi = hspi;
-	newCall->pTxData = pTxData;
-	newCall->pRxData = pRxData;
+
+	copyString(&(newCall->pTxData), pTxData, Size);
+	copyString(&(newCall->pRxData), pRxData, Size); //Might need to double check if both are the same size
+
 	newCall->Size = Size;
 	newCall->Timeout = Timeout;
 	newCall->next = NULL;
@@ -556,7 +591,7 @@ static inline void HALReceiveReplacement(SPI_HandleTypeDef *hspi, uint8_t *pData
 
 }
 
-#define HAL_UART_Transmit HALTransmitReplacement
+//#define HAL_UART_Transmit HALTransmitReplacement
 
 void transmitDataTask(void const* arg)
 {
@@ -581,7 +616,10 @@ void transmitDataTask(void const* arg)
 			cmd[cmdSize++] = '>';
 			cmd[cmdSize++] = ' ';
 			cmd[cmdSize] = 0;
-			HAL_UART_Transmit(&huart2, &cmdStr, cmdSize + 2, UART_TIMEOUT);
+
+			//HAL_UART_Transmit(&huart2, &cmdStr, cmdSize + 2, UART_TIMEOUT);
+			HALTransmitReplacement(&huart2, &cmdStr, cmdSize + 2, UART_TIMEOUT); //Replaced Transmit with transmit replacement
+
 			cmdSize = 0;
 			cmd[0] = 0;
 		} else if (rxChar == 127) {
