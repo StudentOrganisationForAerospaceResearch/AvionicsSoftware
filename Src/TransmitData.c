@@ -274,15 +274,22 @@ void transmitStringTest()
 }
 
 
-
-
+//Types of hall calls
+typedef enum
+{
+    Transmit,
+	TransmitReceive,
+    Receive,
+    TogglePin,
+    WritePin,
+} CallType;
 
 //Struct to store all the variables of a specific HAL call
 typedef struct
 {
 
 	//Keep track of what kind of element it is
-	char type; // a: transmit, b: togglePin, c: writePin, d: transmitReceive, e: Receive
+	CallType type;
 
 	//HAL Transmit, Transmit Receive and Receive variables
 	uint16_t Size;
@@ -312,29 +319,7 @@ static int transmitRealData = 0;
 static HALCall* listHead;
 static HALCall* listTail;
 
-//Print all elements of the linked list
-//Will have to change how the data is sent/printed once the python script works
-void printLinkedList()
-{
-	char msg[] = "\r\n\r\nList Currently Contains:\r\n";
-	HAL_UART_Transmit(&huart2, &msg, sizeof(msg), UART_TIMEOUT);
-
-	HALCall *listItem = listHead;
-	int i = 0;
-	while(listItem != NULL)
-	{
-
-		printListItem(listItem);
-
-		listItem = listItem->next;
-
-		i++;
-	}
-
-	char data[] = "End of the list\r\n\r\n";
-	HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
-}
-
+//Need to test
 //Return the address of the first item from the list and remove it, will have to de alocate the memory elsewhere
 HALCall* getFirstListItem()
 {
@@ -343,61 +328,162 @@ HALCall* getFirstListItem()
 	return firstItem;
 }
 
+//Need to test
+//Return the address of the last item in the list and remove it from the list, will have to free memory once done
+HALCall* getLastListItem()
+{
+	HALCall* lastItem = listTail;
+	HALCall* item = listHead;
+	while(item->next != lastItem)
+		item = item->next;
+
+	item->next = NULL;
+	listTail = item;
+
+	return lastItem;
+}
+
+//Need to test
+//Return the first item of specified type and remove it from the list, null if no item of type exists
+HALCall* getFirstItemOfType(CallType type)
+{
+	HALCall* item = listHead;
+	if (item->type == type)
+	{
+		listHead = item->next;
+		return item;
+	}
+
+	HALCall* prev = listHead;
+	item = item->next;
+
+	while(1)
+	{
+		if (item->type == type)
+		{
+			prev->next = item->next;
+			return item;
+		}
+
+		if (item->next == NULL)
+			break;
+
+		prev = item;
+		item = item->next;
+	}
+	return NULL;
+}
+
+//Need to test
+//Returns the address of the last item with the given type
+HALCall* getLastItemOfType(CallType type)
+{
+	HALCall* item = listHead;
+	HALCall* prev = NULL;
+	HALCall* itemOfType = NULL;
+	HALCall* precedingItem = NULL;
+
+	//Find last item of type
+
+	if (item->type == type)
+		itemOfType = item;
+
+	prev = listHead;
+	item = listHead->next;
+
+	while(1)
+	{
+		if (item->type == type)
+		{
+			itemOfType = item;
+			precedingItem = prev;
+		}
+
+		prev = item;
+		item = item->next;
+	}
+
+	//Remove and return last item of type
+	if (precedingItem == NULL)
+		listHead = itemOfType->next;
+	else
+		precedingItem->next = itemOfType->next;
+
+	return itemOfType;
+
+}
+
+//Print all elements of the linked list
+void printLinkedList()
+{
+	char msg[] = "\r\nList Currently Contains:\r\n";
+	HAL_UART_Transmit(&huart2, &msg, sizeof(msg), UART_TIMEOUT);
+
+	HALCall *listItem = listHead;
+	int i = 0;
+	while(listItem != NULL)
+	{
+		printListItem(listItem);
+		listItem = listItem->next;
+		i++;
+	}
+
+	char data[] = "End of the list\r\n\r\n";
+	HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
+}
+
 //Print the data contained within the specific list item
 void printListItem(HALCall* listItem)
 {
 
 	//if Transmit Call Print data
-	if (listItem->type == 'a')
+	if (listItem->type == Transmit)
 	{
 		char data[] = "HAL Transmit Call\r\nData Sent: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
 		HAL_UART_Transmit(&huart2, listItem->pData, listItem->Size, UART_TIMEOUT);
-		char newLine[] = "\r\n\r\n";
-		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
+
 	}
 
 	//if TogglePin print the pin to toggle
-	else if (listItem->type == 'b')
+	else if (listItem->type == TogglePin)
 	{
 		char data[] = "HAL Toggle Pin Call\r\nPin Toggled: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
 		HAL_UART_Transmit(&huart2, listItem->GPIO_Pin, sizeof(listItem->GPIO_Pin), UART_TIMEOUT);
-		char newLine[] = "\r\n\r\n";
-		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
+
 	}
 
 	//if WritePin print the pin and write value
-	else if (listItem->type == 'c')
+	else if (listItem->type == WritePin)
 	{
-		char data[] = "HAL Write Pin Call\r\nPin Written To: ";
+		char data[] = "HAL Write Pin Call\r\nPin Written to: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
 		HAL_UART_Transmit(&huart2, listItem->GPIO_Pin, sizeof(listItem->GPIO_Pin), UART_TIMEOUT);
-		char newLine[] = "\r\n\r\n";
-		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
+
 	}
 
 	//if TransmitReceive print data sent out
-	else if (listItem->type == 'd')
+	else if (listItem->type == TransmitReceive)
 	{
 		char data[] = "HAL Transmit Receive Call\r\nData Sent: ";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
 		HAL_UART_Transmit(&huart2, listItem->pTxData, listItem->Size, UART_TIMEOUT);
-		char newLine[] = "\r\n\r\n";
-		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
+
 	}
 
 	//if Receive call not going to print anything
-	else if (listItem->type == 'e')
+	else if (listItem->type == Receive)
 	{
-		char data[] = "HAL Receive Call\r\n";
+		char data[] = "HAL Receive Call\r\nNothing to print";
 		HAL_UART_Transmit(&huart2, &data, sizeof(data), UART_TIMEOUT);
 
 		//HAL_UART_Transmit(&huart2, listItem->pData, listItem->Size, UART_TIMEOUT);
 
-		char newLine[] = "\r\n\r\n";
-		HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
 	}
+
+	char newLine[] = "\r\n\r\n";
+	HAL_UART_Transmit(&huart2, &newLine, sizeof(newLine), UART_TIMEOUT);
 }
 
 //Enters the struct into the linked list
@@ -432,7 +518,7 @@ void createHALTransmitCall(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t S
 	//Dynamic memory allocation
 	HALCall *newCall = NULL;
 	newCall = (HALCall*) malloc(sizeof(HALCall));
-	newCall->type = 'a';
+	newCall->type = Transmit;
 	newCall->huart = huart;
 
 	copyString(&(newCall->pData), pData, Size);
@@ -468,7 +554,7 @@ void createHALTogglePinCall(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 	//Dynamic memory allocation
 	HALCall *newCall = NULL;
 	newCall = (HALCall*) malloc(sizeof(HALCall));
-	newCall->type = 'b';
+	newCall->type = TogglePin;
 	newCall->GPIOx = GPIOx;
 	newCall->GPIO_Pin = GPIO_Pin;
 	newCall->next = NULL;
@@ -498,7 +584,7 @@ void createHALWritePinCall(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState
 	//Dynamic memory allocation
 	HALCall *newCall = NULL;
 	newCall = (HALCall*) malloc(sizeof(HALCall));
-	newCall->type = 'b';
+	newCall->type = WritePin;
 	newCall->GPIOx = GPIOx;
 	newCall->GPIO_Pin = GPIO_Pin;
 	newCall->PinState = PinState;
@@ -530,7 +616,7 @@ void createHALTransmitReceiveCall(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uin
 	//Dynamic memory allocation
 	HALCall *newCall = NULL;
 	newCall = (HALCall*) malloc(sizeof(HALCall));
-	newCall->type = 'd';
+	newCall->type = TransmitReceive;
 	newCall->hspi = hspi;
 
 	copyString(&(newCall->pTxData), pTxData, Size);
@@ -565,7 +651,7 @@ void createHALReceiveCall(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size
 	//Dynamic memory allocation
 	HALCall *newCall = NULL;
 	newCall = (HALCall*) malloc(sizeof(HALCall));
-	newCall->type = 'e';
+	newCall->type = Receive;
 	newCall->hspi = hspi;
 	newCall->pData = pData;
 	newCall->Size = Size;
