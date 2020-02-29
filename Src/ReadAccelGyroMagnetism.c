@@ -123,9 +123,11 @@ void readAccelGyroMagnetismTask(void const* arg)
             continue;
         }
 
-        data->accelX_ = accelX * ACCEL_SENSITIVITY; // mg
-        data->accelY_ = accelY * ACCEL_SENSITIVITY; // mg
-        data->accelZ_ = accelZ * ACCEL_SENSITIVITY; // mg
+        data->accelX_ = accelX; // mg
+        data->accelY_ = accelY; // mg
+        data->accelZ_ = accelZ; // mg
+        //TODO Check sensitivity, we believe that we do not need to multiply as it is
+        //set in the chips registers
         data->gyroX_ = gyroX * GYRO_SENSITIVITY; // mdps
         data->gyroY_ = gyroY * GYRO_SENSITIVITY; // mdps
         data->gyroZ_ = gyroZ * GYRO_SENSITIVITY; // mdps

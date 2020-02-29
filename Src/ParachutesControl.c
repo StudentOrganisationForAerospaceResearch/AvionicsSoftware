@@ -28,6 +28,9 @@
 
 #define SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL (1401) // metres
 
+// TODO: THIS NEEDS TO BE UPDATED AND RECORDED ON LAUNCH DAY
+static const int SEA_LEVEL_PRESSURE = 101421.93903699999;
+
 // Pressure at spaceport america in 100*millibars on May 27, 2018
 static const int MAIN_DEPLOYMENT_ALTITUDE = 457 + 1401; // Units in meters. Equivalent of 15000 ft + altitude of spaceport america.
 static const int MONITOR_FOR_PARACHUTES_PERIOD = 200;
@@ -128,23 +131,54 @@ void closeMainParachute()
     HAL_GPIO_WritePin(MAIN_PARACHUTE_GPIO_Port, MAIN_PARACHUTE_Pin, GPIO_PIN_RESET);
 }
 
+double convertBaroData(int32_t milliG)
+{
+    // Convert from 100*millibars to m. This may or may not be right, depending on where you look. Needs testing
+    return (double) 44307.69396 * (1 - pow(milliG / SEA_LEVEL_PRESSURE, 0.190284));
+}
+
+double convertAccelData(int32_t milliG)
+{
+    return (double) milliG / 1000 * 9.8; // Milli-g -> g -> m/s
+}
+
 
 /**
  * Waits for the current flight phase to get out of PRELAUNCH
  */
-void parachutesControlPrelaunchRoutine()
+void parachutesControlPrelaunchRoutine(
+    AccelGyroMagnetismData* accelGyroMagnetismData,
+    BarometerData* barometerData,
+    struct KalmanStateVector* state
+)
 {
     uint32_t prevWakeTime = osKernelSysTick();
 
+    int count = 0;
     for (;;)
     {
         osDelayUntil(&prevWakeTime, MONITOR_FOR_PARACHUTES_PERIOD);
+
+        int32_t currentAccel = readAccel(accelGyroMagnetismData);
+        int32_t currentPressure = readPressure(barometerData);
+
+        state->altitude = convertBaroData(currentPressure);
+        state->acceleration = convertAccelData(currentAccel);
+        //TODO figure this out for now just assign zero
+        state->velocity = 0;
+
+        //TODO take this check out. This is to force the system into
+        //     burn after 10 cycles
+        if(count == 10) {
+            newFlightPhase(BURN);
+        }
 
         if (getCurrentFlightPhase() != PRELAUNCH)
         {
             // Ascent has begun
             return;
         }
+        count++;
     }
 }
 
@@ -159,7 +193,7 @@ void parachutesControlPrelaunchRoutine()
 void parachutesControlBurnRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
     BarometerData* barometerData,
-    struct KalmanStateVector state
+    struct KalmanStateVector* state
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -182,7 +216,10 @@ void parachutesControlBurnRoutine(
             continue;
         }
 
-        state = filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        double convertedAccel = convertAccelData(currentAccel);
+        double convertedPressure = convertBaroData(currentPressure);
+
+        filterSensors(state, convertedAccel, convertedPressure, MONITOR_FOR_PARACHUTES_PERIOD);
     }
 }
 
@@ -199,7 +236,7 @@ void parachutesControlBurnRoutine(
 void parachutesControlCoastRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
     BarometerData* barometerData,
-    struct KalmanStateVector state
+    struct KalmanStateVector* state
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -220,11 +257,14 @@ void parachutesControlCoastRoutine(
             continue;
         }
 
-        double oldAltitude = state.altitude;
+        double convertedAccel = convertAccelData(currentAccel);
+        double convertedPressure = convertBaroData(currentPressure);
 
-        state = filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        double oldAltitude = state->altitude;
 
-        if (state.altitude < oldAltitude)
+        filterSensors(state, convertedAccel, convertedPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+
+        if (state->altitude < oldAltitude)
         {
             numDescents++;
         }
@@ -255,7 +295,7 @@ void parachutesControlCoastRoutine(
 void parachutesControlDrogueDescentRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
     BarometerData* barometerData,
-    struct KalmanStateVector state
+    struct KalmanStateVector* state
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -276,7 +316,7 @@ void parachutesControlDrogueDescentRoutine(
             continue;
         }
 
-        state = filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
 
         // detect 4600 ft above sea level and eject main parachute
         if (detectMainDeploymentAltitude(kalmanFilterState) || elapsedTime > KALMAN_FILTER_MAIN_TIMEOUT)
@@ -301,6 +341,9 @@ void parachutesControlTask(void const* arg)
 {
     ParachutesControlData* data = (ParachutesControlData*) arg;
     struct KalmanStateVector state;
+    state.acceleration = 0.0f;
+    state.velocity = 0.0f;
+    state.altitude = 0.0f;
 
     for (;;)
     {
@@ -308,14 +351,18 @@ void parachutesControlTask(void const* arg)
         {
             case PRELAUNCH:
             case ARM:
-                parachutesControlPrelaunchRoutine();
+                parachutesControlPrelaunchRoutine(
+                    data->accelGyroMagnetismData_,
+                    data->barometerData_,
+                    &state
+                );
                 break;
 
             case BURN:
                 parachutesControlBurnRoutine(
                     data->accelGyroMagnetismData_,
                     data->barometerData_,
-                    state
+                    &state
                 );
                 break;
 
@@ -323,7 +370,7 @@ void parachutesControlTask(void const* arg)
                 parachutesControlCoastRoutine(
                     data->accelGyroMagnetismData_,
                     data->barometerData_,
-                    state
+                    &state
                 );
                 break;
 
@@ -331,7 +378,7 @@ void parachutesControlTask(void const* arg)
                 parachutesControlDrogueDescentRoutine(
                     data->accelGyroMagnetismData_,
                     data->barometerData_,
-                    state
+                    &state
                 );
 
                 break;

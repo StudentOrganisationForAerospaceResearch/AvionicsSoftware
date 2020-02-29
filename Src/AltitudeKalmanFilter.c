@@ -22,8 +22,7 @@
 
 /* Constants -----------------------------------------------------------------*/
 
-static const int SEA_LEVEL_PRESSURE = 101421.93903699999;
-// TODO: THIS NEEDS TO BE UPDATED AND RECORDED ON LAUNCH DAY
+
 
 static const double KALMAN_GAIN[][2] =
 {
@@ -97,6 +96,7 @@ int32_t readPressure(BarometerData* data)
  * Takes an old state vector and current state measurements and
  * converts them into a prediction of the rocket's current state.
  *
+ * TODO change params
  * Params:
  *   oldState 			- (KalmanStateVector) Past altitude, velocity and acceleration
  *   currentAccel 		- (double) Measured acceleration
@@ -106,38 +106,45 @@ int32_t readPressure(BarometerData* data)
  * Returns:
  *   newState 			- (KalmanStateVector) Current altitude, velocity and acceleration
  */
-struct KalmanStateVector filterSensors(
-    struct KalmanStateVector oldState,
-    int32_t currentAccel,
-    int32_t currentPressure,
+void filterSensors(
+    struct KalmanStateVector* state,
+    double currentAccel,
+    double currentAlt,
     double dtMillis
 )
 {
     struct KalmanStateVector newState;
 
-    double accelIn = (double) currentAccel / 1000 * 9.8; // Milli-g -> g -> m/s
-
-    // Convert from 100*millibars to m. This may or may not be right, depending on where you look. Needs testing
-    double altIn = (double) 44307.69396 * (1 - pow(currentPressure / SEA_LEVEL_PRESSURE, 0.190284));
-
     // Convert from ms to s
     double dt = dtMillis / 1000;
 
+//    newState.altitude = altIn;
+//    newState.acceleration = accelIn;
+
 
     // Propagate old state using simple kinematics equations
-    newState.altitude = oldState.altitude + oldState.velocity * dt + 0.5 * dt * dt * oldState.acceleration;
-    newState.velocity = oldState.velocity + oldState.acceleration * dt;
-    newState.acceleration = oldState.acceleration;
+//    newState.altitude = oldState.altitude + oldState.velocity * dt + 0.5 * dt * dt * oldState.acceleration;
+//    newState.velocity = oldState.velocity + oldState.acceleration * dt;
+//    newState.acceleration = oldState->acceleration;
 
-    // Calculate the difference between the new state and the measurements
-    double baroDifference = altIn - newState.altitude;
-    double accelDifference = accelIn - newState.acceleration;
+    // Calculate the difference between the new measurements and the old state
+    double baroDifference =  currentAlt - state->altitude;
+    double accelDifference = currentAccel - state->acceleration;
 
     // Minimize the chi2 error by means of the Kalman gain matrix
-    newState.altitude = newState.altitude + KALMAN_GAIN[0][0] * baroDifference + KALMAN_GAIN[0][1] * accelDifference;
-    newState.velocity = newState.velocity + KALMAN_GAIN[1][0] * baroDifference + KALMAN_GAIN[1][1] * accelDifference;
-    newState.acceleration = newState.velocity + KALMAN_GAIN[2][0] * baroDifference + KALMAN_GAIN[2][1] * accelDifference;
+    // TODO condense back down into one liner
+    double tmpAlt = state->altitude;
+    double tmpBaroDiff = KALMAN_GAIN[2][0] * baroDifference;
+    double tmpAccelDiff = KALMAN_GAIN[2][1] * accelDifference;
+    newState.altitude = tmpAlt + tmpBaroDiff + tmpAccelDiff;
 
-    return newState;
+    //newState.velocity = newState.velocity + KALMAN_GAIN[1][0] * baroDifference + KALMAN_GAIN[1][1] * accelDifference;
+
+    // TODO condense back down into one liner
+    // newState.acceleration = newState.velocity + KALMAN_GAIN[2][0] * baroDifference + KALMAN_GAIN[2][1] * accelDifference;
+    double tmpAccel = state->acceleration;
+    newState.acceleration = tmpAccel + tmpBaroDiff + tmpAccelDiff;
+
+    *state = newState;
 }
 
