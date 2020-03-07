@@ -1,18 +1,21 @@
 #pragma once
 #include "Data.h"
+#include "Vec3d.h"
 
 struct KalmanStateVector
 {
     double altitude;
-    double velocity;
-    double acceleration;
+    struct Vec3d velocity;
+    struct Vec3d acceleration;
 };
 
-int32_t readAccel(AccelGyroMagnetismData* data);
+void zeroState(struct KalmanStateVector *state);
+
+struct Vec3d readAccel(AccelGyroMagnetismData* data);
 int32_t readPressure(BarometerData* data);
 void filterSensors(
     struct KalmanStateVector* oldState,
-    double currentAccel,
+    struct Vec3d currentAccel,
     double currentPressure,
     double dtMillis
 );

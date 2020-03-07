@@ -21,6 +21,7 @@
 #include "FlightPhase.h"
 #include "Data.h"
 #include "AltitudeKalmanFilter.h"
+#include "Vec3d.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -137,9 +138,14 @@ double convertBaroData(int32_t milliG)
     return (double) 44307.69396 * (1 - pow(milliG / SEA_LEVEL_PRESSURE, 0.190284));
 }
 
-double convertAccelData(int32_t milliG)
+struct Vec3d convertAccelData(struct Vec3d milliG)
 {
-    return (double) milliG / 1000 * 9.8; // Milli-g -> g -> m/s
+    struct Vec3d rt;
+    rt.x = (double) milliG.x / 1000 * 9.8; // Milli-g -> g -> m/s
+    rt.y = (double) milliG.y / 1000 * 9.8; // Milli-g -> g -> m/s
+    rt.z = (double) milliG.z / 1000 * 9.8; // Milli-g -> g -> m/s
+    rt.vb = 1;
+    return rt;
 }
 
 
@@ -159,13 +165,13 @@ void parachutesControlPrelaunchRoutine(
     {
         osDelayUntil(&prevWakeTime, MONITOR_FOR_PARACHUTES_PERIOD);
 
-        int32_t currentAccel = readAccel(accelGyroMagnetismData);
+        struct Vec3d currentAccel = readAccel(accelGyroMagnetismData);
         int32_t currentPressure = readPressure(barometerData);
 
         state->altitude = convertBaroData(currentPressure);
         state->acceleration = convertAccelData(currentAccel);
         //TODO figure this out for now just assign zero
-        state->velocity = 0;
+        state->velocity = vectorZero();
 
         //TODO take this check out. This is to force the system into
         //     burn after 10 cycles
@@ -207,16 +213,16 @@ void parachutesControlBurnRoutine(
             return;
         }
 
-        int32_t currentAccel = readAccel(accelGyroMagnetismData);
+        struct Vec3d currentAccel = readAccel(accelGyroMagnetismData);
         int32_t currentPressure = readPressure(barometerData);
 
-        if (currentAccel == -1 || currentPressure == -1)
+        if (currentAccel.vb == -1 || currentPressure == -1)
         {
             // failed to read values
             continue;
         }
 
-        double convertedAccel = convertAccelData(currentAccel);
+        struct Vec3d convertedAccel = convertAccelData(currentAccel);
         double convertedPressure = convertBaroData(currentPressure);
 
         filterSensors(state, convertedAccel, convertedPressure, MONITOR_FOR_PARACHUTES_PERIOD);
@@ -248,16 +254,16 @@ void parachutesControlCoastRoutine(
 
         elapsedTime += MONITOR_FOR_PARACHUTES_PERIOD;
 
-        int32_t currentAccel = readAccel(accelGyroMagnetismData);
+        struct Vec3d currentAccel = readAccel(accelGyroMagnetismData);
         int32_t currentPressure = readPressure(barometerData);
 
-        if (currentAccel == -1 || currentPressure == -1)
+        if (currentAccel.vb == -1 || currentPressure == -1)
         {
             // failed to read values
             continue;
         }
 
-        double convertedAccel = convertAccelData(currentAccel);
+        struct Vec3d convertedAccel = convertAccelData(currentAccel);
         double convertedPressure = convertBaroData(currentPressure);
 
         double oldAltitude = state->altitude;
@@ -307,16 +313,19 @@ void parachutesControlDrogueDescentRoutine(
 
         elapsedTime += MONITOR_FOR_PARACHUTES_PERIOD;
 
-        int32_t currentAccel = readAccel(accelGyroMagnetismData);
+        struct Vec3d currentAccel = readAccel(accelGyroMagnetismData);
         int32_t currentPressure = readPressure(barometerData);
 
-        if (currentAccel == -1 || currentPressure == -1)
+        if (currentAccel.vb == -1 || currentPressure == -1)
         {
             // failed to read values
             continue;
         }
 
-        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        struct Vec3d convertedAccel = convertAccelData(currentAccel);
+        double convertedPressure = convertBaroData(currentPressure);
+
+        filterSensors(state, convertedAccel, convertedPressure, MONITOR_FOR_PARACHUTES_PERIOD);
 
         // detect 4600 ft above sea level and eject main parachute
         if (detectMainDeploymentAltitude(kalmanFilterState) || elapsedTime > KALMAN_FILTER_MAIN_TIMEOUT)
@@ -340,10 +349,10 @@ void parachutesControlDrogueDescentRoutine(
 void parachutesControlTask(void const* arg)
 {
     ParachutesControlData* data = (ParachutesControlData*) arg;
+    struct KalmanStateVector init_state;
     struct KalmanStateVector state;
-    state.acceleration = 0.0f;
-    state.velocity = 0.0f;
-    state.altitude = 0.0f;
+    zeroState(&init_state);
+    zeroState(&state);
 
     for (;;)
     {
@@ -354,11 +363,13 @@ void parachutesControlTask(void const* arg)
                 parachutesControlPrelaunchRoutine(
                     data->accelGyroMagnetismData_,
                     data->barometerData_,
-                    &state
+                    &init_state
                 );
                 break;
 
             case BURN:
+                //Have to set the initial state so kalman filter works properly
+                state = init_state;
                 parachutesControlBurnRoutine(
                     data->accelGyroMagnetismData_,
                     data->barometerData_,

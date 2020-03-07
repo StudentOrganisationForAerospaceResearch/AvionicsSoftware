@@ -17,6 +17,7 @@
 
 #include "AltitudeKalmanFilter.h"
 #include "Data.h"
+#include "Vec3d.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -48,26 +49,38 @@ static const double KALMAN_GAIN[][2] =
  * Returns:
  *   accelMagnitude	- (int32_t) The magnitude of the read acceleration.
  */
-int32_t readAccel(AccelGyroMagnetismData* data)
+//int32_t readAccel(AccelGyroMagnetismData* data)
+struct Vec3d readAccel(AccelGyroMagnetismData* data)
 {
+    struct Vec3d accel;
     if (osMutexWait(data->mutex_, 0) != osOK)
     {
-        return -1;
+        accel.vb = -1;
+        return accel;
     }
 
-    int32_t accelX = data->accelX_;
-    int32_t accelY = data->accelY_;
-    int32_t accelZ = data->accelZ_;
+    accel.x = data->accelX_;
+    accel.y = data->accelY_;
+    accel.z = data->accelZ_;
     osMutexRelease(data->mutex_);
 
-    int32_t accelMagnitude =
-        sqrt(
-            accelX * accelX +
-            accelY * accelY +
-            accelZ * accelZ
-        );
+    accel.vb = 1;
+    return accel;
 
-    return accelMagnitude;
+    // TODO Take out after everything is finalized
+//    int32_t accelX = data->accelX_;
+//    int32_t accelY = data->accelY_;
+//    int32_t accelZ = data->accelZ_;
+//    osMutexRelease(data->mutex_);
+
+//    int32_t accelMagnitude =
+//        sqrt(
+//            accelX * accelX +
+//            accelY * accelY +
+//            accelZ * accelZ
+//        );
+
+//    return accelMagnitude;
 }
 
 /**
@@ -92,6 +105,13 @@ int32_t readPressure(BarometerData* data)
     return (int32_t)pressure;
 }
 
+void zeroState(struct KalmanStateVector *state)
+{
+    state->altitude = 0;
+    state->velocity = vectorZero();
+    state->acceleration = vectorZero();
+}
+
 /**
  * Takes an old state vector and current state measurements and
  * converts them into a prediction of the rocket's current state.
@@ -108,7 +128,7 @@ int32_t readPressure(BarometerData* data)
  */
 void filterSensors(
     struct KalmanStateVector* state,
-    double currentAccel,
+    struct Vec3d currentAccel,
     double currentAlt,
     double dtMillis
 )
@@ -129,21 +149,26 @@ void filterSensors(
 
     // Calculate the difference between the new measurements and the old state
     double baroDifference =  currentAlt - state->altitude;
-    double accelDifference = currentAccel - state->acceleration;
+    struct Vec3d accelDifference = vectorSub(currentAccel, state->acceleration);
 
     // Minimize the chi2 error by means of the Kalman gain matrix
-    // TODO condense back down into one liner
-    double tmpAlt = state->altitude;
-    double tmpBaroDiff = KALMAN_GAIN[2][0] * baroDifference;
-    double tmpAccelDiff = KALMAN_GAIN[2][1] * accelDifference;
-    newState.altitude = tmpAlt + tmpBaroDiff + tmpAccelDiff;
+//    newState.altitude = newState.altitude + KALMAN_GAIN[0][0] * baroDifference + KALMAN_GAIN[0][1] * accelDifference;
+//    newState.velocity = newState.velocity + KALMAN_GAIN[1][0] * baroDifference + KALMAN_GAIN[1][1] * accelDifference;
+//    newState.acceleration = newState.velocity + KALMAN_GAIN[2][0] * baroDifference + KALMAN_GAIN[2][1] * accelDifference;
 
+    // TODO condense back down into one liner
+    double tmpBaroDiff = KALMAN_GAIN[0][0] * baroDifference;
+    struct Vec3d tmpAccelDiff = vectorMultScalar(KALMAN_GAIN[0][1], accelDifference);
+    newState.altitude = state->altitude + tmpBaroDiff + vectorMagnitude(tmpAccelDiff);
+
+    // TODO implement velocity when we finish its calculations for now just return old state
+    newState.velocity = state->velocity;
     //newState.velocity = newState.velocity + KALMAN_GAIN[1][0] * baroDifference + KALMAN_GAIN[1][1] * accelDifference;
 
     // TODO condense back down into one liner
-    // newState.acceleration = newState.velocity + KALMAN_GAIN[2][0] * baroDifference + KALMAN_GAIN[2][1] * accelDifference;
-    double tmpAccel = state->acceleration;
-    newState.acceleration = tmpAccel + tmpBaroDiff + tmpAccelDiff;
+    tmpBaroDiff = KALMAN_GAIN[2][0] * baroDifference;
+    tmpAccelDiff = vectorMultScalar(KALMAN_GAIN[2][1], accelDifference);
+    newState.acceleration = vectorUniformScale(tmpBaroDiff, vectorAdd(state->acceleration, tmpAccelDiff));
 
     *state = newState;
 }
