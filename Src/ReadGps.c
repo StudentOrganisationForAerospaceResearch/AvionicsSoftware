@@ -51,7 +51,7 @@ void readGpsTask(void const* arg)
                     {
                         double latitude = (atof(gps_item)); // DDMM.MMMMMM
                         data->latitude_.degrees_ = (int32_t) latitude / 100; // First 2 numbers are the latitude degrees
-                        data->latitude_.minutes_ = (uint32_t) ((latitude - data->latitude_.degrees_ * 100) * 100000); // Latitude minutes is multplied by 100000
+                        data->latitude_.minutes_ = (int32_t) ((latitude - data->latitude_.degrees_ * 100) * 100000); // Latitude minutes is multplied by 100000
                         break;
                     }
 
@@ -74,7 +74,7 @@ void readGpsTask(void const* arg)
                     {
                         double longitude = (atof(gps_item)); // DDMM.MMMMMM
                         data->longitude_.degrees_ = (int32_t) longitude / 100; // First 2 numbers are the longitude degrees
-                        data->longitude_.minutes_ = (uint32_t) ((longitude - data->longitude_.degrees_ * 100) * 100000); // Longitude minutes is multplied by 100000
+                        data->longitude_.minutes_ = (int32_t) ((longitude - data->longitude_.degrees_ * 100) * 100000); // Longitude minutes is multplied by 100000
                         break;
                     }
 
