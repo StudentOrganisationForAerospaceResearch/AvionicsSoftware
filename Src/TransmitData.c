@@ -7,6 +7,7 @@
 #include "FlightPhase.h"
 #include "Data.h"
 
+CRC_HandleTypeDef hcrc;
 static const int TRANSMIT_DATA_PERIOD = 500;
 
 static const int8_t IMU_HEADER_BYTE = 0x31;
@@ -18,7 +19,16 @@ static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x36;
 static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38;
 static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 
-#define IMU_SERIAL_MSG_SIZE (41)
+#define START_FLAG (0xF0)
+#define END_FLAG (0XF0)
+#define F0_ESCAPE (0xF0)
+#define F0_CHAR1 (0xF1)
+#define F0_CHAR2 (0xF2)
+#define F1_ESCAPE (0xF1)
+#define F1_CHAR1 (0xF1)
+#define F1_CHAR2 (0xF3)
+#define FLAGS_AND_CRC_SIZE (6)
+#define IMU_SERIAL_MSG_SIZE (37)
 #define BAROMETER_SERIAL_MSG_SIZE (13)
 #define GPS_SERIAL_MSG_SIZE (21)
 #define OXIDIZER_TANK_SERIAL_MSG_SIZE (9)
@@ -26,6 +36,36 @@ static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 #define FLIGHT_PHASE_SERIAL_MSG_SIZE (6)
 
 static const uint8_t UART_TIMEOUT = 100;
+
+//Encodes a message composed of data with a header and ender flag, uses byte stuffing to replace instances of overlaps.
+//Finally generates and adds a 32 bit crc at the end based on the buffer (**not the message, but the buffer with flags).
+void Encode(uint8_t* message, int message_length, uint8_t* buffer)
+{
+	int bufferindex = 1;
+	buffer[0] = START_FLAG;
+	for (int i = 0; i < message_length; i++)
+	{
+		//If the byte is F0, replace with F1F2
+		if (message[i] == F0_ESCAPE)
+		{
+			buffer[bufferindex++] = F0_CHAR1;
+			buffer[bufferindex++] = F0_CHAR2;
+		}
+		//If the byte is F1, replace with F1F3
+		else if (message[i] == F1_ESCAPE)
+		{
+			buffer[bufferindex++] = F1_CHAR1;
+			buffer[bufferindex++] = F1_CHAR2;
+		}
+		else
+		{
+			buffer[bufferindex++] = message[i];
+		}
+	}
+	uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)message,message_length-1);
+	writeInt32ToArray(buffer, bufferindex, crc); bufferindex += 4;
+	buffer[bufferindex] = END_FLAG;
+}
 
 void transmitImuData(AllData* data)
 {
@@ -38,7 +78,7 @@ void transmitImuData(AllData* data)
     int32_t magnetoX = -1;
     int32_t magnetoY = -1;
     int32_t magnetoZ = -1;
-
+    //obtain current values from sensors
     if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
     {
         accelX = data->accelGyroMagnetismData_->accelX_;
@@ -52,30 +92,40 @@ void transmitImuData(AllData* data)
         magnetoZ = data->accelGyroMagnetismData_->magnetoZ_;
         osMutexRelease(data->accelGyroMagnetismData_->mutex_);
     }
-
-    uint8_t buffer[IMU_SERIAL_MSG_SIZE] = {0};
-
-    buffer[0] = IMU_HEADER_BYTE;
-    buffer[1] = IMU_HEADER_BYTE;
-    buffer[2] = IMU_HEADER_BYTE;
-    buffer[3] = IMU_HEADER_BYTE;
-    writeInt32ToArray(&buffer, 4, accelX);
-    writeInt32ToArray(&buffer, 8, accelY);
-    writeInt32ToArray(&buffer, 12, accelZ);
-    writeInt32ToArray(&buffer, 16, gyroX);
-    writeInt32ToArray(&buffer, 20, gyroY);
-    writeInt32ToArray(&buffer, 24, gyroZ);
-    writeInt32ToArray(&buffer, 28, magnetoX);
-    writeInt32ToArray(&buffer, 32, magnetoY);
-    writeInt32ToArray(&buffer, 36, magnetoZ);
-    buffer[IMU_SERIAL_MSG_SIZE - 1] = 0x00;
-
+    //construct the message in the format accelXYZ, gyroXYZ, MagnetoXYZ
+	uint8_t message[IMU_SERIAL_MSG_SIZE] = { 0 };
+	int messageindex = 0;
+	message[0] = IMU_HEADER_BYTE; messageindex++;
+	writeInt32ToArray(message, messageindex, accelX); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, accelY); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, accelZ); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, gyroX); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, gyroY); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, gyroZ); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, magnetoX); 	messageindex += 4;
+	writeInt32ToArray(message, messageindex, magnetoY); 	messageindex += 4;
+	writeInt32ToArray(message, messageindex, magnetoZ); 	messageindex += 4;
+	//Find the final length of the encoded buffer based on number of overlaps
+	int encoded_message_length = IMU_SERIAL_MSG_SIZE;
+	for (int i = 0; i < IMU_SERIAL_MSG_SIZE; i++)
+	{
+		//If byte is F0 or F1, requires two bytes to represent(F1F2 or F1F3), so one additional byte is needed every time F0 or F1 is encountered
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	//Dynamic allocate a buffer because variable length arrays are not allowed
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	//Encode the message and send it to ground systems and radio
+	Encode(message, IMU_SERIAL_MSG_SIZE, buffer);
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
-
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    free(buffer);
 }
 
 void transmitBarometerData(AllData* data)
@@ -279,3 +329,5 @@ void transmitDataTask(void const* arg)
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }
+
+
