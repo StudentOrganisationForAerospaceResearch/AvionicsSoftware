@@ -1,7 +1,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
-
+#include <stdlib.h>
 #include "TransmitData.h"
 #include "Utils.h"
 #include "FlightPhase.h"
@@ -29,11 +29,11 @@ static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 #define F1_CHAR2 (0xF3)
 #define FLAGS_AND_CRC_SIZE (6)
 #define IMU_SERIAL_MSG_SIZE (37)
-#define BAROMETER_SERIAL_MSG_SIZE (13)
-#define GPS_SERIAL_MSG_SIZE (21)
-#define OXIDIZER_TANK_SERIAL_MSG_SIZE (9)
-#define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (9)
-#define FLIGHT_PHASE_SERIAL_MSG_SIZE (6)
+#define BAROMETER_SERIAL_MSG_SIZE (9)
+#define GPS_SERIAL_MSG_SIZE (17)
+#define OXIDIZER_TANK_SERIAL_MSG_SIZE (5)
+#define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (5)
+#define ONE_BYTE_SERIAL_MSG_SIZE (2)
 
 static const uint8_t UART_TIMEOUT = 100;
 
@@ -140,22 +140,29 @@ void transmitBarometerData(AllData* data)
         osMutexRelease(data->barometerData_->mutex_);
     }
 
-    uint8_t buffer[BAROMETER_SERIAL_MSG_SIZE] = {0};
-
-    buffer[0] = BAROMETER_HEADER_BYTE;
-    buffer[1] = BAROMETER_HEADER_BYTE;
-    buffer[2] = BAROMETER_HEADER_BYTE;
-    buffer[3] = BAROMETER_HEADER_BYTE;
-    writeInt32ToArray(&buffer, 4, pressure);
-    writeInt32ToArray(&buffer, 8, temperature);
-    buffer[BAROMETER_SERIAL_MSG_SIZE - 1] = 0x00;
-
+	uint8_t message[BAROMETER_SERIAL_MSG_SIZE] = { 0 };
+	int messageindex = 0;
+	message[0] = BAROMETER_HEADER_BYTE; messageindex++;
+	writeInt32ToArray(message, messageindex, pressure); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, temperature); 		messageindex += 4;
+	int encoded_message_length = BAROMETER_SERIAL_MSG_SIZE;
+	for (int i = 0; i < BAROMETER_SERIAL_MSG_SIZE; i++)
+	{
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	Encode(message, BAROMETER_SERIAL_MSG_SIZE, buffer);
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);	// Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    free(buffer);
 }
 
 void transmitGpsData(AllData* data)
@@ -173,18 +180,25 @@ void transmitGpsData(AllData* data)
         longitude = data->gpsData_->longitude_;
         osMutexRelease(data->gpsData_->mutex_);
     }
+    uint8_t message[GPS_SERIAL_MSG_SIZE] = { 0 };
+    int messageindex = 0;
+	message[0] = GPS_HEADER_BYTE; messageindex++;
+	writeInt32ToArray(message, messageindex, altitude); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, epochTimeMsec); 	messageindex += 4;
+	writeInt32ToArray(message, messageindex, latitude); 		messageindex += 4;
+	writeInt32ToArray(message, messageindex, longitude); 		messageindex += 4;
 
-    uint8_t buffer[GPS_SERIAL_MSG_SIZE] = {0};
-
-    buffer[0] = GPS_HEADER_BYTE;
-    buffer[1] = GPS_HEADER_BYTE;
-    buffer[2] = GPS_HEADER_BYTE;
-    buffer[3] = GPS_HEADER_BYTE;
-    writeInt32ToArray(&buffer, 4, altitude);
-    writeInt32ToArray(&buffer, 8, epochTimeMsec);
-    writeInt32ToArray(&buffer, 12, latitude);
-    writeInt32ToArray(&buffer, 16, longitude);
-    buffer[GPS_SERIAL_MSG_SIZE - 1] = 0x00;
+	int encoded_message_length = GPS_SERIAL_MSG_SIZE;
+	for (int i = 0; i < GPS_SERIAL_MSG_SIZE; i++)
+	{
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	Encode(message, GPS_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -192,6 +206,7 @@ void transmitGpsData(AllData* data)
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    free(buffer);
 }
 
 void transmitOxidizerTankData(AllData* data)
@@ -204,22 +219,29 @@ void transmitOxidizerTankData(AllData* data)
         osMutexRelease(data->oxidizerTankPressureData_->mutex_);
     }
 
-    uint8_t buffer[OXIDIZER_TANK_SERIAL_MSG_SIZE] = {0};
+    uint8_t message[OXIDIZER_TANK_SERIAL_MSG_SIZE] = { 0 };
+    int messageindex = 0;
+	message[0] = OXIDIZER_TANK_HEADER_BYTE; messageindex++;
+	writeInt32ToArray(message, messageindex, oxidizerTankPressure);  		messageindex += 4;
 
-    buffer[0] = OXIDIZER_TANK_HEADER_BYTE;
-    buffer[1] = OXIDIZER_TANK_HEADER_BYTE;
-    buffer[2] = OXIDIZER_TANK_HEADER_BYTE;
-    buffer[3] = OXIDIZER_TANK_HEADER_BYTE;
-    writeInt32ToArray(&buffer, 4, oxidizerTankPressure);
-    buffer[OXIDIZER_TANK_SERIAL_MSG_SIZE - 1] = 0x00;
-
+	int encoded_message_length = OXIDIZER_TANK_SERIAL_MSG_SIZE;
+	for (int i = 0; i < OXIDIZER_TANK_SERIAL_MSG_SIZE; i++)
+	{
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	Encode(message, OXIDIZER_TANK_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
-
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    free(buffer);
 }
 
 void transmitCombustionChamberData(AllData* data)
@@ -232,14 +254,22 @@ void transmitCombustionChamberData(AllData* data)
         osMutexRelease(data->combustionChamberPressureData_->mutex_);
     }
 
-    uint8_t buffer[COMBUSTION_CHAMBER_SERIAL_MSG_SIZE] = {0};
+    uint8_t message[COMBUSTION_CHAMBER_SERIAL_MSG_SIZE] = { 0 };
+    int messageindex = 0;
+	message[0] = COMBUSTION_CHAMBER_HEADER_BYTE; messageindex++;
+	writeInt32ToArray(message, messageindex, combustionChamberPressure);  		messageindex += 4;
 
-    buffer[0] = COMBUSTION_CHAMBER_HEADER_BYTE;
-    buffer[1] = COMBUSTION_CHAMBER_HEADER_BYTE;
-    buffer[2] = COMBUSTION_CHAMBER_HEADER_BYTE;
-    buffer[3] = COMBUSTION_CHAMBER_HEADER_BYTE;
-    writeInt32ToArray(&buffer, 4, combustionChamberPressure);
-    buffer[COMBUSTION_CHAMBER_SERIAL_MSG_SIZE - 1] = 0x00;
+	int encoded_message_length = COMBUSTION_CHAMBER_SERIAL_MSG_SIZE;
+	for (int i = 0; i < COMBUSTION_CHAMBER_SERIAL_MSG_SIZE; i++)
+	{
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	Encode(message, COMBUSTION_CHAMBER_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -247,66 +277,89 @@ void transmitCombustionChamberData(AllData* data)
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    free(buffer);
 }
 
 void transmitFlightPhaseData(AllData* data)
 {
     uint8_t flightPhase = getCurrentFlightPhase();
 
-    uint8_t buffer [] = {FLIGHT_PHASE_HEADER_BYTE,
-                         FLIGHT_PHASE_HEADER_BYTE,
-                         FLIGHT_PHASE_HEADER_BYTE,
-                         FLIGHT_PHASE_HEADER_BYTE,
+    uint8_t message [] = {FLIGHT_PHASE_HEADER_BYTE,
                          flightPhase,
-                         0x00
                         };
 
+	int encoded_message_length = ONE_BYTE_SERIAL_MSG_SIZE;
+	for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
+	{
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	Encode(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    free(buffer);
 }
 
 void transmitInjectionValveStatus()
 {
     uint8_t injectionValveStatus = injectionValveIsOpen;
 
-    uint8_t buffer [] = {INJECTION_VALVE_STATUS_HEADER_BYTE,
-                         INJECTION_VALVE_STATUS_HEADER_BYTE,
-                         INJECTION_VALVE_STATUS_HEADER_BYTE,
-                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+    uint8_t message [] = {INJECTION_VALVE_STATUS_HEADER_BYTE,
                          (uint8_t) ((injectionValveStatus)),
-                         0x00
                         };
-
+    int encoded_message_length = ONE_BYTE_SERIAL_MSG_SIZE;
+	for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
+	{
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	Encode(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+    free(buffer);
 }
 
 void transmitLowerVentValveStatus()
 {
     uint8_t ventValveStatus = lowerVentValveIsOpen;
 
-    uint8_t buffer [] = {LOWER_VALVE_STATUS_HEADER_BYTE,
-                         LOWER_VALVE_STATUS_HEADER_BYTE,
-                         LOWER_VALVE_STATUS_HEADER_BYTE,
-                         LOWER_VALVE_STATUS_HEADER_BYTE,
+    uint8_t message [] = {LOWER_VALVE_STATUS_HEADER_BYTE,
                          (uint8_t) ((ventValveStatus)),
-                         0x00
                         };
-
+    int encoded_message_length = ONE_BYTE_SERIAL_MSG_SIZE;
+	for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
+	{
+		if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+		{
+			encoded_message_length++;
+		}
+	}
+	int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+	uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+	Encode(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+    free(buffer);
 }
 
 void transmitDataTask(void const* arg)
