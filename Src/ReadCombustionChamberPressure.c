@@ -20,10 +20,10 @@
 #define QUEUE_SIZE 5
 
 /* Constants -----------------------------------------------------------------*/
+static const int READ_COMBUSTION_CHAMBER_PRESSURE_PERIOD = 50;
 static const int COMBUSTION_CHAMBER_ADC_POLL_TIMEOUT = 50;
 static const double R1 = 100;    // Resistor values in kOhms
 static const double R2 = 133;
-static const int READ_COMBUSTION_CHAMBER_PRESSURE_PERIOD = 80;
 
 /* Variables -----------------------------------------------------------------*/
 
@@ -56,7 +56,7 @@ void readCombustionChamberPressureTask(void const* arg)
 
         uint16_t adcRead = averageArray(combustionChamberValuesQueue, QUEUE_SIZE);
 
-        vo = 3.3 / pow(2, 12) * adcRead;    // Calculate voltage from the 12 bit ADC reading
+        vo = 3.3 / (pow(2, 12) - 1) * adcRead;    // Calculate voltage from the 12 bit ADC reading
 
         // vi to voltage divider varies between 0.5V-4.5V, but the board requires a voltage less than 3.3V.
         // After the voltage divider, the voltage varies between 0.285V-2.57V

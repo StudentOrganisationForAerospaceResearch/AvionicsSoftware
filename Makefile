@@ -5,7 +5,7 @@
 ######################################
 # target
 ######################################
-TARGET = VanderAvionics
+TARGET = AvionicsSoftware
 
 ######################################
 # building variables

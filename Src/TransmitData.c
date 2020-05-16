@@ -22,7 +22,6 @@
 #define OXIDIZER_TANK_SERIAL_MSG_SIZE (9)
 #define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (9)
 #define FLIGHT_PHASE_SERIAL_MSG_SIZE (6)
-#define VENT_VALVE_STATUS_SERIAL_MSG_SIZE (6)
 
 /* Constants -----------------------------------------------------------------*/
 static const int TRANSMIT_DATA_PERIOD = 500;
@@ -34,6 +33,8 @@ static const int8_t COMBUSTION_CHAMBER_HEADER_BYTE = 0x35;
 static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x36;
 static const int8_t VENT_VALVE_STATUS_HEADER_BYTE = 0x37;
 static const uint8_t UART_TIMEOUT = 100;
+static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38;
+static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 
 /* Variables -----------------------------------------------------------------*/
 
@@ -83,9 +84,9 @@ void transmitImuData(AllData* data)
     writeInt32ToArray(&buffer, 36, magnetoZ);
     buffer[IMU_SERIAL_MSG_SIZE - 1] = 0x00;
 
-    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Launch Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
@@ -113,9 +114,9 @@ void transmitBarometerData(AllData* data)
     writeInt32ToArray(&buffer, 8, temperature);
     buffer[BAROMETER_SERIAL_MSG_SIZE - 1] = 0x00;
 
-    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);	// Launch Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);	// Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
@@ -149,9 +150,9 @@ void transmitGpsData(AllData* data)
     writeInt32ToArray(&buffer, 16, longitude);
     buffer[GPS_SERIAL_MSG_SIZE - 1] = 0x00;
 
-    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Launch Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
@@ -177,9 +178,9 @@ void transmitOxidizerTankData(AllData* data)
     buffer[OXIDIZER_TANK_SERIAL_MSG_SIZE - 1] = 0x00;
 
 
-    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Launch Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
@@ -204,9 +205,9 @@ void transmitCombustionChamberData(AllData* data)
     writeInt32ToArray(&buffer, 4, combustionChamberPressure);
     buffer[COMBUSTION_CHAMBER_SERIAL_MSG_SIZE - 1] = 0x00;
 
-    if (getCurrentFlightPhase() == PRELAUNCH)
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Launch Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
@@ -224,29 +225,49 @@ void transmitFlightPhaseData(AllData* data)
                          0x00
                         };
 
-    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Launch Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
 }
 
-void transmitVentValveStatus()
+void transmitInjectionValveStatus()
 {
-    uint8_t ventValveStatus = ventValveIsOpen;
+    uint8_t injectionValveStatus = injectionValveIsOpen;
 
-    uint8_t buffer [] = {VENT_VALVE_STATUS_HEADER_BYTE,
-                         VENT_VALVE_STATUS_HEADER_BYTE,
-                         VENT_VALVE_STATUS_HEADER_BYTE,
-                         VENT_VALVE_STATUS_HEADER_BYTE,
+    uint8_t buffer [] = {INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         INJECTION_VALVE_STATUS_HEADER_BYTE,
+                         (uint8_t) ((injectionValveStatus)),
+                         0x00
+                        };
+
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
+    {
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
+    }
+
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+}
+
+void transmitLowerVentValveStatus()
+{
+    uint8_t ventValveStatus = lowerVentValveIsOpen;
+
+    uint8_t buffer [] = {LOWER_VALVE_STATUS_HEADER_BYTE,
+                         LOWER_VALVE_STATUS_HEADER_BYTE,
+                         LOWER_VALVE_STATUS_HEADER_BYTE,
+                         LOWER_VALVE_STATUS_HEADER_BYTE,
                          (uint8_t) ((ventValveStatus)),
                          0x00
                         };
 
-    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ABORT))
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Launch Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 
     HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
@@ -267,7 +288,8 @@ void transmitDataTask(void const* arg)
         transmitOxidizerTankData(data);
         transmitCombustionChamberData(data);
         transmitFlightPhaseData(data);
-        transmitVentValveStatus();
+        transmitInjectionValveStatus();
+        transmitLowerVentValveStatus();
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }

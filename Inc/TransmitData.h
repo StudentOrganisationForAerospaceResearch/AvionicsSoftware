@@ -14,8 +14,8 @@
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart1;
 
-extern int ventValveIsOpen;
 extern int injectionValveIsOpen;
+extern int lowerVentValveIsOpen;
 extern uint8_t launchSystemsRxChar;
 
 /* Structs -------------------------------------------------------------------*/

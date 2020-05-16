@@ -35,7 +35,7 @@
 #define MAGENTO_SENSITIVITY 0.14 // Unit is mgauss/LSB
 
 /* Constants -----------------------------------------------------------------*/
-static const int READ_ACCEL_GYRO_MAGNETISM = 20;
+static const int READ_ACCEL_GYRO_MAGNETISM = 25;
 static const int CMD_TIMEOUT = 150;
 
 // Full Commands
