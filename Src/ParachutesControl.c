@@ -8,10 +8,18 @@
 #include "FlightPhase.h"
 #include "Data.h"
 
+#define SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL (1401) // metres
+
 // Pressure at spaceport america in 100*millibars on May 27, 2018
 static const int SEA_LEVEL_PRESSURE = 101421.93903699999; //TODO: THIS NEEDS TO BE UPDATED AND RECORDED ON LAUNCH DAY
-static const int MAIN_DEPLOYMENT_ALTITUDE = 457 + 1401; // Units in meters. Equivalent of 15000 ft + altitude of spaceport america.
-static const int MONITOR_FOR_PARACHUTES_PERIOD = 200;
+
+// Units in meters. Equivalent of 1500 ft + altitude of spaceport america.
+static const int MAIN_DEPLOYMENT_ALTITUDE = 457 + SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL;
+
+static const int MONITOR_FOR_PARACHUTES_PERIOD = 50;
+static const int KALMAN_FILTER_DROGUE_TIMEOUT = 2 * 60 * 1000; // 2 minutes
+static const int KALMAN_FILTER_MAIN_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+static const int PARACHUTE_PULSE_DURATION = 2 * 1000; // 2 seconds
 static const double KALMAN_GAIN[][2] =
 {
     {0.105553059, 0.109271566},
@@ -25,6 +33,8 @@ struct KalmanStateVector
     double velocity;
     double acceleration;
 };
+
+static struct KalmanStateVector kalmanFilterState;
 
 int32_t readAccel(AccelGyroMagnetismData* data)
 {
@@ -123,7 +133,7 @@ struct KalmanStateVector filterSensors(
 int32_t detectApogee(struct KalmanStateVector state)
 {
     // Monitor for when to deploy drogue chute. Simple velocity tolerance, looking for a minimum.
-    if (state.velocity < 25)
+    if (state.velocity < 10)
     {
         return 1;
     }
@@ -156,13 +166,24 @@ int32_t detectMainDeploymentAltitude(struct KalmanStateVector state)
 
 void ejectDrogueParachute()
 {
-    HAL_GPIO_WritePin(DROGUE_PARACHUTE_GPIO_Port, DROGUE_PARACHUTE_Pin, GPIO_PIN_SET);  // high signal causes high current to ignite e-match
+    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_SET);  // high signal causes high current to ignite e-match
+}
+
+void closeDrogueParachute()
+{
+    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_RESET);
 }
 
 void ejectMainParachute()
 {
     HAL_GPIO_WritePin(MAIN_PARACHUTE_GPIO_Port, MAIN_PARACHUTE_Pin, GPIO_PIN_SET);  // high signal causes high current to ignite e-match
 }
+
+void closeMainParachute()
+{
+    HAL_GPIO_WritePin(MAIN_PARACHUTE_GPIO_Port, MAIN_PARACHUTE_Pin, GPIO_PIN_RESET);
+}
+
 
 /**
  * This routine just waits for the current flight phase to get out of PRELAUNCH
@@ -185,8 +206,7 @@ void parachutesControlPrelaunchRoutine()
 
 void parachutesControlBurnRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
-    BarometerData* barometerData,
-    struct KalmanStateVector state
+    BarometerData* barometerData
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -209,7 +229,7 @@ void parachutesControlBurnRoutine(
             continue;
         }
 
-        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        filterSensors(kalmanFilterState, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
     }
 }
 
@@ -221,15 +241,17 @@ void parachutesControlBurnRoutine(
  */
 void parachutesControlCoastRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
-    BarometerData* barometerData,
-    struct KalmanStateVector state
+    BarometerData* barometerData
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
+    uint32_t elapsedTime = 0;
 
     for (;;)
     {
         osDelayUntil(&prevWakeTime, MONITOR_FOR_PARACHUTES_PERIOD);
+
+        elapsedTime += MONITOR_FOR_PARACHUTES_PERIOD;
 
         int32_t currentAccel = readAccel(accelGyroMagnetismData);
         int32_t currentPressure = readPressure(barometerData);
@@ -240,9 +262,9 @@ void parachutesControlCoastRoutine(
             continue;
         }
 
-        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        filterSensors(kalmanFilterState, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
 
-        if (detectApogee(state))
+        if (detectApogee(kalmanFilterState) || elapsedTime > KALMAN_FILTER_DROGUE_TIMEOUT)
         {
             ejectDrogueParachute();
             newFlightPhase(DROGUE_DESCENT);
@@ -258,16 +280,22 @@ void parachutesControlCoastRoutine(
  */
 void parachutesControlDrogueDescentRoutine(
     AccelGyroMagnetismData* accelGyroMagnetismData,
-    BarometerData* barometerData,
-    struct KalmanStateVector state
+    BarometerData* barometerData
 )
 {
     uint32_t prevWakeTime = osKernelSysTick();
+    uint32_t elapsedTime = 0;
 
     for (;;)
     {
         osDelayUntil(&prevWakeTime, MONITOR_FOR_PARACHUTES_PERIOD);
 
+        elapsedTime += MONITOR_FOR_PARACHUTES_PERIOD;
+
+        if (elapsedTime > PARACHUTE_PULSE_DURATION)
+        {
+            closeDrogueParachute();
+        }
 
         int32_t currentAccel = readAccel(accelGyroMagnetismData);
         int32_t currentPressure = readPressure(barometerData);
@@ -278,10 +306,10 @@ void parachutesControlDrogueDescentRoutine(
             continue;
         }
 
-        filterSensors(state, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
+        filterSensors(kalmanFilterState, currentAccel, currentPressure, MONITOR_FOR_PARACHUTES_PERIOD);
 
         // detect 4600 ft above sea level and eject main parachute
-        if (detectMainDeploymentAltitude(state))
+        if (detectMainDeploymentAltitude(kalmanFilterState) || elapsedTime > KALMAN_FILTER_MAIN_TIMEOUT)
         {
             ejectMainParachute();
             newFlightPhase(MAIN_DESCENT);
@@ -290,46 +318,72 @@ void parachutesControlDrogueDescentRoutine(
     }
 }
 
+// this task just ensures the gpios for the parachutes are turned off after 3 seconds
+void parachutesControlMainDescentRoutine()
+{
+    uint32_t prevWakeTime = osKernelSysTick();
+    uint32_t elapsedTime = 0;
+
+    for (;;)
+    {
+        osDelayUntil(&prevWakeTime, MONITOR_FOR_PARACHUTES_PERIOD);
+
+        elapsedTime += MONITOR_FOR_PARACHUTES_PERIOD;
+
+        if (elapsedTime > PARACHUTE_PULSE_DURATION)
+        {
+            closeDrogueParachute();
+            closeMainParachute();
+        }
+    }
+}
+
 void parachutesControlTask(void const* arg)
 {
     ParachutesControlData* data = (ParachutesControlData*) arg;
-    struct KalmanStateVector state;
+    kalmanFilterState.altitude = SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL;
+    kalmanFilterState.velocity = 0;
+    kalmanFilterState.acceleration = 0;
 
     for (;;)
     {
         switch (getCurrentFlightPhase())
         {
             case PRELAUNCH:
+            case ARM:
                 parachutesControlPrelaunchRoutine();
                 break;
 
             case BURN:
                 parachutesControlBurnRoutine(
                     data->accelGyroMagnetismData_,
-                    data->barometerData_,
-                    state
+                    data->barometerData_
                 );
                 break;
 
             case COAST:
                 parachutesControlCoastRoutine(
                     data->accelGyroMagnetismData_,
-                    data->barometerData_,
-                    state
+                    data->barometerData_
                 );
                 break;
 
             case DROGUE_DESCENT:
                 parachutesControlDrogueDescentRoutine(
                     data->accelGyroMagnetismData_,
-                    data->barometerData_,
-                    state
+                    data->barometerData_
                 );
 
                 break;
 
             case MAIN_DESCENT:
-            case ABORT:
+                parachutesControlMainDescentRoutine();
+                break;
+
+            case ABORT_COMMAND_RECEIVED:
+            case ABORT_OXIDIZER_PRESSURE:
+            case ABORT_UNSPECIFIED_REASON:
+            case ABORT_COMMUNICATION_ERROR:
                 // do nothing
                 osDelay(MONITOR_FOR_PARACHUTES_PERIOD);
                 break;

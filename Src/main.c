@@ -1,56 +1,28 @@
-
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
   ******************************************************************************
-  * This notice applies to any and all portions of this file
-  * that are not between comment pairs USER CODE BEGIN and
-  * USER CODE END. Other portions of this file, whether
-  * inserted by the user or by software development tools
-  * are owned by their respective copyright owners.
+  * @attention
   *
-  * Copyright (c) 2019 STMicroelectronics International N.V.
-  * All rights reserved.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without
-  * modification, are permitted, provided that the following conditions are met:
-  *
-  * 1. Redistribution of source code must retain the above copyright notice,
-  *    this list of conditions and the following disclaimer.
-  * 2. Redistributions in binary form must reproduce the above copyright notice,
-  *    this list of conditions and the following disclaimer in the documentation
-  *    and/or other materials provided with the distribution.
-  * 3. Neither the name of STMicroelectronics nor the names of other
-  *    contributors to this software may be used to endorse or promote products
-  *    derived from this software without specific written permission.
-  * 4. This software, including modifications and/or derivative works of this
-  *    software, must execute solely and exclusively on microcontroller or
-  *    microprocessor devices manufactured by or for STMicroelectronics.
-  * 5. Redistribution and use of this software other than as permitted under
-  *    this license is void and will automatically terminate your rights under
-  *    this license.
-  *
-  * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT
-  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-  * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
-  * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT
-  * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
-  * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 
+/* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdlib.h>
 #include "ReadAccelGyroMagnetism.h"
@@ -66,11 +38,27 @@
 #include "AbortPhase.h"
 #include "Data.h"
 #include "FlightPhase.h"
+#include "ValveControl.h"
 /* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
+ADC_HandleTypeDef hadc3;
 
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
@@ -79,10 +67,8 @@ SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-UART_HandleTypeDef huart3;
 
 osThreadId defaultTaskHandle;
-
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 static osThreadId readAccelGyroMagnetismTaskHandle;
@@ -101,12 +87,20 @@ static osThreadId transmitDataTaskHandle;
 static osThreadId abortPhaseTaskHandle;
 
 static const uint8_t LAUNCH_CMD_BYTE = 0x20;
+static const uint8_t ARM_CMD_BYTE = 0x21;
 static const uint8_t ABORT_CMD_BYTE = 0x2F;
 static const uint8_t RESET_AVIONICS_CMD_BYTE = 0x4F;
+static const uint8_t HEARTBEAT_BYTE = 0x46;
+static const uint8_t OPEN_INJECTION_VALVE = 0x2A;
+static const uint8_t CLOSE_INJECTION_VALVE = 0x2B;
+
 uint8_t launchSystemsRxChar = 0;
 uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
+
+const int32_t HEARTBEAT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
+int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmergencyShutoff thread
 
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
 static const int FLIGHT_PHASE_BLINK_FREQ = 100;
@@ -123,7 +117,7 @@ static void MX_SPI2_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
-static void MX_USART3_UART_Init(void);
+static void MX_ADC3_Init(void);
 void StartDefaultTask(void const* argument);
 
 /* USER CODE BEGIN PFP */
@@ -131,21 +125,22 @@ void StartDefaultTask(void const* argument);
 
 /* USER CODE END PFP */
 
+/* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
-  *
-  * @retval None
+  * @retval int
   */
 int main(void)
 {
     /* USER CODE BEGIN 1 */
     /* USER CODE END 1 */
 
-    /* MCU Configuration----------------------------------------------------------*/
+
+    /* MCU Configuration--------------------------------------------------------*/
 
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
@@ -171,9 +166,9 @@ int main(void)
     MX_USART1_UART_Init();
     MX_USART2_UART_Init();
     MX_UART4_Init();
-    MX_USART3_UART_Init();
+    MX_ADC3_Init();
     /* USER CODE BEGIN 2 */
-    // data primitive structs
+    // Data primitive structs
     AccelGyroMagnetismData* accelGyroMagnetismData =
         malloc(sizeof(AccelGyroMagnetismData));
     BarometerData* barometerData =
@@ -217,7 +212,7 @@ int main(void)
     oxidizerTankPressureData->mutex_ = osMutexCreate(osMutex(OXIDIZER_TANK_PRESSURE_DATA_MUTEX));
     oxidizerTankPressureData->pressure_ = -17;
 
-    // data containers
+    // Data containers
     AllData* allData =
         malloc(sizeof(AllData));
     allData->accelGyroMagnetismData_ = accelGyroMagnetismData;
@@ -245,10 +240,11 @@ int main(void)
     /* start timers, add new ones, ... */
     HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
 
-    // Turn on fan
-    HAL_GPIO_WritePin(FAN_CTRL_GPIO_Port, FAN_CTRL_Pin, 1);
-
     /* USER CODE END RTOS_TIMERS */
+
+    /* USER CODE BEGIN RTOS_QUEUES */
+    /* add queues, ... */
+    /* USER CODE END RTOS_QUEUES */
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
@@ -368,11 +364,6 @@ int main(void)
         osThreadCreate(osThread(abortPhaseThread), NULL);
     /* USER CODE END RTOS_THREADS */
 
-    /* USER CODE BEGIN RTOS_QUEUES */
-    /* add queues, ... */
-    /* USER CODE END RTOS_QUEUES */
-
-
     /* Start scheduler */
     osKernelStart();
 
@@ -395,7 +386,6 @@ int main(void)
     free(allData);
     free(parachutesControlData);
     /* USER CODE END 3 */
-
 }
 
 /**
@@ -404,17 +394,14 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-    RCC_OscInitTypeDef RCC_OscInitStruct;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct;
-
-    /**Configure the main internal regulator output voltage
+    /** Configure the main internal regulator output voltage
     */
     __HAL_RCC_PWR_CLK_ENABLE();
-
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-    /**Initializes the CPU, AHB and APB busses clocks
+    /** Initializes the CPU, AHB and APB busses clocks
     */
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -427,10 +414,10 @@ void SystemClock_Config(void)
 
     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
 
-    /**Initializes the CPU, AHB and APB busses clocks
+    /** Initializes the CPU, AHB and APB busses clocks
     */
     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
                                   | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
@@ -441,28 +428,28 @@ void SystemClock_Config(void)
 
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
-
-    /**Configure the Systick interrupt time
-    */
-    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
-
-    /**Configure the Systick
-    */
-    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-
-    /* SysTick_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
-/* ADC1 init function */
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_ADC1_Init(void)
 {
 
-    ADC_ChannelConfTypeDef sConfig;
+    /* USER CODE BEGIN ADC1_Init 0 */
 
-    /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+    /* USER CODE END ADC1_Init 0 */
+
+    ADC_ChannelConfTypeDef sConfig = {0};
+
+    /* USER CODE BEGIN ADC1_Init 1 */
+
+    /* USER CODE END ADC1_Init 1 */
+    /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
     */
     hadc1.Instance = ADC1;
     hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
@@ -479,10 +466,10 @@ static void MX_ADC1_Init(void)
 
     if (HAL_ADC_Init(&hadc1) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
 
-    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+    /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
     */
     sConfig.Channel = ADC_CHANNEL_8;
     sConfig.Rank = 1;
@@ -490,18 +477,33 @@ static void MX_ADC1_Init(void)
 
     if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN ADC1_Init 2 */
+
+    /* USER CODE END ADC1_Init 2 */
 
 }
 
-/* ADC2 init function */
+/**
+  * @brief ADC2 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_ADC2_Init(void)
 {
 
-    ADC_ChannelConfTypeDef sConfig;
+    /* USER CODE BEGIN ADC2_Init 0 */
 
-    /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+    /* USER CODE END ADC2_Init 0 */
+
+    ADC_ChannelConfTypeDef sConfig = {0};
+
+    /* USER CODE BEGIN ADC2_Init 1 */
+
+    /* USER CODE END ADC2_Init 1 */
+    /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
     */
     hadc2.Instance = ADC2;
     hadc2.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
@@ -518,10 +520,10 @@ static void MX_ADC2_Init(void)
 
     if (HAL_ADC_Init(&hadc2) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
 
-    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+    /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
     */
     sConfig.Channel = ADC_CHANNEL_9;
     sConfig.Rank = 1;
@@ -529,15 +531,84 @@ static void MX_ADC2_Init(void)
 
     if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN ADC2_Init 2 */
+
+    /* USER CODE END ADC2_Init 2 */
 
 }
 
-/* SPI1 init function */
+/**
+  * @brief ADC3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC3_Init(void)
+{
+
+    /* USER CODE BEGIN ADC3_Init 0 */
+
+    /* USER CODE END ADC3_Init 0 */
+
+    ADC_ChannelConfTypeDef sConfig = {0};
+
+    /* USER CODE BEGIN ADC3_Init 1 */
+
+    /* USER CODE END ADC3_Init 1 */
+    /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+    */
+    hadc3.Instance = ADC3;
+    hadc3.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+    hadc3.Init.Resolution = ADC_RESOLUTION_12B;
+    hadc3.Init.ScanConvMode = DISABLE;
+    hadc3.Init.ContinuousConvMode = ENABLE;
+    hadc3.Init.DiscontinuousConvMode = DISABLE;
+    hadc3.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+    hadc3.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+    hadc3.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+    hadc3.Init.NbrOfConversion = 1;
+    hadc3.Init.DMAContinuousRequests = DISABLE;
+    hadc3.Init.EOCSelection = ADC_EOC_SEQ_CONV;
+
+    if (HAL_ADC_Init(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+    */
+    sConfig.Channel = ADC_CHANNEL_10;
+    sConfig.Rank = 1;
+    sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+
+    if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    /* USER CODE BEGIN ADC3_Init 2 */
+
+    /* USER CODE END ADC3_Init 2 */
+
+}
+
+/**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_SPI1_Init(void)
 {
 
+    /* USER CODE BEGIN SPI1_Init 0 */
+
+    /* USER CODE END SPI1_Init 0 */
+
+    /* USER CODE BEGIN SPI1_Init 1 */
+
+    /* USER CODE END SPI1_Init 1 */
     /* SPI1 parameter configuration*/
     hspi1.Instance = SPI1;
     hspi1.Init.Mode = SPI_MODE_MASTER;
@@ -554,15 +625,30 @@ static void MX_SPI1_Init(void)
 
     if (HAL_SPI_Init(&hspi1) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN SPI1_Init 2 */
+
+    /* USER CODE END SPI1_Init 2 */
 
 }
 
-/* SPI2 init function */
+/**
+  * @brief SPI2 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_SPI2_Init(void)
 {
 
+    /* USER CODE BEGIN SPI2_Init 0 */
+
+    /* USER CODE END SPI2_Init 0 */
+
+    /* USER CODE BEGIN SPI2_Init 1 */
+
+    /* USER CODE END SPI2_Init 1 */
     /* SPI2 parameter configuration*/
     hspi2.Instance = SPI2;
     hspi2.Init.Mode = SPI_MODE_MASTER;
@@ -579,15 +665,30 @@ static void MX_SPI2_Init(void)
 
     if (HAL_SPI_Init(&hspi2) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN SPI2_Init 2 */
+
+    /* USER CODE END SPI2_Init 2 */
 
 }
 
-/* SPI3 init function */
+/**
+  * @brief SPI3 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_SPI3_Init(void)
 {
 
+    /* USER CODE BEGIN SPI3_Init 0 */
+
+    /* USER CODE END SPI3_Init 0 */
+
+    /* USER CODE BEGIN SPI3_Init 1 */
+
+    /* USER CODE END SPI3_Init 1 */
     /* SPI3 parameter configuration*/
     hspi3.Instance = SPI3;
     hspi3.Init.Mode = SPI_MODE_MASTER;
@@ -604,17 +705,32 @@ static void MX_SPI3_Init(void)
 
     if (HAL_SPI_Init(&hspi3) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN SPI3_Init 2 */
+
+    /* USER CODE END SPI3_Init 2 */
 
 }
 
-/* UART4 init function */
+/**
+  * @brief UART4 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_UART4_Init(void)
 {
 
+    /* USER CODE BEGIN UART4_Init 0 */
+
+    /* USER CODE END UART4_Init 0 */
+
+    /* USER CODE BEGIN UART4_Init 1 */
+
+    /* USER CODE END UART4_Init 1 */
     huart4.Instance = UART4;
-    huart4.Init.BaudRate = 4800;
+    huart4.Init.BaudRate = 9600;
     huart4.Init.WordLength = UART_WORDLENGTH_8B;
     huart4.Init.StopBits = UART_STOPBITS_1;
     huart4.Init.Parity = UART_PARITY_NONE;
@@ -624,17 +740,32 @@ static void MX_UART4_Init(void)
 
     if (HAL_UART_Init(&huart4) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN UART4_Init 2 */
+
+    /* USER CODE END UART4_Init 2 */
 
 }
 
-/* USART1 init function */
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_USART1_UART_Init(void)
 {
 
+    /* USER CODE BEGIN USART1_Init 0 */
+
+    /* USER CODE END USART1_Init 0 */
+
+    /* USER CODE BEGIN USART1_Init 1 */
+
+    /* USER CODE END USART1_Init 1 */
     huart1.Instance = USART1;
-    huart1.Init.BaudRate = 4800;
+    huart1.Init.BaudRate = 9600;
     huart1.Init.WordLength = UART_WORDLENGTH_8B;
     huart1.Init.StopBits = UART_STOPBITS_1;
     huart1.Init.Parity = UART_PARITY_NONE;
@@ -644,15 +775,30 @@ static void MX_USART1_UART_Init(void)
 
     if (HAL_UART_Init(&huart1) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN USART1_Init 2 */
+
+    /* USER CODE END USART1_Init 2 */
 
 }
 
-/* USART2 init function */
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_USART2_UART_Init(void)
 {
 
+    /* USER CODE BEGIN USART2_Init 0 */
+
+    /* USER CODE END USART2_Init 0 */
+
+    /* USER CODE BEGIN USART2_Init 1 */
+
+    /* USER CODE END USART2_Init 1 */
     huart2.Instance = USART2;
     huart2.Init.BaudRate = 9600;
     huart2.Init.WordLength = UART_WORDLENGTH_8B;
@@ -664,42 +810,23 @@ static void MX_USART2_UART_Init(void)
 
     if (HAL_UART_Init(&huart2) != HAL_OK)
     {
-        _Error_Handler(__FILE__, __LINE__);
+        Error_Handler();
     }
+
+    /* USER CODE BEGIN USART2_Init 2 */
+
+    /* USER CODE END USART2_Init 2 */
 
 }
 
-/* USART3 init function */
-static void MX_USART3_UART_Init(void)
-{
-
-    huart3.Instance = USART3;
-    huart3.Init.BaudRate = 4800;
-    huart3.Init.WordLength = UART_WORDLENGTH_8B;
-    huart3.Init.StopBits = UART_STOPBITS_1;
-    huart3.Init.Parity = UART_PARITY_NONE;
-    huart3.Init.Mode = UART_MODE_TX_RX;
-    huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    huart3.Init.OverSampling = UART_OVERSAMPLING_16;
-
-    if (HAL_UART_Init(&huart3) != HAL_OK)
-    {
-        _Error_Handler(__FILE__, __LINE__);
-    }
-
-}
-
-/** Configure pins as
-        * Analog
-        * Input
-        * Output
-        * EVENT_OUT
-        * EXTI
-*/
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_GPIO_Init(void)
 {
-
-    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
 
     /* GPIO Ports Clock Enable */
     __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -709,30 +836,24 @@ static void MX_GPIO_Init(void)
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOC, UNUSED_PIN_Pin | UNUSED_PINC14_Pin | UNUSED_PINC15_Pin | UNUSED_PINC0_Pin
-                      | UNUSED_PINC1_Pin | UNUSED_PINC2_Pin | MAG_CS_Pin | LED1_Pin
-                      | BARO_CS_Pin | DROGUE_PARACHUTE_Pin | MAIN_PARACHUTE_Pin | UNUSED_PINC9_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin | PROPULSION_3_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin | UNUSED_PINA8_Pin | UNUSED_PINA9_Pin | UNUSED_PINA10_Pin
-                      | VENT_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOC, MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | MUX_POWER_TEMP_Pin
+                      | MAIN_PARACHUTE_Pin | DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOB, LED2_Pin | UNUSED_PINB12_Pin | UNUSED_PINB4_Pin | FAN_CTRL_Pin
-                      | UNUSED_PINB8_Pin | UNUSED_PINB9_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, LED2_Pin | ACCEL_CS_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(SD2_CS_GPIO_Port, SD2_CS_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LOWER_VENT_VALVE_GPIO_Port, LOWER_VENT_VALVE_Pin, GPIO_PIN_RESET);
 
-    /*Configure GPIO pins : UNUSED_PIN_Pin UNUSED_PINC14_Pin UNUSED_PINC15_Pin UNUSED_PINC0_Pin
-                             UNUSED_PINC1_Pin UNUSED_PINC2_Pin MAG_CS_Pin LED1_Pin
-                             BARO_CS_Pin DROGUE_PARACHUTE_Pin MAIN_PARACHUTE_Pin UNUSED_PINC9_Pin */
-    GPIO_InitStruct.Pin = UNUSED_PIN_Pin | UNUSED_PINC14_Pin | UNUSED_PINC15_Pin | UNUSED_PINC0_Pin
-                          | UNUSED_PINC1_Pin | UNUSED_PINC2_Pin | MAG_CS_Pin | LED1_Pin
-                          | BARO_CS_Pin | DROGUE_PARACHUTE_Pin | MAIN_PARACHUTE_Pin | UNUSED_PINC9_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    /*Configure GPIO pins : PC13 PC14 PC15 PC1
+                             PC2 */
+    GPIO_InitStruct.Pin = GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15 | GPIO_PIN_1
+                          | GPIO_PIN_2;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     /*Configure GPIO pin : LAUNCH_Pin */
@@ -741,30 +862,49 @@ static void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(LAUNCH_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : IMU_CS_Pin UNUSED_PINA8_Pin UNUSED_PINA9_Pin UNUSED_PINA10_Pin
-                             VENT_VALVE_Pin INJECTION_VALVE_Pin SD1_CS_Pin */
-    GPIO_InitStruct.Pin = IMU_CS_Pin | UNUSED_PINA8_Pin | UNUSED_PINA9_Pin | UNUSED_PINA10_Pin
-                          | VENT_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin;
+    /*Configure GPIO pins : IMU_CS_Pin PROPULSION_3_VALVE_Pin INJECTION_VALVE_Pin SD1_CS_Pin */
+    GPIO_InitStruct.Pin = IMU_CS_Pin | PROPULSION_3_VALVE_Pin | INJECTION_VALVE_Pin | SD1_CS_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : LED2_Pin UNUSED_PINB12_Pin UNUSED_PINB4_Pin FAN_CTRL_Pin
-                             UNUSED_PINB8_Pin UNUSED_PINB9_Pin */
-    GPIO_InitStruct.Pin = LED2_Pin | UNUSED_PINB12_Pin | UNUSED_PINB4_Pin | FAN_CTRL_Pin
-                          | UNUSED_PINB8_Pin | UNUSED_PINB9_Pin;
+    /*Configure GPIO pins : MAG_CS_Pin LED1_Pin BARO_CS_Pin MUX_POWER_TEMP_Pin
+                             MAIN_PARACHUTE_Pin DROGUE_PARACHUTE_TEMP_Pin */
+    GPIO_InitStruct.Pin = MAG_CS_Pin | LED1_Pin | BARO_CS_Pin | MUX_POWER_TEMP_Pin
+                          | MAIN_PARACHUTE_Pin | DROGUE_PARACHUTE_TEMP_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : LED2_Pin ACCEL_CS_Pin */
+    GPIO_InitStruct.Pin = LED2_Pin | ACCEL_CS_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : SD2_CS_Pin */
-    GPIO_InitStruct.Pin = SD2_CS_Pin;
+    /*Configure GPIO pins : PB10 PB11 PB4 PB5
+                             PB8 PB9 */
+    GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_4 | GPIO_PIN_5
+                          | GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : PA8 PA9 PA10 */
+    GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : LOWER_VENT_VALVE_Pin */
+    GPIO_InitStruct.Pin = LOWER_VENT_VALVE_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(SD2_CS_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(LOWER_VENT_VALVE_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -780,7 +920,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
     {
         if (launchSystemsRxChar == LAUNCH_CMD_BYTE)
         {
-            launchCmdReceived = 1;
+            if (ARM == getCurrentFlightPhase())
+            {
+                launchCmdReceived++;
+            }
+        }
+        else if (launchSystemsRxChar == ARM_CMD_BYTE)
+        {
+            if (PRELAUNCH == getCurrentFlightPhase())
+            {
+                newFlightPhase(ARM);
+            }
         }
         else if (launchSystemsRxChar == ABORT_CMD_BYTE)
         {
@@ -789,6 +939,24 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         else if (launchSystemsRxChar == RESET_AVIONICS_CMD_BYTE)
         {
             resetAvionicsCmdReceived = 1;
+        }
+        else if (launchSystemsRxChar == HEARTBEAT_BYTE)
+        {
+            heartbeatTimer = HEARTBEAT_TIMEOUT;
+        }
+        else if (launchSystemsRxChar == OPEN_INJECTION_VALVE)
+        {
+            if (IS_ABORT_PHASE)
+            {
+                openInjectionValve();
+            }
+        }
+        else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE)
+        {
+            if (IS_ABORT_PHASE)
+            {
+                closeInjectionValve();
+            }
         }
     }
 
@@ -804,9 +972,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const* argument)
 {
-
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
+    HAL_GPIO_WritePin(MUX_POWER_TEMP_GPIO_Port, MUX_POWER_TEMP_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, 0);
 
     for (;;)
@@ -855,11 +1023,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 
 /**
   * @brief  This function is executed in case of error occurrence.
-  * @param  file: The file name as string.
-  * @param  line: The line in file as a number.
   * @retval None
   */
-void _Error_Handler(char* file, int line)
+void Error_Handler(void)
 {
     /* USER CODE BEGIN Error_Handler_Debug */
     /* User can add his own implementation to report the HAL error return state */
@@ -886,13 +1052,5 @@ void assert_failed(uint8_t* file, uint32_t line)
     /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
