@@ -42,4 +42,3 @@ extern osMutexId flightPhaseMutex;
 void newFlightPhase(FlightPhase newPhase);
 FlightPhase getCurrentFlightPhase();
 void resetFlightPhase();
-
