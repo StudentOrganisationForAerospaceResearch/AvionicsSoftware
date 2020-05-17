@@ -10,13 +10,13 @@
 
 /* Macros --------------------------------------------------------------------*/
 
+/* Structs -------------------------------------------------------------------*/
+
 /* Externs -------------------------------------------------------------------*/
 extern UART_HandleTypeDef huart1;
 extern uint8_t launchCmdReceived;
 extern uint8_t systemIsArmed;
 extern uint8_t pulseVentValveRequested;
-
-/* Structs -------------------------------------------------------------------*/
 
 /* Prototypes ----------------------------------------------------------------*/
 void engineControlTask(void const* arg);

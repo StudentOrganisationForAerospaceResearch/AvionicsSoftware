@@ -34,6 +34,8 @@
 #define GYRO_SENSITIVITY 8.75  // Unit is mdps/LSB
 #define MAGENTO_SENSITIVITY 0.14 // Unit is mgauss/LSB
 
+/* Structs -------------------------------------------------------------------*/
+
 /* Constants -----------------------------------------------------------------*/
 static const int READ_ACCEL_GYRO_MAGNETISM = 25;
 static const int CMD_TIMEOUT = 150;
@@ -58,8 +60,6 @@ static const uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ
 // static const uint8_t READ_WHOAMIM_CMD = WHOAMIM_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
 
 /* Variables -----------------------------------------------------------------*/
-
-/* Structs -------------------------------------------------------------------*/
 
 /* Functions -----------------------------------------------------------------*/
 void readAccelGyroMagnetismTask(void const* arg)

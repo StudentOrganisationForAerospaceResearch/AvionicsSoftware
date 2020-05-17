@@ -23,6 +23,8 @@
 #define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (9)
 #define FLIGHT_PHASE_SERIAL_MSG_SIZE (6)
 
+/* Structs -------------------------------------------------------------------*/
+
 /* Constants -----------------------------------------------------------------*/
 static const int TRANSMIT_DATA_PERIOD = 500;
 static const int8_t IMU_HEADER_BYTE = 0x31;
@@ -37,8 +39,6 @@ static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38;
 static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 
 /* Variables -----------------------------------------------------------------*/
-
-/* Structs -------------------------------------------------------------------*/
 
 /* Functions -----------------------------------------------------------------*/
 void transmitImuData(AllData* data)

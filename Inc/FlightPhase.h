@@ -18,12 +18,6 @@
             getCurrentFlightPhase() == ABORT_UNSPECIFIED_REASON \
         )
 
-/* Externs -------------------------------------------------------------------*/
-extern osMutexId flightPhaseMutex;
-
-// ?
-osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
-
 /* Structs -------------------------------------------------------------------*/
 // Required by AbortPhase.c and FlightPhase.h function prototypes
 typedef enum
@@ -40,6 +34,11 @@ typedef enum
     ABORT_OXIDIZER_PRESSURE,
     ABORT_UNSPECIFIED_REASON
 } FlightPhase;
+
+/* Externs -------------------------------------------------------------------*/
+extern osMutexId flightPhaseMutex;
+//?
+osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
 
 /* Prototypes ----------------------------------------------------------------*/
 void newFlightPhase(FlightPhase newPhase);

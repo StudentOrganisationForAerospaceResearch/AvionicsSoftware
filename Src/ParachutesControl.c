@@ -19,6 +19,14 @@
 /* Macros --------------------------------------------------------------------*/
 #define SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL (1401) // metres
 
+/* Structs -------------------------------------------------------------------*/
+struct KalmanStateVector
+{
+    double altitude;
+    double velocity;
+    double acceleration;
+};
+
 /* Constants -----------------------------------------------------------------*/
 // Pressure at spaceport america in 100*millibars on May 27, 2018
 static const int SEA_LEVEL_PRESSURE = 101421.93903699999; //TODO: THIS NEEDS TO BE UPDATED AND RECORDED ON LAUNCH DAY
@@ -38,16 +46,6 @@ static const double KALMAN_GAIN[][2] =
 };
 
 /* Variables -----------------------------------------------------------------*/
-
-/* Structs -------------------------------------------------------------------*/
-struct KalmanStateVector
-{
-    double altitude;
-    double velocity;
-    double acceleration;
-};
-
-//?
 static struct KalmanStateVector kalmanFilterState;
 
 /* Functions -----------------------------------------------------------------*/
