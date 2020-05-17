@@ -20,69 +20,28 @@ OPT = -O0
 #######################################
 # Build path
 BUILD_DIR = build
+# FreeRTOS path
+FREERTOS_DIR = Middlewares/Third_Party/FreeRTOS/Source
+# Source path
+SRC_DIR = Src
+# tm_fatfs path
+TMFATFS_DIR = tm_fatfs/Src
 
 ######################################
 # source
 ######################################
+
 C_SOURCES = \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
-  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
-  Middlewares/Third_Party/FreeRTOS/Source/croutine.c \
-  Middlewares/Third_Party/FreeRTOS/Source/event_groups.c \
-  Middlewares/Third_Party/FreeRTOS/Source/list.c \
-  Middlewares/Third_Party/FreeRTOS/Source/queue.c \
-  Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
-  Middlewares/Third_Party/FreeRTOS/Source/timers.c \
-  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
-  Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
-  Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
-  Src/AbortPhase.c \
-  Src/EngineControl.c \
-  Src/FlightPhase.c \
-  Src/freertos.c \
-  Src/LogData.c \
-  Src/main.c \
-  Src/MonitorForEmergencyShutoff.c \
-  Src/ParachutesControl.c \
-  Src/ReadAccelGyroMagnetism.c \
-  Src/ReadBarometer.c \
-  Src/ReadCombustionChamberPressure.c \
-  Src/ReadGps.c \
-  Src/ValveControl.c \
-  Src/ReadOxidizerTankPressure.c \
-  Src/stm32f4xx_hal_msp.c \
-  Src/stm32f4xx_hal_timebase_TIM.c \
-  Src/stm32f4xx_it.c \
-  Src/system_stm32f4xx.c \
-  Src/TransmitData.c \
-  Src/Utils.c \
-  tm_fatfs/Src/ccsbcs.c \
-  tm_fatfs/Src/diskio.c \
-  tm_fatfs/Src/fatfs_sd.c \
-  tm_fatfs/Src/ff.c \
-  tm_fatfs/Src/syscall.c \
-  tm_fatfs/Src/tm_stm32_delay.c \
-  tm_fatfs/Src/tm_stm32_fatfs.c \
-  tm_fatfs/Src/tm_stm32_gpio.c \
-  tm_fatfs/Src/tm_stm32_rcc.c \
-  tm_fatfs/Src/tm_stm32_spi.c  
+	$(wildcard Drivers/STM32F4xx_HAL_Driver/Src/*.c) \
+	$(filter-out $(FREERTOS_DIR)/stream_buffer.c, $(wildcard $(FREERTOS_DIR)/*.c)) \
+	$(FREERTOS_DIR)/CMSIS_RTOS/cmsis_os.c \
+	$(FREERTOS_DIR)/portable/GCC/ARM_CM4F/port.c \
+	$(FREERTOS_DIR)/portable/MemMang/heap_4.c \
+	$(filter-out $(SRC_DIR)/syscalls.c, $(wildcard $(SRC_DIR)/*.c)) \
+	$(wildcard $(TMFATFS_DIR)/*.c)
+
 ASM_SOURCES = \
-  startup/startup_stm32f405xx.s
+	startup/startup_stm32f405xx.s
 
 #######################################
 # binaries
@@ -169,7 +128,7 @@ $(BUILD_DIR):
 #######################################
 clean:
 	-rm -fR $(BUILD_DIR)
-  
+	
 #######################################
 # dependencies
 #######################################
