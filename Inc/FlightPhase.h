@@ -37,8 +37,6 @@ typedef enum
 
 /* Externs -------------------------------------------------------------------*/
 extern osMutexId flightPhaseMutex;
-//?
-osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
 
 /* Prototypes ----------------------------------------------------------------*/
 void newFlightPhase(FlightPhase newPhase);
