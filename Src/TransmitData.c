@@ -22,12 +22,12 @@ static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 #define START_FLAG (0xF0)
 #define END_FLAG (0XF0)
 #define F0_ESCAPE (0xF0)
-#define F0_CHAR1 (0xF1)
-#define F0_CHAR2 (0xF2)
+#define F0_REPLACEMENT_1 (0xF1)
+#define F0_REPLACEMENT_2 (0xF2)
 #define F1_ESCAPE (0xF1)
-#define F1_CHAR1 (0xF1)
-#define F1_CHAR2 (0xF3)
-#define FLAGS_AND_CRC_SIZE (6)
+#define F1_REPLACEMENT_1 (0xF1)
+#define F1_REPLACEMENT_2 (0xF3)
+#define FLAGS_AND_CRC_SIZE (6) //1 byte for header flag, 1 byte for ender flag, 4 bytes for crc
 #define IMU_SERIAL_MSG_SIZE (37)
 #define BAROMETER_SERIAL_MSG_SIZE (9)
 #define GPS_SERIAL_MSG_SIZE (17)
@@ -39,35 +39,35 @@ static const uint8_t UART_TIMEOUT = 100;
 
 //Encodes a message composed of data with a header and ender flag, uses byte stuffing to replace instances of overlaps.
 //Finally generates and adds a 32 bit crc at the end based on the buffer (**not the message, but the buffer with flags).
-void Encode(uint8_t* message, int message_length, uint8_t* buffer)
+void encodeMessage(uint8_t* message, int messageLength, uint8_t* buffer)
 {
-    int bufferindex = 1;
+    int bufferIndex = 1;
     buffer[0] = START_FLAG;
 
-    for (int i = 0; i < message_length; i++)
+    for (int i = 0; i < messageLength; i++)
     {
         //If the byte is F0, replace with F1F2
         if (message[i] == F0_ESCAPE)
         {
-            buffer[bufferindex++] = F0_CHAR1;
-            buffer[bufferindex++] = F0_CHAR2;
+            buffer[bufferIndex++] = F0_REPLACEMENT_1;
+            buffer[bufferIndex++] = F0_REPLACEMENT_2;
         }
         //If the byte is F1, replace with F1F3
         else if (message[i] == F1_ESCAPE)
         {
-            buffer[bufferindex++] = F1_CHAR1;
-            buffer[bufferindex++] = F1_CHAR2;
+            buffer[bufferIndex++] = F1_REPLACEMENT_1;
+            buffer[bufferIndex++] = F1_REPLACEMENT_2;
         }
         else
         {
-            buffer[bufferindex++] = message[i];
+            buffer[bufferIndex++] = message[i];
         }
     }
 
-    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)message, message_length - 1);
-    writeInt32ToArray(buffer, bufferindex, crc);
-    bufferindex += 4;
-    buffer[bufferindex] = END_FLAG;
+    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)message, messageLength - 1);
+    writeInt32ToArray(buffer, bufferIndex, crc);
+    bufferIndex += 4;
+    buffer[bufferIndex] = END_FLAG;
 }
 
 void transmitImuData(AllData* data)
@@ -99,44 +99,44 @@ void transmitImuData(AllData* data)
 
     //construct the message in the format accelXYZ, gyroXYZ, MagnetoXYZ
     uint8_t message[IMU_SERIAL_MSG_SIZE] = { 0 };
-    int messageindex = 0;
+    int messageIndex = 0;
     message[0] = IMU_HEADER_BYTE;
-    messageindex++;
-    writeInt32ToArray(message, messageindex, accelX);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, accelY);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, accelZ);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, gyroX);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, gyroY);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, gyroZ);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, magnetoX);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, magnetoY);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, magnetoZ);
-    messageindex += 4;
+    messageIndex++;
+    writeInt32ToArray(message, messageIndex, accelX);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, accelY);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, accelZ);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, gyroX);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, gyroY);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, gyroZ);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, magnetoX);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, magnetoY);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, magnetoZ);
+    messageIndex += 4;
     //Find the final length of the encoded buffer based on number of overlaps
-    int encoded_message_length = IMU_SERIAL_MSG_SIZE;
+    int encodedMessageLength = IMU_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < IMU_SERIAL_MSG_SIZE; i++)
     {
         //If byte is F0 or F1, requires two bytes to represent(F1F2 or F1F3), so one additional byte is needed every time F0 or F1 is encountered
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
     //Dynamic allocate a buffer because variable length arrays are not allowed
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
     //Encode the message and send it to ground systems and radio
-    Encode(message, IMU_SERIAL_MSG_SIZE, buffer);
+    encodeMessage(message, IMU_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -160,26 +160,26 @@ void transmitBarometerData(AllData* data)
     }
 
     uint8_t message[BAROMETER_SERIAL_MSG_SIZE] = { 0 };
-    int messageindex = 0;
+    int messageIndex = 0;
     message[0] = BAROMETER_HEADER_BYTE;
-    messageindex++;
-    writeInt32ToArray(message, messageindex, pressure);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, temperature);
-    messageindex += 4;
-    int encoded_message_length = BAROMETER_SERIAL_MSG_SIZE;
+    messageIndex++;
+    writeInt32ToArray(message, messageIndex, pressure);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, temperature);
+    messageIndex += 4;
+    int encodedMessageLength = BAROMETER_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < BAROMETER_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
-    Encode(message, BAROMETER_SERIAL_MSG_SIZE, buffer);
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, BAROMETER_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -207,31 +207,31 @@ void transmitGpsData(AllData* data)
     }
 
     uint8_t message[GPS_SERIAL_MSG_SIZE] = { 0 };
-    int messageindex = 0;
+    int messageIndex = 0;
     message[0] = GPS_HEADER_BYTE;
-    messageindex++;
-    writeInt32ToArray(message, messageindex, altitude);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, epochTimeMsec);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, latitude);
-    messageindex += 4;
-    writeInt32ToArray(message, messageindex, longitude);
-    messageindex += 4;
+    messageIndex++;
+    writeInt32ToArray(message, messageIndex, altitude);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, epochTimeMsec);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, latitude);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, longitude);
+    messageIndex += 4;
 
-    int encoded_message_length = GPS_SERIAL_MSG_SIZE;
+    int encodedMessageLength = GPS_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < GPS_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
-    Encode(message, GPS_SERIAL_MSG_SIZE, buffer);
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, GPS_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -253,25 +253,25 @@ void transmitOxidizerTankData(AllData* data)
     }
 
     uint8_t message[OXIDIZER_TANK_SERIAL_MSG_SIZE] = { 0 };
-    int messageindex = 0;
+    int messageIndex = 0;
     message[0] = OXIDIZER_TANK_HEADER_BYTE;
-    messageindex++;
-    writeInt32ToArray(message, messageindex, oxidizerTankPressure);
-    messageindex += 4;
+    messageIndex++;
+    writeInt32ToArray(message, messageIndex, oxidizerTankPressure);
+    messageIndex += 4;
 
-    int encoded_message_length = OXIDIZER_TANK_SERIAL_MSG_SIZE;
+    int encodedMessageLength = OXIDIZER_TANK_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < OXIDIZER_TANK_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
-    Encode(message, OXIDIZER_TANK_SERIAL_MSG_SIZE, buffer);
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, OXIDIZER_TANK_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -293,25 +293,25 @@ void transmitCombustionChamberData(AllData* data)
     }
 
     uint8_t message[COMBUSTION_CHAMBER_SERIAL_MSG_SIZE] = { 0 };
-    int messageindex = 0;
+    int messageIndex = 0;
     message[0] = COMBUSTION_CHAMBER_HEADER_BYTE;
-    messageindex++;
-    writeInt32ToArray(message, messageindex, combustionChamberPressure);
-    messageindex += 4;
+    messageIndex++;
+    writeInt32ToArray(message, messageIndex, combustionChamberPressure);
+    messageIndex += 4;
 
-    int encoded_message_length = COMBUSTION_CHAMBER_SERIAL_MSG_SIZE;
+    int encodedMessageLength = COMBUSTION_CHAMBER_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < COMBUSTION_CHAMBER_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
-    Encode(message, COMBUSTION_CHAMBER_SERIAL_MSG_SIZE, buffer);
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, COMBUSTION_CHAMBER_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -330,19 +330,19 @@ void transmitFlightPhaseData(AllData* data)
                           flightPhase,
                          };
 
-    int encoded_message_length = ONE_BYTE_SERIAL_MSG_SIZE;
+    int encodedMessageLength = ONE_BYTE_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
-    Encode(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -360,19 +360,19 @@ void transmitInjectionValveStatus()
     uint8_t message [] = {INJECTION_VALVE_STATUS_HEADER_BYTE,
                           (uint8_t) ((injectionValveStatus)),
                          };
-    int encoded_message_length = ONE_BYTE_SERIAL_MSG_SIZE;
+    int encodedMessageLength = ONE_BYTE_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
-    Encode(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
@@ -390,19 +390,19 @@ void transmitLowerVentValveStatus()
     uint8_t message [] = {LOWER_VALVE_STATUS_HEADER_BYTE,
                           (uint8_t) ((ventValveStatus)),
                          };
-    int encoded_message_length = ONE_BYTE_SERIAL_MSG_SIZE;
+    int encodedMessageLength = ONE_BYTE_SERIAL_MSG_SIZE;
 
     for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_CHAR1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
         {
-            encoded_message_length++;
+            encodedMessageLength++;
         }
     }
 
-    int buffer_length = encoded_message_length + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(buffer_length * sizeof(uint8_t));
-    Encode(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
