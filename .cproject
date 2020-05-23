@@ -18,7 +18,7 @@
 					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.501011326." name="/" resourcePath="">
 						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug.1595750251" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.93819868" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix" value="arm-none-eabi-" valueType="string" />
-							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.755134953" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" value="STM32F405RGTx" valueType="string" />
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.755134953" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" value="" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.board.710208106" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" value="AvionicsSoftware" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1107645183" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet" value="fr.ac6.managedbuild.option.gnu.cross.instructionSet.thumbII" valueType="enumerated" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.1749320014" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu" value="fr.ac6.managedbuild.option.gnu.cross.fpu.fpv4-sp-d16" valueType="enumerated" />
@@ -135,7 +135,7 @@
 					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.release.1310542372." name="/" resourcePath="">
 						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release.551137721" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release">
 							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.93819868" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix" value="arm-none-eabi-" valueType="string" />
-							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.755134953" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" value="STM32F405RGTx" valueType="string" />
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.755134953" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu" value="" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.board.710208106" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board" value="AvionicsSoftware" valueType="string" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1107645183" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet" value="fr.ac6.managedbuild.option.gnu.cross.instructionSet.thumbII" valueType="enumerated" />
 							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.1749320014" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu" value="fr.ac6.managedbuild.option.gnu.cross.fpu.fpv4-sp-d16" valueType="enumerated" />

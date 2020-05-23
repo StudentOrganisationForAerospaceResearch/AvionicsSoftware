@@ -60,6 +60,8 @@ ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 ADC_HandleTypeDef hadc3;
 
+CRC_HandleTypeDef hcrc;
+
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
@@ -120,6 +122,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
 static void MX_ADC3_Init(void);
+static void MX_CRC_Init(void);
 void StartDefaultTask(void const* argument);
 
 /* USER CODE BEGIN PFP */
@@ -169,6 +172,7 @@ int main(void)
     MX_USART2_UART_Init();
     MX_UART4_Init();
     MX_ADC3_Init();
+    MX_CRC_Init();
     /* USER CODE BEGIN 2 */
     // Data primitive structs
     AccelGyroMagnetismData* accelGyroMagnetismData =
@@ -593,6 +597,34 @@ static void MX_ADC3_Init(void)
     /* USER CODE BEGIN ADC3_Init 2 */
 
     /* USER CODE END ADC3_Init 2 */
+
+}
+
+/**
+  * @brief CRC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CRC_Init(void)
+{
+
+    /* USER CODE BEGIN CRC_Init 0 */
+
+    /* USER CODE END CRC_Init 0 */
+
+    /* USER CODE BEGIN CRC_Init 1 */
+
+    /* USER CODE END CRC_Init 1 */
+    hcrc.Instance = CRC;
+
+    if (HAL_CRC_Init(&hcrc) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    /* USER CODE BEGIN CRC_Init 2 */
+
+    /* USER CODE END CRC_Init 2 */
 
 }
 

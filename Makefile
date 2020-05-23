@@ -39,7 +39,6 @@ C_SOURCES = \
 	$(FREERTOS_DIR)/portable/MemMang/heap_4.c \
 	$(filter-out $(SRC_DIR)/syscalls.c, $(wildcard $(SRC_DIR)/*.c)) \
 	$(wildcard $(TMFATFS_DIR)/*.c)
-
 ASM_SOURCES = \
 	startup/startup_stm32f405xx.s
 
