@@ -126,7 +126,7 @@ void transmitImuData(AllData* data)
     for (int i = 0; i < IMU_SERIAL_MSG_SIZE; i++)
     {
         //If byte is F0 or F1, requires two bytes to represent(F1F2 or F1F3), so one additional byte is needed every time F0 or F1 is encountered
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
@@ -171,7 +171,7 @@ void transmitBarometerData(AllData* data)
 
     for (int i = 0; i < BAROMETER_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
@@ -223,7 +223,7 @@ void transmitGpsData(AllData* data)
 
     for (int i = 0; i < GPS_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
@@ -263,7 +263,7 @@ void transmitOxidizerTankData(AllData* data)
 
     for (int i = 0; i < OXIDIZER_TANK_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
@@ -303,7 +303,7 @@ void transmitCombustionChamberData(AllData* data)
 
     for (int i = 0; i < COMBUSTION_CHAMBER_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
@@ -334,7 +334,7 @@ void transmitFlightPhaseData(AllData* data)
 
     for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
@@ -364,7 +364,7 @@ void transmitInjectionValveStatus()
 
     for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
@@ -394,7 +394,7 @@ void transmitLowerVentValveStatus()
 
     for (int i = 0; i < ONE_BYTE_SERIAL_MSG_SIZE; i++)
     {
-        if (message[i] == F0_REPLACEMENT_1 || message[i] == F1_ESCAPE)
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
         {
             encodedMessageLength++;
         }
