@@ -198,9 +198,9 @@ void transmitGpsData(AllData* data)
 {
     uint32_t time = 0xFFFF;
     int32_t latitude_degrees = -1;
-    int32_t latitude_minutes = 0xFFFF;
+    int32_t latitude_minutes = -1;
     int32_t longitude_degrees = -1;
-    int32_t longitude_minutes = 0xFFFF;
+    int32_t longitude_minutes = -1;
     int32_t altitude = -1;
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
