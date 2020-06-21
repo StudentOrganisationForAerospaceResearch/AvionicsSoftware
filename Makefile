@@ -28,6 +28,7 @@ C_SOURCES = \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
+  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_crc.c \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
@@ -66,7 +67,7 @@ C_SOURCES = \
   Src/ValveControl.c \
   Src/ReadOxidizerTankPressure.c \
   Src/stm32f4xx_hal_msp.c \
-  Src/stm32f4xx_hal_timebase_TIM.c \
+  Src/stm32f4xx_hal_timebase_tim.c \
   Src/stm32f4xx_it.c \
   Src/system_stm32f4xx.c \
   Src/TransmitData.c \
