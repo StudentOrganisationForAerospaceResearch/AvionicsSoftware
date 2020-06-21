@@ -36,7 +36,7 @@ void buildLogEntry(AllData* data, char* buffer)
     int32_t combustionChamberPressure = -1;
     int32_t oxidizerTankPressure = -1;
     // GPS
-    static uint32_t time = 0xFFFF;
+    static uint32_t gps_time = 0xFFFF;
     static int32_t latitude_degrees = -1;
     static uint32_t latitude_minutes = 0xFFFF;
     static int32_t longitude_degrees = -1;
@@ -72,7 +72,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-        time = data->gpsData_->time_;
+        gps_time = data->gpsData_->time_;
 
         latitude_degrees = data->gpsData_->latitude_.degrees_;
         latitude_minutes = data->gpsData_->latitude_.minutes_;
@@ -107,7 +107,7 @@ void buildLogEntry(AllData* data, char* buffer)
         temperature,
         combustionChamberPressure,
         oxidizerTankPressure,
-        time,
+        gps_time,
         latitude_degrees,
         latitude_minutes,
         longitude_degrees,

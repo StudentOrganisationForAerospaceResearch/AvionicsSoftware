@@ -196,7 +196,7 @@ void transmitBarometerData(AllData* data)
 
 void transmitGpsData(AllData* data)
 {
-    uint32_t time = 0xFFFF;
+    uint32_t gps_time = 0xFFFF;
     int32_t latitude_degrees = -1;
     int32_t latitude_minutes = -1;
     int32_t longitude_degrees = -1;
@@ -205,7 +205,7 @@ void transmitGpsData(AllData* data)
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-        time = data->gpsData_->time_;
+        gps_time = data->gpsData_->time_;
 
         latitude_degrees = data->gpsData_->latitude_.degrees_;
         latitude_minutes = data->gpsData_->latitude_.minutes_;
@@ -222,7 +222,7 @@ void transmitGpsData(AllData* data)
     int messageIndex = 0;
     message[0] = GPS_HEADER_BYTE;
     messageIndex++;
-    writeInt32ToArray(message, messageIndex, time);
+    writeInt32ToArray(message, messageIndex, gps_time);
     messageIndex += 4;
     writeInt32ToArray(message, messageIndex, latitude_degrees);
     messageIndex += 4;
