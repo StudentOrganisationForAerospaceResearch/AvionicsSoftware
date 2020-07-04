@@ -25,6 +25,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "ReadAccelGyroMagnetism.h"
 #include "ReadBarometer.h"
 #include "ReadCombustionChamberPressure.h"
@@ -69,6 +71,7 @@ SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_uart4_rx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
@@ -106,11 +109,16 @@ int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmer
 
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
 static const int FLIGHT_PHASE_BLINK_FREQ = 100;
+
+char dma_rx_buffer[NMEA_MAX_LENGTH + 1] = {0};
+GpsData* gpsData;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_SPI1_Init(void);
@@ -161,6 +169,7 @@ int main(void)
 
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
+    MX_DMA_Init();
     MX_ADC1_Init();
     MX_ADC2_Init();
     MX_SPI1_Init();
@@ -179,8 +188,8 @@ int main(void)
         malloc(sizeof(BarometerData));
     CombustionChamberPressureData* combustionChamberPressureData =
         malloc(sizeof(CombustionChamberPressureData));
-    GpsData* gpsData =
-        malloc(sizeof(GpsData));
+    gpsData =
+        calloc(1, sizeof(GpsData));
     OxidizerTankPressureData* oxidizerTankPressureData =
         malloc(sizeof(OxidizerTankPressureData));
 
@@ -207,10 +216,6 @@ int main(void)
 
     osMutexDef(GPS_DATA_MUTEX);
     gpsData->mutex_ = osMutexCreate(osMutex(GPS_DATA_MUTEX));
-    gpsData->altitude_ = -13;
-    gpsData->epochTimeMsec_ = -14;
-    gpsData->latitude_ = -15;
-    gpsData->longitude_ = -16;
 
     osMutexDef(OXIDIZER_TANK_PRESSURE_DATA_MUTEX);
     oxidizerTankPressureData->mutex_ = osMutexCreate(osMutex(OXIDIZER_TANK_PRESSURE_DATA_MUTEX));
@@ -852,6 +857,22 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+    /* DMA controller clock enable */
+    __HAL_RCC_DMA1_CLK_ENABLE();
+
+    /* DMA interrupt init */
+    /* DMA1_Stream2_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -991,7 +1012,72 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
             }
         }
     }
+    else if (huart->Instance == UART4)
+    {
+        static char rx_buffer[NMEA_MAX_LENGTH + 1];
+        static int rx_index = 0;
+        static int gpggaDetected = 0;
+        char message[6] = "$GPGGA";
 
+        for (int i = 0; i < NMEA_MAX_LENGTH + 1; i++)
+        {
+            char rx = dma_rx_buffer[i]; // Read 1 character
+
+            if ((rx == '\r') || (rx == '\n')) // End of line character has been reached
+            {
+                if (rx_index != 0 && rx_buffer[0] == '$') // Check that buffer has content and that the message is valid
+                {
+                    rx_buffer[rx_index++] = 0;
+
+                    if (osMutexWait(gpsData->mutex_, 0) == osOK)
+                    {
+                        memcpy(&gpsData->buffer_, &rx_buffer, rx_index); // Copy to gps data buffer from rx_buffer
+                        gpsData->parseFlag_ = 1; // Data in gps data buffer is ready to be parsed
+                    }
+
+                    osMutexRelease(gpsData->mutex_);
+
+                    // Reset back to initial values
+                    rx_index = 0;
+                    gpggaDetected = 0;
+                }
+            }
+            else
+            {
+                if ((rx == '$') || (rx_index == NMEA_MAX_LENGTH)) // If start character received or end of rx buffer reached
+                {
+                    // Reset back to initial values
+                    rx_index = 0;
+                    gpggaDetected = 0;
+                    rx_buffer[rx_index++] = rx;
+                }
+                else if (gpggaDetected == 0)
+                {
+                    if (rx_index >= 6) // If the first 6 characters follow $GPGGA, set gpggaDetected to 1
+                    {
+                        gpggaDetected = 1;
+                        rx_buffer[rx_index++] = rx; // Contents of the rx_buffer will be $GPGGA at this point
+                    }
+                    else if (rx == message[rx_index]) // Check if the first 6 characters follow $GPGGA
+                    {
+                        rx_buffer[rx_index++] = rx;
+                    }
+                    else
+                    {
+                        // If any of the first 6 characters does not follow $GPGGA, reset to initial values
+                        rx_index = 0;
+                        gpggaDetected = 0;
+                    }
+                }
+                else
+                {
+                    rx_buffer[rx_index++] = rx; // Copy received characters to rx_buffer
+                }
+            }
+        }
+
+        HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
+    }
 }
 /* USER CODE END 4 */
 

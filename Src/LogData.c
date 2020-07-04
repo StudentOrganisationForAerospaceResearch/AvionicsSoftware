@@ -10,8 +10,8 @@
 #include "Data.h"
 #include "FlightPhase.h"
 
-static int SLOW_LOG_DATA_PERIOD = 1000;
-static int FAST_LOG_DATA_PERIOD = 50;
+static int SLOW_LOG_DATA_PERIOD = 700;
+static int FAST_LOG_DATA_PERIOD = 200;
 static uint8_t softwareVersion = 104;
 
 static FATFS fatfs;
@@ -34,11 +34,14 @@ void buildLogEntry(AllData* data, char* buffer)
     int32_t pressure = -1;
     int32_t temperature = -1;
     int32_t combustionChamberPressure = -1;
-    int32_t altitude = -1;
-    int32_t epochTimeMsec = -1;
-    int32_t latitude = -1;
-    int32_t longitude = -1;
     int32_t oxidizerTankPressure = -1;
+    // GPS
+    static uint32_t gps_time = 0xFFFF;
+    static int32_t latitude_degrees = -1;
+    static uint32_t latitude_minutes = 0xFFFF;
+    static int32_t longitude_degrees = -1;
+    static uint32_t longitude_minutes = 0xFFFF;
+    static int32_t altitude = -1;
 
     if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
     {
@@ -69,10 +72,16 @@ void buildLogEntry(AllData* data, char* buffer)
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-        altitude = data->gpsData_->altitude_;
-        epochTimeMsec = data->gpsData_->epochTimeMsec_;
-        latitude = data->gpsData_->latitude_;
-        longitude = data->gpsData_->longitude_;
+        gps_time = data->gpsData_->time_;
+
+        latitude_degrees = data->gpsData_->latitude_.degrees_;
+        latitude_minutes = data->gpsData_->latitude_.minutes_;
+
+        longitude_degrees = data->gpsData_->longitude_.degrees_;
+        longitude_minutes = data->gpsData_->longitude_.minutes_;
+
+        altitude = data->gpsData_->totalAltitude_.altitude_;
+
         osMutexRelease(data->gpsData_->mutex_);
     }
 
@@ -84,7 +93,7 @@ void buildLogEntry(AllData* data, char* buffer)
 
     sprintf(
         buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%d,%ld,%d\n",
+        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%lu,%ld,%ld,%ld,%ld,%ld,%d,%ld,%d\n",
         accelX,
         accelY,
         accelZ,
@@ -97,11 +106,13 @@ void buildLogEntry(AllData* data, char* buffer)
         pressure,
         temperature,
         combustionChamberPressure,
-        altitude,
-        epochTimeMsec,
-        latitude,
-        longitude,
         oxidizerTankPressure,
+        gps_time,
+        latitude_degrees,
+        latitude_minutes,
+        longitude_degrees,
+        longitude_minutes,
+        altitude,
         getCurrentFlightPhase(),
         HAL_GetTick(),
         softwareVersion
@@ -196,7 +207,7 @@ void highFrequencyLogToSdRoutine(AllData* data, char* buffer)
 void logDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
-    char buffer[256];
+    char buffer[500];
 
     sprintf(
         buffer,
@@ -212,11 +223,13 @@ void logDataTask(void const* arg)
         "pressure,"
         "temperature(100C),"
         "combustionChamberPressure(1000psi),"
-        "altitude,"
-        "epochTime(ms),"
-        "latitude,"
-        "longitude,"
         "oxidizerTankPressure(1000psi),"
+        "GPS_time,"
+        "GPS_latitude_degrees,"
+        "GPS_latitude_minutes,"
+        "GPS_longitude_degrees,"
+        "GPS_longitude_minutes,"
+        "GPS_altitude,"
         "currentFlightPhase,"
         "elapsedTime(ms),"
         "softwareVersion\n"

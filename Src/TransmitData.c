@@ -1,14 +1,18 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
-#include <stdlib.h>
 #include "TransmitData.h"
 #include "Utils.h"
 #include "FlightPhase.h"
 #include "Data.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+
 CRC_HandleTypeDef hcrc;
-static const int TRANSMIT_DATA_PERIOD = 500;
+static const int TRANSMIT_DATA_PERIOD = 1000;
 
 static const int8_t IMU_HEADER_BYTE = 0x31;
 static const int8_t BAROMETER_HEADER_BYTE = 0x32;
@@ -30,7 +34,7 @@ static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 #define FLAGS_AND_CRC_SIZE (6) //1 byte for header flag, 1 byte for ender flag, 4 bytes for crc
 #define IMU_SERIAL_MSG_SIZE (37)
 #define BAROMETER_SERIAL_MSG_SIZE (9)
-#define GPS_SERIAL_MSG_SIZE (17)
+#define GPS_SERIAL_MSG_SIZE (25)
 #define OXIDIZER_TANK_SERIAL_MSG_SIZE (5)
 #define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (5)
 #define ONE_BYTE_SERIAL_MSG_SIZE (2)
@@ -143,7 +147,7 @@ void transmitImuData(AllData* data)
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
@@ -183,26 +187,34 @@ void transmitBarometerData(AllData* data)
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);	// Ground Systems
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
 void transmitGpsData(AllData* data)
 {
+    uint32_t gps_time = 0xFFFF;
+    int32_t latitude_degrees = -1;
+    int32_t latitude_minutes = -1;
+    int32_t longitude_degrees = -1;
+    int32_t longitude_minutes = -1;
     int32_t altitude = -1;
-    int32_t epochTimeMsec = -1;
-    int32_t latitude = -1;
-    int32_t longitude = -1;
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-        altitude = data->gpsData_->altitude_;
-        epochTimeMsec = data->gpsData_->epochTimeMsec_;
-        latitude = data->gpsData_->latitude_;
-        longitude = data->gpsData_->longitude_;
+        gps_time = data->gpsData_->time_;
+
+        latitude_degrees = data->gpsData_->latitude_.degrees_;
+        latitude_minutes = data->gpsData_->latitude_.minutes_;
+
+        longitude_degrees = data->gpsData_->longitude_.degrees_;
+        longitude_minutes = data->gpsData_->longitude_.minutes_;
+
+        altitude = data->gpsData_->totalAltitude_.altitude_;
+
         osMutexRelease(data->gpsData_->mutex_);
     }
 
@@ -210,13 +222,17 @@ void transmitGpsData(AllData* data)
     int messageIndex = 0;
     message[0] = GPS_HEADER_BYTE;
     messageIndex++;
+    writeInt32ToArray(message, messageIndex, gps_time);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, latitude_degrees);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, latitude_minutes);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, longitude_degrees);
+    messageIndex += 4;
+    writeInt32ToArray(message, messageIndex, longitude_minutes);
+    messageIndex += 4;
     writeInt32ToArray(message, messageIndex, altitude);
-    messageIndex += 4;
-    writeInt32ToArray(message, messageIndex, epochTimeMsec);
-    messageIndex += 4;
-    writeInt32ToArray(message, messageIndex, latitude);
-    messageIndex += 4;
-    writeInt32ToArray(message, messageIndex, longitude);
     messageIndex += 4;
 
     int encodedMessageLength = GPS_SERIAL_MSG_SIZE;
@@ -238,7 +254,7 @@ void transmitGpsData(AllData* data)
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
@@ -278,7 +294,7 @@ void transmitOxidizerTankData(AllData* data)
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
@@ -318,7 +334,7 @@ void transmitCombustionChamberData(AllData* data)
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
@@ -349,7 +365,7 @@ void transmitFlightPhaseData(AllData* data)
         HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);	// Radio
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
@@ -433,5 +449,4 @@ void transmitDataTask(void const* arg)
         HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }
-
 
