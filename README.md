@@ -1,4 +1,4 @@
-# AvionicsSoftware
+* Avionics Software
 
 The original code in this repository was moved without history from the 2017-2018 repository. The old repository can be found here: https://github.com/StudentOrganisationForAerospaceResearch/VanderAvionics.
 
