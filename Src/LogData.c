@@ -13,11 +13,39 @@
 static int SLOW_LOG_DATA_PERIOD = 700;
 static int FAST_LOG_DATA_PERIOD = 200;
 static uint8_t softwareVersion = 104;
+static uint8_t deviceAddress = 0x50;
+static uint8_t currMemAddress = 0x07;
 
 static FATFS fatfs;
 static FIL file;
 
 char fileName[32];
+
+/**
+ * @brief Writes data to the EEPROM over I2C.
+ * @param buffer, pointer to the data buffer.
+ * @param bufferSize, size of data buffer.
+ * @param timeout, time to wait for write operation before timing out in ms.
+ */
+void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress, uint16_t timeout)
+{
+	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
+	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
+	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, timeout);
+}
+
+/**
+ * @brief Reads data from the EEPROM over I2C.
+ * @param receiveBuffer, pointer to the buffer to store received data.
+ * @param bufferSize, size of data to be read.
+ * @param timeout, time to wait for read operation before timing out in ms.
+ */
+void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress, uint16_t timeout)
+{
+	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
+	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
+	HAL_I2C_Mem_Read(&hi2c1, deviceAddress<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, timeout);
+}
 
 void buildLogEntry(AllData* data, char* buffer)
 {
