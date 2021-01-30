@@ -41,6 +41,7 @@
 #include "Data.h"
 #include "FlightPhase.h"
 #include "ValveControl.h"
+#include "Debug.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,6 +92,8 @@ static osThreadId logDataTaskHandle;
 static osThreadId transmitDataTaskHandle;
 // Special abort thread
 static osThreadId abortPhaseTaskHandle;
+// Debug thread
+static osThreadId debugTaskHandle;
 
 static const uint8_t LAUNCH_CMD_BYTE = 0x20;
 static const uint8_t ARM_CMD_BYTE = 0x21;
@@ -371,6 +374,16 @@ int main(void)
     );
     abortPhaseTaskHandle =
         osThreadCreate(osThread(abortPhaseThread), NULL);
+
+    osThreadDef(
+        debugThread,
+		debugTask,
+		osPriorityHigh,
+		1,
+		configMINIMAL_STACK_SIZE
+    );
+    debugTaskHandle =
+        osThreadCreate(osThread(debugThread), NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
