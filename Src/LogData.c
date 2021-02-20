@@ -31,7 +31,7 @@ void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress, ui
 {
 	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
 	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
-	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, timeout);
+	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, (uint16_t)(sizeof(memAddress)), buffer, bufferSize, timeout);
 }
 
 /**
@@ -52,15 +52,15 @@ void writeAllDataToEEPROM(AllData* data, uint16_t memAddress, uint16_t timeout){
     char dataToWrite[200]; 
 
     int index = 0;
-    dataToWrite[0] = data->accelGyroMagnetismData_ ->accelX;
-    dataToWrite[4] = data->accelGyroMagnetismData_ ->accelY;
-    dataToWrite[8] = data->accelGyroMagnetismData_ ->accelZ;
-    dataToWrite[12] = data->accelGyroMagnetismData_ ->gyroX;
-    dataToWrite[16] = data->accelGyroMagnetismData_ ->gyroY;
-    dataToWrite[20] = data->accelGyroMagnetismData_ ->gyroZ;
-    dataToWrite[24] = data->accelGyroMagnetismData_ ->magnetoX;
-    dataToWrite[28] = data->accelGyroMagnetismData_ ->magnetoY;
-    dataToWrite[32] = data->accelGyroMagnetismData_ ->magnetoZ;
+    dataToWrite[0] = data->accelGyroMagnetismData_ ->accelX_;
+    dataToWrite[4] = data->accelGyroMagnetismData_ ->accelY_;
+    dataToWrite[8] = data->accelGyroMagnetismData_ ->accelZ_;
+    dataToWrite[12] = data->accelGyroMagnetismData_ ->gyroX_;
+    dataToWrite[16] = data->accelGyroMagnetismData_ ->gyroY_;
+    dataToWrite[20] = data->accelGyroMagnetismData_ ->gyroZ_;
+    dataToWrite[24] = data->accelGyroMagnetismData_ ->magnetoX_;
+    dataToWrite[28] = data->accelGyroMagnetismData_ ->magnetoY_;
+    dataToWrite[32] = data->accelGyroMagnetismData_ ->magnetoZ_;
 
     dataToWrite[36] = data->barometerData_ ->pressure_;
     dataToWrite[40] = data->barometerData_ ->temperature_;
@@ -68,20 +68,20 @@ void writeAllDataToEEPROM(AllData* data, uint16_t memAddress, uint16_t timeout){
     dataToWrite[44] = data->combustionChamberPressureData_ ->pressure_;
 
     dataToWrite[48] = data->gpsData_ ->time_;
-    dataToWrite[52] = data->gpsData_ ->latitude_->degrees_;
-    dataToWrite[56] = data->gpsData_ ->latitude_->minutes_;
-    dataToWrite[60] = data->gpsData_ ->longitude_->degrees_;
-    dataToWrite[64] = data->gpsData_ ->longitude_->minutes_;
+    dataToWrite[52] = data->gpsData_->latitude_.degrees_;
+    dataToWrite[56] = data->gpsData_->latitude_.minutes_;
+    dataToWrite[60] = data->gpsData_->longitude_.degrees_;
+    dataToWrite[64] = data->gpsData_->longitude_.minutes_;
 
-    dataToWrite[68] = data->gpsData_ ->antennaAltitude_->altitude_;
-    dataToWrite[72] = data->gpsData_ ->geoidAltitude_->altitude_;
-    dataToWrite[76] = data->gpsData_ ->totalAltitude_->altitude_;
+    dataToWrite[68] = data->gpsData_->antennaAltitude_.altitude_;
+    dataToWrite[72] = data->gpsData_->geoidAltitude_.altitude_;
+    dataToWrite[76] = data->gpsData_->totalAltitude_.altitude_;
 
 
     dataToWrite[80] = data->oxidizerTankPressureData_ ->pressure_;
 
    
-    writeToEEPROM(dataToWrite, 80, uint16_t memAddress, uint16_t timeout);
+    //writeToEEPROM(dataToWrite, 80, uint16_t memAddress, uint16_t timeout);
     // need: memAddress and timeout??????
     
 }
@@ -89,18 +89,18 @@ void writeAllDataToEEPROM(AllData* data, uint16_t memAddress, uint16_t timeout){
 void readAllDataFromEEPROM(uint16_t addr, AllData* rtn, uint16_t memAddress, uint16_t timeout){
     char dataRead[200];
   
-   readFromEEPROM(dataRead, 80, uint16_t memAddress, uint16_t timeout);
+   //readFromEEPROM(dataRead, 80, uint16_t memAddress, uint16_t timeout);
    // need: memAdress and timeout
 
-    rtn->accelGyroMagnetismData_ ->accelX = dataRead[0];
-    rtn->accelGyroMagnetismData_ ->accelY = dataRead[4];
-    rtn->accelGyroMagnetismData_ ->accelZ = dataRead[8];
-    rtn->accelGyroMagnetismData_ ->gyroX = dataRead[12];
-    rtn->accelGyroMagnetismData_ ->gyroY = dataRead[16];
-    rtn->accelGyroMagnetismData_ ->gyroZ = dataRead[20];
-    rtn->accelGyroMagnetismData_ ->magnetoX = dataRead[24];
-    rtn->accelGyroMagnetismData_ ->magnetoY = dataRead[28];
-    rtn->accelGyroMagnetismData_ ->magnetoZ = dataRead[32];
+    rtn->accelGyroMagnetismData_ ->accelX_ = dataRead[0];
+    rtn->accelGyroMagnetismData_ ->accelY_ = dataRead[4];
+    rtn->accelGyroMagnetismData_ ->accelY_ = dataRead[8];
+    rtn->accelGyroMagnetismData_ ->gyroX_ = dataRead[12];
+    rtn->accelGyroMagnetismData_ ->gyroY_ = dataRead[16];
+    rtn->accelGyroMagnetismData_ ->gyroZ_ = dataRead[20];
+    rtn->accelGyroMagnetismData_ ->magnetoX_ = dataRead[24];
+    rtn->accelGyroMagnetismData_ ->magnetoY_ = dataRead[28];
+    rtn->accelGyroMagnetismData_ ->magnetoZ_ = dataRead[32];
 
     rtn->barometerData_ ->pressure_ = dataRead[36];
     rtn->barometerData_ ->temperature_ = dataRead[40];
@@ -108,14 +108,14 @@ void readAllDataFromEEPROM(uint16_t addr, AllData* rtn, uint16_t memAddress, uin
     rtn->combustionChamberPressureData_ ->pressure_ = dataRead[44];
 
     rtn->gpsData_ ->time_ = dataRead[48];
-    rtn->gpsData_ ->latitude_->degrees_ = dataRead[52];
-    rtn->gpsData_ ->latitude_->minutes_ = dataRead[56];
-    rtn->gpsData_ ->longitude_->degrees_ = dataRead[60];
-    rtn->gpsData_ ->longitude_->minutes_ = dataRead[64];
+    rtn->gpsData_->latitude_.degrees_ = dataRead[52];
+    rtn->gpsData_->latitude_.minutes_ = dataRead[56];
+    rtn->gpsData_->longitude_.degrees_ = dataRead[60];
+    rtn->gpsData_->longitude_.minutes_ = dataRead[64];
 
-    rtn->gpsData_ ->antennaAltitude_->altitude_ = dataRead[68];
-    rtn->gpsData_ ->geoidAltitude_->altitude_ = dataRead[72];
-    rtn->gpsData_ ->totalAltitude_->altitude_ = dataRead[76];
+    rtn->gpsData_->antennaAltitude_.altitude_ = dataRead[68];
+    rtn->gpsData_->geoidAltitude_.altitude_ = dataRead[72];
+    rtn->gpsData_->totalAltitude_.altitude_ = dataRead[76];
 
     rtn->oxidizerTankPressureData_ ->pressure_ = dataRead[80];
 
