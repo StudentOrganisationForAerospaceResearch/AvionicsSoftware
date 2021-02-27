@@ -74,6 +74,7 @@ C_SOURCES = \
   Src/system_stm32f4xx.c \
   Src/TransmitData.c \
   Src/Utils.c \
+  Src/Debug.c \
   tm_fatfs/Src/ccsbcs.c \
   tm_fatfs/Src/diskio.c \
   tm_fatfs/Src/fatfs_sd.c \
