@@ -29,9 +29,7 @@ char fileName[32];
  */
 void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress, uint16_t timeout)
 {
-	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
-	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
-	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, (uint16_t)(sizeof(memAddress)), buffer, bufferSize, timeout);
+	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, timeout);
 }
 
 /**
@@ -42,13 +40,21 @@ void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress, ui
  */
 void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress, uint16_t timeout)
 {
-	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
-	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
 	HAL_I2C_Mem_Read(&hi2c1, deviceAddress<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, timeout);
 }
 
-void writeAllDataToEEPROM(AllData* data, uint16_t memAddress, uint16_t timeout){
+/**
+ * @brief Blocks the current thread until the I2C state is ready for reading/writing.
+ * @param timeout Timeout duration
+ */
+void checkEEPROMBlocking(uint16_t timeout)
+{
+	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
+	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
+}
 
+void writeAllDataToEEPROM(AllData* data, uint16_t memAddress, uint16_t timeout)
+{
     char dataToWrite[200]; 
 
     int index = 0;
@@ -80,17 +86,19 @@ void writeAllDataToEEPROM(AllData* data, uint16_t memAddress, uint16_t timeout){
 
     dataToWrite[80] = data->oxidizerTankPressureData_ ->pressure_;
 
-   
-    //writeToEEPROM(dataToWrite, 80, uint16_t memAddress, uint16_t timeout);
+    checkEEPROMBlocking(uint16_t timeout);
+    writeToEEPROM(dataToWrite, 80, uint16_t memAddress, uint16_t timeout);
     // need: memAddress and timeout??????
-    
+    // increment address
 }
 
-void readAllDataFromEEPROM(uint16_t addr, AllData* rtn, uint16_t memAddress, uint16_t timeout){
+void readAllDataFromEEPROM(uint16_t addr, AllData* rtn, uint16_t memAddress, uint16_t timeout)
+{
     char dataRead[200];
   
-   //readFromEEPROM(dataRead, 80, uint16_t memAddress, uint16_t timeout);
-   // need: memAdress and timeout
+    checkEEPROMBlocking(uint16_t timeout)
+    readFromEEPROM(dataRead, 80, uint16_t memAddress, uint16_t timeout);
+    // need: memAdress and timeout
 
     rtn->accelGyroMagnetismData_ ->accelX_ = dataRead[0];
     rtn->accelGyroMagnetismData_ ->accelY_ = dataRead[4];
@@ -238,20 +246,8 @@ void lowFrequencyLogToSdRoutine(AllData* data, char* buffer)
         }
 
         buildLogEntry(data, buffer);
+        writeAllDataToEEPROM(data, memAddress, timeout);
 
-        if (f_mount(&fatfs, "SD:", 1) == FR_OK)
-        {
-            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-
-            if (f_open(&file, fileName, FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
-            {
-                f_puts(buffer, &file);
-                f_close(&file);
-            }
-
-            f_mount(NULL, "SD:", 1);
-            HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
-        }
     }
 }
 
@@ -281,7 +277,7 @@ void highFrequencyLogToSdRoutine(AllData* data, char* buffer)
     uint32_t prevWakeTime = osKernelSysTick();
 
     for (;;)
-    {
+    {   // Grab
         osDelayUntil(&prevWakeTime, FAST_LOG_DATA_PERIOD);
 
         FlightPhase flightPhase = getCurrentFlightPhase();
@@ -337,42 +333,6 @@ void logDataTask(void const* arg)
         "elapsedTime(ms),"
         "softwareVersion\n"
     );
-
-    if (f_mount(&fatfs, "SD:", 1) == FR_OK)
-    {
-        if (f_open(&file, "SD:AvionicsData1.csv", FA_OPEN_EXISTING) == FR_NO_FILE)
-        {
-            f_open(&file, "SD:AvionicsData1.csv", FA_CREATE_NEW | FA_READ | FA_WRITE);
-            f_puts(buffer, &file);
-            f_close(&file);
-        }
-        else
-        {
-            uint8_t fileExists = 1;
-
-            for (uint8_t index = 2; fileExists; index++)
-            {
-                sprintf(fileName, "SD:AvionicsData%i.csv", index);
-
-                if (f_open(&file, fileName, FA_OPEN_EXISTING) == FR_NO_FILE)
-                {
-                    f_open(&file, fileName, FA_CREATE_NEW | FA_READ | FA_WRITE);
-                    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-
-                    if (f_size(&file) == 0)
-                    {
-                        f_puts(buffer, &file);
-                    }
-
-                    f_close(&file);
-                    fileExists = 0;
-                }
-            }
-        }
-
-        f_mount(NULL, "SD:", 1);
-        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
-    }
 
     for (;;)
     {
