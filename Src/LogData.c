@@ -15,11 +15,35 @@ static int FAST_LOG_DATA_PERIOD = 200;
 static uint8_t softwareVersion = 104;
 static uint8_t deviceAddress = 0x50;
 static uint8_t currMemAddress = 0x07;
+static uint32_t timeout = 10;//what sbould this be?
+//NOTE: the functions pass around a timeout but i made a static declaration here
 
-static FATFS fatfs;
-static FIL file;
+typedef struct{
+    int32_t accelX;
+    int32_t accelY;
+    int32_t accelZ;
+    int32_t gyroX;
+    int32_t gyroY;
+    int32_t gyroZ;
+    int32_t magnetoX;
+    int32_t magnetoY;
+    int32_t magnetoZ;
+    int32_t barometerPressure;
+    int32_t barometerTemperature;
+    int32_t combustionChamberPressure;
+    int32_t oxidizerTankPressure;
+    int32_t gps_time;
+    int32_t latitude_degrees;
+    int32_t latitude_minutes;
+    int32_t longitude_degrees;
+    int32_t longitude_minutes;
+    int32_t altitude;
+} logEntry;
 
-char fileName[32];
+
+//SUPER COOL THING BELOW!
+static logEntry theLogEntry;
+
 
 /**
  * @brief Writes data to the EEPROM over I2C.
@@ -53,299 +77,196 @@ void checkEEPROMBlocking(uint16_t timeout)
 	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
 }
 
-void writeAllDataToEEPROM(AllData* data, uint16_t memAddress, uint16_t timeout)
+/**
+ * @brief puts a logEntry into a char array and sends to EEPROM for writing
+ * @param memAddress, needed by the writeToEEPROM function
+ * @param timeout, time to wait for write operation
+ */
+void writeLogEntryToEEPROM(uint16_t memAddress, uint16_t timeout)
 {
     char dataToWrite[200]; 
 
-    int index = 0;
-    dataToWrite[0] = data->accelGyroMagnetismData_ ->accelX_;
-    dataToWrite[4] = data->accelGyroMagnetismData_ ->accelY_;
-    dataToWrite[8] = data->accelGyroMagnetismData_ ->accelZ_;
-    dataToWrite[12] = data->accelGyroMagnetismData_ ->gyroX_;
-    dataToWrite[16] = data->accelGyroMagnetismData_ ->gyroY_;
-    dataToWrite[20] = data->accelGyroMagnetismData_ ->gyroZ_;
-    dataToWrite[24] = data->accelGyroMagnetismData_ ->magnetoX_;
-    dataToWrite[28] = data->accelGyroMagnetismData_ ->magnetoY_;
-    dataToWrite[32] = data->accelGyroMagnetismData_ ->magnetoZ_;
+    dataToWrite[0] = theLogEntry.accelX;
+    dataToWrite[4] = theLogEntry.accelY;
+    dataToWrite[8] = theLogEntry.accelZ;
+    dataToWrite[12] = theLogEntry.gyroX;
+    dataToWrite[16] = theLogEntry.gyroY;
+    dataToWrite[20] = theLogEntry.gyroZ;
+    dataToWrite[24] = theLogEntry.magnetoX;
+    dataToWrite[28] = theLogEntry.magnetoY;
+    dataToWrite[32] = theLogEntry.magnetoZ;
 
-    dataToWrite[36] = data->barometerData_ ->pressure_;
-    dataToWrite[40] = data->barometerData_ ->temperature_;
+    dataToWrite[36] = theLogEntry.barometerPressure;
+    dataToWrite[40] = theLogEntry.barometerTemperature;
 
-    dataToWrite[44] = data->combustionChamberPressureData_ ->pressure_;
+    dataToWrite[44] = theLogEntry.combustionChamberPressure;
+    dataToWrite[48] = theLogEntry.oxidizerTankPressure;
 
-    dataToWrite[48] = data->gpsData_ ->time_;
-    dataToWrite[52] = data->gpsData_->latitude_.degrees_;
-    dataToWrite[56] = data->gpsData_->latitude_.minutes_;
-    dataToWrite[60] = data->gpsData_->longitude_.degrees_;
-    dataToWrite[64] = data->gpsData_->longitude_.minutes_;
+    dataToWrite[52] = theLogEntry.gps_time;
+    dataToWrite[56] = theLogEntry.latitude_degrees;
+    dataToWrite[60] = theLogEntry.latitude_minutes;
+    dataToWrite[64] = theLogEntry.longitude_degrees;
+    dataToWrite[68] = theLogEntry.longitude_minutes;
+    dataToWrite[72] = theLogEntry.altitude;
 
-    dataToWrite[68] = data->gpsData_->antennaAltitude_.altitude_;
-    dataToWrite[72] = data->gpsData_->geoidAltitude_.altitude_;
-    dataToWrite[76] = data->gpsData_->totalAltitude_.altitude_;
-
-
-    dataToWrite[80] = data->oxidizerTankPressureData_ ->pressure_;
-
-    checkEEPROMBlocking(uint16_t timeout);
-    writeToEEPROM(dataToWrite, 80, uint16_t memAddress, uint16_t timeout);
+    checkEEPROMBlocking(timeout);
+    writeToEEPROM(dataToWrite, 76, memAddress, timeout);
     // need: memAddress and timeout??????
     // increment address
 }
 
-void readAllDataFromEEPROM(uint16_t addr, AllData* rtn, uint16_t memAddress, uint16_t timeout)
+/**
+ * @brief reads logEntry-sized char array from EEPROM and updates theLogEntry
+ * @param addr, I dont know where this is used
+ * @param memAddress, needed by the readFromEEPROM function
+ * @param timeout, time to wait for read operation
+ */
+void readLogEntryToEEPROM(uint16_t addr, uint16_t memAddress, uint16_t timeout)
 {
     char dataRead[200];
   
-    checkEEPROMBlocking(uint16_t timeout)
-    readFromEEPROM(dataRead, 80, uint16_t memAddress, uint16_t timeout);
+    checkEEPROMBlocking(timeout);
+    readFromEEPROM(dataRead, 80, memAddress, timeout);
     // need: memAdress and timeout
 
-    rtn->accelGyroMagnetismData_ ->accelX_ = dataRead[0];
-    rtn->accelGyroMagnetismData_ ->accelY_ = dataRead[4];
-    rtn->accelGyroMagnetismData_ ->accelY_ = dataRead[8];
-    rtn->accelGyroMagnetismData_ ->gyroX_ = dataRead[12];
-    rtn->accelGyroMagnetismData_ ->gyroY_ = dataRead[16];
-    rtn->accelGyroMagnetismData_ ->gyroZ_ = dataRead[20];
-    rtn->accelGyroMagnetismData_ ->magnetoX_ = dataRead[24];
-    rtn->accelGyroMagnetismData_ ->magnetoY_ = dataRead[28];
-    rtn->accelGyroMagnetismData_ ->magnetoZ_ = dataRead[32];
+    theLogEntry.accelX = dataRead[0];
+    theLogEntry.accelY = dataRead[4];
+    theLogEntry.accelY = dataRead[8];
+    theLogEntry.gyroX = dataRead[12];
+    theLogEntry.gyroY = dataRead[16];
+    theLogEntry.gyroZ = dataRead[20];
+    theLogEntry.magnetoX = dataRead[24];
+    theLogEntry.magnetoY = dataRead[28];
+    theLogEntry.magnetoZ = dataRead[32];
 
-    rtn->barometerData_ ->pressure_ = dataRead[36];
-    rtn->barometerData_ ->temperature_ = dataRead[40];
+    theLogEntry.barometerPressure = dataRead[36];
+    theLogEntry.barometerTemperature = dataRead[40];
 
-    rtn->combustionChamberPressureData_ ->pressure_ = dataRead[44];
+    theLogEntry.combustionChamberPressure = dataRead[44];
+    theLogEntry.oxidizerTankPressure = dataRead[48];
 
-    rtn->gpsData_ ->time_ = dataRead[48];
-    rtn->gpsData_->latitude_.degrees_ = dataRead[52];
-    rtn->gpsData_->latitude_.minutes_ = dataRead[56];
-    rtn->gpsData_->longitude_.degrees_ = dataRead[60];
-    rtn->gpsData_->longitude_.minutes_ = dataRead[64];
-
-    rtn->gpsData_->antennaAltitude_.altitude_ = dataRead[68];
-    rtn->gpsData_->geoidAltitude_.altitude_ = dataRead[72];
-    rtn->gpsData_->totalAltitude_.altitude_ = dataRead[76];
-
-    rtn->oxidizerTankPressureData_ ->pressure_ = dataRead[80];
-
+    theLogEntry.gps_time = dataRead[52];
+    theLogEntry.latitude_degrees = dataRead[56];
+    theLogEntry.latitude_minutes = dataRead[60];
+    theLogEntry.longitude_degrees = dataRead[64];
+    theLogEntry.longitude_minutes = dataRead[68];
+    theLogEntry.altitude = dataRead[72];
 }
 
-
-void buildLogEntry(AllData* data, char* buffer)
-{
-
-    int32_t accelX = -1;
-    int32_t accelY = -1;
-    int32_t accelZ = -1;
-    int32_t gyroX = -1;
-    int32_t gyroY = -1;
-    int32_t gyroZ = -1;
-    int32_t magnetoX = -1;
-    int32_t magnetoY = -1;
-    int32_t magnetoZ = -1;
-    int32_t pressure = -1;
-    int32_t temperature = -1;
-    int32_t combustionChamberPressure = -1;
-    int32_t oxidizerTankPressure = -1;
+/**
+ * @brief
+ */
+void initializeLogEntry(){
+    theLogEntry.accelX = -1;
+    theLogEntry.accelY = -1;
+    theLogEntry.accelZ = -1;
+    theLogEntry.gyroX = -1;
+    theLogEntry.gyroY = -1;
+    theLogEntry.gyroZ = -1;
+    theLogEntry.magnetoX = -1;
+    theLogEntry.magnetoY = -1;
+    theLogEntry.magnetoZ = -1;
+    theLogEntry.barometerPressure = -1;
+    theLogEntry.barometerTemperature = -1;
+    theLogEntry.combustionChamberPressure = -1;
+    theLogEntry.oxidizerTankPressure = -1; //this too
     // GPS
-    static uint32_t gps_time = 0xFFFF;
-    static int32_t latitude_degrees = -1;
-    static uint32_t latitude_minutes = 0xFFFF;
-    static int32_t longitude_degrees = -1;
-    static uint32_t longitude_minutes = 0xFFFF;
-    static int32_t altitude = -1;
-
-    if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
+    theLogEntry.gps_time = 0xFFFF;
+    theLogEntry.latitude_degrees = -1;
+    theLogEntry.latitude_minutes = 0xFFFF;
+    theLogEntry.longitude_degrees = -1;
+    theLogEntry.longitude_minutes = 0xFFFF;
+    theLogEntry.altitude = -1;
+}
+/**
+ * @brief Simply updates theLogEntry field with CURRENT values in AllData struct, formerly buildLogEntry
+ * @param data, pointer to AllData struct
+ */
+void updateLogEntry(AllData* data)//updateLogEntry, pointer to the log entry
+{
+    if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK) //this is how we do it!
     {
-        accelX = data->accelGyroMagnetismData_->accelX_;
-        accelY = data->accelGyroMagnetismData_->accelY_;
-        accelZ = data->accelGyroMagnetismData_->accelZ_;
-        gyroX = data->accelGyroMagnetismData_->gyroX_;
-        gyroY = data->accelGyroMagnetismData_->gyroY_;
-        gyroZ = data->accelGyroMagnetismData_->gyroZ_;
-        magnetoX = data->accelGyroMagnetismData_->magnetoX_;
-        magnetoY = data->accelGyroMagnetismData_->magnetoY_;
-        magnetoZ = data->accelGyroMagnetismData_->magnetoZ_;
+        theLogEntry.accelX = data->accelGyroMagnetismData_->accelX_;
+        theLogEntry.accelY = data->accelGyroMagnetismData_->accelY_;
+        theLogEntry.accelZ = data->accelGyroMagnetismData_->accelZ_;
+        theLogEntry.gyroX = data->accelGyroMagnetismData_->gyroX_;
+        theLogEntry.gyroY = data->accelGyroMagnetismData_->gyroY_;
+        theLogEntry.gyroZ = data->accelGyroMagnetismData_->gyroZ_;
+        theLogEntry.magnetoX = data->accelGyroMagnetismData_->magnetoX_;
+        theLogEntry.magnetoY = data->accelGyroMagnetismData_->magnetoY_;
+        theLogEntry.magnetoZ = data->accelGyroMagnetismData_->magnetoZ_;
         osMutexRelease(data->accelGyroMagnetismData_->mutex_);
     }
 
     if (osMutexWait(data->barometerData_->mutex_, 0) == osOK)
     {
-        pressure = data->barometerData_->pressure_;
-        temperature = data->barometerData_->temperature_;
+        theLogEntry.pressure = data->barometerData_->pressure_;
+        theLogEntry.temperature = data->barometerData_->temperature_;
         osMutexRelease(data->barometerData_->mutex_);
     }
 
     if (osMutexWait(data->combustionChamberPressureData_->mutex_, 0) == osOK)
     {
-        combustionChamberPressure = data->combustionChamberPressureData_->pressure_;
+        theLogEntry.combustionChamberPressure = data->combustionChamberPressureData_->pressure_;
         osMutexRelease(data->combustionChamberPressureData_->mutex_);
+    }
+
+     if (osMutexWait(data->oxidizerTankPressureData_->mutex_, 0) == osOK)
+    {
+        theLogEntry.oxidizerTankPressure = data->oxidizerTankPressureData_->pressure_;
+        osMutexRelease(data->oxidizerTankPressureData_->mutex_);
     }
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-        gps_time = data->gpsData_->time_;
+        theLogEntry.gps_time = data->gpsData_->time_;
 
-        latitude_degrees = data->gpsData_->latitude_.degrees_;
-        latitude_minutes = data->gpsData_->latitude_.minutes_;
+        theLogEntry.latitude_degrees = data->gpsData_->latitude_.degrees_;
+        theLogEntry.latitude_minutes = data->gpsData_->latitude_.minutes_;
 
-        longitude_degrees = data->gpsData_->longitude_.degrees_;
-        longitude_minutes = data->gpsData_->longitude_.minutes_;
+        theLogEntry.longitude_degrees = data->gpsData_->longitude_.degrees_;
+        theLogEntry.longitude_minutes = data->gpsData_->longitude_.minutes_;
 
-        altitude = data->gpsData_->totalAltitude_.altitude_;
+        theLogEntry.altitude = data->gpsData_->totalAltitude_.altitude_;
 
         osMutexRelease(data->gpsData_->mutex_);
     }
-
-    if (osMutexWait(data->oxidizerTankPressureData_->mutex_, 0) == osOK)
-    {
-        oxidizerTankPressure = data->oxidizerTankPressureData_->pressure_;
-        osMutexRelease(data->oxidizerTankPressureData_->mutex_);
-    }
-
-    sprintf(
-        buffer,
-        "%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%lu,%ld,%ld,%ld,%ld,%ld,%d,%ld,%d\n",
-        accelX,
-        accelY,
-        accelZ,
-        gyroX,
-        gyroY,
-        gyroZ,
-        magnetoX,
-        magnetoY,
-        magnetoZ,
-        pressure,
-        temperature,
-        combustionChamberPressure,
-        oxidizerTankPressure,
-        gps_time,
-        latitude_degrees,
-        latitude_minutes,
-        longitude_degrees,
-        longitude_minutes,
-        altitude,
-        getCurrentFlightPhase(),
-        HAL_GetTick(),
-        softwareVersion
-    );
 }
 
-void lowFrequencyLogToSdRoutine(AllData* data, char* buffer)
+/**
+ * Used for logging entries to the EEPROM. First updates the struct, then writes it
+ * the wait times are all managed in the main for loop so highFrequencyLog = lowFrequencyLog
+ * @param data, sent to updateLogEntry
+ */
+void logEntryOnceRoutine(AllData* data)
 {
-    uint32_t prevWakeTime = osKernelSysTick();
-    FlightPhase entryPhase = getCurrentFlightPhase();
-
-    for (;;)
-    {
-        osDelayUntil(&prevWakeTime, SLOW_LOG_DATA_PERIOD);
-
-        if (getCurrentFlightPhase() != entryPhase)
-        {
-            // New phase has started, exit low frequency logging
-            return;
-        }
-
-        buildLogEntry(data, buffer);
-        writeAllDataToEEPROM(data, memAddress, timeout);
-
-    }
-}
-
-void highFrequencyLogToSdRoutine(AllData* data, char* buffer)
-{
-    // Get card mounted
-    uint8_t mounted = 0;
-
-    while (!mounted)
-    {
-        // Keep trying, really need to log during this time
-        mounted = (f_mount(&fatfs, "SD:", 1) == FR_OK);
-
-        FlightPhase flightPhase = getCurrentFlightPhase();
-
-        if ( flightPhase != BURN &&
-                flightPhase != COAST &&
-                flightPhase != DROGUE_DESCENT)
-        {
-            // couldn't mount during important phases, too bad :(
-            return;
-        }
-    }
-
-    // Card mounted, start writing at high frequency
-    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-    uint32_t prevWakeTime = osKernelSysTick();
-
-    for (;;)
-    {   // Grab
-        osDelayUntil(&prevWakeTime, FAST_LOG_DATA_PERIOD);
-
-        FlightPhase flightPhase = getCurrentFlightPhase();
-
-        if ( flightPhase != BURN &&
-                flightPhase != COAST &&
-                flightPhase != DROGUE_DESCENT)
-        {
-            // done important phases, unmount card and exit high frequency logging
-            break;
-        }
-
-        buildLogEntry(data, buffer);
-
-        if (f_open(&file, fileName, FA_OPEN_APPEND | FA_READ | FA_WRITE) == FR_OK)
-        {
-            f_puts(buffer, &file);
-            f_close(&file); // close to save the file
-        }
-    }
-
-    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
-    f_mount(NULL, "SD:", 1);
+    updateLogEntry(data);
+    writeLogEntryToEEPROM(currMemAddress, timeout);
 }
 
 void logDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
-    char buffer[500];
-
-    sprintf(
-        buffer,
-        "accelX,"
-        "accelY,"
-        "accelZ,"
-        "gyroX,"
-        "gyroY,"
-        "gyroZ,"
-        "magnetoX,"
-        "magnetoY,"
-        "magnetoZ,"
-        "pressure,"
-        "temperature(100C),"
-        "combustionChamberPressure(1000psi),"
-        "oxidizerTankPressure(1000psi),"
-        "GPS_time,"
-        "GPS_latitude_degrees,"
-        "GPS_latitude_minutes,"
-        "GPS_longitude_degrees,"
-        "GPS_longitude_minutes,"
-        "GPS_altitude,"
-        "currentFlightPhase,"
-        "elapsedTime(ms),"
-        "softwareVersion\n"
-    );
-
+    initializeLogEntry();
+    uint32_t prevWakeTime;
+    clock_t beforeLogTime, afterLogTime, totalTime;
     for (;;)
     {
+        beforeLogTime = clock();
+        logEntryOnceRoutine();//should have a delay arugument
+        afterLogTime = clock();
+        totalTime = (double)(afterLogTime - beforeLogTime) / CLOCKS_PER_SEC / 1000; //this also takes time!
+        prevWakeTime = osKernelSysTick();//assume it is atomic: runs in one cycle
         switch (getCurrentFlightPhase())
         {
             case BURN:
             case COAST:
             case DROGUE_DESCENT:
-                highFrequencyLogToSdRoutine(data, buffer);
+                osDelayUntil(&prevWakeTime, (uint32_t)(FAST_LOG_DATA_PERIOD - totalTime));
                 break;
 
             default:
-                lowFrequencyLogToSdRoutine(data, buffer);
+                osDelayUntil(&prevWakeTime, (uint32_t)(SLOW_LOG_DATA_PERIOD - totalTime));
                 break;
         }
     }
