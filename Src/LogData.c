@@ -117,7 +117,6 @@ void writeLogEntryToEEPROM(uint16_t memAddress)
     dataToWrite[72] = theLogEntry.altitude;
     dataToWrite[76] = theLogEntry.currentFlightPhase;
     dataToWrite[80] = theLogEntry.tick;
-
     checkEEPROMBlocking();
     writeToEEPROM(dataToWrite, sizeof(dataToWrite), memAddress);
     //TODO: make sure memAddress is correct, increment address
