@@ -1,3 +1,12 @@
+/**
+ ******************************************************************************
+ * File Name          : LogData.c
+ * Description        : Code handles logging of AllData as per FlightPhase
+ ******************************************************************************
+*/
+
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -10,14 +19,8 @@
 #include "Data.h"
 #include "FlightPhase.h"
 
-static int SLOW_LOG_DATA_PERIOD = 700;
-static int FAST_LOG_DATA_PERIOD = 200;
-static uint8_t softwareVersion = 104;
-static uint8_t deviceAddress = 0x50;
-static uint8_t currMemAddress = 0x07;
-static uint32_t timeout = 10;//what sbould this be?
-//NOTE: the functions pass around a timeout but i made a static declaration here
 
+/* Structs -------------------------------------------------------------------*/
 typedef struct{
     int32_t accelX;
     int32_t accelY;
@@ -37,21 +40,30 @@ typedef struct{
     int32_t latitude_minutes;
     int32_t longitude_degrees;
     int32_t longitude_minutes;
+    int32_t antennaAltitude;
+    int32_t geoidAltitude;
     int32_t altitude;
-} logEntry;
+    int32_t tick;
+} logEntry; // logEntry holds data from AllData that is to be logged
 
 
-//SUPER COOL THING BELOW!
-static logEntry theLogEntry;
+/* Constants -----------------------------------------------------------------*/
+static int SLOW_LOG_DATA_PERIOD = 700;
+static int FAST_LOG_DATA_PERIOD = 200;
+static uint8_t softwareVersion = 104;
+static uint8_t deviceAddress = 0x50;
+static uint8_t currMemAddress = 0x07; //TODO: update this as needed
+static uint32_t timeout = 10; // Time required to wait before ending read/write 
+static logEntry theLogEntry; // This is the global log entry that is updated
+static uint8_t logEntrySize = 80;
 
-
+/* Functions -----------------------------------------------------------------*/
 /**
  * @brief Writes data to the EEPROM over I2C.
  * @param buffer, pointer to the data buffer.
  * @param bufferSize, size of data buffer.
- * @param timeout, time to wait for write operation before timing out in ms.
  */
-void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress, uint16_t timeout)
+void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
 	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, timeout);
 }
@@ -60,18 +72,16 @@ void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress, ui
  * @brief Reads data from the EEPROM over I2C.
  * @param receiveBuffer, pointer to the buffer to store received data.
  * @param bufferSize, size of data to be read.
- * @param timeout, time to wait for read operation before timing out in ms.
  */
-void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress, uint16_t timeout)
+void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress)
 {
 	HAL_I2C_Mem_Read(&hi2c1, deviceAddress<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, timeout);
 }
 
 /**
  * @brief Blocks the current thread until the I2C state is ready for reading/writing.
- * @param timeout Timeout duration
  */
-void checkEEPROMBlocking(uint16_t timeout)
+void checkEEPROMBlocking()
 {
 	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
 	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
@@ -79,12 +89,11 @@ void checkEEPROMBlocking(uint16_t timeout)
 
 /**
  * @brief puts a logEntry into a char array and sends to EEPROM for writing
- * @param memAddress, needed by the writeToEEPROM function
- * @param timeout, time to wait for write operation
+ * @param memAddress, the address at which the EEPROM is instructed to start writing
  */
-void writeLogEntryToEEPROM(uint16_t memAddress, uint16_t timeout)
+void writeLogEntryToEEPROM(uint16_t memAddress)
 {
-    char dataToWrite[200]; 
+    char dataToWrite[logEntrySize]; 
 
     dataToWrite[0] = theLogEntry.accelX;
     dataToWrite[4] = theLogEntry.accelY;
@@ -95,39 +104,34 @@ void writeLogEntryToEEPROM(uint16_t memAddress, uint16_t timeout)
     dataToWrite[24] = theLogEntry.magnetoX;
     dataToWrite[28] = theLogEntry.magnetoY;
     dataToWrite[32] = theLogEntry.magnetoZ;
-
     dataToWrite[36] = theLogEntry.barometerPressure;
     dataToWrite[40] = theLogEntry.barometerTemperature;
-
     dataToWrite[44] = theLogEntry.combustionChamberPressure;
     dataToWrite[48] = theLogEntry.oxidizerTankPressure;
-
     dataToWrite[52] = theLogEntry.gps_time;
     dataToWrite[56] = theLogEntry.latitude_degrees;
     dataToWrite[60] = theLogEntry.latitude_minutes;
     dataToWrite[64] = theLogEntry.longitude_degrees;
     dataToWrite[68] = theLogEntry.longitude_minutes;
     dataToWrite[72] = theLogEntry.altitude;
+    dataToWrite[76] = theLogEntry.tick;
 
-    checkEEPROMBlocking(timeout);
-    writeToEEPROM(dataToWrite, 76, memAddress, timeout);
-    // need: memAddress and timeout??????
-    // increment address
+    checkEEPROMBlocking();
+    writeToEEPROM(dataToWrite, sizeof(dataToWrite), memAddress);
+    //TODO: make sure memAddress is correct, increment address
 }
 
 /**
  * @brief reads logEntry-sized char array from EEPROM and updates theLogEntry
- * @param addr, I dont know where this is used
- * @param memAddress, needed by the readFromEEPROM function
- * @param timeout, time to wait for read operation
+ * @param memAddress, the address at which the EEPROM is instructed to start reading
  */
-void readLogEntryToEEPROM(uint16_t addr, uint16_t memAddress, uint16_t timeout)
+void readLogEntryToEEPROM(uint16_t memAddress)
 {
-    char dataRead[200];
+    char dataRead[logEntrySize];
   
-    checkEEPROMBlocking(timeout);
-    readFromEEPROM(dataRead, 80, memAddress, timeout);
-    // need: memAdress and timeout
+    checkEEPROMBlocking();
+    readFromEEPROM(dataRead, sizeof(dataRead), memAddress);
+    //TODO: memAdress may not be corrrect bc it's never incremented
 
     theLogEntry.accelX = dataRead[0];
     theLogEntry.accelY = dataRead[4];
@@ -138,25 +142,25 @@ void readLogEntryToEEPROM(uint16_t addr, uint16_t memAddress, uint16_t timeout)
     theLogEntry.magnetoX = dataRead[24];
     theLogEntry.magnetoY = dataRead[28];
     theLogEntry.magnetoZ = dataRead[32];
-
     theLogEntry.barometerPressure = dataRead[36];
     theLogEntry.barometerTemperature = dataRead[40];
-
     theLogEntry.combustionChamberPressure = dataRead[44];
     theLogEntry.oxidizerTankPressure = dataRead[48];
-
     theLogEntry.gps_time = dataRead[52];
     theLogEntry.latitude_degrees = dataRead[56];
     theLogEntry.latitude_minutes = dataRead[60];
     theLogEntry.longitude_degrees = dataRead[64];
     theLogEntry.longitude_minutes = dataRead[68];
     theLogEntry.altitude = dataRead[72];
+    theLogEntry.tick = dataRead[76];
 }
 
 /**
- * @brief
+ * @brief this method initializes the log entry struct
+ * and is only called during the start of the task
  */
-void initializeLogEntry(){
+void initializeLogEntry()
+{
     theLogEntry.accelX = -1;
     theLogEntry.accelY = -1;
     theLogEntry.accelZ = -1;
@@ -169,22 +173,24 @@ void initializeLogEntry(){
     theLogEntry.barometerPressure = -1;
     theLogEntry.barometerTemperature = -1;
     theLogEntry.combustionChamberPressure = -1;
-    theLogEntry.oxidizerTankPressure = -1; //this too
-    // GPS
+    theLogEntry.oxidizerTankPressure = -1;
     theLogEntry.gps_time = 0xFFFF;
     theLogEntry.latitude_degrees = -1;
     theLogEntry.latitude_minutes = 0xFFFF;
     theLogEntry.longitude_degrees = -1;
     theLogEntry.longitude_minutes = 0xFFFF;
+    theLogEntry.antennaAltitude = -1;
+    theLogEntry.geoidAltitude = -1;
     theLogEntry.altitude = -1;
+    theLogEntry.tick = HAL_GetTick();
 }
 /**
- * @brief Simply updates theLogEntry field with CURRENT values in AllData struct, formerly buildLogEntry
+ * @brief Simply updates theLogEntry field with CURRENT values in AllData struct
  * @param data, pointer to AllData struct
  */
-void updateLogEntry(AllData* data)//updateLogEntry, pointer to the log entry
+void updateLogEntry(AllData* data)
 {
-    if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK) //this is how we do it!
+    if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
     {
         theLogEntry.accelX = data->accelGyroMagnetismData_->accelX_;
         theLogEntry.accelY = data->accelGyroMagnetismData_->accelY_;
@@ -220,28 +226,28 @@ void updateLogEntry(AllData* data)//updateLogEntry, pointer to the log entry
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
         theLogEntry.gps_time = data->gpsData_->time_;
-
         theLogEntry.latitude_degrees = data->gpsData_->latitude_.degrees_;
         theLogEntry.latitude_minutes = data->gpsData_->latitude_.minutes_;
-
         theLogEntry.longitude_degrees = data->gpsData_->longitude_.degrees_;
         theLogEntry.longitude_minutes = data->gpsData_->longitude_.minutes_;
-
+        theLogEntry.antennaAltitude = data->gpsData_->totalAltitude_.altitude_;
+        theLogEntry.geoidAltitude = data->gpsData_->totalAltitude_.altitude_;
         theLogEntry.altitude = data->gpsData_->totalAltitude_.altitude_;
-
         osMutexRelease(data->gpsData_->mutex_);
     }
+    //TODO: add FlightPhase to logEntry and update it
+    theLogEntry.tick = HAL_GetTick();
 }
 
 /**
- * Used for logging entries to the EEPROM. First updates the struct, then writes it
+ * @brief Used for logging entries to the EEPROM. First updates the struct, then writes it
  * the wait times are all managed in the main for loop so highFrequencyLog = lowFrequencyLog
- * @param data, sent to updateLogEntry
+ * @param data, pointer to AllData Struct sent to updateLogEntry to update the logEntry struct
  */
 void logEntryOnceRoutine(AllData* data)
 {
     updateLogEntry(data);
-    writeLogEntryToEEPROM(currMemAddress, timeout);
+    writeLogEntryToEEPROM(currMemAddress);
 }
 
 void logDataTask(void const* arg)
@@ -253,7 +259,7 @@ void logDataTask(void const* arg)
     for (;;)
     {
         beforeLogTime = clock();
-        logEntryOnceRoutine();//should have a delay arugument
+        logEntryOnceRoutine();
         afterLogTime = clock();
         totalTime = (double)(afterLogTime - beforeLogTime) / CLOCKS_PER_SEC / 1000; //this also takes time!
         prevWakeTime = osKernelSysTick();//assume it is atomic: runs in one cycle
