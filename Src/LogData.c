@@ -20,6 +20,13 @@
 #include "FlightPhase.h"
 
 
+/* Macros --------------------------------------------------------------------*/
+//CHECK: was max implemented somewhere else?
+#define max(a,b) \
+    ({ __typeof__ (a) _a = (a); \
+        __typeof__ (b) _b = (b); \
+        _a > _b ? _a : _b; })
+
 /* Structs -------------------------------------------------------------------*/
 typedef struct{
     int32_t accelX;
@@ -45,18 +52,19 @@ typedef struct{
     int32_t altitude;
     int32_t currentFlightPhase;
     int32_t tick;
-} logEntry; // logEntry holds data from AllData that is to be logged
+} LogEntry; // logEntry holds data from AllData that is to be logged
 
 
 /* Constants -----------------------------------------------------------------*/
-static int SLOW_LOG_DATA_PERIOD = 700;
-static int FAST_LOG_DATA_PERIOD = 200;
-static uint8_t softwareVersion = 104;
-static uint8_t deviceAddress = 0x50;
-static uint8_t currMemAddress = 0x07; //TODO: update this as needed
-static uint32_t timeout = 10; //Time required to wait before ending read/write (unit =?)
-static logEntry theLogEntry; //This is the global log entry that is updated
-static uint8_t logEntrySize = 84;
+static const int32_t SLOW_LOG_DATA_PERIOD_ms = 700; // logging period for slow routine
+static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast routine
+static const uint8_t softwareVersion = 104; // this is not used at all
+static const uint8_t deviceAddress = 0x50; // used for reading/writing to EEPROM
+static uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
+static uint8_t logAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
+static const uint32_t timeout_ms = 10; // Time required to wait before ending read/write
+static LogEntry theLogEntry; // This is the global log entry that is updated
+static const uint8_t LogEntrySize = sizeof(LogEntry); //size of logEntry = 96 bytes
 
 /* Functions -----------------------------------------------------------------*/
 /**
@@ -66,7 +74,7 @@ static uint8_t logEntrySize = 84;
  */
 void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, timeout);
+	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, timeout_ms);
 }
 
 /**
@@ -76,7 +84,7 @@ void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
  */
 void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	HAL_I2C_Mem_Read(&hi2c1, deviceAddress<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, timeout);
+	HAL_I2C_Mem_Read(&hi2c1, deviceAddress<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, timeout_ms);
 }
 
 /**
@@ -85,7 +93,8 @@ void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAdd
 void checkEEPROMBlocking()
 {
 	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
-	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout) != HAL_OK){};
+	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout_ms) != HAL_OK){};
+    // TODO: add a delay ~100us?
 }
 
 /**
@@ -94,7 +103,7 @@ void checkEEPROMBlocking()
  */
 void writeLogEntryToEEPROM(uint16_t memAddress)
 {
-    char dataToWrite[logEntrySize]; 
+    char dataToWrite[LogEntrySize]; 
 
     dataToWrite[0] = theLogEntry.accelX;
     dataToWrite[4] = theLogEntry.accelY;
@@ -114,25 +123,25 @@ void writeLogEntryToEEPROM(uint16_t memAddress)
     dataToWrite[60] = theLogEntry.latitude_minutes;
     dataToWrite[64] = theLogEntry.longitude_degrees;
     dataToWrite[68] = theLogEntry.longitude_minutes;
-    dataToWrite[72] = theLogEntry.altitude;
-    dataToWrite[76] = theLogEntry.currentFlightPhase;
-    dataToWrite[80] = theLogEntry.tick;
+    dataToWrite[72] = theLogEntry.antennaAltitude;
+    dataToWrite[76] = theLogEntry.geoidAltitude;
+    dataToWrite[80] = theLogEntry.altitude;
+    dataToWrite[84] = theLogEntry.currentFlightPhase;
+    dataToWrite[88] = theLogEntry.tick;
     checkEEPROMBlocking();
     writeToEEPROM(dataToWrite, sizeof(dataToWrite), memAddress);
-    //TODO: make sure memAddress is correct, increment address
 }
 
 /**
- * @brief reads logEntry-sized char array from EEPROM and updates theLogEntry
+ * @brief reads LogEntry-sized char array from EEPROM and updates theLogEntry
  * @param memAddress, the address at which the EEPROM is instructed to start reading
  */
 void readLogEntryToEEPROM(uint16_t memAddress)
 {
-    char dataRead[logEntrySize];
+    char dataRead[LogEntrySize];
   
     checkEEPROMBlocking();
     readFromEEPROM(dataRead, sizeof(dataRead), memAddress);
-    //TODO: memAdress may not be corrrect bc it's never incremented
 
     theLogEntry.accelX = dataRead[0];
     theLogEntry.accelY = dataRead[4];
@@ -152,9 +161,11 @@ void readLogEntryToEEPROM(uint16_t memAddress)
     theLogEntry.latitude_minutes = dataRead[60];
     theLogEntry.longitude_degrees = dataRead[64];
     theLogEntry.longitude_minutes = dataRead[68];
-    theLogEntry.altitude = dataRead[72];
-    theLogEntry.currentFlightPhase = dataRead][76];
-    theLogEntry.tick = dataRead[80];
+    theLogEntry.antennaAltitude = dataRead[72];
+    theLogEntry.geoidAltitude = dataRead[76];
+    theLogEntry.altitude = dataRead[80];
+    theLogEntry.currentFlightPhase = dataRead[84];
+    theLogEntry.tick = dataRead[86];
 }
 
 /**
@@ -184,8 +195,14 @@ void initializeLogEntry()
     theLogEntry.antennaAltitude = -1;
     theLogEntry.geoidAltitude = -1;
     theLogEntry.altitude = -1;
+    //[1] Using memcpy: does it only update one element of the struct?
+    //[2] when using memcpy to update entire struct, would we need a temp stuct?
+
+    //because struct memory is contiguous, is this correct:
+    //char initValue = 0xFF;
+    //memcpy (&LogEntry, &initValue, sizeof(LogEntry));
     theLogEntry.currentFlightPhase = getCurrentFlightPhase();
-    theLogEntry.tick = HAL_GetTick();
+    theLogEntry.tick = osKernelSysTick();
 }
 /**
  * @brief Simply updates theLogEntry field with CURRENT values in AllData struct
@@ -209,8 +226,8 @@ void updateLogEntry(AllData* data)
 
     if (osMutexWait(data->barometerData_->mutex_, 0) == osOK)
     {
-        theLogEntry.pressure = data->barometerData_->pressure_;
-        theLogEntry.temperature = data->barometerData_->temperature_;
+        theLogEntry.barometerPressure = data->barometerData_->pressure_;
+        theLogEntry.barometerTemperature = data->barometerData_->temperature_;
         osMutexRelease(data->barometerData_->mutex_);
     }
 
@@ -250,32 +267,32 @@ void updateLogEntry(AllData* data)
 void logEntryOnceRoutine(AllData* data)
 {
     updateLogEntry(data);
-    writeLogEntryToEEPROM(currMemAddress);
+    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + logAddressOffset);
+    logAddressOffset += LogEntrySize;
 }
 
 void logDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
+    //TODO: make log entry here and pass it around (LogEntry log;) instead of a global var?
     initializeLogEntry();
     uint32_t prevWakeTime;
     clock_t beforeLogTime, afterLogTime, totalTime;
     for (;;)
     {
-        beforeLogTime = clock();
+        beforeLogTime = osKernelSysTick();
         logEntryOnceRoutine();
-        afterLogTime = clock();
-        totalTime = (double)(afterLogTime - beforeLogTime) / CLOCKS_PER_SEC / 1000; //this also takes time!
         prevWakeTime = osKernelSysTick();//assume it is atomic: runs in one cycle
         switch (getCurrentFlightPhase())
         {
             case BURN:
             case COAST:
             case DROGUE_DESCENT:
-                osDelayUntil(&prevWakeTime, (uint32_t)(FAST_LOG_DATA_PERIOD - totalTime));
+                osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
                 break;
 
             default:
-                osDelayUntil(&prevWakeTime, (uint32_t)(SLOW_LOG_DATA_PERIOD - totalTime));
+                osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
                 break;
         }
     }
