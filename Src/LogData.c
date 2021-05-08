@@ -27,6 +27,7 @@
         __typeof__ (b) _b = (b); \
         _a > _b ? _a : _b; })
 
+
 /* Structs -------------------------------------------------------------------*/
 typedef struct{
     int32_t accelX;
@@ -52,19 +53,22 @@ typedef struct{
     int32_t altitude;
     int32_t currentFlightPhase;
     int32_t tick;
-} LogEntry; // logEntry holds data from AllData that is to be logged
+} LogEntry; // LogEntry holds data from AllData that is to be logged
 
 
 /* Constants -----------------------------------------------------------------*/
 static const int32_t SLOW_LOG_DATA_PERIOD_ms = 700; // logging period for slow routine
 static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast routine
-static const uint8_t softwareVersion = 104; // this is not used at all
-static const uint8_t deviceAddress = 0x50; // used for reading/writing to EEPROM
-static uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
+static const uint8_t SOFTWARE_VERSION = 104; // this is not used at all
+static const uint8_t DEVICE_ADDRESS = 0x50; // used for reading/writing to EEPROM
+static const uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
+static const uint32_t TIMEOUT_MS = 10; // Time required to wait before ending read/write
+static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 96 bytes
+
+
+/* Variables -----------------------------------------------------------------*/
 static uint8_t logAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
-static const uint32_t timeout_ms = 10; // Time required to wait before ending read/write
-static LogEntry theLogEntry; // This is the global log entry that is updated
-static const uint8_t LogEntrySize = sizeof(LogEntry); //size of logEntry = 96 bytes
+
 
 /* Functions -----------------------------------------------------------------*/
 /**
@@ -74,7 +78,7 @@ static const uint8_t LogEntrySize = sizeof(LogEntry); //size of logEntry = 96 by
  */
 void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	HAL_I2C_Mem_Write(&hi2c1, deviceAddress<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, timeout_ms);
+	HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
 }
 
 /**
@@ -84,7 +88,7 @@ void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
  */
 void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	HAL_I2C_Mem_Read(&hi2c1, deviceAddress<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, timeout_ms);
+	HAL_I2C_Mem_Read(&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS);
 }
 
 /**
@@ -93,196 +97,153 @@ void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAdd
 void checkEEPROMBlocking()
 {
 	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
-	while (HAL_I2C_IsDeviceReady(&hi2c1, deviceAddress<<1, 3, timeout_ms) != HAL_OK){};
+	while (HAL_I2C_IsDeviceReady(&hi2c1, DEVICE_ADDRESS<<1, 3, TIMEOUT_MS) != HAL_OK){};
     // TODO: add a delay ~100us?
+    // should this return a boolean?
 }
 
 /**
- * @brief puts a logEntry into a char array and sends to EEPROM for writing
+ * @brief puts a LogEntry into a char array and sends to EEPROM for writing
  * @param memAddress, the address at which the EEPROM is instructed to start writing
+ * @param givenLog, pointer to a log initialized at the start of task
  */
-void writeLogEntryToEEPROM(uint16_t memAddress)
+void writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
 {
-    char dataToWrite[LogEntrySize]; 
-
-    dataToWrite[0] = theLogEntry.accelX;
-    dataToWrite[4] = theLogEntry.accelY;
-    dataToWrite[8] = theLogEntry.accelZ;
-    dataToWrite[12] = theLogEntry.gyroX;
-    dataToWrite[16] = theLogEntry.gyroY;
-    dataToWrite[20] = theLogEntry.gyroZ;
-    dataToWrite[24] = theLogEntry.magnetoX;
-    dataToWrite[28] = theLogEntry.magnetoY;
-    dataToWrite[32] = theLogEntry.magnetoZ;
-    dataToWrite[36] = theLogEntry.barometerPressure;
-    dataToWrite[40] = theLogEntry.barometerTemperature;
-    dataToWrite[44] = theLogEntry.combustionChamberPressure;
-    dataToWrite[48] = theLogEntry.oxidizerTankPressure;
-    dataToWrite[52] = theLogEntry.gps_time;
-    dataToWrite[56] = theLogEntry.latitude_degrees;
-    dataToWrite[60] = theLogEntry.latitude_minutes;
-    dataToWrite[64] = theLogEntry.longitude_degrees;
-    dataToWrite[68] = theLogEntry.longitude_minutes;
-    dataToWrite[72] = theLogEntry.antennaAltitude;
-    dataToWrite[76] = theLogEntry.geoidAltitude;
-    dataToWrite[80] = theLogEntry.altitude;
-    dataToWrite[84] = theLogEntry.currentFlightPhase;
-    dataToWrite[88] = theLogEntry.tick;
     checkEEPROMBlocking();
-    writeToEEPROM(dataToWrite, sizeof(dataToWrite), memAddress);
+    //Note: writeToEEPROM expects a uint8_t*
+    //if that's not a problem, can we send the LogEntry pointer without casting?
+    writeToEEPROM((char*)givenLog, LOG_ENTRY_SIZE, memAddress);
 }
 
 /**
- * @brief reads LogEntry-sized char array from EEPROM and updates theLogEntry
+ * @brief reads LogEntry-sized char array from EEPROM and updates the log entry
  * @param memAddress, the address at which the EEPROM is instructed to start reading
+ * @param givenLog, pointer to a log initialized at the start of task
  */
-void readLogEntryToEEPROM(uint16_t memAddress)
+void readLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
 {
-    char dataRead[LogEntrySize];
+    char dataRead[LOG_ENTRY_SIZE];
   
     checkEEPROMBlocking();
     readFromEEPROM(dataRead, sizeof(dataRead), memAddress);
 
-    theLogEntry.accelX = dataRead[0];
-    theLogEntry.accelY = dataRead[4];
-    theLogEntry.accelY = dataRead[8];
-    theLogEntry.gyroX = dataRead[12];
-    theLogEntry.gyroY = dataRead[16];
-    theLogEntry.gyroZ = dataRead[20];
-    theLogEntry.magnetoX = dataRead[24];
-    theLogEntry.magnetoY = dataRead[28];
-    theLogEntry.magnetoZ = dataRead[32];
-    theLogEntry.barometerPressure = dataRead[36];
-    theLogEntry.barometerTemperature = dataRead[40];
-    theLogEntry.combustionChamberPressure = dataRead[44];
-    theLogEntry.oxidizerTankPressure = dataRead[48];
-    theLogEntry.gps_time = dataRead[52];
-    theLogEntry.latitude_degrees = dataRead[56];
-    theLogEntry.latitude_minutes = dataRead[60];
-    theLogEntry.longitude_degrees = dataRead[64];
-    theLogEntry.longitude_minutes = dataRead[68];
-    theLogEntry.antennaAltitude = dataRead[72];
-    theLogEntry.geoidAltitude = dataRead[76];
-    theLogEntry.altitude = dataRead[80];
-    theLogEntry.currentFlightPhase = dataRead[84];
-    theLogEntry.tick = dataRead[86];
+    givenLog->accelX = dataRead[0];
+    givenLog->accelY = dataRead[4];
+    givenLog->accelY = dataRead[8];
+    givenLog->gyroX = dataRead[12];
+    givenLog->gyroY = dataRead[16];
+    givenLog->gyroZ = dataRead[20];
+    givenLog->magnetoX = dataRead[24];
+    givenLog->magnetoY = dataRead[28];
+    givenLog->magnetoZ = dataRead[32];
+    givenLog->barometerPressure = dataRead[36];
+    givenLog->barometerTemperature = dataRead[40];
+    givenLog->combustionChamberPressure = dataRead[44];
+    givenLog->oxidizerTankPressure = dataRead[48];
+    givenLog->gps_time = dataRead[52];
+    givenLog->latitude_degrees = dataRead[56];
+    givenLog->latitude_minutes = dataRead[60];
+    givenLog->longitude_degrees = dataRead[64];
+    givenLog->longitude_minutes = dataRead[68];
+    givenLog->antennaAltitude = dataRead[72];
+    givenLog->geoidAltitude = dataRead[76];
+    givenLog->altitude = dataRead[80];
+    givenLog->currentFlightPhase = dataRead[84];
+    givenLog->tick = dataRead[88];
 }
 
 /**
  * @brief this method initializes the log entry struct
- * and is only called during the start of the task
+ * @param givenLog, pointer to a log created at the start of the task
  */
-void initializeLogEntry()
+void initializeLogEntry(LogEntry* givenLog)
 {
-    theLogEntry.accelX = -1;
-    theLogEntry.accelY = -1;
-    theLogEntry.accelZ = -1;
-    theLogEntry.gyroX = -1;
-    theLogEntry.gyroY = -1;
-    theLogEntry.gyroZ = -1;
-    theLogEntry.magnetoX = -1;
-    theLogEntry.magnetoY = -1;
-    theLogEntry.magnetoZ = -1;
-    theLogEntry.barometerPressure = -1;
-    theLogEntry.barometerTemperature = -1;
-    theLogEntry.combustionChamberPressure = -1;
-    theLogEntry.oxidizerTankPressure = -1;
-    theLogEntry.gps_time = 0xFFFF;
-    theLogEntry.latitude_degrees = -1;
-    theLogEntry.latitude_minutes = 0xFFFF;
-    theLogEntry.longitude_degrees = -1;
-    theLogEntry.longitude_minutes = 0xFFFF;
-    theLogEntry.antennaAltitude = -1;
-    theLogEntry.geoidAltitude = -1;
-    theLogEntry.altitude = -1;
-    //[1] Using memcpy: does it only update one element of the struct?
-    //[2] when using memcpy to update entire struct, would we need a temp stuct?
-
-    //because struct memory is contiguous, is this correct:
-    //char initValue = 0xFF;
-    //memcpy (&LogEntry, &initValue, sizeof(LogEntry));
+    memset(&LogEntry, -1, LOG_ENTRY_SIZE);
     theLogEntry.currentFlightPhase = getCurrentFlightPhase();
     theLogEntry.tick = osKernelSysTick();
 }
 /**
  * @brief Simply updates theLogEntry field with CURRENT values in AllData struct
  * @param data, pointer to AllData struct
+ * @param givenLog, pointer to a log created at the start of the task
  */
-void updateLogEntry(AllData* data)
+void updateLogEntry(AllData* data, LogEntry* givenLog)
 {
     if (osMutexWait(data->accelGyroMagnetismData_->mutex_, 0) == osOK)
     {
-        theLogEntry.accelX = data->accelGyroMagnetismData_->accelX_;
-        theLogEntry.accelY = data->accelGyroMagnetismData_->accelY_;
-        theLogEntry.accelZ = data->accelGyroMagnetismData_->accelZ_;
-        theLogEntry.gyroX = data->accelGyroMagnetismData_->gyroX_;
-        theLogEntry.gyroY = data->accelGyroMagnetismData_->gyroY_;
-        theLogEntry.gyroZ = data->accelGyroMagnetismData_->gyroZ_;
-        theLogEntry.magnetoX = data->accelGyroMagnetismData_->magnetoX_;
-        theLogEntry.magnetoY = data->accelGyroMagnetismData_->magnetoY_;
-        theLogEntry.magnetoZ = data->accelGyroMagnetismData_->magnetoZ_;
+        givenLog->accelX = data->accelGyroMagnetismData_->accelX_;
+        givenLog->accelY = data->accelGyroMagnetismData_->accelY_;
+        givenLog->accelZ = data->accelGyroMagnetismData_->accelZ_;
+        givenLog->gyroX = data->accelGyroMagnetismData_->gyroX_;
+        givenLog->gyroY = data->accelGyroMagnetismData_->gyroY_;
+        givenLog->gyroZ = data->accelGyroMagnetismData_->gyroZ_;
+        givenLog->magnetoX = data->accelGyroMagnetismData_->magnetoX_;
+        givenLog->magnetoY = data->accelGyroMagnetismData_->magnetoY_;
+        givenLog->magnetoZ = data->accelGyroMagnetismData_->magnetoZ_;
         osMutexRelease(data->accelGyroMagnetismData_->mutex_);
     }
 
     if (osMutexWait(data->barometerData_->mutex_, 0) == osOK)
     {
-        theLogEntry.barometerPressure = data->barometerData_->pressure_;
-        theLogEntry.barometerTemperature = data->barometerData_->temperature_;
+        givenLog->barometerPressure = data->barometerData_->pressure_;
+        givenLog->barometerTemperature = data->barometerData_->temperature_;
         osMutexRelease(data->barometerData_->mutex_);
     }
 
     if (osMutexWait(data->combustionChamberPressureData_->mutex_, 0) == osOK)
     {
-        theLogEntry.combustionChamberPressure = data->combustionChamberPressureData_->pressure_;
+        givenLog->combustionChamberPressure = data->combustionChamberPressureData_->pressure_;
         osMutexRelease(data->combustionChamberPressureData_->mutex_);
     }
 
      if (osMutexWait(data->oxidizerTankPressureData_->mutex_, 0) == osOK)
     {
-        theLogEntry.oxidizerTankPressure = data->oxidizerTankPressureData_->pressure_;
+        givenLog->oxidizerTankPressure = data->oxidizerTankPressureData_->pressure_;
         osMutexRelease(data->oxidizerTankPressureData_->mutex_);
     }
 
     if (osMutexWait(data->gpsData_->mutex_, 0) == osOK)
     {
-        theLogEntry.gps_time = data->gpsData_->time_;
-        theLogEntry.latitude_degrees = data->gpsData_->latitude_.degrees_;
-        theLogEntry.latitude_minutes = data->gpsData_->latitude_.minutes_;
-        theLogEntry.longitude_degrees = data->gpsData_->longitude_.degrees_;
-        theLogEntry.longitude_minutes = data->gpsData_->longitude_.minutes_;
-        theLogEntry.antennaAltitude = data->gpsData_->antennaAltitude_.altitude_;
-        theLogEntry.geoidAltitude = data->gpsData_->geoidAltitude_.altitude_;
-        theLogEntry.altitude = data->gpsData_->totalAltitude_.altitude_;
+        givenLog->gps_time = data->gpsData_->time_;
+        givenLog->latitude_degrees = data->gpsData_->latitude_.degrees_;
+        givenLog->latitude_minutes = data->gpsData_->latitude_.minutes_;
+        givenLog->longitude_degrees = data->gpsData_->longitude_.degrees_;
+        givenLog->longitude_minutes = data->gpsData_->longitude_.minutes_;
+        givenLog->antennaAltitude = data->gpsData_->antennaAltitude_.altitude_;
+        givenLog->geoidAltitude = data->gpsData_->geoidAltitude_.altitude_;
+        givenLog->altitude = data->gpsData_->totalAltitude_.altitude_;
         osMutexRelease(data->gpsData_->mutex_);
     }
-    theLogEntry.currentFlightPhase = getCurrentFlightPhase();
-    theLogEntry.tick = HAL_GetTick();
+    givenLog->currentFlightPhase = getCurrentFlightPhase();
+    givenLog->tick = HAL_GetTick();
 }
 
 /**
  * @brief Used for logging entries to the EEPROM. First updates the struct, then writes it
  * the wait times are all managed in the main for loop so highFrequencyLog = lowFrequencyLog
- * @param data, pointer to AllData Struct sent to updateLogEntry to update the logEntry struct
+ * @param data, pointer to AllData Struct sent to updateLogEntry to update the LogEntry struct
+ * @param givenLog, pointer to a log initialized at the start of task
  */
-void logEntryOnceRoutine(AllData* data)
+void logEntryOnceRoutine(AllData* data, LogEntry* givenLog)
 {
-    updateLogEntry(data);
-    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + logAddressOffset);
-    logAddressOffset += LogEntrySize;
+    updateLogEntry(data, givenLog);
+    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + logAddressOffset, givenLog);
+    logAddressOffset += sizeof(LogEntry);
 }
 
 void logDataTask(void const* arg)
 {
     AllData* data = (AllData*) arg;
-    //TODO: make log entry here and pass it around (LogEntry log;) instead of a global var?
-    initializeLogEntry();
+    LogEntry log;
+    initializeLogEntry(&log);
+
     uint32_t prevWakeTime;
     clock_t beforeLogTime, afterLogTime, totalTime;
     for (;;)
     {
         beforeLogTime = osKernelSysTick();
-        logEntryOnceRoutine();
-        prevWakeTime = osKernelSysTick();//assume it is atomic: runs in one cycle
+        logEntryOnceRoutine(data, &log);
+        prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
         switch (getCurrentFlightPhase())
         {
             case BURN:
