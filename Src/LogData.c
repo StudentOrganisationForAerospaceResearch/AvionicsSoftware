@@ -18,7 +18,7 @@
 #include "LogData.h"
 #include "Data.h"
 #include "FlightPhase.h"
-
+#include "Utils.h"
 
 /* Macros --------------------------------------------------------------------*/
 //CHECK: was max implemented somewhere else?
@@ -59,11 +59,11 @@ typedef struct{
 /* Constants -----------------------------------------------------------------*/
 static const int32_t SLOW_LOG_DATA_PERIOD_ms = 700; // logging period for slow routine
 static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast routine
-static const uint8_t SOFTWARE_VERSION = 104; // this is not used at all
+static const uint8_t SOFTWARE_VERSION = 104; // this is not used at all !!
 static const uint8_t DEVICE_ADDRESS = 0x50; // used for reading/writing to EEPROM
 static const uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
 static const uint32_t TIMEOUT_MS = 10; // Time required to wait before ending read/write
-static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 96 bytes
+static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 92 bytes
 
 
 /* Variables -----------------------------------------------------------------*/
@@ -120,36 +120,45 @@ void writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
  * @param memAddress, the address at which the EEPROM is instructed to start reading
  * @param givenLog, pointer to a log initialized at the start of task
  */
-void readLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
+void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
 {
     char dataRead[LOG_ENTRY_SIZE];
   
     checkEEPROMBlocking();
     readFromEEPROM(dataRead, sizeof(dataRead), memAddress);
+    /* what if we did:
 
-    givenLog->accelX = dataRead[0];
-    givenLog->accelY = dataRead[4];
-    givenLog->accelY = dataRead[8];
-    givenLog->gyroX = dataRead[12];
-    givenLog->gyroY = dataRead[16];
-    givenLog->gyroZ = dataRead[20];
-    givenLog->magnetoX = dataRead[24];
-    givenLog->magnetoY = dataRead[28];
-    givenLog->magnetoZ = dataRead[32];
-    givenLog->barometerPressure = dataRead[36];
-    givenLog->barometerTemperature = dataRead[40];
-    givenLog->combustionChamberPressure = dataRead[44];
-    givenLog->oxidizerTankPressure = dataRead[48];
-    givenLog->gps_time = dataRead[52];
-    givenLog->latitude_degrees = dataRead[56];
-    givenLog->latitude_minutes = dataRead[60];
-    givenLog->longitude_degrees = dataRead[64];
-    givenLog->longitude_minutes = dataRead[68];
-    givenLog->antennaAltitude = dataRead[72];
-    givenLog->geoidAltitude = dataRead[76];
-    givenLog->altitude = dataRead[80];
-    givenLog->currentFlightPhase = dataRead[84];
-    givenLog->tick = dataRead[88];
+    uint32_t* readingAddress = &(givenLog->accelX);
+    for(int i = 0; i < LOG_ENTRY_SIZE - 4; i+=4, readingAddress++){
+        readUInt32FromUInt8Array(dataRead, i, readingAddress);
+    }
+
+    because structs are contiguous memory, would incrementing address like this work?
+    readingAddress is a uint32_t pointer so doing ++ should move it to the next uint32_t ???
+    */
+    readUInt32FromUInt8Array(dataRead, 0, &(givenLog->accelX));
+    readUInt32FromUInt8Array(dataRead, 4, &(givenLog->accelY));
+    readUInt32FromUInt8Array(dataRead, 8, &(givenLog->accelZ));
+    readUInt32FromUInt8Array(dataRead, 12, &(givenLog->gyroX));
+    readUInt32FromUInt8Array(dataRead, 16, &(givenLog->gyroY));
+    readUInt32FromUInt8Array(dataRead, 20, &(givenLog->gyroZ));
+    readUInt32FromUInt8Array(dataRead, 24, &(givenLog->magnetoX));
+    readUInt32FromUInt8Array(dataRead, 28, &(givenLog->magnetoY));
+    readUInt32FromUInt8Array(dataRead, 32, &(givenLog->magnetoZ));
+    readUInt32FromUInt8Array(dataRead, 36, &(givenLog->barometerPressure));
+    readUInt32FromUInt8Array(dataRead, 40, &(givenLog->barometerTemperature));
+    readUInt32FromUInt8Array(dataRead, 44, &(givenLog->combustionChamberPressure));
+    readUInt32FromUInt8Array(dataRead, 48, &(givenLog->oxidizerTankPressure));
+    readUInt32FromUInt8Array(dataRead, 52, &(givenLog->gps_time));
+    readUInt32FromUInt8Array(dataRead, 56, &(givenLog->latitude_degrees));
+    readUInt32FromUInt8Array(dataRead, 60, &(givenLog->latitude_minutes));
+    readUInt32FromUInt8Array(dataRead, 64, &(givenLog->longitude_degrees));
+    readUInt32FromUInt8Array(dataRead, 68, &(givenLog->longitude_minutes));
+    readUInt32FromUInt8Array(dataRead, 72, &(givenLog->antennaAltitude));
+    readUInt32FromUInt8Array(dataRead, 76, &(givenLog->geoidAltitude));
+    readUInt32FromUInt8Array(dataRead, 80, &(givenLog->altitude));
+    readUInt32FromUInt8Array(dataRead, 84, &(givenLog->currentFlightPhase));
+    readUInt32FromUInt8Array(dataRead, 88, &(givenLog->tick));
 }
 
 /**
