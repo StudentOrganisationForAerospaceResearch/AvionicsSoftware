@@ -78,7 +78,7 @@ static uint8_t logAddressOffset = 0; // offset updated after writing in logEntry
  */
 void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS<<1, memAddress, uint16_t(sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
+	HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
 }
 
 /**
@@ -167,10 +167,12 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
  */
 void initializeLogEntry(LogEntry* givenLog)
 {
-    memset(&LogEntry, -1, LOG_ENTRY_SIZE);
-    theLogEntry.currentFlightPhase = getCurrentFlightPhase();
-    theLogEntry.tick = osKernelSysTick();
+    memset(&givenLog, -1, LOG_ENTRY_SIZE);
+
+    givenLog->currentFlightPhase = getCurrentFlightPhase();
+    givenLog->tick = osKernelSysTick();
 }
+
 /**
  * @brief Simply updates theLogEntry field with CURRENT values in AllData struct
  * @param data, pointer to AllData struct
@@ -247,7 +249,7 @@ void logDataTask(void const* arg)
     initializeLogEntry(&log);
 
     uint32_t prevWakeTime;
-    clock_t beforeLogTime, afterLogTime, totalTime;
+    __clock_t beforeLogTime, afterLogTime, totalTime;
     for (;;)
     {
         beforeLogTime = osKernelSysTick();
