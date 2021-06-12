@@ -11,9 +11,9 @@
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
-#include "defines.h"
-#include "tm_stm32_delay.h"
-#include "tm_stm32_fatfs.h"
+//#include "defines.h"
+//#include "tm_stm32_delay.h"
+//#include "tm_stm32_fatfs.h"
 
 #include "LogData.h"
 #include "Data.h"
@@ -249,7 +249,7 @@ void logDataTask(void const* arg)
     initializeLogEntry(&log);
 
     uint32_t prevWakeTime;
-    __clock_t beforeLogTime, afterLogTime, totalTime;
+    uint32_t beforeLogTime, afterLogTime, totalTime;
     for (;;)
     {
         beforeLogTime = osKernelSysTick();
