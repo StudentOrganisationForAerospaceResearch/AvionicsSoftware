@@ -64,7 +64,7 @@ static const uint8_t DEVICE_ADDRESS = 0x50; // used for reading/writing to EEPRO
 static const uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
 static const uint32_t TIMEOUT_MS = 10; // Time required to wait before ending read/write
 static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 92 bytes
-
+static const uint16_t PRE_FLIGHT_MEMORY_CAP = 14*sizeof(LogEntry); // largest address to write to before flight
 
 /* Variables -----------------------------------------------------------------*/
 static uint8_t logAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
@@ -78,6 +78,9 @@ static uint8_t logAddressOffset = 0; // offset updated after writing in logEntry
  */
 void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
+	// if Hal_i2c returns HAL_ok then return hal_ok not void
+	// if it returns error or busy, try 3 more times with more delay
+	// if still error or busy, then send error/busy
 	HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
 }
 
@@ -252,12 +255,19 @@ void logDataTask(void const* arg)
     uint32_t beforeLogTime, afterLogTime, totalTime;
     for (;;)
     {
-        beforeLogTime = osKernelSysTick();
-        logEntryOnceRoutine(data, &log);
+    	beforeLogTime = osKernelSysTick();
+    	logEntryOnceRoutine(data, &log);
         prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
         switch (getCurrentFlightPhase())
         {
-            case BURN:
+        	case PRELAUNCH:
+        	case ARM:
+        		if ((PRE_FLIGHT_MEMORY_CAP - logAddressOffset) < sizeof(LogEntry))
+        			logAddressOffset = 0;
+                osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+        		break;
+
+        	case BURN:
             case COAST:
             case DROGUE_DESCENT:
                 osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
