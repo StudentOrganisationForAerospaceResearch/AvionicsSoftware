@@ -64,12 +64,10 @@ static const uint8_t DEVICE_ADDRESS = 0x50; // used for reading/writing to EEPRO
 static const uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
 static const uint32_t TIMEOUT_MS = 10; // Time required to wait before ending read/write
 static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 92 bytes
-static const uint16_t PRE_FLIGHT_MEMORY_CAP = 14*sizeof(LogEntry); // largest address to write to before flight
 
 /* Variables -----------------------------------------------------------------*/
-static uint8_t logAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
-
-
+static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
+static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address to write to before flight, updated during flight
 /* Functions -----------------------------------------------------------------*/
 /**
  * @brief Writes data to the EEPROM over I2C.
@@ -237,12 +235,13 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
  * the wait times are all managed in the main for loop so highFrequencyLog = lowFrequencyLog
  * @param data, pointer to AllData Struct sent to updateLogEntry to update the LogEntry struct
  * @param givenLog, pointer to a log initialized at the start of task
+ * @param logStartAddress, pointer to the start of memory for flight logging
  */
-void logEntryOnceRoutine(AllData* data, LogEntry* givenLog)
+void logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
     updateLogEntry(data, givenLog);
-    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + logAddressOffset, givenLog);
-    logAddressOffset += sizeof(LogEntry);
+    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + (*logStartAddress), givenLog);
+    (*logStartAddress) += sizeof(LogEntry);
 }
 
 void logDataTask(void const* arg)
@@ -250,31 +249,33 @@ void logDataTask(void const* arg)
     AllData* data = (AllData*) arg;
     LogEntry log;
     initializeLogEntry(&log);
-
-    uint32_t prevWakeTime;
-    uint32_t beforeLogTime, afterLogTime, totalTime;
+    uint32_t prevWakeTime, beforeLogTime;
     for (;;)
     {
     	beforeLogTime = osKernelSysTick();
-    	logEntryOnceRoutine(data, &log);
-        prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
         switch (getCurrentFlightPhase())
         {
         	case PRELAUNCH:
         	case ARM:
-        		if ((PRE_FLIGHT_MEMORY_CAP - logAddressOffset) < sizeof(LogEntry))
-        			logAddressOffset = 0;
+				logEntryOnceRoutine(data, &log, &preFlightAddressOffset);
+				prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
+				if ((inFlightAddressOffset - preFlightAddressOffset) < sizeof(LogEntry))
+					preFlightAddressOffset = 0;
                 osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
         		break;
 
         	case BURN:
             case COAST:
             case DROGUE_DESCENT:
-                osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+				logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
+				prevWakeTime = osKernelSysTick();
+				osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
                 break;
 
             default:
-                osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+				logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
+				prevWakeTime = osKernelSysTick();
+				osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
                 break;
         }
     }
