@@ -257,26 +257,26 @@ void logDataTask(void const* arg)
         {
         	case PRELAUNCH:
         	case ARM:
-				logEntryOnceRoutine(data, &log, &preFlightAddressOffset);
-				prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
-				if ((inFlightAddressOffset - preFlightAddressOffset) < sizeof(LogEntry))
-					preFlightAddressOffset = 0;
-                osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+        		logEntryOnceRoutine(data, &log, &preFlightAddressOffset);
+        		prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
+        		if ((inFlightAddressOffset - preFlightAddressOffset) < sizeof(LogEntry))
+        			preFlightAddressOffset = 0;
+        		osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
         		break;
 
         	case BURN:
-            case COAST:
-            case DROGUE_DESCENT:
-				logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
-				prevWakeTime = osKernelSysTick();
-				osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
-                break;
+        	case COAST:
+        	case DROGUE_DESCENT:
+        		logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
+        		prevWakeTime = osKernelSysTick();
+        		osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+        		break;
 
-            default:
-				logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
-				prevWakeTime = osKernelSysTick();
-				osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
-                break;
+        	default:
+        		logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
+        		prevWakeTime = osKernelSysTick();
+        		osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+        		break;
         }
     }
 }
