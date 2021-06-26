@@ -65,11 +65,11 @@ void debugTask(void const* arg) {
 		switch(buffer){
 			case 't':
 				initializeLogEntry(allData);
-				writeLogEntryToEEPROM(memAddress,allData);
+				writeLogEntryToEEPROM(memAddress,debugData);
 				// TODO: transmit allData struct through UART
 				break;
 			case 'd':
-				readLogEntryFromEEPROM(memAddress,allData);
+				readLogEntryFromEEPROM(memAddress,debugData);
 				// TODO: transmit allDara struct through UART
 				break;
 			default:

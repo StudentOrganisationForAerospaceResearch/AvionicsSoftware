@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main.h"
+#include "LogData.h"
 
 extern UART_HandleTypeDef huart5;
 
