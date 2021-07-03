@@ -126,40 +126,40 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
     char dataRead[LOG_ENTRY_SIZE];
   
     checkEEPROMBlocking();
-    readFromEEPROM(dataRead, sizeof(dataRead), memAddress);
+    readFromEEPROM((uint8_t*)dataRead, sizeof(dataRead), memAddress);
     /* what if we did:
 
     uint32_t* readingAddress = &(givenLog->accelX);
     for(int i = 0; i < LOG_ENTRY_SIZE - 4; i+=4, readingAddress++){
-        readUInt32FromUInt8Array(dataRead, i, readingAddress);
+        readUInt32FromUInt8Array((uint8_t*)dataRead, i, readingAddress);
     }
 
     because structs are contiguous memory, would incrementing address like this work?
     readingAddress is a uint32_t pointer so doing ++ should move it to the next uint32_t ???
     */
-    readUInt32FromUInt8Array(dataRead, 0, &(givenLog->accelX));
-    readUInt32FromUInt8Array(dataRead, 4, &(givenLog->accelY));
-    readUInt32FromUInt8Array(dataRead, 8, &(givenLog->accelZ));
-    readUInt32FromUInt8Array(dataRead, 12, &(givenLog->gyroX));
-    readUInt32FromUInt8Array(dataRead, 16, &(givenLog->gyroY));
-    readUInt32FromUInt8Array(dataRead, 20, &(givenLog->gyroZ));
-    readUInt32FromUInt8Array(dataRead, 24, &(givenLog->magnetoX));
-    readUInt32FromUInt8Array(dataRead, 28, &(givenLog->magnetoY));
-    readUInt32FromUInt8Array(dataRead, 32, &(givenLog->magnetoZ));
-    readUInt32FromUInt8Array(dataRead, 36, &(givenLog->barometerPressure));
-    readUInt32FromUInt8Array(dataRead, 40, &(givenLog->barometerTemperature));
-    readUInt32FromUInt8Array(dataRead, 44, &(givenLog->combustionChamberPressure));
-    readUInt32FromUInt8Array(dataRead, 48, &(givenLog->oxidizerTankPressure));
-    readUInt32FromUInt8Array(dataRead, 52, &(givenLog->gps_time));
-    readUInt32FromUInt8Array(dataRead, 56, &(givenLog->latitude_degrees));
-    readUInt32FromUInt8Array(dataRead, 60, &(givenLog->latitude_minutes));
-    readUInt32FromUInt8Array(dataRead, 64, &(givenLog->longitude_degrees));
-    readUInt32FromUInt8Array(dataRead, 68, &(givenLog->longitude_minutes));
-    readUInt32FromUInt8Array(dataRead, 72, &(givenLog->antennaAltitude));
-    readUInt32FromUInt8Array(dataRead, 76, &(givenLog->geoidAltitude));
-    readUInt32FromUInt8Array(dataRead, 80, &(givenLog->altitude));
-    readUInt32FromUInt8Array(dataRead, 84, &(givenLog->currentFlightPhase));
-    readUInt32FromUInt8Array(dataRead, 88, &(givenLog->tick));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 0, &(givenLog->accelX));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 4, &(givenLog->accelY));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 8, &(givenLog->accelZ));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 12, &(givenLog->gyroX));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 16, &(givenLog->gyroY));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 20, &(givenLog->gyroZ));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 24, &(givenLog->magnetoX));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 28, &(givenLog->magnetoY));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 32, &(givenLog->magnetoZ));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 36, &(givenLog->barometerPressure));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 40, &(givenLog->barometerTemperature));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 44, &(givenLog->combustionChamberPressure));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 48, &(givenLog->oxidizerTankPressure));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 52, &(givenLog->gps_time));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 56, &(givenLog->latitude_degrees));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 60, &(givenLog->latitude_minutes));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 64, &(givenLog->longitude_degrees));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 68, &(givenLog->longitude_minutes));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 72, &(givenLog->antennaAltitude));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 76, &(givenLog->geoidAltitude));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 80, &(givenLog->altitude));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 84, &(givenLog->currentFlightPhase));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 88, &(givenLog->tick));
 }
 
 /**
@@ -249,6 +249,8 @@ void logDataTask(void const* arg)
     AllData* data = (AllData*) arg;
     LogEntry log;
     initializeLogEntry(&log);
+    char flightStartflag[] = "**flight**";
+    writeToEEPROM((uint8_t*)flightStartflag,sizeof(flightStartflag),inFlightAddressOffset-sizeof(flightStartflag));
     uint32_t prevWakeTime, beforeLogTime;
     for (;;)
     {
@@ -258,9 +260,9 @@ void logDataTask(void const* arg)
         	case PRELAUNCH:
         	case ARM:
         		logEntryOnceRoutine(data, &log, &preFlightAddressOffset);
-        		prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
         		if ((inFlightAddressOffset - preFlightAddressOffset) < sizeof(LogEntry))
         			preFlightAddressOffset = 0;
+        		prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
         		osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
         		break;
 
