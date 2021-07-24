@@ -65,11 +65,9 @@ static const uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/w
 static const uint32_t TIMEOUT_MS = 10; // Time required to wait before ending read/write
 static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 92 bytes
 
-
 /* Variables -----------------------------------------------------------------*/
-static uint8_t logAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
-
-
+static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
+static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address to write to before flight, updated during flight
 /* Functions -----------------------------------------------------------------*/
 /**
  * @brief Writes data to the EEPROM over I2C.
@@ -78,6 +76,9 @@ static uint8_t logAddressOffset = 0; // offset updated after writing in logEntry
  */
 void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
+	// if Hal_i2c returns HAL_ok then return hal_ok not void
+	// if it returns error or busy, try 3 more times with more delay
+	// if still error or busy, then send error/busy
 	HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
 }
 
@@ -125,40 +126,40 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
     char dataRead[LOG_ENTRY_SIZE];
   
     checkEEPROMBlocking();
-    readFromEEPROM(dataRead, sizeof(dataRead), memAddress);
+    readFromEEPROM((uint8_t*)dataRead, sizeof(dataRead), memAddress);
     /* what if we did:
 
     uint32_t* readingAddress = &(givenLog->accelX);
     for(int i = 0; i < LOG_ENTRY_SIZE - 4; i+=4, readingAddress++){
-        readUInt32FromUInt8Array(dataRead, i, readingAddress);
+        readUInt32FromUInt8Array((uint8_t*)dataRead, i, readingAddress);
     }
 
     because structs are contiguous memory, would incrementing address like this work?
     readingAddress is a uint32_t pointer so doing ++ should move it to the next uint32_t ???
     */
-    readUInt32FromUInt8Array(dataRead, 0, &(givenLog->accelX));
-    readUInt32FromUInt8Array(dataRead, 4, &(givenLog->accelY));
-    readUInt32FromUInt8Array(dataRead, 8, &(givenLog->accelZ));
-    readUInt32FromUInt8Array(dataRead, 12, &(givenLog->gyroX));
-    readUInt32FromUInt8Array(dataRead, 16, &(givenLog->gyroY));
-    readUInt32FromUInt8Array(dataRead, 20, &(givenLog->gyroZ));
-    readUInt32FromUInt8Array(dataRead, 24, &(givenLog->magnetoX));
-    readUInt32FromUInt8Array(dataRead, 28, &(givenLog->magnetoY));
-    readUInt32FromUInt8Array(dataRead, 32, &(givenLog->magnetoZ));
-    readUInt32FromUInt8Array(dataRead, 36, &(givenLog->barometerPressure));
-    readUInt32FromUInt8Array(dataRead, 40, &(givenLog->barometerTemperature));
-    readUInt32FromUInt8Array(dataRead, 44, &(givenLog->combustionChamberPressure));
-    readUInt32FromUInt8Array(dataRead, 48, &(givenLog->oxidizerTankPressure));
-    readUInt32FromUInt8Array(dataRead, 52, &(givenLog->gps_time));
-    readUInt32FromUInt8Array(dataRead, 56, &(givenLog->latitude_degrees));
-    readUInt32FromUInt8Array(dataRead, 60, &(givenLog->latitude_minutes));
-    readUInt32FromUInt8Array(dataRead, 64, &(givenLog->longitude_degrees));
-    readUInt32FromUInt8Array(dataRead, 68, &(givenLog->longitude_minutes));
-    readUInt32FromUInt8Array(dataRead, 72, &(givenLog->antennaAltitude));
-    readUInt32FromUInt8Array(dataRead, 76, &(givenLog->geoidAltitude));
-    readUInt32FromUInt8Array(dataRead, 80, &(givenLog->altitude));
-    readUInt32FromUInt8Array(dataRead, 84, &(givenLog->currentFlightPhase));
-    readUInt32FromUInt8Array(dataRead, 88, &(givenLog->tick));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 0, &(givenLog->accelX));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 4, &(givenLog->accelY));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 8, &(givenLog->accelZ));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 12, &(givenLog->gyroX));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 16, &(givenLog->gyroY));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 20, &(givenLog->gyroZ));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 24, &(givenLog->magnetoX));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 28, &(givenLog->magnetoY));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 32, &(givenLog->magnetoZ));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 36, &(givenLog->barometerPressure));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 40, &(givenLog->barometerTemperature));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 44, &(givenLog->combustionChamberPressure));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 48, &(givenLog->oxidizerTankPressure));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 52, &(givenLog->gps_time));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 56, &(givenLog->latitude_degrees));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 60, &(givenLog->latitude_minutes));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 64, &(givenLog->longitude_degrees));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 68, &(givenLog->longitude_minutes));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 72, &(givenLog->antennaAltitude));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 76, &(givenLog->geoidAltitude));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 80, &(givenLog->altitude));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 84, &(givenLog->currentFlightPhase));
+    readUInt32FromUInt8Array((uint8_t*)dataRead, 88, &(givenLog->tick));
 }
 
 /**
@@ -234,12 +235,13 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
  * the wait times are all managed in the main for loop so highFrequencyLog = lowFrequencyLog
  * @param data, pointer to AllData Struct sent to updateLogEntry to update the LogEntry struct
  * @param givenLog, pointer to a log initialized at the start of task
+ * @param logStartAddress, pointer to the start of memory for flight logging
  */
-void logEntryOnceRoutine(AllData* data, LogEntry* givenLog)
+void logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
     updateLogEntry(data, givenLog);
-    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + logAddressOffset, givenLog);
-    logAddressOffset += sizeof(LogEntry);
+    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + (*logStartAddress), givenLog);
+    (*logStartAddress) += sizeof(LogEntry);
 }
 
 void logDataTask(void const* arg)
@@ -247,25 +249,36 @@ void logDataTask(void const* arg)
     AllData* data = (AllData*) arg;
     LogEntry log;
     initializeLogEntry(&log);
-
-    uint32_t prevWakeTime;
-    uint32_t beforeLogTime, afterLogTime, totalTime;
+    char flightStartflag[] = "**flight**";
+    writeToEEPROM((uint8_t*)flightStartflag,sizeof(flightStartflag),inFlightAddressOffset-sizeof(flightStartflag));
+    uint32_t prevWakeTime, beforeLogTime;
     for (;;)
     {
-        beforeLogTime = osKernelSysTick();
-        logEntryOnceRoutine(data, &log);
-        prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
+    	beforeLogTime = osKernelSysTick();
         switch (getCurrentFlightPhase())
         {
-            case BURN:
-            case COAST:
-            case DROGUE_DESCENT:
-                osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
-                break;
+        	case PRELAUNCH:
+        	case ARM:
+        		logEntryOnceRoutine(data, &log, &preFlightAddressOffset);
+        		if ((inFlightAddressOffset - preFlightAddressOffset) < sizeof(LogEntry))
+        			preFlightAddressOffset = 0;
+        		prevWakeTime = osKernelSysTick(); //assume it is atomic: runs in one cycle
+        		osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+        		break;
 
-            default:
-                osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
-                break;
+        	case BURN:
+        	case COAST:
+        	case DROGUE_DESCENT:
+        		logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
+        		prevWakeTime = osKernelSysTick();
+        		osDelayUntil(&prevWakeTime, (uint32_t)(max(FAST_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+        		break;
+
+        	default:
+        		logEntryOnceRoutine(data, &log, &inFlightAddressOffset);
+        		prevWakeTime = osKernelSysTick();
+        		osDelayUntil(&prevWakeTime, (uint32_t)(max(SLOW_LOG_DATA_PERIOD_ms - (osKernelSysTick() - beforeLogTime), 0)));
+        		break;
         }
     }
 }
