@@ -41,11 +41,11 @@ void debugTask(void const* arg) {
 			case 't':
 				initializeLogEntry(debugData);
 				writeLogEntryToEEPROM(memAddress,debugData);
-				HAL_UART_TRANSMIT(&huart5,debugData,sizeof(debugData,1000));
+				HAL_UART_TRANSMIT(&huart5,debugData,sizeof(*debugData),1000);
 				break;
 			case 'd':
 				readLogEntryFromEEPROM(memAddress,debugData);
-				HAL_UART_TRANSMIT(&huart5,debugData,sizeof(debugData,1000));
+				HAL_UART_TRANSMIT(&huart5,debugData,sizeof(*debugData),1000);
 				break;
 			default:
 		}
