@@ -35,3 +35,4 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog);
 void initializeLogEntry(LogEntry* givenLog);
 
 void debugTask(void const* arg);
+
