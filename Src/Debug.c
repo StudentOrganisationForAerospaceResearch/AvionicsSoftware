@@ -18,7 +18,7 @@
 
 /* Constants -----------------------------------------------------------------*/
 static const int DEBUG_TASK_PERIOD = 100;
-static const uint16_t memAddress;
+static const uint16_t memAddress = 0x07; 
 
 /* Variables -----------------------------------------------------------------*/
 
