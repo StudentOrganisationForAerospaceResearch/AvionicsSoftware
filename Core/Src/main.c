@@ -236,6 +236,7 @@ int main(void)
     allData->accelGyroMagnetismData_ = accelGyroMagnetismData;
     allData->barometerData_ = barometerData;
     allData->combustionChamberPressureData_ = combustionChamberPressureData;
+    allData->batteryVoltageData_ = batteryVoltageData;
     allData->gpsData_ = gpsData;
     allData->oxidizerTankPressureData_ = oxidizerTankPressureData;
 
@@ -298,6 +299,16 @@ int main(void)
     );
     readCombustionChamberPressureTaskHandle =
         osThreadCreate(osThread(readCombustionChamberPressureThread), combustionChamberPressureData);
+
+    osThreadDef(
+        readBatteryVoltageThread,
+        readBatteryVoltageTask,
+        osPriorityAboveNormal,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    readBatteryVoltageTaskHandle =
+        osThreadCreate(osThread(readBatteryVoltageThread), batteryVoltageData);
 
     osThreadDef(
         readGpsThread,
