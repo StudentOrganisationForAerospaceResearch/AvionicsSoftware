@@ -26,13 +26,13 @@ typedef struct
 typedef struct
 {
     osMutexId   mutex_;
-    uint32_t     voltage_;
+    int32_t     pressure_;
 } CombustionChamberPressureData;
 
 typedef struct
 {
     osMutexId   mutex_;
-    int32_t     pressure_;
+    uint32_t     voltage_;
 } BatteryVoltageData;
 
 /* GPS Data */
