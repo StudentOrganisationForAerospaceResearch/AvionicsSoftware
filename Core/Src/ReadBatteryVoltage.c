@@ -8,7 +8,30 @@
 
 static int READ_BATTERY_VOLTAGE_PERIOD = 250;
 
+static const int BATTERY_VOLTAGE_ADC_POLL_TIMEOUT = 50;
+
 void readBatteryVoltageTask(void const* arg) {
     BatteryVoltageData* data = (BatteryVoltageData*) arg;
     uint32_t prevWakeTime = osKernelSysTick();
+
+    double batteryVoltageValue = 0; //Not quite sure if it's a double or int can confirm
+
+    HAL_ADC_Start(&hadc2);  // Enables ADC and starts conversion of regular channels
+
+    for (;;) {
+        osDelayUntil(&prevWakeTime, READ_BATTERY_VOLTAGE_PERIOD);
+
+        if (HAL_ADC_PollForConversion(&hadc2, BATTERY_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK)
+        {
+            batteryVoltageValue = HAL_ADC_GetValue(&hadc2);
+        }
+
+        batteryVoltageValue = batteryVoltageValue * 4;   // Multiply by 4 for the voltage divider calculation
+
+         if (osMutexWait(data->mutex_, 0) == osOK)
+        {
+            data->voltage_ = (int32_t) batteryVoltageValue;
+            osMutexRelease(data->mutex_);
+        }
+    }
 }
