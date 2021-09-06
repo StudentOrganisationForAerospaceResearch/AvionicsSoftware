@@ -193,6 +193,8 @@ int main(void)
         malloc(sizeof(BarometerData));
     CombustionChamberPressureData* combustionChamberPressureData =
         malloc(sizeof(CombustionChamberPressureData));
+    BatteryVoltageData* batteryVoltageData = 
+        malloc(sizeof(BatteryVoltageData));
     gpsData =
         calloc(1, sizeof(GpsData));
     OxidizerTankPressureData* oxidizerTankPressureData =
@@ -218,6 +220,10 @@ int main(void)
     osMutexDef(COMBUSTION_CHAMBER_PRESSURE_DATA_MUTEX);
     combustionChamberPressureData->mutex_ = osMutexCreate(osMutex(COMBUSTION_CHAMBER_PRESSURE_DATA_MUTEX));
     combustionChamberPressureData->pressure_ = -12;
+
+    osMutexDef(BATTERY_VOLTAGE_DATA_MUTEX);
+    batteryVoltageData->mutex_ = osMutexCreate(osMutex(BATTERY_VOLTAGE_DATA_MUTEX));
+    batteryVoltageData->voltage_ = -13; //Give it a random assigned negative value
 
     osMutexDef(GPS_DATA_MUTEX);
     gpsData->mutex_ = osMutexCreate(osMutex(GPS_DATA_MUTEX));
