@@ -29,6 +29,7 @@
 #include "ReadAccelGyroMagnetism.h"
 #include "ReadBarometer.h"
 #include "ReadCombustionChamberPressure.h"
+#include "ReadBatteryVoltage.h"
 #include "ReadGps.h"
 #include "ReadOxidizerTankPressure.h"
 #include "MonitorForEmergencyShutoff.h"
