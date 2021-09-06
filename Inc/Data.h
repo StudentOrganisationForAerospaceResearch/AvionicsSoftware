@@ -77,6 +77,7 @@ typedef struct
     AccelGyroMagnetismData*         accelGyroMagnetismData_;
     BarometerData*                  barometerData_;
     CombustionChamberPressureData*  combustionChamberPressureData_;
+    BatteryVoltageData*             batteryVoltageData_;
     GpsData*                        gpsData_;
     OxidizerTankPressureData*       oxidizerTankPressureData_;
 } AllData;
