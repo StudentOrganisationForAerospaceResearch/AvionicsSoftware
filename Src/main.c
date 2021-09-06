@@ -82,6 +82,7 @@ osThreadId defaultTaskHandle;
 static osThreadId readAccelGyroMagnetismTaskHandle;
 static osThreadId readBarometerTaskHandle;
 static osThreadId readCombustionChamberPressureTaskHandle;
+static osThreadId readBatteryVoltageTaskHandle;
 static osThreadId readGpsTaskHandle;
 static osThreadId readOxidizerTankPressureTaskHandle;
 // Controls that will perform actions
