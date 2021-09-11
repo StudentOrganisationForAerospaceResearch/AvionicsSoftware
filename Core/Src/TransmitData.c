@@ -22,8 +22,9 @@ static const int8_t COMBUSTION_CHAMBER_HEADER_BYTE = 0x35;		// not used
 static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x13;
 static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38; 	// not used
 static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;		// not used
-static const int8_t TICK_HEADER_BYTE = 0x14;
-static const int8_t CRC_HEADER_BYTE = 0x15;						// needed?
+static const int8_t BATTERY_VOLTAGE_HEADER_BYTE = 0x14;
+static const int8_t TICK_HEADER_BYTE = 0x15;
+static const int8_t CRC_HEADER_BYTE = 0x16;						// needed?
 
 #define F0_ESCAPE (0xF0)
 #define START_FLAG (0x00)
@@ -74,12 +75,17 @@ void transmitLogEntry(LogEntry* givenLog)
 	transmitBuffer[bufferIndex++] = FLIGHT_PHASE_HEADER_BYTE;
     bufferIndex = writeInt32ToArrayEncoded(transmitBuffer, bufferIndex, givenLog->currentFlightPhase);
 
-    // tick flag 	0xF014
+    // battery voltage flag 	0xF014
+    transmitBuffer[bufferIndex++] = F0_ESCAPE;
+    transmitBuffer[bufferIndex++] = BATTERY_VOLTAGE_HEADER_BYTE;
+    bufferIndex = writeInt32ToArrayEncoded(transmitBuffer, bufferIndex, givenLog->batteryVoltage);
+
+    // tick flag 	0xF015
 	transmitBuffer[bufferIndex++] = F0_ESCAPE;
 	transmitBuffer[bufferIndex++] = TICK_HEADER_BYTE;
 	bufferIndex = writeInt32ToArrayEncoded(transmitBuffer, bufferIndex, givenLog->tick);
 
-	// CRC flag		0xF015
+	// CRC flag		0xF016
     transmitBuffer[bufferIndex++] = F0_ESCAPE;
 	transmitBuffer[bufferIndex++] = CRC_HEADER_BYTE;
     uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)transmitBuffer, bufferIndex - 1);
