@@ -22,6 +22,7 @@ static const int8_t COMBUSTION_CHAMBER_HEADER_BYTE = 0x35;
 static const int8_t FLIGHT_PHASE_HEADER_BYTE = 0x36;
 static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38;
 static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
+static const int8_t BATTERY_VOLTAGE_HEADER_BYTE = 0x40;
 
 #define START_FLAG (0xF0)
 #define END_FLAG (0XF0)
@@ -37,6 +38,7 @@ static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;
 #define GPS_SERIAL_MSG_SIZE (25)
 #define OXIDIZER_TANK_SERIAL_MSG_SIZE (5)
 #define COMBUSTION_CHAMBER_SERIAL_MSG_SIZE (5)
+#define BATTERY_VOLTAGE_SERIAL_MSG_SIZE (5)
 #define ONE_BYTE_SERIAL_MSG_SIZE (2)
 
 static const uint8_t UART_TIMEOUT = 100;
@@ -338,6 +340,46 @@ void transmitCombustionChamberData(AllData* data)
     free(buffer);
 }
 
+void transmitBatteryVoltageData(AllData* data)
+{
+    int32_t batteryVoltage = -1;
+
+    if (osMutexWait(data->batteryVoltageData_->mutex_, 0) == osOK)
+    {
+        batteryVoltage = data->batteryVoltageData_->voltage_;
+        osMutexRelease(data->batteryVoltageData_->mutex_);
+    }
+
+    uint8_t message[BATTERY_VOLTAGE_SERIAL_MSG_SIZE] = { 0 };
+    int messageIndex = 0;
+    message[0] = COMBUSTION_CHAMBER_HEADER_BYTE;
+    messageIndex++;
+    writeInt32ToArray(message, messageIndex, batteryVoltage);
+    messageIndex += 4;
+
+    int encodedMessageLength = BATTERY_VOLTAGE_SERIAL_MSG_SIZE;
+
+    for (int i = 0; i < BATTERY_VOLTAGE_SERIAL_MSG_SIZE; i++)
+    {
+        if (message[i] == F0_ESCAPE || message[i] == F1_ESCAPE)
+        {
+            encodedMessageLength++;
+        }
+    }
+
+    int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
+    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    encodeMessage(message, BATTERY_VOLTAGE_SERIAL_MSG_SIZE, buffer);
+
+    if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
+    {
+        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT);  // Ground Systems
+    }
+
+    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+    free(buffer);
+}
+
 void transmitFlightPhaseData(AllData* data)
 {
     uint8_t flightPhase = getCurrentFlightPhase();
@@ -443,6 +485,7 @@ void transmitDataTask(void const* arg)
         transmitGpsData(data);
         transmitOxidizerTankData(data);
         transmitCombustionChamberData(data);
+        transmitBatteryVoltageData(data);
         transmitFlightPhaseData(data);
         transmitInjectionValveStatus();
         transmitLowerVentValveStatus();
