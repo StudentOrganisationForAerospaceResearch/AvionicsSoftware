@@ -57,8 +57,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define EN_7V5_Pin GPIO_PIN_14
-#define EN_7V5_GPIO_Port GPIOC
+#define MAIN_PARACHUTE_Pin GPIO_PIN_14
+#define MAIN_PARACHUTE_GPIO_Port GPIOC
 #define PMB_GPIO_1_Pin GPIO_PIN_15
 #define PMB_GPIO_1_GPIO_Port GPIOC
 #define BATT_SENSE_ADC_Pin GPIO_PIN_0
