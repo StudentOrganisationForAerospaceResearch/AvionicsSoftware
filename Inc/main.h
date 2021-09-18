@@ -57,10 +57,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MAIN_PARACHUTE_Pin GPIO_PIN_14
-#define MAIN_PARACHUTE_GPIO_Port GPIOC
-#define PMB_GPIO1_Pin GPIO_PIN_15
-#define PMB_GPIO1_GPIO_Port GPIOC
+#define EN_7V5_Pin GPIO_PIN_14
+#define EN_7V5_GPIO_Port GPIOC
+#define PMB_GPIO_1_Pin GPIO_PIN_15
+#define PMB_GPIO_1_GPIO_Port GPIOC
+#define BATT_SENSE_ADC_Pin GPIO_PIN_0
+#define BATT_SENSE_ADC_GPIO_Port GPIOC
 #define AUX2_Pin GPIO_PIN_2
 #define AUX2_GPIO_Port GPIOC
 #define AUX1_Pin GPIO_PIN_3
@@ -87,20 +89,20 @@ void Error_Handler(void);
 #define COMBUSTION_CHAMBER_ADC_GPIO_Port GPIOC
 #define OXIDIZER_TANK_ADC_Pin GPIO_PIN_0
 #define OXIDIZER_TANK_ADC_GPIO_Port GPIOB
-#define PROPULSION_3_VALVE_PRESSURE_ADC_Pin GPIO_PIN_1
-#define PROPULSION_3_VALVE_PRESSURE_ADC_GPIO_Port GPIOB
+#define PROPULSION_3_VALVE_ADC_Pin GPIO_PIN_1
+#define PROPULSION_3_VALVE_ADC_GPIO_Port GPIOB
 #define LOWER_VENT_VALVE_Pin GPIO_PIN_2
 #define LOWER_VENT_VALVE_GPIO_Port GPIOB
 #define INJECTION_VALVE_Pin GPIO_PIN_10
 #define INJECTION_VALVE_GPIO_Port GPIOB
 #define PROPULSION_3_VALVE_Pin GPIO_PIN_11
 #define PROPULSION_3_VALVE_GPIO_Port GPIOB
-#define LED3_Pin GPIO_PIN_14
-#define LED3_GPIO_Port GPIOB
-#define LED2_Pin GPIO_PIN_15
-#define LED2_GPIO_Port GPIOB
-#define LED1_Pin GPIO_PIN_6
-#define LED1_GPIO_Port GPIOC
+#define LED_3_Pin GPIO_PIN_14
+#define LED_3_GPIO_Port GPIOB
+#define LED_2_Pin GPIO_PIN_15
+#define LED_2_GPIO_Port GPIOB
+#define LED_1_Pin GPIO_PIN_6
+#define LED_1_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_8
 #define LAUNCH_GPIO_Port GPIOA
 #define LAUNCH_SYS_UART_TX_Pin GPIO_PIN_9

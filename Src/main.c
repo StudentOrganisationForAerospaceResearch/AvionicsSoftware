@@ -17,7 +17,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
@@ -73,7 +72,6 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_uart4_rx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
@@ -122,16 +120,15 @@ GpsData* gpsData;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_SPI1_Init(void);
-static void MX_SPI3_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
 static void MX_CRC_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_SPI3_Init(void);
 static void MX_UART5_Init(void);
 void StartDefaultTask(void const * argument);
 
@@ -175,12 +172,12 @@ int main(void)
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_SPI1_Init();
-  MX_SPI3_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_UART4_Init();
   MX_CRC_Init();
   MX_I2C1_Init();
+  MX_SPI3_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
 
@@ -383,7 +380,7 @@ int main(void)
 
   /* Start scheduler */
   osKernelStart();
- 
+
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -413,11 +410,12 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Configure the main internal regulator output voltage 
+  /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -431,7 +429,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -463,7 +461,7 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
@@ -481,9 +479,9 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -513,7 +511,7 @@ static void MX_ADC2_Init(void)
   /* USER CODE BEGIN ADC2_Init 1 */
 
   /* USER CODE END ADC2_Init 1 */
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
   hadc2.Instance = ADC2;
   hadc2.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
@@ -531,9 +529,9 @@ static void MX_ADC2_Init(void)
   {
     Error_Handler();
   }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_9;
+  sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
@@ -815,22 +813,6 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
-  * Enable DMA controller clock
-  */
-static void MX_DMA_Init(void)
-{
-
-    /* DMA controller clock enable */
-    __HAL_RCC_DMA1_CLK_ENABLE();
-
-    /* DMA interrupt init */
-    /* DMA1_Stream2_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 5, 0);
-    HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
-
-}
-
-/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -847,28 +829,25 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, MAIN_PARACHUTE_Pin|PMB_GPIO1_Pin|MAG_CS_Pin|COMBUSTION_CHAMBER_ADC_Pin 
-                          |LED1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, EN_7V5_Pin|PMB_GPIO_1_Pin|MAG_CS_Pin|LED_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin|LAUNCH_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|LED3_Pin 
-                          |LED2_Pin|BARO_CS_Pin|MEM_WP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|LED_3_Pin
+                          |LED_2_Pin|BARO_CS_Pin|MEM_WP_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PC13 PC0 PC1 PC7 
-                           PC8 PC9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_7 
-                          |GPIO_PIN_8|GPIO_PIN_9;
+  /*Configure GPIO pins : PC13 PC1 PC7 PC8
+                           PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_1|GPIO_PIN_7|GPIO_PIN_8
+                          |GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MAIN_PARACHUTE_Pin PMB_GPIO1_Pin MAG_CS_Pin COMBUSTION_CHAMBER_ADC_Pin 
-                           LED1_Pin */
-  GPIO_InitStruct.Pin = MAIN_PARACHUTE_Pin|PMB_GPIO1_Pin|MAG_CS_Pin|COMBUSTION_CHAMBER_ADC_Pin 
-                          |LED1_Pin;
+  /*Configure GPIO pins : EN_7V5_Pin PMB_GPIO_1_Pin MAG_CS_Pin LED_1_Pin */
+  GPIO_InitStruct.Pin = EN_7V5_Pin|PMB_GPIO_1_Pin|MAG_CS_Pin|LED_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -887,10 +866,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LOWER_VENT_VALVE_Pin INJECTION_VALVE_Pin PROPULSION_3_VALVE_Pin LED3_Pin 
-                           LED2_Pin BARO_CS_Pin MEM_WP_Pin */
-  GPIO_InitStruct.Pin = LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|LED3_Pin 
-                          |LED2_Pin|BARO_CS_Pin|MEM_WP_Pin;
+  /*Configure GPIO pins : LOWER_VENT_VALVE_Pin INJECTION_VALVE_Pin PROPULSION_3_VALVE_Pin LED_3_Pin
+                           LED_2_Pin BARO_CS_Pin MEM_WP_Pin */
+  GPIO_InitStruct.Pin = LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|LED_3_Pin
+                          |LED_2_Pin|BARO_CS_Pin|MEM_WP_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1062,10 +1041,10 @@ void StartDefaultTask(void const * argument)
         }
     }
 
-  /* USER CODE END 5 */ 
+  /* USER CODE END 5 */
 }
 
- /**
+/**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM1 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
@@ -1110,7 +1089,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
       ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
