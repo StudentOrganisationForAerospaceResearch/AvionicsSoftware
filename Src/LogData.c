@@ -64,6 +64,7 @@ static const uint8_t DEVICE_ADDRESS = 0x50; // used for reading/writing to EEPRO
 static const uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
 static const uint32_t TIMEOUT_MS = 10; // Time required to wait before ending read/write
 static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 92 bytes
+static const uint32_t LOGGING_BUSY_RETRIES = 3; //Number of times to retry if EEPROM is Busy.
 
 /* Variables -----------------------------------------------------------------*/
 static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
@@ -73,23 +74,64 @@ static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address 
  * @brief Writes data to the EEPROM over I2C.
  * @param buffer, pointer to the data buffer.
  * @param bufferSize, size of data buffer.
+ * @return HAL Status of the read operation (HAL_OK, HAL_ERROR ,HAL_BUSY).
  */
-void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
+HAL_StatusTypeDef writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	// if Hal_i2c returns HAL_ok then return hal_ok not void
-	// if it returns error or busy, try 3 more times with more delay
-	// if still error or busy, then send error/busy
-	HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
+	// if HAL_I2C_Mem_Write returns HAL_OK then return HAL_OK.
+	// if it returns HAL_ERROR, return HAL_ERROR.
+	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
+
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(
+    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS
+			);
+    if(status == HAL_BUSY)
+    {
+    	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
+    	{
+    		HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Write(
+    				&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, (i + 2) * TIMEOUT_MS
+					);
+    		if(retryStatus == HAL_OK || retryStatus == HAL_ERROR)
+    		{
+    			return retryStatus;
+    		}
+    	}
+    	return HAL_BUSY;
+    }
+    return status;
 }
 
 /**
  * @brief Reads data from the EEPROM over I2C.
  * @param receiveBuffer, pointer to the buffer to store received data.
  * @param bufferSize, size of data to be read.
+ * @return HAL Status of the read operation (HAL_OK, HAL_ERROR ,HAL_BUSY).
  */
-void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress)
+HAL_StatusTypeDef readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	HAL_I2C_Mem_Read(&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS);
+	// if HAL_I2C_Mem_Read returns HAL_OK then return HAL_OK.
+	// if it returns HAL_ERROR, return HAL_ERROR.
+	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
+    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS
+			);
+
+    if(status == HAL_BUSY)
+    {
+    	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
+    	{
+    		HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Read(
+    				&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS
+					);
+    		if(retryStatus == HAL_OK || retryStatus == HAL_ERROR)
+    		{
+    			return retryStatus;
+    		}
+    	}
+    	return HAL_BUSY;
+    }
+    return status;
 }
 
 /**
@@ -104,16 +146,17 @@ void checkEEPROMBlocking()
 }
 
 /**
- * @brief puts a LogEntry into a char array and sends to EEPROM for writing
- * @param memAddress, the address at which the EEPROM is instructed to start writing
- * @param givenLog, pointer to a log initialized at the start of task
+ * @brief puts a LogEntry into a char array and sends to EEPROM for writing.
+ * @param memAddress, the address at which the EEPROM is instructed to start writing.
+ * @param givenLog, pointer to a log initialized at the start of task.
+ * @return HAL Status of the read operation (HAL_OK, HAL_ERROR ,HAL_BUSY).
  */
-void writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
+HAL_StatusTypeDef writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
 {
     checkEEPROMBlocking();
     //Note: writeToEEPROM expects a uint8_t*
     //if that's not a problem, can we send the LogEntry pointer without casting?
-    writeToEEPROM((char*)givenLog, LOG_ENTRY_SIZE, memAddress);
+    return (writeToEEPROM((char*)givenLog, LOG_ENTRY_SIZE, memAddress));
 }
 
 /**
@@ -126,7 +169,15 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
     char dataRead[LOG_ENTRY_SIZE];
   
     checkEEPROMBlocking();
-    readFromEEPROM((uint8_t*)dataRead, sizeof(dataRead), memAddress);
+    HAL_StatusTypeDef statusCode = readFromEEPROM((uint8_t*)dataRead, sizeof(dataRead), memAddress);
+    // If read is not successful, fill dataRead with error code.
+    if(statusCode != HAL_OK)
+    {
+    	for(int i=0; i<sizeof(dataRead); i++)
+    	{
+    		dataRead[i] = statusCode;
+    	}
+    }
     /* what if we did:
 
     uint32_t* readingAddress = &(givenLog->accelX);
@@ -250,7 +301,7 @@ void logDataTask(void const* arg)
     LogEntry log;
     initializeLogEntry(&log);
     char flightStartflag[] = "**flight**";
-    writeToEEPROM((uint8_t*)flightStartflag,sizeof(flightStartflag),inFlightAddressOffset-sizeof(flightStartflag));
+    writeToEEPROM((uint8_t*)flightStartflag, sizeof(flightStartflag), inFlightAddressOffset-sizeof(flightStartflag));
     uint32_t prevWakeTime, beforeLogTime;
     for (;;)
     {
