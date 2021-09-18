@@ -372,7 +372,7 @@ int main(void)
     abortPhaseTaskHandle =
         osThreadCreate(osThread(abortPhaseThread), NULL);
 
-    if (HAL_GPIO_ReadPin(AUX1_Pin_Port, AUX1_Pin) == 1) {
+    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
       osThreadDef(debugThread,debugTask,osPriorityHigh,1,configMINIMAL_STACK_SIZE);
       debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
     }
@@ -1021,7 +1021,7 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
     /* Infinite loop */
     //HAL_GPIO_WritePin(MUX_POWER_TEMP_GPIO_Port, MUX_POWER_TEMP_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, 0);
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
 
     for (;;)
     {
@@ -1034,9 +1034,9 @@ void StartDefaultTask(void const * argument)
         // blink 5 times for MAIN_DESCENT phase
         for (int i = -1; i < getCurrentFlightPhase(); i++)
         {
-            HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, 1);
+            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
-            HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, 0);
+            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
         }
     }
