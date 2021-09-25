@@ -394,7 +394,7 @@ int main(void)
     abortPhaseTaskHandle =
         osThreadCreate(osThread(abortPhaseThread), NULL);
 
-    if (HAL_GPIO_ReadPin(AUX1_Pin_Port, AUX1_Pin) == 1) {
+    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
       osThreadDef(debugThread,debugTask,osPriorityHigh,1,configMINIMAL_STACK_SIZE);
       debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
     }

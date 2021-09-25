@@ -51,6 +51,7 @@ typedef struct{
     int32_t antennaAltitude;
     int32_t geoidAltitude;
     int32_t altitude;
+    uint32_t batteryVoltage;
     int32_t currentFlightPhase;
     int32_t tick;
 } LogEntry; // LogEntry holds data from AllData that is to be logged
@@ -225,6 +226,11 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
         givenLog->geoidAltitude = data->gpsData_->geoidAltitude_.altitude_;
         givenLog->altitude = data->gpsData_->totalAltitude_.altitude_;
         osMutexRelease(data->gpsData_->mutex_);
+    }
+    if (osMutexWait(data->batteryVoltageData_->mutex_, 0) == osOK)
+    {
+        givenLog->batteryVoltage = data->batteryVoltageData_->voltage_;
+        osMutexRelease(data->batteryVoltageData_->mutex_);
     }
     givenLog->currentFlightPhase = getCurrentFlightPhase();
     givenLog->tick = HAL_GetTick();
