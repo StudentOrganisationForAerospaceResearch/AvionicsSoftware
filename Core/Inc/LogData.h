@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main.h"
+#include "Data.h"
 #include "../../Drivers/w25qxx/w25qxx.h"
 
 #define SPIMODE 1
@@ -12,8 +13,7 @@
 extern UART_HandleTypeDef huart5;
 extern SPI_HandleTypeDef hspi2;
 extern w25qxx_t w25qxx;
+extern CRC_HandleTypeDef hcrc;
 
-HAL_StatusTypeDef writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog);
-void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog);
 void initializeLogEntry(LogEntry* givenLog);
 void logDataTask(void const* arg);

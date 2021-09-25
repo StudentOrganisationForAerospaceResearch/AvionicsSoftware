@@ -125,6 +125,7 @@ typedef struct{
     int32_t antennaAltitude;
     int32_t geoidAltitude;
     int32_t altitude;
+    uint32_t batteryVoltage;
     uint8_t currentFlightPhase;
     int32_t tick;
 

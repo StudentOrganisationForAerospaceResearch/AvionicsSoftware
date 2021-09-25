@@ -11,7 +11,6 @@
 #include <string.h>
 
 
-CRC_HandleTypeDef hcrc;
 static const int TRANSMIT_DATA_PERIOD = 1000;
 
 static const int8_t IMU_HEADER_BYTE = 0x10;
