@@ -1,0 +1,108 @@
+@startuml
+
+hnote over GS: start program
+hnote over Rocket: power on
+hnote over GS: enable communications
+hnote over GS: tare data values
+GS -> Rocket: Open fill valve (PV1)
+hnote over GS: monitor data
+
+loop until launch
+  Rocket -> GS: Send mass and pressure data
+end
+
+GS -> Rocket: Close fill valve (PV1)
+
+loop 3 times
+  GS -> Rocket: fill, vent, valve (SOL1)
+end
+
+GS -> Rocket: Energize fill valve (SOL2)
+hnote over Rocket: Cylinder valve open? closed?
+
+GS -> Rocket: Actuate fill disconnect valve (SOL 3)
+
+== Normal Launch Procedure ==
+
+hnote over Rocket: Fill disconnect valve open? closed?
+
+GS -> Rocket: New Flight Phase: Prelaunch
+hnote over Rocket: Flight Phase: Prelaunch
+
+loop until launch
+  Rocket -> GS: Heartbeat signal
+end
+
+GS -> Rocket: New Flight Phase: Arm
+hnote over Rocket: Flight Phase: Arm
+
+loop 2 times
+  GS -> Rocket: Launch Command
+end
+
+hnote over Rocket: Launch, connection severed
+
+== End Normal Launch Procedure ==
+== Abort Command Received Procedure ==
+
+hnote over Rocket: Fill disconnect valve open? closed?
+
+GS -> Rocket: New Flight Phase: Prelaunch
+hnote over Rocket: Flight Phase: Prelaunch
+
+loop until launch
+  Rocket -> GS: Heartbeat signal
+end
+
+GS -> Rocket: New Flight Phase: Arm
+hnote over Rocket: Flight Phase: Arm
+
+GS -> Rocket: Abort Command
+hnote over Rocket: Flight Phase: Abort Command Received
+
+hnote over GS: Communications in standby
+
+GS -> Rocket: Open rocket vent valve (SOL4)
+hnote over Rocket: Vent valve open
+
+== End Abort Command Received Procedure ==
+== Abort Communication Error Procedure ==
+
+hnote over Rocket: Fill disconnect valve open? closed?
+
+Rocket -> GS: Heartbeat Timer Expired
+hnote over Rocket: Flight Phase: Abort Communication Error
+
+hnote over GS: Communications in standby
+
+GS -> Rocket: Open rocket vent valve (SOL4)
+hnote over Rocket: Vent valve open
+
+== End Abort Communication Error Procedure ==
+== Exit Abort Phase Procedure ==
+
+GS -> Rocket: Reset Avionics Command
+
+hnote over Rocket: Close lower vent valve (SOL4?)
+
+GS -> Rocket: New Flight Phase: Prelaunch
+hnote over Rocket: Flight Phase: Prelaunch
+
+loop until launch
+  Rocket -> GS: Heartbeat signal
+end
+
+GS -> Rocket: New Flight Phase: Arm
+hnote over Rocket: Flight Phase: Arm
+
+loop 2 times
+  GS -> Rocket: Launch Command
+end
+
+hnote over Rocket: Launch, connection severed
+
+== End Exit Abort Phase Procedure ==
+
+==END==
+
+@enduml
