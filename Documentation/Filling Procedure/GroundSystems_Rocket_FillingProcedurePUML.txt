@@ -18,13 +18,13 @@ loop 3 times
 end
 
 GS -> Rocket: Energize fill valve (SOL2)
-hnote over Rocket: Cylinder valve open? closed?
+hnote over Rocket: Cylinder valve closed
 
 GS -> Rocket: Actuate fill disconnect valve (SOL 3)
 
 == Normal Launch Procedure ==
 
-hnote over Rocket: Fill disconnect valve open? closed?
+hnote over Rocket: Fill arm disconnected
 
 GS -> Rocket: New Flight Phase: Prelaunch
 hnote over Rocket: Flight Phase: Prelaunch
@@ -45,7 +45,7 @@ hnote over Rocket: Launch, connection severed
 == End Normal Launch Procedure ==
 == Abort Command Received Procedure ==
 
-hnote over Rocket: Fill disconnect valve open? closed?
+hnote over Rocket: Fill arm disconnected
 
 GS -> Rocket: New Flight Phase: Prelaunch
 hnote over Rocket: Flight Phase: Prelaunch
@@ -68,7 +68,7 @@ hnote over Rocket: Vent valve open
 == End Abort Command Received Procedure ==
 == Abort Communication Error Procedure ==
 
-hnote over Rocket: Fill disconnect valve open? closed?
+hnote over Rocket: Fill arm disconnected
 
 Rocket -> GS: Heartbeat Timer Expired
 hnote over Rocket: Flight Phase: Abort Communication Error
