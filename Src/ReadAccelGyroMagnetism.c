@@ -5,6 +5,8 @@
 #include "ReadAccelGyroMagnetism.h"
 
 #include "Data.h"
+#include "main.h"
+
 
 static int READ_ACCEL_GYRO_MAGNETISM = 25;
 
@@ -129,6 +131,20 @@ void readAccelGyroMagnetismTask(void const* arg)
         data->gyroX_ = gyroX * GYRO_SENSITIVITY; // mdps
         data->gyroY_ = gyroY * GYRO_SENSITIVITY; // mdps
         data->gyroZ_ = gyroZ * GYRO_SENSITIVITY; // mdps
+//        HAL_UART_Transmit(&huart5, "IMU\r\n", 5, 100);
+//		HAL_UART_Transmit(&huart5, &data->accelX_, sizeof(int32_t), 100);
+//		HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//		HAL_UART_Transmit(&huart5, &data->accelY_, sizeof(int32_t), 100);
+//		HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//		HAL_UART_Transmit(&huart5, &data->accelZ_, sizeof(int32_t), 100);
+//		HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//		HAL_UART_Transmit(&huart5, &data->gyroX_, sizeof(int32_t), 100);
+//		HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//		HAL_UART_Transmit(&huart5, &data->gyroY_, sizeof(int32_t), 100);
+//		HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//		HAL_UART_Transmit(&huart5, &data->gyroZ_, sizeof(int32_t), 100);
+//		HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//		HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
         // data->magnetoX_ = magnetoX * MAGENTO_SENSITIVITY; // mgauss
         // data->magnetoY_ = magnetoY * MAGENTO_SENSITIVITY; // mgauss
         // data->magnetoZ_ = magnetoZ * MAGENTO_SENSITIVITY; // mgauss

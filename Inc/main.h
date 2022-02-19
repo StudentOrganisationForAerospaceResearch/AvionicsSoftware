@@ -97,18 +97,20 @@ void Error_Handler(void);
 #define INJECTION_VALVE_GPIO_Port GPIOB
 #define PROPULSION_3_VALVE_Pin GPIO_PIN_11
 #define PROPULSION_3_VALVE_GPIO_Port GPIOB
-#define LED_3_Pin GPIO_PIN_14
-#define LED_3_GPIO_Port GPIOB
-#define LED_2_Pin GPIO_PIN_15
-#define LED_2_GPIO_Port GPIOB
-#define LED_1_Pin GPIO_PIN_6
+#define LED_3_Pin GPIO_PIN_6
+#define LED_3_GPIO_Port GPIOC
+#define LED_2_Pin GPIO_PIN_7
+#define LED_2_GPIO_Port GPIOC
+#define LED_1_Pin GPIO_PIN_8
 #define LED_1_GPIO_Port GPIOC
-#define LAUNCH_Pin GPIO_PIN_8
-#define LAUNCH_GPIO_Port GPIOA
 #define LAUNCH_SYS_UART_TX_Pin GPIO_PIN_9
 #define LAUNCH_SYS_UART_TX_GPIO_Port GPIOA
 #define LAUNCH_SYS_UART_RX_Pin GPIO_PIN_10
 #define LAUNCH_SYS_UART_RX_GPIO_Port GPIOA
+#define SPI_CS_Pin GPIO_PIN_11
+#define SPI_CS_GPIO_Port GPIOA
+#define MEM_WP_Pin GPIO_PIN_12
+#define MEM_WP_GPIO_Port GPIOA
 #define BARO_SPI_SCK_Pin GPIO_PIN_10
 #define BARO_SPI_SCK_GPIO_Port GPIOC
 #define BARO_SPI_MISO_Pin GPIO_PIN_11
@@ -121,12 +123,6 @@ void Error_Handler(void);
 #define BARO_CS_GPIO_Port GPIOB
 #define BARO_SPI_MOSI_Pin GPIO_PIN_5
 #define BARO_SPI_MOSI_GPIO_Port GPIOB
-#define MEM_WP_Pin GPIO_PIN_7
-#define MEM_WP_GPIO_Port GPIOB
-#define EEPROM_I2C_SCL_Pin GPIO_PIN_8
-#define EEPROM_I2C_SCL_GPIO_Port GPIOB
-#define EEPROM_I2C_SDA_Pin GPIO_PIN_9
-#define EEPROM_I2C_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

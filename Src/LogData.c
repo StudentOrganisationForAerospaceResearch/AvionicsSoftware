@@ -19,6 +19,7 @@
 #include "Data.h"
 #include "FlightPhase.h"
 #include "Utils.h"
+#include <string.h>
 
 /* Macros --------------------------------------------------------------------*/
 //CHECK: was max implemented somewhere else?
@@ -26,34 +27,6 @@
     ({ __typeof__ (a) _a = (a); \
         __typeof__ (b) _b = (b); \
         _a > _b ? _a : _b; })
-
-
-/* Structs -------------------------------------------------------------------*/
-typedef struct{
-    int32_t accelX;
-    int32_t accelY;
-    int32_t accelZ;
-    int32_t gyroX;
-    int32_t gyroY;
-    int32_t gyroZ;
-    int32_t magnetoX;
-    int32_t magnetoY;
-    int32_t magnetoZ;
-    int32_t barometerPressure;
-    int32_t barometerTemperature;
-    int32_t combustionChamberPressure;
-    int32_t oxidizerTankPressure;
-    int32_t gps_time;
-    int32_t latitude_degrees;
-    int32_t latitude_minutes;
-    int32_t longitude_degrees;
-    int32_t longitude_minutes;
-    int32_t antennaAltitude;
-    int32_t geoidAltitude;
-    int32_t altitude;
-    int32_t currentFlightPhase;
-    int32_t tick;
-} LogEntry; // LogEntry holds data from AllData that is to be logged
 
 
 /* Constants -----------------------------------------------------------------*/
@@ -82,19 +55,30 @@ HAL_StatusTypeDef writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t m
 	// if it returns HAL_ERROR, return HAL_ERROR.
 	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
 
-    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(
-    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS
-			);
+#ifdef SPIMODE
+    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+    HAL_StatusTypeDef status = HAL_SPI_Transmit (&hspi2, (uint8_t *)buffer, bufferSize, TIMEOUT_MS);
+    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
+#else
+    //    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(
+    //    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
+
+#endif
     if(status == HAL_BUSY)
     {
     	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
     	{
-    		HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Write(
-    				&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, (i + 2) * TIMEOUT_MS
-					);
+#ifdef SPIMODE
+    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+    	    HAL_StatusTypeDef retryStatus = HAL_SPI_Transmit (&hspi2, (uint8_t *)buffer, bufferSize, (i + 2) * TIMEOUT_MS);
+    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
+#else
+    	    HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Write(
+					&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, (i + 2) * TIMEOUT_MS);
+#endif
     		if(retryStatus == HAL_OK || retryStatus == HAL_ERROR)
     		{
-    			return retryStatus;
+    			return 1; //retryStatus;
     		}
     	}
     	return HAL_BUSY;
@@ -113,20 +97,31 @@ HAL_StatusTypeDef readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, ui
 	// if HAL_I2C_Mem_Read returns HAL_OK then return HAL_OK.
 	// if it returns HAL_ERROR, return HAL_ERROR.
 	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
-    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
-    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS
-			);
+#ifdef SPIMODE
+    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+    HAL_StatusTypeDef status = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
+    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
 
-    if(status == HAL_BUSY)
+#else
+    //    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
+    //    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS);
+#endif
+    if( status == HAL_BUSY)
     {
     	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
     	{
-    		HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Read(
-    				&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS
-					);
-    		if(retryStatus == HAL_OK || retryStatus == HAL_ERROR)
+#ifdef SPIMODE
+    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
+    	    HAL_StatusTypeDef retryStatus = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
+    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
+
+#else
+    	    HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Read(
+    	        				&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
+#endif
+    		if( retryStatus == HAL_OK || retryStatus == HAL_ERROR)
     		{
-    			return retryStatus;
+    			return 1;// retryStatus;
     		}
     	}
     	return HAL_BUSY;
@@ -139,8 +134,8 @@ HAL_StatusTypeDef readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, ui
  */
 void checkEEPROMBlocking()
 {
-	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
-	while (HAL_I2C_IsDeviceReady(&hi2c1, DEVICE_ADDRESS<<1, 3, TIMEOUT_MS) != HAL_OK){};
+//	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
+//	while (HAL_I2C_IsDeviceReady(&hi2c1, DEVICE_ADDRESS<<1, 3, TIMEOUT_MS) != HAL_OK){};
     // TODO: add a delay ~100us?
     // should this return a boolean?
 }
@@ -156,7 +151,7 @@ HAL_StatusTypeDef writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
     checkEEPROMBlocking();
     //Note: writeToEEPROM expects a uint8_t*
     //if that's not a problem, can we send the LogEntry pointer without casting?
-    return (writeToEEPROM((char*)givenLog, LOG_ENTRY_SIZE, memAddress));
+    return (writeToEEPROM(givenLog, LOG_ENTRY_SIZE, memAddress));
 }
 
 /**
@@ -167,7 +162,8 @@ HAL_StatusTypeDef writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
 void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
 {
     char dataRead[LOG_ENTRY_SIZE];
-  
+    memset(dataRead, 1, LOG_ENTRY_SIZE);
+
     checkEEPROMBlocking();
     HAL_StatusTypeDef statusCode = readFromEEPROM((uint8_t*)dataRead, sizeof(dataRead), memAddress);
     // If read is not successful, fill dataRead with error code.
@@ -219,8 +215,17 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
  */
 void initializeLogEntry(LogEntry* givenLog)
 {
-    memset(&givenLog, -1, LOG_ENTRY_SIZE);
-
+//    givenLog->accelX = 0;
+//    givenLog->accelY = 0;
+//    givenLog->accelZ = 0;
+//    givenLog->gyroX = 0;
+//    givenLog->gyroY = 0;
+//    givenLog->gyroZ = 0;
+//    givenLog->magnetoX = 0;
+//    givenLog->magnetoY = 0;
+//    givenLog->magnetoZ = 0;
+    memset(givenLog, 3, LOG_ENTRY_SIZE);
+//	bzero(givenLog, LOG_ENTRY_SIZE);
     givenLog->currentFlightPhase = getCurrentFlightPhase();
     givenLog->tick = osKernelSysTick();
 }

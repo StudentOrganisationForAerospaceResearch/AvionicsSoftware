@@ -202,6 +202,14 @@ void readBarometerTask(void const* arg)
         {
             data->pressure_     = p;
             data->temperature_  = temp;
+//            HAL_UART_Transmit(&huart5, "Bar\r\n", 5, 100);
+//			HAL_UART_Transmit(&huart5, &data->pressure_, 20, 100);
+//			HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//			HAL_UART_Transmit(&huart5, &data->temperature_, 20, 100);
+//			HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+//			HAL_UART_Transmit(&huart5, "\r\n", 2, 100);
+
+
             osMutexRelease(data->mutex_);
         }
 

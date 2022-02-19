@@ -41,6 +41,8 @@
 #include "FlightPhase.h"
 #include "ValveControl.h"
 #include "Debug.h"
+#include "../Drivers/w25qxx/w25qxx.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,15 +65,15 @@ ADC_HandleTypeDef hadc2;
 
 CRC_HandleTypeDef hcrc;
 
-I2C_HandleTypeDef hi2c1;
-
 SPI_HandleTypeDef hspi1;
+SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_uart4_rx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
@@ -127,9 +129,10 @@ static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
 static void MX_CRC_Init(void);
-static void MX_I2C1_Init(void);
 static void MX_SPI3_Init(void);
+static void MX_DMA_Init(void);
 static void MX_UART5_Init(void);
+static void MX_SPI2_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -169,6 +172,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_SPI1_Init();
@@ -176,10 +180,11 @@ int main(void)
   MX_USART2_UART_Init();
   MX_UART4_Init();
   MX_CRC_Init();
-  MX_I2C1_Init();
   MX_SPI3_Init();
   MX_UART5_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
+  //W25qxx_Init(); // TODO: ADDED HERE!
 
     // Data primitive structs
     AccelGyroMagnetismData* accelGyroMagnetismData =
@@ -247,7 +252,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
-    HAL_UART_Receive_IT(&huart1, &launchSystemsRxChar, 1);
+//    HAL_UART_Receive_IT(&huart1, &launchSystemsRxChar, 1);
 
   /* USER CODE END RTOS_TIMERS */
 
@@ -262,6 +267,9 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
 
+  //========== NOTE
+  // threads that are not needed for solid have been commented out
+  //==========
     osThreadDef(
         readAccelGyroMagnetismThread,
         readAccelGyroMagnetismTask,
@@ -282,15 +290,15 @@ int main(void)
     readBarometerTaskHandle =
         osThreadCreate(osThread(readBarometerThread), barometerData);
 
-    osThreadDef(
-        readCombustionChamberPressureThread,
-        readCombustionChamberPressureTask,
-        osPriorityAboveNormal,
-        1,
-        configMINIMAL_STACK_SIZE
-    );
-    readCombustionChamberPressureTaskHandle =
-        osThreadCreate(osThread(readCombustionChamberPressureThread), combustionChamberPressureData);
+//    osThreadDef(
+//        readCombustionChamberPressureThread,
+//        readCombustionChamberPressureTask,
+//        osPriorityAboveNormal,
+//        1,
+//        configMINIMAL_STACK_SIZE
+//    );
+//    readCombustionChamberPressureTaskHandle =
+//        osThreadCreate(osThread(readCombustionChamberPressureThread), combustionChamberPressureData);
 
     osThreadDef(
         readGpsThread,
@@ -302,55 +310,57 @@ int main(void)
     readGpsTaskHandle =
         osThreadCreate(osThread(readGpsThread), gpsData);
 
-    osThreadDef(
-        readOxidizerTankPressureThread,
-        readOxidizerTankPressureTask,
-        osPriorityAboveNormal,
-        1,
-        configMINIMAL_STACK_SIZE
-    );
-    readOxidizerTankPressureTaskHandle =
-        osThreadCreate(osThread(readOxidizerTankPressureThread), oxidizerTankPressureData);
-
-    osThreadDef(
-        monitorForEmergencyShutoffThread,
-        monitorForEmergencyShutoffTask,
-        osPriorityHigh,
-        1,
-        configMINIMAL_STACK_SIZE
-    );
-    monitorForEmergencyShutoffTaskHandle =
-        osThreadCreate(osThread(monitorForEmergencyShutoffThread), accelGyroMagnetismData);
-
-    osThreadDef(
-        engineControlThread,
-        engineControlTask,
-        osPriorityNormal,
-        1,
-        configMINIMAL_STACK_SIZE * 2
-    );
-    engineControlTaskHandle =
-        osThreadCreate(osThread(engineControlThread), oxidizerTankPressureData);
-
-    osThreadDef(
-        parachutesControlThread,
-        parachutesControlTask,
-        osPriorityAboveNormal,
-        1,
-        configMINIMAL_STACK_SIZE * 2
-    );
-    parachutesControlTaskHandle =
-        osThreadCreate(osThread(parachutesControlThread), parachutesControlData);
-
-    osThreadDef(
-        logDataThread,
-        logDataTask,
-        osPriorityNormal,
-        1,
-        configMINIMAL_STACK_SIZE * 3
-    );
-    logDataTaskHandle =
-        osThreadCreate(osThread(logDataThread), allData);
+//    osThreadDef(
+//        readOxidizerTankPressureThread,
+//        readOxidizerTankPressureTask,
+//        osPriorityAboveNormal,
+//        1,
+//        configMINIMAL_STACK_SIZE
+//    );
+//    readOxidizerTankPressureTaskHandle =
+//        osThreadCreate(osThread(readOxidizerTankPressureThread), oxidizerTankPressureData);
+//
+//    osThreadDef(
+//        monitorForEmergencyShutoffThread,
+//        monitorForEmergencyShutoffTask,
+//        osPriorityHigh,
+//        1,
+//        configMINIMAL_STACK_SIZE
+//    );
+//    monitorForEmergencyShutoffTaskHandle =
+//        osThreadCreate(osThread(monitorForEmergencyShutoffThread), accelGyroMagnetismData);
+//
+//    osThreadDef(
+//        engineControlThread,
+//        engineControlTask,
+//        osPriorityNormal,
+//        1,
+//        configMINIMAL_STACK_SIZE * 2
+//    );
+//    engineControlTaskHandle =
+//        osThreadCreate(osThread(engineControlThread), oxidizerTankPressureData);
+//
+//    osThreadDef(
+//        parachutesControlThread,
+//        parachutesControlTask,
+//        osPriorityAboveNormal,
+//        1,
+//        configMINIMAL_STACK_SIZE * 2
+//    );
+//    parachutesControlTaskHandle =
+//        osThreadCreate(osThread(parachutesControlThread), parachutesControlData);
+//
+//    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
+//      osThreadDef(
+//		  logDataThread,
+//		  logDataTask,
+//		  osPriorityNormal,
+//		  1,
+//		  configMINIMAL_STACK_SIZE * 3
+//	  );
+//      logDataTaskHandle =
+//        osThreadCreate(osThread(logDataThread), allData);
+//    }
 
     osThreadDef(
         transmitDataThread,
@@ -362,20 +372,27 @@ int main(void)
     transmitDataTaskHandle =
         osThreadCreate(osThread(transmitDataThread), allData);
 
-    osThreadDef(
-        abortPhaseThread,
-        abortPhaseTask,
-        osPriorityHigh,
-        1,
-        configMINIMAL_STACK_SIZE
-    );
-    abortPhaseTaskHandle =
-        osThreadCreate(osThread(abortPhaseThread), NULL);
-
-    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
-      osThreadDef(debugThread,debugTask,osPriorityHigh,1,configMINIMAL_STACK_SIZE);
-      debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
-    }
+//    osThreadDef(
+//        abortPhaseThread,
+//        abortPhaseTask,
+//        osPriorityHigh,
+//        1,
+//        configMINIMAL_STACK_SIZE
+//    );
+//    abortPhaseTaskHandle =
+//        osThreadCreate(osThread(abortPhaseThread), NULL);
+//
+//    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) != 1) {
+//      osThreadDef(
+//          debugThread,
+//		  debugTask,
+//		  osPriorityHigh,
+//		  1,
+//		  configMINIMAL_STACK_SIZE
+//	  );
+//      debugTaskHandle =
+//        osThreadCreate(osThread(debugThread), NULL);
+//    }
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -571,40 +588,6 @@ static void MX_CRC_Init(void)
 }
 
 /**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_I2C1_Init(void)
-{
-
-  /* USER CODE BEGIN I2C1_Init 0 */
-
-  /* USER CODE END I2C1_Init 0 */
-
-  /* USER CODE BEGIN I2C1_Init 1 */
-
-  /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
-  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-  hi2c1.Init.OwnAddress1 = 160;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
   * @brief SPI1 Initialization Function
   * @param None
   * @retval None
@@ -639,6 +622,44 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief SPI2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI2_Init(void)
+{
+
+  /* USER CODE BEGIN SPI2_Init 0 */
+
+  /* USER CODE END SPI2_Init 0 */
+
+  /* USER CODE BEGIN SPI2_Init 1 */
+
+  /* USER CODE END SPI2_Init 1 */
+  /* SPI2 parameter configuration*/
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI2_Init 2 */
+
+  /* USER CODE END SPI2_Init 2 */
 
 }
 
@@ -696,7 +717,7 @@ static void MX_UART4_Init(void)
 
   /* USER CODE END UART4_Init 1 */
   huart4.Instance = UART4;
-  huart4.Init.BaudRate = 9600;
+  huart4.Init.BaudRate = 38400;
   huart4.Init.WordLength = UART_WORDLENGTH_8B;
   huart4.Init.StopBits = UART_STOPBITS_1;
   huart4.Init.Parity = UART_PARITY_NONE;
@@ -762,7 +783,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 9600;
+  huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -795,7 +816,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 9600;
+  huart2.Init.BaudRate = 57600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -809,6 +830,22 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
 
 }
 
@@ -829,25 +866,25 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, MAIN_PARACHUTE_Pin|PMB_GPIO_1_Pin|MAG_CS_Pin|LED_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, MAIN_PARACHUTE_Pin|PMB_GPIO_1_Pin|MAG_CS_Pin|LED_3_Pin
+                          |LED_2_Pin|LED_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin|LAUNCH_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin|SPI_CS_Pin|MEM_WP_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|LED_3_Pin
-                          |LED_2_Pin|BARO_CS_Pin|MEM_WP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|BARO_CS_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PC13 PC1 PC7 PC8
-                           PC9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_1|GPIO_PIN_7|GPIO_PIN_8
-                          |GPIO_PIN_9;
+  /*Configure GPIO pins : PC13 PC1 PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_1|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MAIN_PARACHUTE_Pin PMB_GPIO_1_Pin MAG_CS_Pin LED_1_Pin */
-  GPIO_InitStruct.Pin = MAIN_PARACHUTE_Pin|PMB_GPIO_1_Pin|MAG_CS_Pin|LED_1_Pin;
+  /*Configure GPIO pins : MAIN_PARACHUTE_Pin PMB_GPIO_1_Pin MAG_CS_Pin LED_3_Pin
+                           LED_2_Pin LED_1_Pin */
+  GPIO_InitStruct.Pin = MAIN_PARACHUTE_Pin|PMB_GPIO_1_Pin|MAG_CS_Pin|LED_3_Pin
+                          |LED_2_Pin|LED_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -859,30 +896,30 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : IMU_CS_Pin LAUNCH_Pin */
-  GPIO_InitStruct.Pin = IMU_CS_Pin|LAUNCH_Pin;
+  /*Configure GPIO pins : IMU_CS_Pin SPI_CS_Pin MEM_WP_Pin */
+  GPIO_InitStruct.Pin = IMU_CS_Pin|SPI_CS_Pin|MEM_WP_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LOWER_VENT_VALVE_Pin INJECTION_VALVE_Pin PROPULSION_3_VALVE_Pin LED_3_Pin
-                           LED_2_Pin BARO_CS_Pin MEM_WP_Pin */
-  GPIO_InitStruct.Pin = LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|LED_3_Pin
-                          |LED_2_Pin|BARO_CS_Pin|MEM_WP_Pin;
+  /*Configure GPIO pins : LOWER_VENT_VALVE_Pin INJECTION_VALVE_Pin PROPULSION_3_VALVE_Pin BARO_CS_Pin */
+  GPIO_InitStruct.Pin = LOWER_VENT_VALVE_Pin|INJECTION_VALVE_Pin|PROPULSION_3_VALVE_Pin|BARO_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB12 PB13 PB6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_6;
+  /*Configure GPIO pins : PB12 PB6 PB7 PB8
+                           PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8
+                          |GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA11 PA12 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_15;
+  /*Configure GPIO pins : PA8 PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -945,7 +982,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         static char rx_buffer[NMEA_MAX_LENGTH + 1];
         static int rx_index = 0;
         static int gpggaDetected = 0;
-        char message[6] = "$GPGGA";
+        char message[6] = "$GPGGA"; // CHANGED!
 
         for (int i = 0; i < NMEA_MAX_LENGTH + 1; i++)
         {
