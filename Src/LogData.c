@@ -42,6 +42,12 @@ static const uint32_t LOGGING_BUSY_RETRIES = 3; //Number of times to retry if EE
 /* Variables -----------------------------------------------------------------*/
 static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
 static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address to write to before flight, updated during flight
+static uint32_t Log_Sector_Address = 0; // counts up; rewrites if needed
+static uint32_t log_OffsetInByte = 0; // two per page, 0 or 92
+static uint8_t flash_filled = 0;
+static uint8_t remaining_overwrite_pages = 16; // counts down from 16
+//static bool current_sector_erased = false;
+
 /* Functions -----------------------------------------------------------------*/
 /**
  * @brief Writes data to the EEPROM over I2C.
@@ -55,27 +61,15 @@ HAL_StatusTypeDef writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t m
 	// if it returns HAL_ERROR, return HAL_ERROR.
 	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
 
-#ifdef SPIMODE
-    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
     HAL_StatusTypeDef status = HAL_SPI_Transmit (&hspi2, (uint8_t *)buffer, bufferSize, TIMEOUT_MS);
-    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
-#else
-    //    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(
-    //    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
 
-#endif
     if(status == HAL_BUSY)
     {
     	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
     	{
-#ifdef SPIMODE
-    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
-    	    HAL_StatusTypeDef retryStatus = HAL_SPI_Transmit (&hspi2, (uint8_t *)buffer, bufferSize, (i + 2) * TIMEOUT_MS);
-    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
-#else
-    	    HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Write(
-					&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, (i + 2) * TIMEOUT_MS);
-#endif
+
+    		HAL_StatusTypeDef retryStatus = HAL_SPI_Transmit (&hspi2, (uint8_t *)buffer, bufferSize, (i + 2) * TIMEOUT_MS);
+
     		if(retryStatus == HAL_OK || retryStatus == HAL_ERROR)
     		{
     			return 1; //retryStatus;
@@ -97,29 +91,17 @@ HAL_StatusTypeDef readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, ui
 	// if HAL_I2C_Mem_Read returns HAL_OK then return HAL_OK.
 	// if it returns HAL_ERROR, return HAL_ERROR.
 	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
-#ifdef SPIMODE
-    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
-    HAL_StatusTypeDef status = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
-    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
 
-#else
-    //    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
-    //    		&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS);
-#endif
+	HAL_StatusTypeDef status = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
+
     if( status == HAL_BUSY)
     {
     	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
     	{
-#ifdef SPIMODE
-    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
-    	    HAL_StatusTypeDef retryStatus = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
-    	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
 
-#else
-    	    HAL_StatusTypeDef retryStatus = HAL_I2C_Mem_Read(
-    	        				&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
-#endif
-    		if( retryStatus == HAL_OK || retryStatus == HAL_ERROR)
+    		HAL_StatusTypeDef retryStatus = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
+
+    	    if( retryStatus == HAL_OK || retryStatus == HAL_ERROR)
     		{
     			return 1;// retryStatus;
     		}
@@ -296,8 +278,34 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
 void logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
     updateLogEntry(data, givenLog);
-    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + (*logStartAddress), givenLog);
-    (*logStartAddress) += sizeof(LogEntry);
+
+
+//    if (Log_OffsetInByte + LOG_ENTRY_SIZE < w25qxx.SectorSize){
+//    	W25qxx_WriteSector((uint8_t*)(givenLog), Log_Sector_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+//    } else {
+//    	if(Log_Sector_Address == w25qxx.SectorCount){
+//    		flash_filled = 1;
+//        	Log_OffsetInByte = 0;
+//    		Log_Sector_Address = 0;
+//    		W25qxx_EraseSector(Log_Sector_Address);
+//        	W25qxx_WriteSector((uint8_t*)(givenLog), Log_Sector_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+//    		current_sector_erased = true;
+//    	}
+//
+//    	else{
+//    		Log_OffsetInByte = 0;
+//			Log_Sector_Address++;
+//            if(flash_filled){
+//            	W25qxx_EraseSector(Log_Sector_Address);
+//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+//            }
+//            else{
+//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+//            }
+//    	}
+//    }
+
+//    Log_OffsetInByte += LOG_ENTRY_SIZE;
 }
 
 void logDataTask(void const* arg)

@@ -31,12 +31,27 @@ void debugTask(void const* arg) {
     uint32_t prevWakeTime = osKernelSysTick();
     uint8_t buffer = 0x00;
     LogEntry debugData;
+
+//    bool initStatus = W25qxx_Init();
+
+    //erase entire chip before logging
+    W25qxx_EraseChip();
+
+
 	uint8_t checkLib1[8] = {1,2,3,4,5,6,7,8};
 	uint8_t checkLib2[8];
 
 	while (1) {
 		osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD*5);
-		HAL_UART_Receive(&huart5, &buffer, 1, 100);
+//		HAL_UART_Receive(&huart5, &buffer, 1, 100);
+//========= TESTING NEW SPI DRIVER
+
+		W25qxx_WriteSector(checkLib1, 1, 0, 8);
+
+		W25qxx_ReadSector(checkLib2, 1, 0, 8);
+
+
+
 
 //========= TESTING RADIO
 /*
@@ -97,15 +112,6 @@ void debugTask(void const* arg) {
 			default:
 				break;
 		}
-*/
-
-
-//========= TESTING NEW SPI DRIVER
-/* 		W25qxx_EraseSector(1);
-
-		W25qxx_WriteSector(checkLib1, 1, 0, 8);
-
-		W25qxx_ReadSector(checkLib2, 1, 0, 8);
 */
 
 

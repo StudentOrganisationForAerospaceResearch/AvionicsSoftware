@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main.h"
+//#include "Drivers/w25qxx.h"
 
 #define SPIMODE 1
 
@@ -10,7 +11,7 @@
 
 extern UART_HandleTypeDef huart5;
 extern SPI_HandleTypeDef hspi2;
-
+//extern w25qxx;
 
 /* Structs -------------------------------------------------------------------*/
 typedef struct{

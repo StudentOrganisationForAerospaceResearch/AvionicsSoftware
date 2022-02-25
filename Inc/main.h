@@ -103,6 +103,8 @@ void Error_Handler(void);
 #define LED_2_GPIO_Port GPIOC
 #define LED_1_Pin GPIO_PIN_8
 #define LED_1_GPIO_Port GPIOC
+#define LAUNCH_12V_Pin GPIO_PIN_8
+#define LAUNCH_12V_GPIO_Port GPIOA
 #define LAUNCH_SYS_UART_TX_Pin GPIO_PIN_9
 #define LAUNCH_SYS_UART_TX_GPIO_Port GPIOA
 #define LAUNCH_SYS_UART_RX_Pin GPIO_PIN_10

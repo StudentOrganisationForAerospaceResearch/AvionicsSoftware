@@ -35,7 +35,6 @@ void readGpsTask(void const* arg)
    //
    //    HAL_StatusTypeDef configstatus = HAL_UART_Transmit(&huart4, (uint8_t*) &configGpsBuffer, 17, 500);
 
-
     HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
 
     for (;;)
@@ -55,7 +54,7 @@ void readGpsTask(void const* arg)
 			uint8_t counter = 0;
 			uint8_t done = 0;
 			char direction;
-			HAL_GPIO_TogglePin(LED_3_GPIO_Port, LED_3_Pin);
+//			HAL_GPIO_TogglePin(LED_3_GPIO_Port, LED_3_Pin);
 
 			// Keeps printing tokens while one of the delimiters present in gps_item
 			do
