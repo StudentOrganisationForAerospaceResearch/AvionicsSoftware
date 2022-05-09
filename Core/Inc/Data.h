@@ -41,7 +41,7 @@ typedef struct
 typedef struct
 {
     osMutexId   mutex_;
-    uint32_t     voltage_;
+    uint32_t    voltage_; // millivolts
 } BatteryVoltageData;
 
 /* GPS Data */

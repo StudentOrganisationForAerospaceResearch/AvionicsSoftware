@@ -6,7 +6,7 @@
 
 #include "Data.h"
 
-static int READ_BATTERY_VOLTAGE_PERIOD = 250;
+static int READ_BATTERY_VOLTAGE_PERIOD = 1000;
 
 static const int BATTERY_VOLTAGE_ADC_POLL_TIMEOUT = 50;
 
@@ -14,7 +14,7 @@ void readBatteryVoltageTask(void const* arg) {
     BatteryVoltageData* data = (BatteryVoltageData*) arg;
     uint32_t prevWakeTime = osKernelSysTick();
 
-    double batteryVoltageValue = 0; //Not quite sure if it's a double or int can confirm
+    uint32_t batteryVoltageValue = 0;
 
     HAL_ADC_Start(&hadc2);  // Enables ADC and starts conversion of regular channels
 
@@ -23,7 +23,7 @@ void readBatteryVoltageTask(void const* arg) {
 
         if (HAL_ADC_PollForConversion(&hadc2, BATTERY_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK)
         {
-            batteryVoltageValue = HAL_ADC_GetValue(&hadc2);
+            batteryVoltageValue = HAL_ADC_GetValue(&hadc2); // TODO: Test!
         }
 
         batteryVoltageValue = batteryVoltageValue * 4;   // Multiply by 4 for the voltage divider calculation
