@@ -32,16 +32,17 @@
 #include "ReadCombustionChamberPressure.h"
 #include "ReadGps.h"
 #include "ReadOxidizerTankPressure.h"
-#include "MonitorForEmergencyShutoff.h"
-#include "EngineControl.h"
+//#include "MonitorForEmergencyShutoff.h"
+//#include "EngineControl.h"
 #include "ParachutesControl.h"
 #include "LogData.h"
 #include "TransmitData.h"
-#include "AbortPhase.h"
+//#include "AbortPhase.h"
 #include "Data.h"
 #include "FlightPhase.h"
-#include "ValveControl.h"
+//#include "ValveControl.h"
 #include "Debug.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,32 +85,22 @@ static osThreadId readCombustionChamberPressureTaskHandle;
 static osThreadId readGpsTaskHandle;
 static osThreadId readOxidizerTankPressureTaskHandle;
 // Controls that will perform actions
-static osThreadId monitorForEmergencyShutoffTaskHandle;
-static osThreadId engineControlTaskHandle;
-static osThreadId parachutesControlTaskHandle;
+//static osThreadId monitorForEmergencyShutoffTaskHandle;
+//static osThreadId engineControlTaskHandle;
+//static osThreadId parachutesControlTaskHandle;
 // Storing data
 static osThreadId logDataTaskHandle;
 static osThreadId transmitDataTaskHandle;
 // Special abort thread
-static osThreadId abortPhaseTaskHandle;
+//static osThreadId abortPhaseTaskHandle;
 // Debug thread
 static osThreadId debugTaskHandle;
 
-static const uint8_t LAUNCH_CMD_BYTE = 0x20;
-static const uint8_t ARM_CMD_BYTE = 0x21;
-static const uint8_t ABORT_CMD_BYTE = 0x2F;
-static const uint8_t RESET_AVIONICS_CMD_BYTE = 0x4F;
-static const uint8_t HEARTBEAT_BYTE = 0x46;
-static const uint8_t OPEN_INJECTION_VALVE = 0x2A;
-static const uint8_t CLOSE_INJECTION_VALVE = 0x2B;
-
-uint8_t launchSystemsRxChar = 0;
-uint8_t launchCmdReceived = 0;
-uint8_t abortCmdReceived = 0;
-uint8_t resetAvionicsCmdReceived = 0;
-
-const int32_t HEARTBEAT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
-int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmergencyShutoff thread
+// Flight phase queue to be passed to flight phase thread
+xQueueHandle flightPhaseQueue;
+static const int FLIGHT_PHASE_QUEUE_SIZE = 10;
+// value to temporarily store received char from ground systems before submitting to queue
+uint8_t groundSystemsRxChar = 0;
 
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
 static const int FLIGHT_PHASE_BLINK_FREQ = 100;
@@ -250,12 +241,13 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
-    HAL_UART_Receive_IT(&huart1, &launchSystemsRxChar, 1);
+    HAL_UART_Receive_IT(&huart2, &groundSystemsRxChar, 1);
 
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
     /* add queues, ... */
+    flightPhaseQueue = xQueueCreate(FLIGHT_PHASE_QUEUE_SIZE, sizeof(uint8_t));
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -315,6 +307,7 @@ int main(void)
     readOxidizerTankPressureTaskHandle =
         osThreadCreate(osThread(readOxidizerTankPressureThread), oxidizerTankPressureData);
 
+/* Combined into flight phase thread
     osThreadDef(
         monitorForEmergencyShutoffThread,
         monitorForEmergencyShutoffTask,
@@ -345,6 +338,26 @@ int main(void)
     parachutesControlTaskHandle =
         osThreadCreate(osThread(parachutesControlThread), parachutesControlData);
 
+	osThreadDef(
+        abortPhaseThread,
+        abortPhaseTask,
+        osPriorityHigh,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    abortPhaseTaskHandle =
+        osThreadCreate(osThread(abortPhaseThread), NULL);
+*/
+    osThreadDef(
+        flightPhaseThread,
+		flightPhaseTask,
+        osPriorityHigh,
+        1,
+        configMINIMAL_STACK_SIZE * 3
+    );
+    logDataTaskHandle =
+        osThreadCreate(osThread(flightPhaseThread), &flightPhaseQueue);
+
     osThreadDef(
         logDataThread,
         logDataTask,
@@ -365,17 +378,7 @@ int main(void)
     transmitDataTaskHandle =
         osThreadCreate(osThread(transmitDataThread), allData);
 
-    osThreadDef(
-        abortPhaseThread,
-        abortPhaseTask,
-        osPriorityHigh,
-        1,
-        configMINIMAL_STACK_SIZE
-    );
-    abortPhaseTaskHandle =
-        osThreadCreate(osThread(abortPhaseThread), NULL);
-
-    if (HAL_GPIO_ReadPin(AUX1_Pin_Port, AUX1_Pin) == 1) {
+    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
       osThreadDef(debugThread,debugTask,osPriorityHigh,1,configMINIMAL_STACK_SIZE);
       debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
     }
@@ -918,48 +921,65 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef* huart)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
+#ifdef ROCKET_TYPE_SOLID
     if (huart->Instance == USART2)
     {
-        if (launchSystemsRxChar == LAUNCH_CMD_BYTE)
+    	if (groundSystemsRxChar == ABORT_COMMAND_RECEIVED)
+    	{
+    		if(xQueueSendToFrontFromISR(flightPhaseQueue, &groundSystemsRxChar, pdFALSE) != pdPASS)
+    		{
+    			HAL_UART_Transmit(&huart5, (uint8_t *)"\n\nError sending to flight queue front\n\n", 39, 500);
+    		}
+    	}
+    	else
+    	{
+    		if(xQueueSendToBackFromISR(flightPhaseQueue, &groundSystemsRxChar, pdFALSE) != pdPASS)
+			{
+				HAL_UART_Transmit(&huart5, (uint8_t *)"\n\nError sending to flight queue back\n\n", 38, 500);
+			}
+    	}
+    	/* Replaced with flight phase queue
+        if (groundSystemsRxChar == LAUNCH_CMD_BYTE)
         {
             if (ARM == getCurrentFlightPhase())
             {
                 launchCmdReceived++;
             }
         }
-        else if (launchSystemsRxChar == ARM_CMD_BYTE)
+        else if (groundSystemsRxChar == ARM_CMD_BYTE)
         {
             if (PRELAUNCH == getCurrentFlightPhase())
             {
                 newFlightPhase(ARM);
             }
         }
-        else if (launchSystemsRxChar == ABORT_CMD_BYTE)
+        else if (groundSystemsRxChar == ABORT_CMD_BYTE)
         {
             abortCmdReceived = 1;
         }
-        else if (launchSystemsRxChar == RESET_AVIONICS_CMD_BYTE)
+        else if (groundSystemsRxChar == RESET_AVIONICS_CMD_BYTE)
         {
             resetAvionicsCmdReceived = 1;
         }
-        else if (launchSystemsRxChar == HEARTBEAT_BYTE)
+        else if (groundSystemsRxChar == HEARTBEAT_BYTE)
         {
             heartbeatTimer = HEARTBEAT_TIMEOUT;
         }
-        else if (launchSystemsRxChar == OPEN_INJECTION_VALVE)
+        else if (groundSystemsRxChar == OPEN_INJECTION_VALVE)
         {
             if (IS_ABORT_PHASE)
             {
                 openInjectionValve();
             }
         }
-        else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE)
+        else if (groundSystemsRxChar == CLOSE_INJECTION_VALVE)
         {
             if (IS_ABORT_PHASE)
             {
                 closeInjectionValve();
             }
         }
+        */
     }
     else if (huart->Instance == UART4)
     {
@@ -1027,6 +1047,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 
         HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
     }
+#endif
 }
 /* USER CODE END 4 */
 

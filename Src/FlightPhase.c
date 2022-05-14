@@ -70,3 +70,22 @@ void resetFlightPhase()
     currentFlightPhase = PRELAUNCH;
     return;
 }
+
+void flightPhaseTask(void const* flightPhaseQueue)
+{
+	uint8_t cmd = 0;
+	for(;;)
+	{
+		uint32_t prevWakeTime = osKernelSysTick();
+		if (xQueueReceive(flightPhaseQueue, &cmd, 0) != pdTRUE)
+		{
+			HAL_UART_Transmit(&huart5, (uint8_t *)"Error in Receiving from Queue\n\n", 31, 1000);
+		}
+		else
+		{
+			HAL_UART_Transmit(&huart5, &cmd, sizeof(uint8_t), 1000);
+		}
+		HAL_UART_Receive_IT(&huart2, &groundSystemsRxChar, 1);
+		osDelayUntil(&prevWakeTime, FLIGHT_PHASE_CHECK_PERIOD);
+	}
+}

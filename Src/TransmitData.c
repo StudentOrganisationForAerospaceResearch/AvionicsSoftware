@@ -446,7 +446,6 @@ void transmitDataTask(void const* arg)
         transmitFlightPhaseData(data);
         transmitInjectionValveStatus();
         transmitLowerVentValveStatus();
-        HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }
 
