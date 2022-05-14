@@ -34,8 +34,11 @@ We program for multiple boards. The two boards we are currently using are STM32 
 
 # Setting Up Development
 
+The following tools are required for making changes to the repo.
+
 ## Download Git
 
+Git is our chosen version control system.
 ### On Linux
 
 #### Debian/Ubuntu
