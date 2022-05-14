@@ -164,15 +164,15 @@ int32_t detectMainDeploymentAltitude(struct KalmanStateVector state)
     return 0;
 }
 
-void ejectDrogueParachute()
-{
-    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_SET);  // high signal causes high current to ignite e-match
-}
-
-void closeDrogueParachute()
-{
-    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_RESET);
-}
+//void ejectDrogueParachute()
+//{
+//    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_SET);  // high signal causes high current to ignite e-match
+//}
+//
+//void closeDrogueParachute()
+//{
+//    HAL_GPIO_WritePin(DROGUE_PARACHUTE_TEMP_GPIO_Port, DROGUE_PARACHUTE_TEMP_Pin, GPIO_PIN_RESET);
+//}
 
 void ejectMainParachute()
 {
@@ -266,7 +266,7 @@ void parachutesControlCoastRoutine(
 
         if (detectApogee(kalmanFilterState) || elapsedTime > KALMAN_FILTER_DROGUE_TIMEOUT)
         {
-            ejectDrogueParachute();
+            //ejectDrogueParachute();
             newFlightPhase(DROGUE_DESCENT);
             return;
         }
@@ -294,7 +294,7 @@ void parachutesControlDrogueDescentRoutine(
 
         if (elapsedTime > PARACHUTE_PULSE_DURATION)
         {
-            closeDrogueParachute();
+            //closeDrogueParachute();
         }
 
         int32_t currentAccel = readAccel(accelGyroMagnetismData);
@@ -332,7 +332,7 @@ void parachutesControlMainDescentRoutine()
 
         if (elapsedTime > PARACHUTE_PULSE_DURATION)
         {
-            closeDrogueParachute();
+            //closeDrogueParachute();
             closeMainParachute();
         }
     }

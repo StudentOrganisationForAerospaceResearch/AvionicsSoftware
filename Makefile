@@ -43,6 +43,8 @@ C_SOURCES = \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
   Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
+  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c \
+  Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c \
   Middlewares/Third_Party/FreeRTOS/Source/croutine.c \
   Middlewares/Third_Party/FreeRTOS/Source/event_groups.c \
   Middlewares/Third_Party/FreeRTOS/Source/list.c \
@@ -72,6 +74,7 @@ C_SOURCES = \
   Src/system_stm32f4xx.c \
   Src/TransmitData.c \
   Src/Utils.c \
+  Src/Debug.c \
   tm_fatfs/Src/ccsbcs.c \
   tm_fatfs/Src/diskio.c \
   tm_fatfs/Src/fatfs_sd.c \
