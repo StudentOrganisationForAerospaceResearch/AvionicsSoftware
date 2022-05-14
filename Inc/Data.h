@@ -2,6 +2,15 @@
 
 /* Structs containing data primitives */
 
+/*
+ * IMPORTANT NOTE:
+ *  Despite being typed as int32 or uint32 these are actually not integers.
+ *  They represent fixed point decimal numbers.
+ *
+ * The specified precision is not consistent across all instruments,
+ * please see the design manual for more information.
+ */
+
 typedef struct
 {
     osMutexId   mutex_;
@@ -65,6 +74,10 @@ typedef struct
 } OxidizerTankPressureData;
 
 /* Data Containers */
+
+/*
+ * This is meant to act as a pointer to the other data structs.
+ */
 
 typedef struct
 {
