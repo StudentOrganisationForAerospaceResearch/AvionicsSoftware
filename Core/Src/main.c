@@ -258,76 +258,76 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
-//    osThreadDef(
-//        readAccelGyroMagnetismThread,
-//        readAccelGyroMagnetismTask,
-//        osPriorityNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE
-//    );
-//    readAccelGyroMagnetismTaskHandle =
-//        osThreadCreate(osThread(readAccelGyroMagnetismThread), accelGyroMagnetismData);
-//
-//    osThreadDef(
-//        readBarometerThread,
-//        readBarometerTask,
-//        osPriorityNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE
-//    );
-//    readBarometerTaskHandle =
-//        osThreadCreate(osThread(readBarometerThread), barometerData);
-//
-//    osThreadDef(
-//        readCombustionChamberPressureThread,
-//        readCombustionChamberPressureTask,
-//        osPriorityAboveNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE
-//    );
-//    readCombustionChamberPressureTaskHandle =
-//        osThreadCreate(osThread(readCombustionChamberPressureThread), combustionChamberPressureData);
-//
-//    osThreadDef(
-//        readGpsThread,
-//        readGpsTask,
-//        osPriorityBelowNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE
-//    );
-//    readGpsTaskHandle =
-//        osThreadCreate(osThread(readGpsThread), gpsData);
-//
-//    osThreadDef(
-//        readOxidizerTankPressureThread,
-//        readOxidizerTankPressureTask,
-//        osPriorityAboveNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE
-//    );
-//    readOxidizerTankPressureTaskHandle =
-//        osThreadCreate(osThread(readOxidizerTankPressureThread), oxidizerTankPressureData);
-//
-//    osThreadDef(
-//        monitorForEmergencyShutoffThread,
-//        monitorForEmergencyShutoffTask,
-//        osPriorityHigh,
-//        1,
-//        configMINIMAL_STACK_SIZE
-//    );
-//    monitorForEmergencyShutoffTaskHandle =
-//        osThreadCreate(osThread(monitorForEmergencyShutoffThread), accelGyroMagnetismData);
-//
-//    osThreadDef(
-//        engineControlThread,
-//        engineControlTask,
-//        osPriorityNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE * 2
-//    );
-//    engineControlTaskHandle =
-//        osThreadCreate(osThread(engineControlThread), oxidizerTankPressureData);
-//
+    osThreadDef(
+        readAccelGyroMagnetismThread,
+        readAccelGyroMagnetismTask,
+        osPriorityNormal,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    readAccelGyroMagnetismTaskHandle =
+        osThreadCreate(osThread(readAccelGyroMagnetismThread), accelGyroMagnetismData);
+
+    osThreadDef(
+        readBarometerThread,
+        readBarometerTask,
+        osPriorityNormal,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    readBarometerTaskHandle =
+        osThreadCreate(osThread(readBarometerThread), barometerData);
+
+    osThreadDef(
+        readCombustionChamberPressureThread,
+        readCombustionChamberPressureTask,
+        osPriorityAboveNormal,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    readCombustionChamberPressureTaskHandle =
+        osThreadCreate(osThread(readCombustionChamberPressureThread), combustionChamberPressureData);
+
+    osThreadDef(
+        readGpsThread,
+        readGpsTask,
+        osPriorityBelowNormal,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    readGpsTaskHandle =
+        osThreadCreate(osThread(readGpsThread), gpsData);
+
+    osThreadDef(
+        readOxidizerTankPressureThread,
+        readOxidizerTankPressureTask,
+        osPriorityAboveNormal,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    readOxidizerTankPressureTaskHandle =
+        osThreadCreate(osThread(readOxidizerTankPressureThread), oxidizerTankPressureData);
+
+    osThreadDef(
+        monitorForEmergencyShutoffThread,
+        monitorForEmergencyShutoffTask,
+        osPriorityHigh,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    monitorForEmergencyShutoffTaskHandle =
+        osThreadCreate(osThread(monitorForEmergencyShutoffThread), accelGyroMagnetismData);
+
+    osThreadDef(
+        engineControlThread,
+        engineControlTask,
+        osPriorityNormal,
+        1,
+        configMINIMAL_STACK_SIZE * 2
+    );
+    engineControlTaskHandle =
+        osThreadCreate(osThread(engineControlThread), oxidizerTankPressureData);
+
 //    osThreadDef(
 //        parachutesControlThread,
 //        parachutesControlTask,
@@ -337,38 +337,38 @@ int main(void)
 //    );
 //    parachutesControlTaskHandle =
 //        osThreadCreate(osThread(parachutesControlThread), parachutesControlData);
-//
-//    osThreadDef(
-//        logDataThread,
-//        logDataTask,
-//        osPriorityNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE * 3
-//    );
-//    logDataTaskHandle =
-//        osThreadCreate(osThread(logDataThread), allData);
-//
-//    osThreadDef(
-//        transmitDataThread,
-//        transmitDataTask,
-//        osPriorityNormal,
-//        1,
-//        configMINIMAL_STACK_SIZE * 3
-//    );
-//    transmitDataTaskHandle =
-//        osThreadCreate(osThread(transmitDataThread), allData);
-//
-//    osThreadDef(
-//        abortPhaseThread,
-//        abortPhaseTask,
-//        osPriorityHigh,
-//        1,
-//        configMINIMAL_STACK_SIZE
-//    );
-//    abortPhaseTaskHandle =
-//        osThreadCreate(osThread(abortPhaseThread), NULL);
-//
-//    if (HAL_GPIO_ReadPin(AUX1_Pin_Port, AUX1_Pin) == 1) {
+
+    osThreadDef(
+        logDataThread,
+        logDataTask,
+        osPriorityNormal,
+        1,
+        configMINIMAL_STACK_SIZE * 3
+    );
+    logDataTaskHandle =
+        osThreadCreate(osThread(logDataThread), allData);
+
+    osThreadDef(
+        transmitDataThread,
+        transmitDataTask,
+        osPriorityNormal,
+        1,
+        configMINIMAL_STACK_SIZE * 3
+    );
+    transmitDataTaskHandle =
+        osThreadCreate(osThread(transmitDataThread), allData);
+
+    osThreadDef(
+        abortPhaseThread,
+        abortPhaseTask,
+        osPriorityHigh,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    abortPhaseTaskHandle =
+        osThreadCreate(osThread(abortPhaseThread), NULL);
+
+//    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
 //      osThreadDef(debugThread,debugTask,osPriorityHigh,1,configMINIMAL_STACK_SIZE);
 //      debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
 //    }

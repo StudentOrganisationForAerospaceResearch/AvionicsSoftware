@@ -168,7 +168,7 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
  */
 void initializeLogEntry(LogEntry* givenLog)
 {
-    memset(&givenLog, -1, LOG_ENTRY_SIZE);
+    memset(givenLog, -1, LOG_ENTRY_SIZE);
 
     givenLog->currentFlightPhase = getCurrentFlightPhase();
     givenLog->tick = osKernelSysTick();
