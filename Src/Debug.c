@@ -76,7 +76,7 @@ void debugTask(void const* arg) {
 
 		uint8_t res = 5;
 		uint8_t checkArray[5] = {1, 1, 1, 1, 1};
-	    HAL_UART_Transmit(&huart5, checkArray, sizeof(checkArray),100);
+	   	HAL_UART_Transmit(&huart5, checkArray, sizeof(checkArray),100);
 */
 
 

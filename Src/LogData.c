@@ -42,11 +42,11 @@ static const uint32_t LOGGING_BUSY_RETRIES = 3; //Number of times to retry if EE
 /* Variables -----------------------------------------------------------------*/
 static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
 static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address to write to before flight, updated during flight
-static uint32_t Log_Sector_Address = 0; // counts up; rewrites if needed
-static uint32_t log_OffsetInByte = 0; // two per page, 0 or 92
-static uint8_t flash_filled = 0;
-static uint8_t remaining_overwrite_pages = 16; // counts down from 16
-//static bool current_sector_erased = false;
+uint32_t Log_Sector_Address = 0; // counts up; rewrites if needed
+uint32_t log_OffsetInByte = 0; // two per page, 0 or 92
+uint8_t flash_filled = 0;
+uint8_t remaining_overwrite_pages = 16; // counts down from 16
+bool current_sector_erased = false;
 
 /* Functions -----------------------------------------------------------------*/
 /**
@@ -197,17 +197,7 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
  */
 void initializeLogEntry(LogEntry* givenLog)
 {
-//    givenLog->accelX = 0;
-//    givenLog->accelY = 0;
-//    givenLog->accelZ = 0;
-//    givenLog->gyroX = 0;
-//    givenLog->gyroY = 0;
-//    givenLog->gyroZ = 0;
-//    givenLog->magnetoX = 0;
-//    givenLog->magnetoY = 0;
-//    givenLog->magnetoZ = 0;
-    memset(givenLog, 3, LOG_ENTRY_SIZE);
-//	bzero(givenLog, LOG_ENTRY_SIZE);
+	memset(&givenLog, -1, LOG_ENTRY_SIZE);
     givenLog->currentFlightPhase = getCurrentFlightPhase();
     givenLog->tick = osKernelSysTick();
 }
@@ -280,32 +270,32 @@ void logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAd
     updateLogEntry(data, givenLog);
 
 
-//    if (Log_OffsetInByte + LOG_ENTRY_SIZE < w25qxx.SectorSize){
-//    	W25qxx_WriteSector((uint8_t*)(givenLog), Log_Sector_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
-//    } else {
-//    	if(Log_Sector_Address == w25qxx.SectorCount){
-//    		flash_filled = 1;
-//        	Log_OffsetInByte = 0;
-//    		Log_Sector_Address = 0;
-//    		W25qxx_EraseSector(Log_Sector_Address);
-//        	W25qxx_WriteSector((uint8_t*)(givenLog), Log_Sector_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
-//    		current_sector_erased = true;
-//    	}
-//
-//    	else{
-//    		Log_OffsetInByte = 0;
-//			Log_Sector_Address++;
-//            if(flash_filled){
-//            	W25qxx_EraseSector(Log_Sector_Address);
-//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
-//            }
-//            else{
-//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
-//            }
-//    	}
-//    }
+    if (Log_OffsetInByte + LOG_ENTRY_SIZE < w25qxx.SectorSize){
+    	W25qxx_WriteSector((uint8_t*)(givenLog), Log_Sector_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+    } else {
+    	if(Log_Sector_Address == w25qxx.SectorCount){
+    		flash_filled = 1;
+        	Log_OffsetInByte = 0;
+    		Log_Sector_Address = 0;
+    		W25qxx_EraseSector(Log_Sector_Address);
+        	W25qxx_WriteSector((uint8_t*)(givenLog), Log_Sector_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+    		current_sector_erased = true;
+    	}
 
-//    Log_OffsetInByte += LOG_ENTRY_SIZE;
+    	else{
+    		Log_OffsetInByte = 0;
+			Log_Sector_Address++;
+            if(flash_filled){
+            	W25qxx_EraseSector(Log_Sector_Address);
+        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+            }
+            else{
+        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, Log_OffsetInByte, LOG_ENTRY_SIZE);
+            }
+    	}
+    }
+
+    Log_OffsetInByte += LOG_ENTRY_SIZE;
 }
 
 void logDataTask(void const* arg)

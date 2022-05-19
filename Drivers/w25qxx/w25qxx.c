@@ -143,89 +143,86 @@ bool W25qxx_Init(void)
 	printf("w25qxx ID:0x%X\r\n", id);
 #endif
 
-	// we know what flash we are using
-	w25qxx.ID = W25Q16;
-	w25qxx.BlockCount = 32;
 
-//	switch (id & 0x000000FF)
-//	{
-//	case 0x20: // 	w25q512
-//		w25qxx.ID = W25Q512;
-//		w25qxx.BlockCount = 1024;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q512\r\n");
-//#endif
-//		break;
-//	case 0x19: // 	w25q256
-//		w25qxx.ID = W25Q256;
-//		w25qxx.BlockCount = 512;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q256\r\n");
-//#endif
-//		break;
-//	case 0x18: // 	w25q128
-//		w25qxx.ID = W25Q128;
-//		w25qxx.BlockCount = 256;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q128\r\n");
-//#endif
-//		break;
-//	case 0x17: //	w25q64
-//		w25qxx.ID = W25Q64;
-//		w25qxx.BlockCount = 128;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q64\r\n");
-//#endif
-//		break;
-//	case 0x16: //	w25q32
-//		w25qxx.ID = W25Q32;
-//		w25qxx.BlockCount = 64;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q32\r\n");
-//#endif
-//		break;
-//	case 0x15: //	w25q16
-//		w25qxx.ID = W25Q16;
-//		w25qxx.BlockCount = 32;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q16\r\n");
-//#endif
-//		break;
-//	case 0x14: //	w25q80
-//		w25qxx.ID = W25Q80;
-//		w25qxx.BlockCount = 16;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q80\r\n");
-//#endif
-//		break;
-//	case 0x13: //	w25q40
-//		w25qxx.ID = W25Q40;
-//		w25qxx.BlockCount = 8;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q40\r\n");
-//#endif
-//		break;
-//	case 0x12: //	w25q20
-//		w25qxx.ID = W25Q20;
-//		w25qxx.BlockCount = 4;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q20\r\n");
-//#endif
-//		break;
-//	case 0x11: //	w25q10
-//		w25qxx.ID = W25Q10;
-//		w25qxx.BlockCount = 2;
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Chip: w25q10\r\n");
-//#endif
-//		break;
-//	default:
-//#if (_W25QXX_DEBUG == 1)
-//		printf("w25qxx Unknown ID\r\n");
-//#endif
-//		w25qxx.Lock = 0;
-//		return false;
-//	}
+	switch (id & 0x000000FF)
+	{
+	case 0x20: // 	w25q512
+		w25qxx.ID = W25Q512;
+		w25qxx.BlockCount = 1024;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q512\r\n");
+#endif
+		break;
+	case 0x19: // 	w25q256
+		w25qxx.ID = W25Q256;
+		w25qxx.BlockCount = 512;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q256\r\n");
+#endif
+		break;
+	case 0x18: // 	w25q128
+		w25qxx.ID = W25Q128;
+		w25qxx.BlockCount = 256;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q128\r\n");
+#endif
+		break;
+	case 0x17: //	w25q64
+		w25qxx.ID = W25Q64;
+		w25qxx.BlockCount = 128;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q64\r\n");
+#endif
+		break;
+	case 0x16: //	w25q32
+		w25qxx.ID = W25Q32;
+		w25qxx.BlockCount = 64;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q32\r\n");
+#endif
+		break;
+	case 0x15: //	w25q16
+		w25qxx.ID = W25Q16;
+		w25qxx.BlockCount = 32;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q16\r\n");
+#endif
+		break;
+	case 0x14: //	w25q80
+		w25qxx.ID = W25Q80;
+		w25qxx.BlockCount = 16;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q80\r\n");
+#endif
+		break;
+	case 0x13: //	w25q40
+		w25qxx.ID = W25Q40;
+		w25qxx.BlockCount = 8;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q40\r\n");
+#endif
+		break;
+	case 0x12: //	w25q20
+		w25qxx.ID = W25Q20;
+		w25qxx.BlockCount = 4;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q20\r\n");
+#endif
+		break;
+	case 0x11: //	w25q10
+		w25qxx.ID = W25Q10;
+		w25qxx.BlockCount = 2;
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Chip: w25q10\r\n");
+#endif
+		break;
+	default:
+#if (_W25QXX_DEBUG == 1)
+		printf("w25qxx Unknown ID\r\n");
+#endif
+		w25qxx.Lock = 0;
+		return false;
+	}
 	w25qxx.PageSize = 256;
 	w25qxx.SectorSize = 0x1000;
 	w25qxx.SectorCount = w25qxx.BlockCount * 16;

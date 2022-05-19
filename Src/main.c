@@ -172,7 +172,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_SPI1_Init();
@@ -181,6 +180,7 @@ int main(void)
   MX_UART4_Init();
   MX_CRC_Init();
   MX_SPI3_Init();
+  MX_DMA_Init();
   MX_UART5_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
