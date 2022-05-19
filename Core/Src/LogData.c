@@ -19,6 +19,7 @@
 #include "Data.h"
 #include "FlightPhase.h"
 #include "Utils.h"
+#include <string.h>
 
 /* Macros --------------------------------------------------------------------*/
 //CHECK: was max implemented somewhere else?
@@ -26,34 +27,6 @@
     ({ __typeof__ (a) _a = (a); \
         __typeof__ (b) _b = (b); \
         _a > _b ? _a : _b; })
-
-
-/* Structs -------------------------------------------------------------------*/
-typedef struct{
-    int32_t accelX;
-    int32_t accelY;
-    int32_t accelZ;
-    int32_t gyroX;
-    int32_t gyroY;
-    int32_t gyroZ;
-    int32_t magnetoX;
-    int32_t magnetoY;
-    int32_t magnetoZ;
-    int32_t barometerPressure;
-    int32_t barometerTemperature;
-    int32_t combustionChamberPressure;
-    int32_t oxidizerTankPressure;
-    int32_t gps_time;
-    int32_t latitude_degrees;
-    int32_t latitude_minutes;
-    int32_t longitude_degrees;
-    int32_t longitude_minutes;
-    int32_t antennaAltitude;
-    int32_t geoidAltitude;
-    int32_t altitude;
-    int32_t currentFlightPhase;
-    int32_t tick;
-} LogEntry; // LogEntry holds data from AllData that is to be logged
 
 
 /* Constants -----------------------------------------------------------------*/
@@ -64,32 +37,78 @@ static const uint8_t DEVICE_ADDRESS = 0x50; // used for reading/writing to EEPRO
 static const uint8_t EEPROM_START_ADDRESS = 0x07; // start address for reading/writing
 static const uint32_t TIMEOUT_MS = 10; // Time required to wait before ending read/write
 static const uint8_t LOG_ENTRY_SIZE = sizeof(LogEntry); //size of LogEntry = 92 bytes
+static const uint32_t LOGGING_BUSY_RETRIES = 3; //Number of times to retry if EEPROM is Busy.
 
 /* Variables -----------------------------------------------------------------*/
 static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
 static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address to write to before flight, updated during flight
+uint32_t log_SectorAddress = 0; // counts up; rewrites if needed
+uint32_t log_OffsetInByte = 0; // two per page, 0 or 92
+uint8_t flash_filled = 0;
+uint8_t remaining_overwrite_pages = 16; // counts down from 16
+bool current_sector_erased = false;
+
 /* Functions -----------------------------------------------------------------*/
 /**
  * @brief Writes data to the EEPROM over I2C.
  * @param buffer, pointer to the data buffer.
  * @param bufferSize, size of data buffer.
+ * @return HAL Status of the read operation (HAL_OK, HAL_ERROR ,HAL_BUSY).
  */
-void writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
+HAL_StatusTypeDef writeToEEPROM(uint8_t* buffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	// if Hal_i2c returns HAL_ok then return hal_ok not void
-	// if it returns error or busy, try 3 more times with more delay
-	// if still error or busy, then send error/busy
-	HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS<<1, memAddress, (sizeof(memAddress)), buffer, bufferSize, TIMEOUT_MS);
+	// if HAL_I2C_Mem_Write returns HAL_OK then return HAL_OK.
+	// if it returns HAL_ERROR, return HAL_ERROR.
+	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
+
+    HAL_StatusTypeDef status = HAL_SPI_Transmit (&hspi2, (uint8_t *)buffer, bufferSize, TIMEOUT_MS);
+
+    if(status == HAL_BUSY)
+    {
+    	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
+    	{
+
+    		HAL_StatusTypeDef retryStatus = HAL_SPI_Transmit (&hspi2, (uint8_t *)buffer, bufferSize, (i + 2) * TIMEOUT_MS);
+
+    		if(retryStatus == HAL_OK || retryStatus == HAL_ERROR)
+    		{
+    			return 1; //retryStatus;
+    		}
+    	}
+    	return HAL_BUSY;
+    }
+    return status;
 }
 
 /**
  * @brief Reads data from the EEPROM over I2C.
  * @param receiveBuffer, pointer to the buffer to store received data.
  * @param bufferSize, size of data to be read.
+ * @return HAL Status of the read operation (HAL_OK, HAL_ERROR ,HAL_BUSY).
  */
-void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress)
+HAL_StatusTypeDef readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAddress)
 {
-	HAL_I2C_Mem_Read(&hi2c1, DEVICE_ADDRESS<<1, memAddress, sizeof(memAddress), receiveBuffer, bufferSize, TIMEOUT_MS);
+	// if HAL_I2C_Mem_Read returns HAL_OK then return HAL_OK.
+	// if it returns HAL_ERROR, return HAL_ERROR.
+	// if it returns HAL_BUSY, retry LOGGING_BUSY_RETRIES times with longer timeout.
+
+	HAL_StatusTypeDef status = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
+
+    if( status == HAL_BUSY)
+    {
+    	for(int i=0; i<LOGGING_BUSY_RETRIES; i++)
+    	{
+
+    		HAL_StatusTypeDef retryStatus = HAL_SPI_Receive(&hspi2, (uint8_t *)receiveBuffer, bufferSize, TIMEOUT_MS);
+
+    	    if( retryStatus == HAL_OK || retryStatus == HAL_ERROR)
+    		{
+    			return 1;// retryStatus;
+    		}
+    	}
+    	return HAL_BUSY;
+    }
+    return status;
 }
 
 /**
@@ -97,23 +116,24 @@ void readFromEEPROM(uint8_t* receiveBuffer, uint16_t bufferSize, uint16_t memAdd
  */
 void checkEEPROMBlocking()
 {
-	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
-	while (HAL_I2C_IsDeviceReady(&hi2c1, DEVICE_ADDRESS<<1, 3, TIMEOUT_MS) != HAL_OK){};
+//	while(HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){};
+//	while (HAL_I2C_IsDeviceReady(&hi2c1, DEVICE_ADDRESS<<1, 3, TIMEOUT_MS) != HAL_OK){};
     // TODO: add a delay ~100us?
     // should this return a boolean?
 }
 
 /**
- * @brief puts a LogEntry into a char array and sends to EEPROM for writing
- * @param memAddress, the address at which the EEPROM is instructed to start writing
- * @param givenLog, pointer to a log initialized at the start of task
+ * @brief puts a LogEntry into a char array and sends to EEPROM for writing.
+ * @param memAddress, the address at which the EEPROM is instructed to start writing.
+ * @param givenLog, pointer to a log initialized at the start of task.
+ * @return HAL Status of the read operation (HAL_OK, HAL_ERROR ,HAL_BUSY).
  */
-void writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
+HAL_StatusTypeDef writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
 {
     checkEEPROMBlocking();
     //Note: writeToEEPROM expects a uint8_t*
     //if that's not a problem, can we send the LogEntry pointer without casting?
-    writeToEEPROM((char*)givenLog, LOG_ENTRY_SIZE, memAddress);
+    return (writeToEEPROM(givenLog, LOG_ENTRY_SIZE, memAddress));
 }
 
 /**
@@ -124,16 +144,23 @@ void writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
 void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
 {
     char dataRead[LOG_ENTRY_SIZE];
-  
-    checkEEPROMBlocking();
-    readFromEEPROM((uint8_t*)dataRead, sizeof(dataRead), memAddress);
-    /* what if we did:
+    memset(dataRead, 1, LOG_ENTRY_SIZE);
 
+    checkEEPROMBlocking();
+    HAL_StatusTypeDef statusCode = readFromEEPROM((uint8_t*)dataRead, sizeof(dataRead), memAddress);
+    // If read is not successful, fill dataRead with error code.
+    if(statusCode != HAL_OK)
+    {
+    	for(int i=0; i<sizeof(dataRead); i++)
+    	{
+    		dataRead[i] = statusCode;
+    	}
+    }
+    /* what if we did:
     uint32_t* readingAddress = &(givenLog->accelX);
     for(int i = 0; i < LOG_ENTRY_SIZE - 4; i+=4, readingAddress++){
         readUInt32FromUInt8Array((uint8_t*)dataRead, i, readingAddress);
     }
-
     because structs are contiguous memory, would incrementing address like this work?
     readingAddress is a uint32_t pointer so doing ++ should move it to the next uint32_t ???
     */
@@ -168,8 +195,7 @@ void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog)
  */
 void initializeLogEntry(LogEntry* givenLog)
 {
-    memset(givenLog, -1, LOG_ENTRY_SIZE);
-
+	memset(givenLog, -1, LOG_ENTRY_SIZE);
     givenLog->currentFlightPhase = getCurrentFlightPhase();
     givenLog->tick = osKernelSysTick();
 }
@@ -240,8 +266,34 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
 void logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
     updateLogEntry(data, givenLog);
-    writeLogEntryToEEPROM(EEPROM_START_ADDRESS + (*logStartAddress), givenLog);
-    (*logStartAddress) += sizeof(LogEntry);
+
+
+    if (log_OffsetInByte + LOG_ENTRY_SIZE < w25qxx.SectorSize){
+    	W25qxx_WriteSector((uint8_t*)(givenLog), log_SectorAddress, log_OffsetInByte, LOG_ENTRY_SIZE);
+    } else {
+    	if(log_SectorAddress == w25qxx.SectorCount){
+    		flash_filled = 1;
+        	log_OffsetInByte = 0;
+    		log_SectorAddress = 0;
+    		W25qxx_EraseSector(log_SectorAddress);
+        	W25qxx_WriteSector((uint8_t*)(givenLog), log_SectorAddress, log_OffsetInByte, LOG_ENTRY_SIZE);
+    		current_sector_erased = true;
+    	}
+
+    	else{
+    		log_OffsetInByte = 0;
+			log_SectorAddress++;
+            if(flash_filled){
+            	W25qxx_EraseSector(log_SectorAddress);
+//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, log_OffsetInByte, LOG_ENTRY_SIZE); // TODO: Log_Page_Address?
+            }
+            else{
+//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, log_OffsetInByte, LOG_ENTRY_SIZE); // TODO: Log_Page_Address?
+            }
+    	}
+    }
+
+    log_OffsetInByte += LOG_ENTRY_SIZE;
 }
 
 void logDataTask(void const* arg)
@@ -250,7 +302,7 @@ void logDataTask(void const* arg)
     LogEntry log;
     initializeLogEntry(&log);
     char flightStartflag[] = "**flight**";
-    writeToEEPROM((uint8_t*)flightStartflag,sizeof(flightStartflag),inFlightAddressOffset-sizeof(flightStartflag));
+    writeToEEPROM((uint8_t*)flightStartflag, sizeof(flightStartflag), inFlightAddressOffset-sizeof(flightStartflag));
     uint32_t prevWakeTime, beforeLogTime;
     for (;;)
     {
