@@ -33,10 +33,12 @@ void debugTask(void const* arg) {
     uint8_t buffer = 0x00;
     LogEntry debugData;
 
-//    bool initStatus = W25qxx_Init();
+    uint8_t initStatus = W25qxx_Init();
 
     //erase entire chip before logging
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
     W25qxx_EraseChip();
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
 
 
 	uint8_t checkLib1[8] = {1,2,3,4,5,6,7,8};

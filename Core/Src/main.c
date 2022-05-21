@@ -371,10 +371,10 @@ int main(void)
     abortPhaseTaskHandle =
         osThreadCreate(osThread(abortPhaseThread), NULL);
 
-//    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
-//      osThreadDef(debugThread,debugTask,osPriorityHigh,1,configMINIMAL_STACK_SIZE);
-//      debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
-//    }
+    if (HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin) == 0) { // Internal pull-up is enabled, so jump AUX_1 to GND to enable this thread
+      osThreadDef(debugThread, debugTask, osPriorityHigh, 1, configMINIMAL_STACK_SIZE);
+      debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
+    }
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -889,11 +889,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : AUX_2_Pin AUX_1_Pin */
-  GPIO_InitStruct.Pin = AUX_2_Pin|AUX_1_Pin;
+  /*Configure GPIO pin : AUX_2_Pin */
+  GPIO_InitStruct.Pin = AUX_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(AUX_2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : AUX_1_Pin */
+  GPIO_InitStruct.Pin = AUX_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(AUX_1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : IMU_CS_Pin LAUNCH_Pin */
   GPIO_InitStruct.Pin = IMU_CS_Pin|LAUNCH_Pin;
