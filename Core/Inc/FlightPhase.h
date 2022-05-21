@@ -10,7 +10,7 @@
             getCurrentFlightPhase() == ABORT_UNSPECIFIED_REASON \
         )
 
-osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
+extern osMutexId flightPhaseMutex; // ONLY PUBLIC FOR INITIALIZATION PURPOSES
 
 typedef enum
 {
