@@ -4,9 +4,9 @@
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
+#include "Globals.h"
 #include "ParachutesControl.h"
 #include "FlightPhase.h"
-#include "Data.h"
 
 #define SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL (1401) // metres
 

@@ -3,9 +3,9 @@
 #include "cmsis_os.h"
 #include "math.h"
 
+#include "Globals.h"
 #include "ReadCombustionChamberPressure.h"
 
-#include "Data.h"
 #include "Utils.h"
 
 #define QUEUE_SIZE 5

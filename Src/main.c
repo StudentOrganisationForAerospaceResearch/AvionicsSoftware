@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "Globals.h"
 #include "ReadAccelGyroMagnetism.h"
 #include "ReadBarometer.h"
 #include "ReadCombustionChamberPressure.h"
@@ -38,7 +39,6 @@
 #include "LogData.h"
 #include "TransmitData.h"
 //#include "AbortPhase.h"
-#include "Data.h"
 #include "FlightPhase.h"
 //#include "ValveControl.h"
 #include "Debug.h"
@@ -357,6 +357,16 @@ int main(void)
     );
     logDataTaskHandle =
         osThreadCreate(osThread(flightPhaseThread), &flightPhaseQueue);
+
+    osThreadDef(
+        gsListenThread,
+		gsListenerTask,
+        osPriorityHigh,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    logDataTaskHandle =
+        osThreadCreate(osThread(gsListenThread), NULL);
 
     osThreadDef(
         logDataThread,
@@ -924,7 +934,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 #ifdef ROCKET_TYPE_SOLID
     if (huart->Instance == USART2)
     {
-    	if (groundSystemsRxChar == ABORT_COMMAND_RECEIVED)
+    	if (groundSystemsRxChar == ABORT_CMD_BYTE)
     	{
     		if(xQueueSendToFrontFromISR(flightPhaseQueue, &groundSystemsRxChar, pdFALSE) != pdPASS)
     		{
@@ -938,7 +948,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 				HAL_UART_Transmit(&huart5, (uint8_t *)"\n\nError sending to flight queue back\n\n", 38, 500);
 			}
     	}
-    	/* Replaced with flight phase queue
+    	/* Replaced with flight phase queue ^
         if (groundSystemsRxChar == LAUNCH_CMD_BYTE)
         {
             if (ARM == getCurrentFlightPhase())

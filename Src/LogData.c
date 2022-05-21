@@ -16,9 +16,9 @@
 //#include "tm_stm32_fatfs.h"
 
 #include "LogData.h"
-#include "Data.h"
 #include "FlightPhase.h"
 #include "Utils.h"
+#include "Globals.h"
 
 /* Macros --------------------------------------------------------------------*/
 //CHECK: was max implemented somewhere else?

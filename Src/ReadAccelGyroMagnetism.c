@@ -2,9 +2,9 @@
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
+#include "Globals.h"
 #include "ReadAccelGyroMagnetism.h"
 
-#include "Data.h"
 
 static int READ_ACCEL_GYRO_MAGNETISM = 25;
 

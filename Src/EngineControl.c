@@ -4,8 +4,8 @@
 
 #include "EngineControl.h"
 #include "FlightPhase.h"
-#include "Data.h"
 #include "ValveControl.h"
+#include "Globals.h"
 
 static const int PRELAUNCH_PHASE_PERIOD = 50;
 static const int BURN_DURATION = 8500;

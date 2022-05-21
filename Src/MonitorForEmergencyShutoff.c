@@ -2,9 +2,9 @@
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
+#include "Globals.h"
 #include "MonitorForEmergencyShutoff.h"
 #include "FlightPhase.h"
-#include "Data.h"
 #include "ValveControl.h"
 
 static const int MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD = 1000;
