@@ -112,6 +112,7 @@ int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmer
 
 static const int FLIGHT_PHASE_DISPLAY_FREQ = 1000;
 static const int FLIGHT_PHASE_BLINK_FREQ = 100;
+static const int BUZZER_ERR_PERIOD = 5000;
 
 char dma_rx_buffer[NMEA_MAX_LENGTH + 1] = {0};
 GpsData* gpsData;
@@ -708,9 +709,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 168-1;
+  htim2.Init.Prescaler = 105-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 255;
+  htim2.Init.Period = 100;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -733,7 +734,7 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 127;
+  sConfigOC.Pulse = 50;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
@@ -1054,29 +1055,40 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-    /* Infinite loop */
-    //HAL_GPIO_WritePin(MUX_POWER_TEMP_GPIO_Port, MUX_POWER_TEMP_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
+    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 0);
 
-    for (;;)
-    {
+    for (;;) {
         osDelay(FLIGHT_PHASE_DISPLAY_FREQ);
 
-        // blink once for PRELAUNCH phase
-        // blink twice for BURN phase
-        // blink 3 times for COAST phase
-        // blink 4 times for DROGUE_DESCENT phase
-        // blink 5 times for MAIN_DESCENT phase
-        for (int i = -1; i < getCurrentFlightPhase(); i++)
-        {
+        // Half the buzzer frequency for flight phase beeps
+        // (slightly less important, and only a bit quieter)
+		htim2.Init.Prescaler = ((htim2.Init.Prescaler + 1) * 2) - 1;
+		if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
 			HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
+            osDelay(BUZZER_ERR_PERIOD);
+			HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+		}
+
+		// Beep n times for flight phase n, and blink LED 1
+        for (int i = -1; i < getCurrentFlightPhase(); i++) {
+			HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+            HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 1);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
 
 			HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
+            HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 0);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
         }
+
+        // Return the buzzer to its optimal frequency for message beeps
+		htim2.Init.Prescaler = ((htim2.Init.Prescaler + 1) / 2) - 1;
+		if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
+			HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+            osDelay(BUZZER_ERR_PERIOD);
+			HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+		}
+
+		// TODO: Message beeps
     }
   /* USER CODE END 5 */
 }
