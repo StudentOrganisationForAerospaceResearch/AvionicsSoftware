@@ -39,6 +39,17 @@ STM32L152-Discovery.elf.launch
 .dep/
 
 # Other
+*.d
+*.su
+*.bin
+*.list
+*.map
 .fuse*
-.settings/
+
+# IDE
+.metadata
+.settings
+[Rr]elease
+[Dd]ebug
+*.launch
 
