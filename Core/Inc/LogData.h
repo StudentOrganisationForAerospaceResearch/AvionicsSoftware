@@ -43,7 +43,5 @@ typedef struct{
     //}
 } LogEntry; // LogEntry holds data from AllData that is to be logged
 
-HAL_StatusTypeDef writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog);
-void readLogEntryFromEEPROM(uint16_t memAddress, LogEntry* givenLog);
 void initializeLogEntry(LogEntry* givenLog);
 void logDataTask(void const* arg);
