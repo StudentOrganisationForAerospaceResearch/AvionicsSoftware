@@ -17,11 +17,15 @@
 #include <string.h>
 
 /* Macros --------------------------------------------------------------------*/
-//CHECK: was max implemented somewhere else?
 #define max(a,b) \
     ({ __typeof__ (a) _a = (a); \
         __typeof__ (b) _b = (b); \
         _a > _b ? _a : _b; })
+
+#define min(a,b) \
+    ({ __typeof__ (a) _a = (a); \
+        __typeof__ (b) _b = (b); \
+        _a < _b ? _a : _b; })
 
 
 /* Constants -----------------------------------------------------------------*/
@@ -31,8 +35,8 @@ static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast r
 /* Variables -----------------------------------------------------------------*/
 static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
 static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address to write to before flight, updated during flight
-uint32_t log_SectorAddress = 0; // counts up; rewrites if needed
-uint32_t log_OffsetInByte = 0; // two per page, 0 or 92
+uint32_t currentSectorAddr = 0; // counts up; rewrites if needed
+uint32_t currentSectorOffset_B = 0; // two per page, 0 or 92
 uint8_t flash_filled = 0;
 uint8_t remaining_overwrite_pages = 16; // counts down from 16
 bool current_sector_erased = false;
@@ -44,7 +48,7 @@ bool current_sector_erased = false;
  */
 void initializeLogEntry(LogEntry* givenLog)
 {
-	memset(givenLog, -1, LOG_ENTRY_SIZE);
+	memset(givenLog, -1, sizeof(LogEntry));
     givenLog->currentFlightPhase = getCurrentFlightPhase();
     givenLog->tick = osKernelSysTick();
 }
@@ -106,43 +110,44 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
 }
 
 /**
- * @brief Used for logging entries to the EEPROM. First updates the struct, then writes it
- * the wait times are all managed in the main for loop so highFrequencyLog = lowFrequencyLog
- * @param data, pointer to AllData Struct sent to updateLogEntry to update the LogEntry struct
+ * @brief Writes a single LogEntry struct to the on-board W25Qxx flash chip.
+ * @param data, pointer to AllData struct sent to updateLogEntry to update the LogEntry struct
  * @param givenLog, pointer to a log initialized at the start of task
  * @param logStartAddress, pointer to the start of memory for flight logging
+ * @return True if the log was written, false if the chip is full
  */
-void logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
+bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
     updateLogEntry(data, givenLog);
 
+    uint8_t* logPtr = (uint8_t*)(givenLog);
+    uint32_t internalLogOffset = 0;
+    uint32_t numBytesLeftInLog = sizeof(LogEntry);
+    while (numBytesLeftInLog > 0) {
+		if (currentSectorOffset_B == w25qxx.SectorSize) {
+			// Current sector is full, move to the next sector
+			currentSectorOffset_B = 0;
+			currentSectorAddr += 1;
+		}
 
-    if (log_OffsetInByte + LOG_ENTRY_SIZE < w25qxx.SectorSize){
-    	W25qxx_WriteSector((uint8_t*)(givenLog), log_SectorAddress, log_OffsetInByte, LOG_ENTRY_SIZE);
-    } else {
-    	if(log_SectorAddress == w25qxx.SectorCount){
-    		flash_filled = 1;
-        	log_OffsetInByte = 0;
-    		log_SectorAddress = 0;
-    		W25qxx_EraseSector(log_SectorAddress);
-        	W25qxx_WriteSector((uint8_t*)(givenLog), log_SectorAddress, log_OffsetInByte, LOG_ENTRY_SIZE);
-    		current_sector_erased = true;
-    	}
+		if (currentSectorAddr >= w25qxx.SectorCount) {
+			// Chip is full, can't log anymore!
+			return false;
+		}
 
-    	else{
-    		log_OffsetInByte = 0;
-			log_SectorAddress++;
-            if(flash_filled){
-            	W25qxx_EraseSector(log_SectorAddress);
-//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, log_OffsetInByte, LOG_ENTRY_SIZE); // TODO: Log_Page_Address?
-            }
-            else{
-//        		W25qxx_WritePage((uint8_t*)(givenLog), Log_Page_Address, log_OffsetInByte, LOG_ENTRY_SIZE); // TODO: Log_Page_Address?
-            }
-    	}
+		// Write next portion of log into current flash sector,
+		// # free bytes in sector or rest of the log, whichever is lowest.
+		uint32_t numFreeBytesInSector = w25qxx.SectorSize - currentSectorOffset_B;
+		uint32_t numBytesToWrite = min(numFreeBytesInSector, numBytesLeftInLog) ;
+		W25qxx_WriteSector(&logPtr[internalLogOffset], currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
+
+		currentSectorOffset_B += numBytesToWrite;
+		numBytesLeftInLog -= numBytesToWrite;
+		internalLogOffset += numBytesToWrite;
+		logPtr = &logPtr[internalLogOffset];
+
+		return true;
     }
-
-    log_OffsetInByte += LOG_ENTRY_SIZE;
 }
 
 void logDataTask(void const* arg)
