@@ -86,6 +86,10 @@ static osThreadId transmitDataTaskHandle;
 // Debug thread
 static osThreadId debugTaskHandle;
 
+// Flight phase threads
+static osThreadId flightPhaseTaskHandle;
+static osThreadId gsListenTaskHandle;
+static osThreadId debugTaskHandle;
 // Flight phases variables
 osMutexId flightPhaseMutex;
 xQueueHandle flightPhaseQueue; //queue to be passed to flight phase thread
@@ -320,7 +324,7 @@ int main(void)
         1,
         configMINIMAL_STACK_SIZE * 3
     );
-    logDataTaskHandle =
+    flightPhaseTaskHandle =
         osThreadCreate(osThread(flightPhaseThread), &flightPhaseQueue);
 
     osThreadDef(
@@ -330,7 +334,7 @@ int main(void)
         1,
         configMINIMAL_STACK_SIZE
     );
-    logDataTaskHandle =
+    gsListenTaskHandle =
         osThreadCreate(osThread(gsListenThread), NULL);
 
 //    if (HAL_GPIO_ReadPin(AUX1_GPIO_Port, AUX1_Pin) == 1) {
