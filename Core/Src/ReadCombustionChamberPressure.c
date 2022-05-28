@@ -4,8 +4,7 @@
 #include "math.h"
 
 #include "ReadCombustionChamberPressure.h"
-
-#include "Data.h"
+#include "Globals.h"
 #include "Utils.h"
 
 #define QUEUE_SIZE 5

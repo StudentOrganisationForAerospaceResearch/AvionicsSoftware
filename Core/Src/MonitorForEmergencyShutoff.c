@@ -4,8 +4,8 @@
 
 #include "MonitorForEmergencyShutoff.h"
 #include "FlightPhase.h"
-#include "Data.h"
 #include "ValveControl.h"
+#include "Globals.h"
 
 static const int MONITOR_FOR_EMERGENCY_SHUTOFF_PERIOD = 1000;
 

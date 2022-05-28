@@ -6,7 +6,7 @@
 
 #include "ParachutesControl.h"
 #include "FlightPhase.h"
-#include "Data.h"
+#include "Globals.h"
 
 #define SPACE_PORT_AMERICA_ALTITUDE_ABOVE_SEA_LEVEL (1401) // metres
 

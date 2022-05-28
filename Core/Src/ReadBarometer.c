@@ -16,7 +16,7 @@
 #include "cmsis_os.h"
 
 #include "ReadBarometer.h"
-#include "Data.h"
+#include "Globals.h"
 
 /* Macros --------------------------------------------------------------------*/
 

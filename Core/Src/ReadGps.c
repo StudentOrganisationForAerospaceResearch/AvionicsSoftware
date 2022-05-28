@@ -3,8 +3,7 @@
 #include "cmsis_os.h"
 
 #include "ReadGps.h"
-
-#include "Data.h"
+#include "Globals.h"
 
 #include <stdio.h>
 #include <stdlib.h>

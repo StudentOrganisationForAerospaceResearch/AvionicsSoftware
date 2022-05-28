@@ -3,8 +3,7 @@
 #include "cmsis_os.h"
 
 #include "ReadAccelGyroMagnetism.h"
-
-#include "Data.h"
+#include "Globals.h"
 
 static int READ_ACCEL_GYRO_MAGNETISM = 25;
 

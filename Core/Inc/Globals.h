@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef ROCKET_TYPE_SOLID
+#define ROCKET_TYPE_SOLID
+#endif
+
 /* Structs containing data primitives */
 
 /*

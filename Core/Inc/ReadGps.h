@@ -1,5 +1,5 @@
 #pragma once
-#include "Data.h"
+#include <Globals.h>
 
 void readGpsTask(void const* arg);
 
