@@ -33,7 +33,7 @@ void debugTask(void const* arg) {
 	while (1) {
 		osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD);
 
-		HAL_UART_Receive(&huart5, &buffer, 1, 1000);
+		HAL_UART_Receive(&DEBUG_UART, &buffer, 1, 1000);
 
 		// LOGIC
 	}

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "main.h"
+#include "Globals.h"
 
-extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef IMU_SPI;
 
 void readAccelGyroMagnetismTask(void const* arg);

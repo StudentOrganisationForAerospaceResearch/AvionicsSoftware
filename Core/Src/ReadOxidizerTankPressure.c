@@ -4,8 +4,7 @@
 #include "math.h"
 
 #include "ReadOxidizerTankPressure.h"
-
-#include "Data.h"
+#include "Globals.h"
 #include "Utils.h"
 
 #define QUEUE_SIZE 5
@@ -27,15 +26,15 @@ void readOxidizerTankPressureTask(void const* arg)
 
     int oxidizerTankQueueIndex = 0;
 
-    HAL_ADC_Start(&hadc2);  // Enables ADC and starts conversion of regular channels
+    HAL_ADC_Start(&COMBINED_ADC);  // Enables ADC and starts conversion of regular channels
 
     for (;;)
     {
         osDelayUntil(&prevWakeTime, READ_OXIDIZER_TANK_PRESSURE_PERIOD);
 
-        if (HAL_ADC_PollForConversion(&hadc2, OXIDIZER_TANK_POLL_TIMEOUT) == HAL_OK)
+        if (HAL_ADC_PollForConversion(&COMBINED_ADC, OXIDIZER_TANK_POLL_TIMEOUT) == HAL_OK)
         {
-            oxidizerTankValuesQueue[oxidizerTankQueueIndex++] = HAL_ADC_GetValue(&hadc2);
+            oxidizerTankValuesQueue[oxidizerTankQueueIndex++] = HAL_ADC_GetValue(&COMBINED_ADC);
         }
 
         uint16_t adcRead = averageArray(oxidizerTankValuesQueue, QUEUE_SIZE);

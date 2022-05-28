@@ -4,8 +4,6 @@
 
 #include "ReadGps.h"
 
-#include "Data.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,7 +15,7 @@ void readGpsTask(void const* arg)
     GpsData* data = (GpsData*) arg;
     uint32_t prevWakeTime = osKernelSysTick();
 
-    HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
+    HAL_UART_Receive_DMA(&GPS_UART, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
 
     for (;;)
     {

@@ -4,8 +4,7 @@
 #include "math.h"
 
 #include "ReadCombustionChamberPressure.h"
-
-#include "Data.h"
+#include "Globals.h"
 #include "Utils.h"
 
 #define QUEUE_SIZE 5
@@ -29,15 +28,15 @@ void readCombustionChamberPressureTask(void const* arg)
 
     int combustionChamberQueueIndex = 0;
 
-    HAL_ADC_Start(&hadc1);  // Enables ADC and starts conversion of regular channels
+    HAL_ADC_Start(&COMBINED_ADC);  // Enables ADC and starts conversion of regular channels
 
     for (;;)
     {
         osDelayUntil(&prevWakeTime, READ_COMBUSTION_CHAMBER_PRESSURE_PERIOD);
 
-        if (HAL_ADC_PollForConversion(&hadc1, COMBUSTION_CHAMBER_ADC_POLL_TIMEOUT) == HAL_OK)
+        if (HAL_ADC_PollForConversion(&COMBINED_ADC, COMBUSTION_CHAMBER_ADC_POLL_TIMEOUT) == HAL_OK)
         {
-            combustionChamberValuesQueue[combustionChamberQueueIndex++] = HAL_ADC_GetValue(&hadc1);
+            combustionChamberValuesQueue[combustionChamberQueueIndex++] = HAL_ADC_GetValue(&COMBINED_ADC);
         }
 
         uint16_t adcRead = averageArray(combustionChamberValuesQueue, QUEUE_SIZE);
