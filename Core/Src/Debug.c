@@ -14,13 +14,18 @@
 #include "LogData.h"
 #include "main.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 /* Macros --------------------------------------------------------------------*/
+#define UART5_PAGE_TX_TIMEOUT ((w25qxx.PageSize * 8 / huart5.Init.BaudRate) * 1000 * 10)
+#define UART5_SECTOR_TX_TIMEOUT ((w25qxx.SectorSize * 8 / huart5.Init.BaudRate) * 1000 * 10)
 
 /* Structs -------------------------------------------------------------------*/
 
 /* Constants -----------------------------------------------------------------*/
 static const int DEBUG_TASK_PERIOD = 100;
-static const uint16_t memAddress = 0x07;
+static const int RX_BUFFER_SZ_B = 8;
 
 /* Variables -----------------------------------------------------------------*/
 
@@ -28,127 +33,77 @@ static const uint16_t memAddress = 0x07;
 
 /* Functions -----------------------------------------------------------------*/
 
+uint32_t str2uint32(uint8_t* s, uint32_t max_size) {
+  uint32_t ret = 0;
+  for (uint8_t i = 0; i < max_size; i++) {
+    if (s[i] >= '0' && s[i] <= '9') {
+      ret = (ret * 10) + (s[i] - '0');
+    } else {
+      break;
+    }
+  }
+  return ret;
+}
+
 void debugTask(void const* arg) {
-    uint32_t prevWakeTime = osKernelSysTick();
-    uint8_t buffer = 0x00;
-    LogEntry debugData;
+  uint32_t prevWakeTime = osKernelSysTick();
+  uint8_t rx_buffer[RX_BUFFER_SZ_B + 1]; // Ensure last byte always 0
 
-    uint8_t initStatus = W25qxx_Init();
+  uint8_t initStatus = W25qxx_Init();
 
-    //erase entire chip before logging
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
-    W25qxx_EraseChip();
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
+  while (1) {
+    osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD);
 
+    memset(rx_buffer, 0, RX_BUFFER_SZ_B);
+    for (uint8_t i = 0; i < RX_BUFFER_SZ_B; i++) {
+      HAL_UART_Receive(&huart5, &rx_buffer[i], 1, 0);
+      if (rx_buffer[i] < '0' || rx_buffer[i] > '9') { // If not an ASCII number character...
+        rx_buffer[i] |= 0x20; // Set bit 5, so capital ASCII letters are now lowercase
+        if (rx_buffer[i] < 'a' || rx_buffer[i] > 'z') { // If not an ASCII lowercase letter...
+          rx_buffer[i] = 0; // Terminate the string
+          break;
+        }
+      }
+    }
 
-	uint8_t checkLib1[8] = {1,2,3,4,5,6,7,8};
-	uint8_t checkLib2[8];
+    switch (rx_buffer[0]) {
+      case 'e':
+        if (strcmp(rx_buffer, "erase") == 0) {
+          HAL_UART_Transmit(&huart5, "ERASING\n", 8, 1000);
+          W25qxx_EraseChip();
+          HAL_UART_Transmit(&huart5, "ERASED\n", 7, 1000);
+        }
+        break;
 
-	while (1) {
-		osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD*5);
-//		HAL_UART_Receive(&huart5, &buffer, 1, 100);
-//========= TESTING NEW SPI DRIVER
+      case 'p':
+        asm volatile ("nop"); // Labels can't point to declarations?
+        uint32_t page_num = str2uint32(&rx_buffer[1], RX_BUFFER_SZ_B - 1);
+        if (page_num >= w25qxx.PageCount) {
+          HAL_UART_Transmit(&huart5, "BAD INDEX\n", 10, 1000);
+        }
+        uint8_t* page_data = malloc(w25qxx.PageSize);
+        memset(page_data, 0, w25qxx.PageSize);
+        W25qxx_ReadPage(page_data, page_num, 0, w25qxx.PageSize);
+        HAL_UART_Transmit(&huart5, "\n======== BEGIN PAGE ========\n", 30, 1000);
+        HAL_UART_Transmit(&huart5, page_data, w25qxx.PageSize, UART5_PAGE_TX_TIMEOUT);
+        HAL_UART_Transmit(&huart5, "\n======== END PAGE ========\n", 28, 1000);
+        free(page_data);
+        break;
 
-		W25qxx_WriteSector(checkLib1, 1, 0, 8);
-
-		W25qxx_ReadSector(checkLib2, 1, 0, 8);
-
-
-
-
-//========= TESTING RADIO
-/*
- 		HAL_UART_Receive(&huart2, &buffer, sizeof(buffer), 100);
-		HAL_UART_Transmit(&huart2, "a", 1, 10);
-		HAL_UART_Transmit(&huart2, "b", 1, 10);
-		HAL_UART_Receive(&huart5, &buffer, 1, 100);
- */
-
-//========= TESTING UMBILICAL
-/*
-		HAL_UART_Receive(&huart1, &buffer, sizeof(buffer), 100);
-		HAL_UART_Transmit(&huart1, "foo", 3, 10);
-		buffer = 't';
-
-		// LOGIC
-		HAL_UART_Transmit(&huart5, (uint8_t*)(&buffer),sizeof(buffer),10);
-		HAL_UART_Transmit(&huart5, " ",1,10);
-
-		HAL_UART_Transmit(&huart1, (uint8_t*)(&buffer),sizeof(buffer),10);
-		HAL_UART_Transmit(&huart1, " ",1,10);
-
-		uint8_t res = 5;
-		uint8_t checkArray[5] = {1, 1, 1, 1, 1};
-	   	HAL_UART_Transmit(&huart5, checkArray, sizeof(checkArray),100);
-*/
-
-
-//========= TESTING WRITE AND READ SEPARATELY
-/*
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
-	    HAL_StatusTypeDef writeStatus = HAL_SPI_Transmit(&hspi2, checkArray, 5, 1000);
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
-
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
-	    HAL_StatusTypeDef readStatus = HAL_SPI_Receive(&hspi2, checkArray, 5, 1000);
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
-
-	    HAL_UART_Transmit(&huart5, checkArray, sizeof(checkArray),100);
-
-	    HAL_UART_Transmit(&huart5, "354", 3,100);
-*/
-
-//========= TESTING DEBUG CASES
-/*
-		switch(buffer){
-			case 't':
-	            HAL_GPIO_TogglePin(LED_3_GPIO_Port, LED_3_Pin);
-				initializeLogEntry(&debugData);
-				writeLogEntryToEEPROM(memAddress,&debugData);
-				HAL_UART_Transmit(&huart5, (uint8_t*)(&debugData), sizeof(debugData),100);
-				break;
-			case 'd':
-				readLogEntryFromEEPROM(memAddress, &debugData);
-				HAL_UART_Transmit(&huart5, (uint8_t*)(&debugData),sizeof(debugData),100);
-				buffer = 't';
-				break;
-			default:
-				break;
-		}
-*/
-
-
-//========= USING HAL Functions
-/*
-		// WRITE PROTECT
-		// HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,RESET);
-		// HAL_GPIO_WritePin(MEM_WP_GPIO_Port,MEM_WP_Pin,SET);
-		// HAL_GPIO_WritePin(LED_1_GPIO_Port,LED_1_Pin,SET);
-
-	    uint8_t Write_Enable = 0x06;
-	    uint8_t Page_Program = 0x02;
-	    uint32_t Address = 0x00000000;
-	    uint8_t txBuffer[10] = {0x02, 0x04, 0x06, 0x08, 0xa2, 0xa4, 0xa6, 0xa8, 0x00, 0x00};
-	    uint8_t rxBuffer[10];
-
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port,SPI_CS_Pin,RESET);
-	    volatile HAL_StatusTypeDef weStatus = HAL_SPI_Transmit(&hspi2,&Write_Enable,1,1000);
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port,SPI_CS_Pin,SET);
-
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port,SPI_CS_Pin,RESET);
-	    volatile HAL_StatusTypeDef ppStatus = HAL_SPI_Transmit(&hspi2,&Page_Program,1,1000);
-	    volatile HAL_StatusTypeDef addStatus = HAL_SPI_Transmit(&hspi2,&Address,4,1000);
-	    volatile HAL_StatusTypeDef txStatus = HAL_SPI_Transmit(&hspi2,txBuffer,10,1000);
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port,SPI_CS_Pin,SET);
-
-	    uint8_t Read_Data = 0x03;
-
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port,SPI_CS_Pin,RESET);
-	    volatile HAL_StatusTypeDef readCommandStatus = HAL_SPI_Transmit(&hspi2,&Read_Data,1,1000);
-	    volatile HAL_StatusTypeDef addressCommandStatus = HAL_SPI_Transmit(&hspi2,&Address,4,1000);
-	    volatile HAL_StatusTypeDef rxStatus = HAL_SPI_Receive(&hspi2,rxBuffer,10,1000);
-	    HAL_GPIO_WritePin(SPI_CS_GPIO_Port,SPI_CS_Pin,SET);
-*/
-
-	}
+      case 's':
+        asm volatile ("nop"); // Labels can't point to declarations?
+        uint32_t sector_num = str2uint32(&rx_buffer[1], RX_BUFFER_SZ_B - 1);
+        if (sector_num >= w25qxx.SectorCount) {
+          HAL_UART_Transmit(&huart5, "BAD INDEX\n", 10, 1000);
+        }
+        uint8_t* sector_data = malloc(w25qxx.SectorSize);
+        memset(sector_data, 0, w25qxx.SectorSize);
+        W25qxx_ReadSector(sector_data, sector_num, 0, w25qxx.SectorSize);
+        HAL_UART_Transmit(&huart5, "\n======== BEGIN SECTOR ========\n", 32, 1000);
+        HAL_UART_Transmit(&huart5, sector_data, w25qxx.SectorSize, UART5_SECTOR_TX_TIMEOUT);
+        HAL_UART_Transmit(&huart5, "\n======== END SECTOR ========\n", 30, 1000);
+        free(sector_data);
+        break;
+    }
+  }
 }
