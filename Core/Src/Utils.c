@@ -29,6 +29,35 @@ void writeInt32ToArray(uint8_t* array, int startIndex, int32_t value)
 }
 
 /**
+ * @brief used for transmitting encoded data
+ */
+
+int writeInt32ToArrayEncoded(uint8_t* array, int startIndex, int32_t value)
+{
+	uint8_t temp;
+	uint8_t insertedCount = 0;
+	int i = 0;
+
+	while (insertedCount < 4){
+		temp = (value >> ( 24 - (insertedCount * 8)) ) & 0xFF;
+
+		if (temp == 0xF0){
+			array[startIndex + i++] = 0xF0;
+			array[startIndex + i++] = 0xF1;
+		}
+		else{
+			array[startIndex + i++] = temp;
+		}
+
+		insertedCount ++;
+	}
+
+	return startIndex + i; // returns the next startIndex
+
+	// return some sense of how many bytes were added (i ?)
+}
+
+/**
  * @brief converts a uint8_t* read from EEPROM to a uint32_t
  * @param array, the array read from the EEPROM (datRead)
  * @param startIndex, where the data field starts in the array
