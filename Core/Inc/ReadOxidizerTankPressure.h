@@ -1,5 +1,6 @@
 #pragma once
+#include "Globals.h"
 
-extern ADC_HandleTypeDef hadc2;
+extern ADC_HandleTypeDef COMBINED_ADC;
 
 void readOxidizerTankPressureTask(void const* arg);

@@ -18,7 +18,6 @@
 #include "LogData.h"
 #include "FlightPhase.h"
 #include "Utils.h"
-#include "Globals.h"
 
 /* Macros --------------------------------------------------------------------*/
 //CHECK: was max implemented somewhere else?

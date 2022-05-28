@@ -2,9 +2,10 @@
 
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
+#include "Globals.h"
 
-extern UART_HandleTypeDef huart2;
-extern UART_HandleTypeDef huart5;
+extern UART_HandleTypeDef GS_UART;
+extern UART_HandleTypeDef DEBUG_UART;
 extern uint8_t groundSystemsRxChar;
 extern osMutexId flightPhaseMutex;
 

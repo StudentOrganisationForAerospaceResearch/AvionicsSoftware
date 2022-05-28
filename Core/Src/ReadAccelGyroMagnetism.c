@@ -56,29 +56,29 @@ void readAccelGyroMagnetismTask(void const* arg)
     osDelay(1000);
 
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi1, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(&IMU_SPI, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
 
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi1, &ACTIVATE_GYRO_ACCEL_CMD, 1, CMD_TIMEOUT);
-    HAL_SPI_Transmit(&hspi1, &ACTIVATE_GYRO_ACCEL_DATA, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(&IMU_SPI, &ACTIVATE_GYRO_ACCEL_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(&IMU_SPI, &ACTIVATE_GYRO_ACCEL_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
 
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi1, &SET_ACCEL_SCALE_CMD, 1, CMD_TIMEOUT);
-    HAL_SPI_Transmit(&hspi1, &SET_ACCEL_SCALE_DATA, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(&IMU_SPI, &SET_ACCEL_SCALE_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(&IMU_SPI, &SET_ACCEL_SCALE_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
 
     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi1, &ACTIVATE_MAGNETO_CMD, 1, CMD_TIMEOUT);
-    HAL_SPI_Transmit(&hspi1, &ACTIVATE_MAGNETO_DATA, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(&IMU_SPI, &ACTIVATE_MAGNETO_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(&IMU_SPI, &ACTIVATE_MAGNETO_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_SET);
 
     /* Read WHO AM I register for verification, should read 104. */
     // uint8_t whoami;
     // HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_RESET);
-    // HAL_SPI_Transmit(&hspi1, &READ_WHOAMIM_CMD, 1, CMD_TIMEOUT);
-    // HAL_SPI_Receive(&hspi1, &whoami, 1, CMD_TIMEOUT);
+    // HAL_SPI_Transmit(&IMU_SPI, &READ_WHOAMIM_CMD, 1, CMD_TIMEOUT);
+    // HAL_SPI_Receive(&IMU_SPI, &whoami, 1, CMD_TIMEOUT);
     // HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_SET);
 
     uint8_t dataBuffer[6];
@@ -93,24 +93,24 @@ void readAccelGyroMagnetismTask(void const* arg)
 
         //READ------------------------------------------------------
         HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
-        HAL_SPI_Transmit(&hspi1, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
-        HAL_SPI_Receive(&hspi1, &dataBuffer[0], 6, CMD_TIMEOUT);
+        HAL_SPI_Transmit(&IMU_SPI, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
+        HAL_SPI_Receive(&IMU_SPI, &dataBuffer[0], 6, CMD_TIMEOUT);
         HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
         gyroX = (dataBuffer[1] << 8) | (dataBuffer[0]);
         gyroY = (dataBuffer[3] << 8) | (dataBuffer[2]);
         gyroZ = (dataBuffer[5] << 8) | (dataBuffer[4]);
 
         HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
-        HAL_SPI_Transmit(&hspi1, &READ_ACCEL_X_LOW_CMD, 1, CMD_TIMEOUT);
-        HAL_SPI_Receive(&hspi1, &dataBuffer[0], 6, CMD_TIMEOUT);
+        HAL_SPI_Transmit(&IMU_SPI, &READ_ACCEL_X_LOW_CMD, 1, CMD_TIMEOUT);
+        HAL_SPI_Receive(&IMU_SPI, &dataBuffer[0], 6, CMD_TIMEOUT);
         HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
         accelX = (dataBuffer[1] << 8) | (dataBuffer[0]);
         accelY = (dataBuffer[3] << 8) | (dataBuffer[2]);
         accelZ = (dataBuffer[5] << 8) | (dataBuffer[4]);
 
         // HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_RESET);
-        // HAL_SPI_Transmit(&hspi1, &READ_MAGNETO_X_LOW_CMD, 1, CMD_TIMEOUT);
-        // HAL_SPI_Receive(&hspi1, &dataBuffer[0], 6, CMD_TIMEOUT);
+        // HAL_SPI_Transmit(&IMU_SPI, &READ_MAGNETO_X_LOW_CMD, 1, CMD_TIMEOUT);
+        // HAL_SPI_Receive(&IMU_SPI, &dataBuffer[0], 6, CMD_TIMEOUT);
         // HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_SET);
         // magnetoX = (dataBuffer[1] << 8) | (dataBuffer[0]);
         // magnetoY = (dataBuffer[3] << 8) | (dataBuffer[2]);

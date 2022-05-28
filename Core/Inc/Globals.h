@@ -4,6 +4,19 @@
 #define ROCKET_TYPE_SOLID
 #endif
 
+/*
+ * Global macros for peripherals to avoid confusion over which peripheral
+ * number corresponds to what hardware.
+ */
+#define GS_UART huart1
+#define RADIO_UART huart2
+#define GPS_UART huart4
+#define DEBUG_UART huart5
+#define IMU_SPI hspi1
+#define BARO_SPI hspi3
+#define COMBINED_ADC hadc1 //Combination of Combustion chamber, oxidizer tank and propulsion valve adc
+#define BATT_ADC hadc2
+
 /* Structs containing data primitives */
 
 /*

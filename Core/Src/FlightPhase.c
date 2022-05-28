@@ -88,7 +88,7 @@ int isAbortPhase()
 
 void gsListenerTask(void const* arg)
 {
-	HAL_UART_Receive_IT(&huart2, &groundSystemsRxChar, 1);
+	HAL_UART_Receive_IT(&GS_UART, &groundSystemsRxChar, 1);
 }
 
 void flightPhaseTask(void const* flightPhaseQueue)
@@ -107,11 +107,11 @@ void flightPhaseTask(void const* flightPhaseQueue)
 		 */
 //		if (xQueueReceive(flightPhaseQueue, &cmd, 0) != pdTRUE)
 //		{
-//			HAL_UART_Transmit(&huart5, (uint8_t *)"Error in Receiving from Queue\n\n", 31, 1000);
+//			HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)"Error in Receiving from Queue\n\n", 31, 1000);
 //		}
 //		else
 //		{
-//			HAL_UART_Transmit(&huart5, &cmd, sizeof(uint8_t), 1000);
+//			HAL_UART_Transmit(&DEBUG_UART, &cmd, sizeof(uint8_t), 1000);
 //		}
 		// Check heart beat, if no heart beat, go into abort
 		if(heartbeatTimer <= 0 && currPhase != ABORT_NO_HEARTBEAT)

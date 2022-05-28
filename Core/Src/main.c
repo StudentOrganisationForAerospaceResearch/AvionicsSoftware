@@ -950,7 +950,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
             }
         }
 
-        HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
+        HAL_UART_Receive_DMA(&GPS_UART, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
     }
 }
 /* USER CODE END 4 */
