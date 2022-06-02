@@ -29,6 +29,7 @@
 #include "ReadAccelGyroMagnetism.h"
 #include "ReadBarometer.h"
 #include "ReadCombustionChamberPressure.h"
+#include "ReadBatteryVoltage.h"
 #include "ReadGps.h"
 #include "ReadOxidizerTankPressure.h"
 #include "MonitorForEmergencyShutoff.h"
@@ -78,6 +79,7 @@ osThreadId defaultTaskHandle;
 static osThreadId readAccelGyroMagnetismTaskHandle;
 static osThreadId readBarometerTaskHandle;
 static osThreadId readCombustionChamberPressureTaskHandle;
+static osThreadId readBatteryVoltageTaskHandle;
 static osThreadId readGpsTaskHandle;
 static osThreadId readOxidizerTankPressureTaskHandle;
 // Controls that will perform actions
@@ -189,6 +191,8 @@ int main(void)
         malloc(sizeof(BarometerData));
     CombustionChamberPressureData* combustionChamberPressureData =
         malloc(sizeof(CombustionChamberPressureData));
+    BatteryVoltageData* batteryVoltageData = 
+        malloc(sizeof(BatteryVoltageData));
     gpsData =
         calloc(1, sizeof(GpsData));
     OxidizerTankPressureData* oxidizerTankPressureData =
@@ -215,6 +219,10 @@ int main(void)
     combustionChamberPressureData->mutex_ = osMutexCreate(osMutex(COMBUSTION_CHAMBER_PRESSURE_DATA_MUTEX));
     combustionChamberPressureData->pressure_ = -12;
 
+    osMutexDef(BATTERY_VOLTAGE_DATA_MUTEX);
+    batteryVoltageData->mutex_ = osMutexCreate(osMutex(BATTERY_VOLTAGE_DATA_MUTEX));
+    batteryVoltageData->voltage_ = -13; //Give it a random assigned negative value
+
     osMutexDef(GPS_DATA_MUTEX);
     gpsData->mutex_ = osMutexCreate(osMutex(GPS_DATA_MUTEX));
 
@@ -228,6 +236,7 @@ int main(void)
     allData->accelGyroMagnetismData_ = accelGyroMagnetismData;
     allData->barometerData_ = barometerData;
     allData->combustionChamberPressureData_ = combustionChamberPressureData;
+    allData->batteryVoltageData_ = batteryVoltageData;
     allData->gpsData_ = gpsData;
     allData->oxidizerTankPressureData_ = oxidizerTankPressureData;
 
@@ -290,6 +299,16 @@ int main(void)
     );
     readCombustionChamberPressureTaskHandle =
         osThreadCreate(osThread(readCombustionChamberPressureThread), combustionChamberPressureData);
+
+    osThreadDef(
+        readBatteryVoltageThread,
+        readBatteryVoltageTask,
+        osPriorityAboveNormal,
+        1,
+        configMINIMAL_STACK_SIZE
+    );
+    readBatteryVoltageTaskHandle =
+        osThreadCreate(osThread(readBatteryVoltageThread), batteryVoltageData);
 
     osThreadDef(
         readGpsThread,

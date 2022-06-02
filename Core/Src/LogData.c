@@ -11,7 +11,6 @@
 #include "cmsis_os.h"
 
 #include "LogData.h"
-#include "Data.h"
 #include "FlightPhase.h"
 #include "Utils.h"
 #include <string.h>
@@ -105,6 +104,13 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
         givenLog->altitude = data->gpsData_->totalAltitude_.altitude_;
         osMutexRelease(data->gpsData_->mutex_);
     }
+
+    if (osMutexWait(data->batteryVoltageData_->mutex_, 0) == osOK)
+    {
+        givenLog->batteryVoltage = data->batteryVoltageData_->voltage_;
+        osMutexRelease(data->batteryVoltageData_->mutex_);
+    }
+    
     givenLog->currentFlightPhase = getCurrentFlightPhase();
     givenLog->tick = HAL_GetTick();
 }

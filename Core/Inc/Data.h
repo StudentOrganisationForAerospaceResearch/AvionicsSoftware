@@ -38,6 +38,12 @@ typedef struct
     int32_t     pressure_;
 } CombustionChamberPressureData;
 
+typedef struct
+{
+    osMutexId   mutex_;
+    uint32_t    voltage_; // millivolts
+} BatteryVoltageData;
+
 /* GPS Data */
 
 #define NMEA_MAX_LENGTH 82
@@ -84,6 +90,7 @@ typedef struct
     AccelGyroMagnetismData*         accelGyroMagnetismData_;
     BarometerData*                  barometerData_;
     CombustionChamberPressureData*  combustionChamberPressureData_;
+    BatteryVoltageData*             batteryVoltageData_;
     GpsData*                        gpsData_;
     OxidizerTankPressureData*       oxidizerTankPressureData_;
 } AllData;
@@ -118,6 +125,7 @@ typedef struct{
     int32_t antennaAltitude;
     int32_t geoidAltitude;
     int32_t altitude;
+    uint32_t batteryVoltage;
     uint8_t currentFlightPhase;
     int32_t tick;
 
