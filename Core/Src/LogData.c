@@ -32,13 +32,12 @@ static const int32_t SLOW_LOG_DATA_PERIOD_ms = 700; // logging period for slow r
 static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast routine
 
 /* Variables -----------------------------------------------------------------*/
+uint8_t isOkayToLog = 1;
+uint32_t currentSectorAddr = 0;
+uint32_t currentSectorOffset_B = 0;
+
 static uint16_t preFlightAddressOffset = 0; // offset updated after writing in logEntryOnceRoutine
 static uint16_t inFlightAddressOffset = 14*sizeof(LogEntry); // largest address to write to before flight, updated during flight
-uint32_t currentSectorAddr = 0; // counts up; rewrites if needed
-uint32_t currentSectorOffset_B = 0; // two per page, 0 or 92
-uint8_t flash_filled = 0;
-uint8_t remaining_overwrite_pages = 16; // counts down from 16
-bool current_sector_erased = false;
 
 /* Functions -----------------------------------------------------------------*/
 /**

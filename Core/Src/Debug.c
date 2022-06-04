@@ -48,8 +48,6 @@ uint32_t str2uint32(uint8_t* s, uint32_t max_size) {
 void debugTask(void const* arg) {
   uint32_t prevWakeTime = osKernelSysTick();
 
-  uint8_t initStatus = W25qxx_Init();
-
   while (1) {
     osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD);
 

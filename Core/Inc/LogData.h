@@ -15,5 +15,9 @@ extern SPI_HandleTypeDef hspi2;
 extern w25qxx_t w25qxx;
 extern CRC_HandleTypeDef hcrc;
 
+extern uint8_t isOkayToLog;
+extern uint32_t currentSectorAddr;
+extern uint32_t currentSectorOffset_B;
+
 void initializeLogEntry(LogEntry* givenLog);
 void logDataTask(void const* arg);
