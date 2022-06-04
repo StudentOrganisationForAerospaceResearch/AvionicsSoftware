@@ -103,11 +103,16 @@ static const uint8_t RESET_AVIONICS_CMD_BYTE = 0x4F;
 static const uint8_t HEARTBEAT_BYTE = 0x46;
 static const uint8_t OPEN_INJECTION_VALVE = 0x2A;
 static const uint8_t CLOSE_INJECTION_VALVE = 0x2B;
+static const uint8_t ERASE_FLASH_CMD_BYTE = 0x30;
+static const uint8_t START_LOGGING_CMD_BYTE = 0x31;
+static const uint8_t STOP_LOGGING_CMD_BYTE = 0x32;
+static const uint8_t RESET_LOGGING_CMD_BYTE = 0x33;
 
 uint8_t launchSystemsRxChar = 0;
 uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
+uint8_t debugRxChar = 0;
 
 const int32_t HEARTBEAT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmergencyShutoff thread
@@ -244,6 +249,9 @@ int main(void)
         malloc(sizeof(ParachutesControlData));
     parachutesControlData->accelGyroMagnetismData_ = accelGyroMagnetismData;
     parachutesControlData->barometerData_ = barometerData;
+
+    // Init flash chip
+    W25qxx_Init();
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -258,6 +266,7 @@ int main(void)
   /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
     HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
+    HAL_UART_Receive_IT(&huart5, &debugRxChar, 1);
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -270,6 +279,12 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
+    if (HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin) == 0) { // Internal pull-up is enabled, so jump AUX_1 to GND to enable this thread
+      osThreadDef(debugThread, debugTask, osPriorityHigh, 1, configMINIMAL_STACK_SIZE);
+      debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
+      isOkayToLog = 0;
+    }
+
     osThreadDef(
         readAccelGyroMagnetismThread,
         readAccelGyroMagnetismTask,
@@ -389,11 +404,6 @@ int main(void)
     );
     abortPhaseTaskHandle =
         osThreadCreate(osThread(abortPhaseThread), NULL);
-
-    if (HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin) == 0) { // Internal pull-up is enabled, so jump AUX_1 to GND to enable this thread
-      osThreadDef(debugThread, debugTask, osPriorityHigh, 1, configMINIMAL_STACK_SIZE);
-      debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
-    }
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -960,46 +970,40 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart->Instance == USART2)
     {
-        if (launchSystemsRxChar == LAUNCH_CMD_BYTE)
-        {
-            if (ARM == getCurrentFlightPhase())
-            {
-                launchCmdReceived++;
-            }
+      if (launchSystemsRxChar == LAUNCH_CMD_BYTE) {
+        if (ARM == getCurrentFlightPhase()) {
+          launchCmdReceived++;
         }
-        else if (launchSystemsRxChar == ARM_CMD_BYTE)
-        {
-            if (PRELAUNCH == getCurrentFlightPhase())
-            {
-                newFlightPhase(ARM);
-            }
+      } else if (launchSystemsRxChar == ARM_CMD_BYTE) {
+        if (PRELAUNCH == getCurrentFlightPhase()) {
+          newFlightPhase(ARM);
         }
-        else if (launchSystemsRxChar == ABORT_CMD_BYTE)
-        {
-            abortCmdReceived = 1;
+      } else if (launchSystemsRxChar == ABORT_CMD_BYTE) {
+          abortCmdReceived = 1;
+      } else if (launchSystemsRxChar == RESET_AVIONICS_CMD_BYTE) {
+          resetAvionicsCmdReceived = 1;
+      } else if (launchSystemsRxChar == HEARTBEAT_BYTE) {
+          heartbeatTimer = HEARTBEAT_TIMEOUT;
+      } else if (launchSystemsRxChar == OPEN_INJECTION_VALVE) {
+        if (IS_ABORT_PHASE) {
+          openInjectionValve();
         }
-        else if (launchSystemsRxChar == RESET_AVIONICS_CMD_BYTE)
-        {
-            resetAvionicsCmdReceived = 1;
+      } else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE) {
+        if (IS_ABORT_PHASE) {
+          closeInjectionValve();
         }
-        else if (launchSystemsRxChar == HEARTBEAT_BYTE)
-        {
-            heartbeatTimer = HEARTBEAT_TIMEOUT;
-        }
-        else if (launchSystemsRxChar == OPEN_INJECTION_VALVE)
-        {
-            if (IS_ABORT_PHASE)
-            {
-                openInjectionValve();
-            }
-        }
-        else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE)
-        {
-            if (IS_ABORT_PHASE)
-            {
-                closeInjectionValve();
-            }
-        }
+      } else if (launchSystemsRxChar == ERASE_FLASH_CMD_BYTE) {
+        isOkayToLog = 0;
+        W25qxx_EraseChip();
+        isOkayToLog = 1;
+      } else if (launchSystemsRxChar == START_LOGGING_CMD_BYTE) {
+        isOkayToLog = 1;
+      } else if (launchSystemsRxChar == STOP_LOGGING_CMD_BYTE) {
+        isOkayToLog = 0;
+      } else if (launchSystemsRxChar == RESET_LOGGING_CMD_BYTE) {
+        currentSectorAddr = 0;
+        currentSectorOffset_B = 0;
+      }
     }
     else if (huart->Instance == UART4)
     {
@@ -1066,6 +1070,25 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         }
 
         HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
+    }
+    else if (huart->Instance == UART5) {
+      if (!isDebugMsgReady) {
+        debugMsg[debugMsgIdx] = debugRxChar;
+        HAL_UART_Transmit(&huart5, &debugMsg[debugMsgIdx], 1, 100);
+        if (debugMsg[debugMsgIdx] < '0' || debugMsg[debugMsgIdx] > '9') { // If not an ASCII number character...
+          debugMsg[debugMsgIdx] |= 0x20; // Set bit 5, so capital ASCII letters are now lowercase
+          if (debugMsg[debugMsgIdx] < 'a' || debugMsg[debugMsgIdx] > 'z') { // If not an ASCII lowercase letter...
+            debugMsg[debugMsgIdx] = 0; // Terminate the string
+            debugMsgIdx = 0;
+            isDebugMsgReady = 1;
+            return;
+          }
+        }
+        if (debugMsgIdx++ == DEBUG_RX_BUFFER_SZ_B) {
+          isDebugMsgReady = 1;
+        }
+      }
+      HAL_UART_Receive_IT(&huart5, &debugRxChar, 1);
     }
 }
 /* USER CODE END 4 */
