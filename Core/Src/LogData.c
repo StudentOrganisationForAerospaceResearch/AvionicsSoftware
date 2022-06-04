@@ -33,6 +33,7 @@ static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast r
 
 /* Variables -----------------------------------------------------------------*/
 uint8_t isOkayToLog = 1;
+uint8_t isErasing = 0;
 uint32_t currentSectorAddr = 0;
 uint32_t currentSectorOffset_B = 0;
 

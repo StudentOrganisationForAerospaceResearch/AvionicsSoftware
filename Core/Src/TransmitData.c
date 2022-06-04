@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "FlightPhase.h"
 #include "Data.h"
+#include "LogData.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,7 +24,8 @@ static const int8_t INJECTION_VALVE_STATUS_HEADER_BYTE = 0x38; 	// not used
 static const int8_t LOWER_VALVE_STATUS_HEADER_BYTE = 0x39;		// not used
 static const int8_t BATTERY_VOLTAGE_HEADER_BYTE = 0x14;
 static const int8_t TICK_HEADER_BYTE = 0x15;
-static const int8_t CRC_HEADER_BYTE = 0x16;						// needed?
+static const int8_t LOG_STATUS_BYTE = 0x16;
+static const int8_t CRC_HEADER_BYTE = 0x17;						// needed?
 
 #define F0_ESCAPE (0xF0)
 #define START_FLAG (0x00)
@@ -84,7 +86,12 @@ void transmitLogEntry(LogEntry* givenLog)
 	transmitBuffer[bufferIndex++] = TICK_HEADER_BYTE;
 	bufferIndex = writeInt32ToArrayEncoded(transmitBuffer, bufferIndex, givenLog->tick);
 
-	// CRC flag		0xF016
+    // Log status flag 	0xF016
+	transmitBuffer[bufferIndex++] = F0_ESCAPE;
+	transmitBuffer[bufferIndex++] = LOG_STATUS_BYTE;
+	bufferIndex = writeInt32ToArrayEncoded(transmitBuffer, bufferIndex, (currentSectorAddr << 16) | (isErasing << 1) | isOkayToLog);
+
+	// CRC flag		0xF017
     transmitBuffer[bufferIndex++] = F0_ESCAPE;
 	transmitBuffer[bufferIndex++] = CRC_HEADER_BYTE;
     uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)transmitBuffer, bufferIndex - 1);

@@ -16,6 +16,7 @@ extern w25qxx_t w25qxx;
 extern CRC_HandleTypeDef hcrc;
 
 extern uint8_t isOkayToLog;
+extern uint8_t isErasing;
 extern uint32_t currentSectorAddr;
 extern uint32_t currentSectorOffset_B;
 
