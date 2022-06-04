@@ -108,6 +108,7 @@ uint8_t launchSystemsRxChar = 0;
 uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
+uint8_t debugRxChar = 0;
 
 const int32_t HEARTBEAT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 int32_t heartbeatTimer = 0; // Initalized to HEARTBEAT_TIMEOUT in MonitorForEmergencyShutoff thread
@@ -258,6 +259,7 @@ int main(void)
   /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
     HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
+    HAL_UART_Receive_IT(&huart5, &debugRxChar, 1);
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -1066,6 +1068,25 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         }
 
         HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
+    }
+    else if (huart->Instance == UART5) {
+      if (!isDebugMsgReady) {
+        debugMsg[debugMsgIdx] = debugRxChar;
+        HAL_UART_Transmit(&huart5, &debugMsg[debugMsgIdx], 1, 100);
+        if (debugMsg[debugMsgIdx] < '0' || debugMsg[debugMsgIdx] > '9') { // If not an ASCII number character...
+          debugMsg[debugMsgIdx] |= 0x20; // Set bit 5, so capital ASCII letters are now lowercase
+          if (debugMsg[debugMsgIdx] < 'a' || debugMsg[debugMsgIdx] > 'z') { // If not an ASCII lowercase letter...
+            debugMsg[debugMsgIdx] = 0; // Terminate the string
+            debugMsgIdx = 0;
+            isDebugMsgReady = 1;
+            return;
+          }
+        }
+        if (debugMsgIdx++ == DEBUG_RX_BUFFER_SZ_B) {
+          isDebugMsgReady = 1;
+        }
+      }
+      HAL_UART_Receive_IT(&huart5, &debugRxChar, 1);
     }
 }
 /* USER CODE END 4 */

@@ -147,6 +147,10 @@ bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAd
 		uint32_t numBytesToWrite = min(numFreeBytesInSector, numBytesLeftInLog) ;
 		W25qxx_WriteSector(&logPtr[internalLogOffset], currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
 
+		uint8_t* ptr = (uint8_t*)malloc(numBytesToWrite);
+		W25qxx_ReadSector(ptr, currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
+		free(ptr);
+
 		currentSectorOffset_B += numBytesToWrite;
 		numBytesLeftInLog -= numBytesToWrite;
 		internalLogOffset += numBytesToWrite;
