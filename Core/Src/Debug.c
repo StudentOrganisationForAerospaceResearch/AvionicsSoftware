@@ -97,6 +97,22 @@ void debugTask(void const* arg) {
         HAL_UART_Transmit(&huart5, "\n======== END SECTOR ========\n", 30, 1000);
         free(sector_data);
         break;
+
+      case 'b':
+        asm volatile ("nop"); // Labels can't point to declarations?
+        uint32_t block_num = str2uint32(&debugMsg[1], DEBUG_RX_BUFFER_SZ_B - 1);
+        if (block_num >= w25qxx.BlockCount) {
+          HAL_UART_Transmit(&huart5, "BAD INDEX\n", 10, 1000);
+          break;
+        }
+        uint8_t* block_data = malloc(w25qxx.BlockSize);
+        memset(block_data, 0, w25qxx.BlockSize);
+        W25qxx_ReadBlock(block_data, block_num, 0, w25qxx.BlockSize);
+        HAL_UART_Transmit(&huart5, "\n======== BEGIN BLOCK ========\n", 31, 1000);
+        HAL_UART_Transmit(&huart5, block_data, w25qxx.BlockSize, 25000);
+        HAL_UART_Transmit(&huart5, "\n======== END BLOCK ========\n", 29, 1000);
+        free(block_data);
+        break;
     }
 
     isDebugMsgReady = 0;
