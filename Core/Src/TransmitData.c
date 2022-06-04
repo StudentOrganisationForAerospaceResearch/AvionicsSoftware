@@ -27,7 +27,7 @@ static const int8_t CRC_HEADER_BYTE = 0x16;						// needed?
 
 #define F0_ESCAPE (0xF0)
 #define START_FLAG (0x00)
-#define END_FLAG (0X01)
+#define END_FLAG (0XFF)
 
 static const uint8_t UART_TIMEOUT = 100;
 
@@ -90,7 +90,7 @@ void transmitLogEntry(LogEntry* givenLog)
     uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)transmitBuffer, bufferIndex - 1);
     bufferIndex = writeInt32ToArrayEncoded(transmitBuffer, bufferIndex, crc);
 
-	// END flag		0xF001
+	// END flag		0xF0FF
     transmitBuffer[bufferIndex++] = F0_ESCAPE;
 	transmitBuffer[bufferIndex++] = END_FLAG;
 
