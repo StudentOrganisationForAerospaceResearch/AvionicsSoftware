@@ -108,7 +108,9 @@ static const uint8_t START_LOGGING_CMD_BYTE = 0x31;
 static const uint8_t STOP_LOGGING_CMD_BYTE = 0x32;
 static const uint8_t RESET_LOGGING_CMD_BYTE = 0x33;
 
+uint8_t launchSystemsRxState = 0;
 uint8_t launchSystemsRxChar = 0;
+uint8_t launchSystemsRxCmd = 0;
 uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
@@ -970,41 +972,62 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart->Instance == USART2)
     {
-      if (launchSystemsRxChar == LAUNCH_CMD_BYTE) {
-        if (ARM == getCurrentFlightPhase()) {
-          launchCmdReceived++;
+      if (launchSystemsRxChar == 0xF0 && launchSystemsRxState == 0) {
+
+      } else if (launchSystemsRxChar == 0xF0 && launchSystemsRxState == 0) {
+        launchSystemsRxState = 1;
+      } else if (launchSystemsRxChar == 0x02 && launchSystemsRxState == 1) {
+        launchSystemsRxState = 2;
+      } else if (launchSystemsRxState == 2) {
+        launchSystemsRxCmd = launchSystemsRxChar;
+        launchSystemsRxState = 3;
+      } else if (launchSystemsRxChar == 0xF0 && launchSystemsRxState == 2) {
+        launchSystemsRxState = 4;
+      } else if (launchSystemsRxChar == 0xFF && launchSystemsRxState == 4) {
+        if (launchSystemsRxChar == LAUNCH_CMD_BYTE) {
+          if (ARM == getCurrentFlightPhase()) {
+            launchCmdReceived++;
+          }
+        } else if (launchSystemsRxChar == ARM_CMD_BYTE) {
+          if (PRELAUNCH == getCurrentFlightPhase()) {
+            newFlightPhase(ARM);
+          }
+        } else if (launchSystemsRxChar == ABORT_CMD_BYTE) {
+            abortCmdReceived = 1;
+        } else if (launchSystemsRxChar == RESET_AVIONICS_CMD_BYTE) {
+            resetAvionicsCmdReceived = 1;
+        } else if (launchSystemsRxChar == HEARTBEAT_BYTE) {
+            heartbeatTimer = HEARTBEAT_TIMEOUT;
+        } else if (launchSystemsRxChar == OPEN_INJECTION_VALVE) {
+          if (IS_ABORT_PHASE) {
+            openInjectionValve();
+          }
+        } else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE) {
+          if (IS_ABORT_PHASE) {
+            closeInjectionValve();
+          }
+        } else if (launchSystemsRxChar == ERASE_FLASH_CMD_BYTE) {
+          isOkayToLog = 0;
+          isErasing = 1;
+          W25qxx_EraseChip();
+          isErasing = 0;
+          isOkayToLog = 1;
+        } else if (launchSystemsRxChar == START_LOGGING_CMD_BYTE) {
+          isOkayToLog = 1;
+        } else if (launchSystemsRxChar == STOP_LOGGING_CMD_BYTE) {
+          isOkayToLog = 0;
+        } else if (launchSystemsRxChar == RESET_LOGGING_CMD_BYTE) {
+          currentSectorAddr = 0;
+          currentSectorOffset_B = 0;
         }
-      } else if (launchSystemsRxChar == ARM_CMD_BYTE) {
-        if (PRELAUNCH == getCurrentFlightPhase()) {
-          newFlightPhase(ARM);
-        }
-      } else if (launchSystemsRxChar == ABORT_CMD_BYTE) {
-          abortCmdReceived = 1;
-      } else if (launchSystemsRxChar == RESET_AVIONICS_CMD_BYTE) {
-          resetAvionicsCmdReceived = 1;
-      } else if (launchSystemsRxChar == HEARTBEAT_BYTE) {
-          heartbeatTimer = HEARTBEAT_TIMEOUT;
-      } else if (launchSystemsRxChar == OPEN_INJECTION_VALVE) {
-        if (IS_ABORT_PHASE) {
-          openInjectionValve();
-        }
-      } else if (launchSystemsRxChar == CLOSE_INJECTION_VALVE) {
-        if (IS_ABORT_PHASE) {
-          closeInjectionValve();
-        }
-      } else if (launchSystemsRxChar == ERASE_FLASH_CMD_BYTE) {
-        isOkayToLog = 0;
-        isErasing = 1;
-        W25qxx_EraseChip();
-        isErasing = 0;
-        isOkayToLog = 1;
-      } else if (launchSystemsRxChar == START_LOGGING_CMD_BYTE) {
-        isOkayToLog = 1;
-      } else if (launchSystemsRxChar == STOP_LOGGING_CMD_BYTE) {
-        isOkayToLog = 0;
-      } else if (launchSystemsRxChar == RESET_LOGGING_CMD_BYTE) {
-        currentSectorAddr = 0;
-        currentSectorOffset_B = 0;
+
+        launchSystemsRxCmd = 0;
+        launchSystemsRxChar = 0;
+        launchSystemsRxState = 0;
+      } else {
+        launchSystemsRxCmd = 0;
+        launchSystemsRxChar = 0;
+        launchSystemsRxState = 0;
       }
     }
     else if (huart->Instance == UART4)
