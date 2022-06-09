@@ -32,7 +32,7 @@ static const int32_t SLOW_LOG_DATA_PERIOD_ms = 700; // logging period for slow r
 static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast routine
 
 /* Variables -----------------------------------------------------------------*/
-uint8_t isOkayToLog = 1;
+uint8_t isOkayToLog = 0;
 uint8_t isErasing = 0;
 uint32_t currentSectorAddr = 0;
 uint32_t currentSectorOffset_B = 0;
@@ -124,6 +124,10 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
  */
 bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
+    if (!isOkayToLog || isErasing) {
+        return false;
+    }
+
     updateLogEntry(data, givenLog);
 
     uint8_t* logPtr = (uint8_t*)(givenLog);
@@ -138,8 +142,11 @@ bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAd
 
 		if (currentSectorAddr >= w25qxx.SectorCount) {
 			// Chip is full, can't log anymore!
+      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, 1);
 			return false;
 		}
+
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
 
 		// Write next portion of log into current flash sector,
 		// # free bytes in sector or rest of the log, whichever is lowest.
@@ -155,6 +162,8 @@ bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAd
 		numBytesLeftInLog -= numBytesToWrite;
 		internalLogOffset += numBytesToWrite;
 		logPtr = &logPtr[internalLogOffset];
+
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
 
 		return true;
     }

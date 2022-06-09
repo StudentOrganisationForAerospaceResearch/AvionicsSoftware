@@ -181,6 +181,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_SPI1_Init();
@@ -189,7 +190,6 @@ int main(void)
   MX_CRC_Init();
   MX_SPI3_Init();
   MX_UART5_Init();
-  MX_DMA_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
@@ -287,7 +287,6 @@ int main(void)
     if (HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin) == 0) { // Internal pull-up is enabled, so jump AUX_1 to GND to enable this thread
       osThreadDef(debugThread, debugTask, osPriorityHigh, 1, configMINIMAL_STACK_SIZE);
       debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
-      isOkayToLog = 0;
     }
 
     osThreadDef(
@@ -1028,7 +1027,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         } else if (launchSystemsRxChar == ERASE_FLASH_CMD_BYTE) {
           isOkayToLog = 0;
           isErasing = 1;
+          HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
           W25qxx_EraseChip();
+          HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
           isErasing = 0;
           isOkayToLog = 1;
         } else if (launchSystemsRxChar == START_LOGGING_CMD_BYTE) {
@@ -1036,6 +1037,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         } else if (launchSystemsRxChar == STOP_LOGGING_CMD_BYTE) {
           isOkayToLog = 0;
         } else if (launchSystemsRxChar == RESET_LOGGING_CMD_BYTE) {
+          isOkayToLog = 0;
           currentSectorAddr = 0;
           currentSectorOffset_B = 0;
         }
