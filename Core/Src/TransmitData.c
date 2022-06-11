@@ -119,7 +119,6 @@ void transmitDataTask(void const* arg)
         osDelayUntil(&prevWakeTime, TRANSMIT_DATA_PERIOD);
         updateLogEntry(data, &log);
         transmitLogEntry(&log);
-        HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
     }
 }
 

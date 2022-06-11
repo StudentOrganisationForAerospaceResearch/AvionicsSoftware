@@ -109,9 +109,7 @@ static const uint8_t START_LOGGING_CMD_BYTE = 0x31;
 static const uint8_t STOP_LOGGING_CMD_BYTE = 0x32;
 static const uint8_t RESET_LOGGING_CMD_BYTE = 0x33;
 
-uint8_t launchSystemsRxState = 0;
-uint8_t launchSystemsRxChar = 0;
-uint8_t launchSystemsRxCmd = 0;
+uint8_t launchSystemsRxBuf[GS_CMD_SZ_B] = { 0 };
 uint8_t launchCmdReceived = 0;
 uint8_t abortCmdReceived = 0;
 uint8_t resetAvionicsCmdReceived = 0;
@@ -131,6 +129,7 @@ GpsData* gpsData;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_SPI1_Init(void);
@@ -139,7 +138,6 @@ static void MX_UART4_Init(void);
 static void MX_CRC_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_UART5_Init(void);
-static void MX_DMA_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_TIM2_Init(void);
 void StartDefaultTask(void const * argument);
@@ -270,7 +268,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
-    HAL_UART_Receive_IT(&huart2, &launchSystemsRxChar, 1);
+    HAL_UART_Receive_IT(&huart2, launchSystemsRxBuf, GS_CMD_SZ_B);
     HAL_UART_Receive_IT(&huart5, &debugRxChar, 1);
   /* USER CODE END RTOS_TIMERS */
 
@@ -990,18 +988,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart->Instance == USART2)
     {
-      if (launchSystemsRxChar == 0xF0 && launchSystemsRxState == 0) {
-
-      } else if (launchSystemsRxChar == 0xF0 && launchSystemsRxState == 0) {
-        launchSystemsRxState = 1;
-      } else if (launchSystemsRxChar == 0x02 && launchSystemsRxState == 1) {
-        launchSystemsRxState = 2;
-      } else if (launchSystemsRxState == 2) {
-        launchSystemsRxCmd = launchSystemsRxChar;
-        launchSystemsRxState = 3;
-      } else if (launchSystemsRxChar == 0xF0 && launchSystemsRxState == 2) {
-        launchSystemsRxState = 4;
-      } else if (launchSystemsRxChar == 0xFF && launchSystemsRxState == 4) {
+      if ((launchSystemsRxBuf[0] == 0xF0) &&
+          (launchSystemsRxBuf[1] == 0x02) &&
+          (launchSystemsRxBuf[3] == 0xF0) &&
+          (launchSystemsRxBuf[4] == 0xFF)) {
+        uint8_t launchSystemsRxChar = launchSystemsRxBuf[2];
         if (launchSystemsRxChar == LAUNCH_CMD_BYTE) {
           if (ARM == getCurrentFlightPhase()) {
             launchCmdReceived++;
@@ -1041,15 +1032,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
           currentSectorAddr = 0;
           currentSectorOffset_B = 0;
         }
-
-        launchSystemsRxCmd = 0;
-        launchSystemsRxChar = 0;
-        launchSystemsRxState = 0;
-      } else {
-        launchSystemsRxCmd = 0;
-        launchSystemsRxChar = 0;
-        launchSystemsRxState = 0;
       }
+      memset(launchSystemsRxBuf, 0, GS_CMD_SZ_B);
+      HAL_UART_Receive_IT(&huart2, launchSystemsRxBuf, GS_CMD_SZ_B);
     }
     else if (huart->Instance == UART4)
     {
