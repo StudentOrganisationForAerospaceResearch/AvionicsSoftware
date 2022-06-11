@@ -12,7 +12,7 @@
 #include <string.h>
 
 
-static const int TRANSMIT_DATA_PERIOD = 1000;
+static const int TRANSMIT_DATA_PERIOD = 200;
 
 static const int8_t IMU_HEADER_BYTE = 0x10;
 static const int8_t BAROMETER_HEADER_BYTE = 0x11;

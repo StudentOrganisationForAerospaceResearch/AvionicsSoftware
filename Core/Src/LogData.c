@@ -28,8 +28,8 @@
 
 
 /* Constants -----------------------------------------------------------------*/
-static const int32_t SLOW_LOG_DATA_PERIOD_ms = 700; // logging period for slow routine
-static const int32_t FAST_LOG_DATA_PERIOD_ms = 200; // logging period for fast routine
+static const int32_t SLOW_LOG_DATA_PERIOD_ms = 1000; // logging period for slow routine
+static const int32_t FAST_LOG_DATA_PERIOD_ms = 20; // logging period for fast routine
 
 /* Variables -----------------------------------------------------------------*/
 uint8_t isOkayToLog = 0;
