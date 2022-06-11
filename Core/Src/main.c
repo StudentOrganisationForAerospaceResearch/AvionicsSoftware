@@ -1018,11 +1018,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         } else if (launchSystemsRxChar == ERASE_FLASH_CMD_BYTE) {
           isOkayToLog = 0;
           isErasing = 1;
-          HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
-          W25qxx_EraseChip();
-          HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
-          isErasing = 0;
-          isOkayToLog = 1;
         } else if (launchSystemsRxChar == START_LOGGING_CMD_BYTE) {
           isOkayToLog = 1;
         } else if (launchSystemsRxChar == STOP_LOGGING_CMD_BYTE) {

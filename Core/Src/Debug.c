@@ -56,14 +56,7 @@ void debugTask(void const* arg) {
     }
 
     if (strcmp(debugMsg, "erase") == 0) {
-      HAL_UART_Transmit(&huart5, "ERASING\n", 8, 1000);
-      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
       isErasing = 1;
-      osDelay(100); // Ensure writing isn't happening TODO: Mutex
-      W25qxx_EraseChip();
-      isErasing = 0;
-      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
-      HAL_UART_Transmit(&huart5, "ERASED\n", 7, 1000);
     } else if (strcmp(debugMsg, "startlog") == 0) {
       isOkayToLog = 1;
     } else if (strcmp(debugMsg, "stoplog") == 0) {
