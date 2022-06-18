@@ -134,39 +134,34 @@ bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAd
     uint32_t internalLogOffset = 0;
     uint32_t numBytesLeftInLog = sizeof(LogEntry);
     while (numBytesLeftInLog > 0) {
-		if (currentSectorOffset_B == w25qxx.SectorSize) {
-			// Current sector is full, move to the next sector
-			currentSectorOffset_B = 0;
-			currentSectorAddr += 1;
-		}
+      if (currentSectorOffset_B >= w25qxx.SectorSize) {
+        // Current sector is full, move to the next sector
+        currentSectorOffset_B %= w25qxx.SectorSize;
+        currentSectorAddr += 1;
+      }
 
-		if (currentSectorAddr >= w25qxx.SectorCount) {
-			// Chip is full, can't log anymore!
-      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, 1);
-			return false;
-		}
+      if (currentSectorAddr >= w25qxx.SectorCount) {
+        // Chip is full, can't log anymore!
+        HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, 1);
+        return false;
+      }
 
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
+      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
 
-		// Write next portion of log into current flash sector,
-		// # free bytes in sector or rest of the log, whichever is lowest.
-		uint32_t numFreeBytesInSector = w25qxx.SectorSize - currentSectorOffset_B;
-		uint32_t numBytesToWrite = min(numFreeBytesInSector, numBytesLeftInLog) ;
-		W25qxx_WriteSector(&logPtr[internalLogOffset], currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
+      // Write next portion of log into current flash sector,
+      // # free bytes in sector or rest of the log, whichever is lowest.
+      uint32_t numFreeBytesInSector = w25qxx.SectorSize - currentSectorOffset_B;
+      uint32_t numBytesToWrite = min(numFreeBytesInSector, numBytesLeftInLog) ;
+      W25qxx_WriteSector(&logPtr[internalLogOffset], currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
 
-		uint8_t* ptr = (uint8_t*)malloc(numBytesToWrite);
-		W25qxx_ReadSector(ptr, currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
-		free(ptr);
+      currentSectorOffset_B += numBytesToWrite;
+      numBytesLeftInLog -= numBytesToWrite;
+      internalLogOffset += numBytesToWrite;
 
-		currentSectorOffset_B += numBytesToWrite;
-		numBytesLeftInLog -= numBytesToWrite;
-		internalLogOffset += numBytesToWrite;
-		logPtr = &logPtr[internalLogOffset];
-
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
-
-		return true;
+      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
     }
+
+    return true;
 }
 
 void logDataTask(void const* arg)
