@@ -2,7 +2,7 @@
 
 #include "main.h"
 
-#define DEBUG_RX_BUFFER_SZ_B 8
+#define DEBUG_RX_BUFFER_SZ_B 16
 
 extern UART_HandleTypeDef huart5;
 extern UART_HandleTypeDef huart1;
