@@ -180,7 +180,6 @@ void logDataTask(void const* arg)
         W25qxx_EraseChip();
         HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
         isErasing = 0;
-        isOkayToLog = 1;
         HAL_UART_Transmit(&huart5, "ERASED\n", 7, 1000);
       }
     	beforeLogTime = osKernelSysTick();
