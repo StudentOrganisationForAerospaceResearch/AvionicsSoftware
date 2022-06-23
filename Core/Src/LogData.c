@@ -32,7 +32,7 @@ static const int32_t SLOW_LOG_DATA_PERIOD_ms = 200; // logging period for slow r
 static const int32_t FAST_LOG_DATA_PERIOD_ms = 20; // logging period for fast routine
 
 /* Variables -----------------------------------------------------------------*/
-uint8_t isOkayToLog = 0;
+uint8_t isOkayToLog;
 uint8_t isErasing = 0;
 uint32_t currentSectorAddr = 0;
 uint32_t currentSectorOffset_B = 0;
@@ -171,6 +171,7 @@ void logDataTask(void const* arg)
     initializeLogEntry(&log);
     char flightStartflag[] = "**flight**";
     uint32_t prevWakeTime, beforeLogTime;
+    isOkayToLog = HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin);
     for (;;)
     {
       if (isErasing) {
