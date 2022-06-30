@@ -56,15 +56,15 @@ void debugTask(void const* arg) {
     }
 
     if (strcmp(debugMsg, "erase") == 0) {
-      isErasing = 1;
+//      isErasing = 1;
     } else if (strcmp(debugMsg, "startlog") == 0) {
-      isOkayToLog = 1;
+//      isOkayToLog = 1;
     } else if (strcmp(debugMsg, "stoplog") == 0) {
       isOkayToLog = 0;
     } else if (strcmp(debugMsg, "resetlog") == 0) {
       isOkayToLog = 0;
-      currentSectorAddr = 0;
-      currentSectorOffset_B = 0;
+//      currentSectorAddr = 0;
+//      currentSectorOffset_B = 0;
     } else {
       switch (debugMsg[0]) {
         case 'p':

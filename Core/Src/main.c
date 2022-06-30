@@ -1019,7 +1019,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
           isOkayToLog = 0;
           isErasing = 1;
         } else if (launchSystemsRxChar == START_LOGGING_CMD_BYTE) {
-          isOkayToLog = 1;
+//          isOkayToLog = 1;
         } else if (launchSystemsRxChar == STOP_LOGGING_CMD_BYTE) {
           isOkayToLog = 0;
         } else if (launchSystemsRxChar == RESET_LOGGING_CMD_BYTE) {

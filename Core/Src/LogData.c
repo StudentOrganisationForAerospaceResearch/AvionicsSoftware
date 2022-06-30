@@ -124,43 +124,43 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
  */
 bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
-    if (!isOkayToLog || isErasing) {
-        return false;
-    }
-
-    updateLogEntry(data, givenLog);
-
-    uint8_t* logPtr = (uint8_t*)(givenLog);
-    uint32_t internalLogOffset = 0;
-    uint32_t numBytesLeftInLog = sizeof(LogEntry);
-    while (numBytesLeftInLog > 0) {
-      if (currentSectorOffset_B >= w25qxx.SectorSize) {
-        // Current sector is full, move to the next sector
-        currentSectorOffset_B %= w25qxx.SectorSize;
-        currentSectorAddr += 1;
-      }
-
-      if (currentSectorAddr >= w25qxx.SectorCount) {
-        // Chip is full, can't log anymore!
-        HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, 1);
-        return false;
-      }
-
-      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
-
-      // Write next portion of log into current flash sector,
-      // # free bytes in sector or rest of the log, whichever is lowest.
-      uint32_t numFreeBytesInSector = w25qxx.SectorSize - currentSectorOffset_B;
-      uint32_t numBytesToWrite = min(numFreeBytesInSector, numBytesLeftInLog) ;
-      W25qxx_WriteSector(&logPtr[internalLogOffset], currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
-
-      currentSectorOffset_B += numBytesToWrite;
-      numBytesLeftInLog -= numBytesToWrite;
-      internalLogOffset += numBytesToWrite;
-
-      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
-    }
-
+//    if (!isOkayToLog || isErasing) {
+//        return false;
+//    }
+//
+//    updateLogEntry(data, givenLog);
+//
+//    uint8_t* logPtr = (uint8_t*)(givenLog);
+//    uint32_t internalLogOffset = 0;
+//    uint32_t numBytesLeftInLog = sizeof(LogEntry);
+//    while (numBytesLeftInLog > 0) {
+//      if (currentSectorOffset_B >= w25qxx.SectorSize) {
+//        // Current sector is full, move to the next sector
+//        currentSectorOffset_B %= w25qxx.SectorSize;
+//        currentSectorAddr += 1;
+//      }
+//
+//      if (currentSectorAddr >= w25qxx.SectorCount) {
+//        // Chip is full, can't log anymore!
+//        HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, 1);
+//        return false;
+//      }
+//
+//      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
+//
+//      // Write next portion of log into current flash sector,
+//      // # free bytes in sector or rest of the log, whichever is lowest.
+//      uint32_t numFreeBytesInSector = w25qxx.SectorSize - currentSectorOffset_B;
+//      uint32_t numBytesToWrite = min(numFreeBytesInSector, numBytesLeftInLog) ;
+//      W25qxx_WriteSector(&logPtr[internalLogOffset], currentSectorAddr, currentSectorOffset_B, numBytesToWrite);
+//
+//      currentSectorOffset_B += numBytesToWrite;
+//      numBytesLeftInLog -= numBytesToWrite;
+//      internalLogOffset += numBytesToWrite;
+//
+//      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
+//    }
+//
     return true;
 }
 
@@ -171,17 +171,17 @@ void logDataTask(void const* arg)
     initializeLogEntry(&log);
     char flightStartflag[] = "**flight**";
     uint32_t prevWakeTime, beforeLogTime;
-    isOkayToLog = HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin);
+    isOkayToLog = 0; // HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin);
     for (;;)
     {
-      if (isErasing) {
-        HAL_UART_Transmit(&huart5, "ERASING\n", 8, 1000);
-        HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
-        W25qxx_EraseChip();
-        HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
-        isErasing = 0;
-        HAL_UART_Transmit(&huart5, "ERASED\n", 7, 1000);
-      }
+//      if (isErasing) {
+//        HAL_UART_Transmit(&huart5, "ERASING\n", 8, 1000);
+//        HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
+//        W25qxx_EraseChip();
+//        HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
+//        isErasing = 0;
+//        HAL_UART_Transmit(&huart5, "ERASED\n", 7, 1000);
+//      }
     	beforeLogTime = osKernelSysTick();
         switch (getCurrentFlightPhase())
         {
