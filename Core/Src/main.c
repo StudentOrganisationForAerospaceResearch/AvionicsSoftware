@@ -282,7 +282,7 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
-    if (HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin) == 0) { // Internal pull-up is enabled, so jump AUX_1 to GND to enable this thread
+    if (1) { // Internal pull-up is enabled, so jump AUX_1 to GND to enable this thread
       osThreadDef(debugThread, debugTask, osPriorityHigh, 1, configMINIMAL_STACK_SIZE);
       debugTaskHandle = osThreadCreate(osThread(debugThread), NULL);
     }
