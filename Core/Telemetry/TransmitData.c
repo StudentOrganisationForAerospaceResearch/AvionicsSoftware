@@ -1,14 +1,14 @@
+#include "TransmitData.h"
+
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
-#include "TransmitData.h"
 #include "Utils.h"
 #include "FlightPhase.h"
-#include "Data.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "Data.h"
 
 
 static const int TRANSMIT_DATA_PERIOD = 1000;

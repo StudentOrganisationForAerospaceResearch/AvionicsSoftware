@@ -7,6 +7,8 @@
 
 
 /* Includes ------------------------------------------------------------------*/
+#include "../Telemetry/Inc/LogData.h"
+
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
@@ -15,10 +17,9 @@
 //#include "tm_stm32_delay.h"
 //#include "tm_stm32_fatfs.h"
 
-#include "LogData.h"
-#include "Data.h"
 #include "FlightPhase.h"
 #include "Utils.h"
+#include "../Telemetry/Inc/Data.h"
 
 /* Macros --------------------------------------------------------------------*/
 //CHECK: was max implemented somewhere else?

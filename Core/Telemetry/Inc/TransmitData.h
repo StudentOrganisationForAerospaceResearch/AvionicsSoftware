@@ -1,5 +1,7 @@
 #pragma once
 
+#include "main.h"
+
 void transmitDataTask(void const* arg);
 
 extern UART_HandleTypeDef huart2;

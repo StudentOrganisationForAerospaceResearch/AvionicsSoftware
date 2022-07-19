@@ -26,20 +26,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "ReadAccelGyroMagnetism.h"
 #include "ReadBarometer.h"
 #include "ReadCombustionChamberPressure.h"
-#include "ReadGps.h"
 #include "ReadOxidizerTankPressure.h"
 #include "MonitorForEmergencyShutoff.h"
 #include "EngineControl.h"
-#include "LogData.h"
-#include "TransmitData.h"
 #include "AbortPhase.h"
-#include "Data.h"
 #include "FlightPhase.h"
 #include "ValveControl.h"
 #include "Debug.h"
+
+#include "Data.h"
+#include "LogData.h"
+#include "ReadAccelGyroMagnetism.h"
+#include "ReadGps.h"
+#include "TransmitData.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -1041,9 +1042,9 @@ void StartDefaultTask(void const * argument)
         // blink 5 times for MAIN_DESCENT phase
         for (int i = -1; i < getCurrentFlightPhase(); i++)
         {
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
+            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_1);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
+            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_0);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
         }
     }

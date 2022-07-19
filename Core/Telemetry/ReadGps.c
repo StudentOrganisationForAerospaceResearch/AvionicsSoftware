@@ -1,14 +1,13 @@
+#include "../Telemetry/Inc/ReadGps.h"
+
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
-#include "ReadGps.h"
-
-#include "Data.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../Telemetry/Inc/Data.h"
 
 static int READ_GPS_PERIOD = 500;
 

@@ -1,10 +1,10 @@
+#include "../Telemetry/Inc/ReadAccelGyroMagnetism.h"
+
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
-#include "ReadAccelGyroMagnetism.h"
-
-#include "Data.h"
+#include "../Telemetry/Inc/Data.h"
 
 static int READ_ACCEL_GYRO_MAGNETISM = 25;
 
