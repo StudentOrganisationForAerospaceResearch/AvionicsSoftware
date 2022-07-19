@@ -20,6 +20,7 @@
 #include "FlightPhase.h"
 #include "Utils.h"
 #include "../Telemetry/Inc/Data.h"
+#include "string.h"
 
 /* Macros --------------------------------------------------------------------*/
 //CHECK: was max implemented somewhere else?
@@ -114,7 +115,7 @@ void writeLogEntryToEEPROM(uint16_t memAddress, LogEntry* givenLog)
     checkEEPROMBlocking();
     //Note: writeToEEPROM expects a uint8_t*
     //if that's not a problem, can we send the LogEntry pointer without casting?
-    writeToEEPROM((char*)givenLog, LOG_ENTRY_SIZE, memAddress);
+    writeToEEPROM((uint8_t*)givenLog, LOG_ENTRY_SIZE, memAddress);
 }
 
 /**

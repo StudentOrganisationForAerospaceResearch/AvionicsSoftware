@@ -41,6 +41,8 @@
 #include "ReadAccelGyroMagnetism.h"
 #include "ReadGps.h"
 #include "TransmitData.h"
+
+#include "SystemDefines.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -184,15 +186,15 @@ int main(void)
 
     // Data primitive structs
     AccelGyroMagnetismData* accelGyroMagnetismData =
-        malloc(sizeof(AccelGyroMagnetismData));
+        (AccelGyroMagnetismData*)malloc(sizeof(AccelGyroMagnetismData));
     BarometerData* barometerData =
-        malloc(sizeof(BarometerData));
+        (BarometerData*)malloc(sizeof(BarometerData));
     CombustionChamberPressureData* combustionChamberPressureData =
-        malloc(sizeof(CombustionChamberPressureData));
+        (CombustionChamberPressureData*)malloc(sizeof(CombustionChamberPressureData));
     gpsData =
-        calloc(1, sizeof(GpsData));
+        (GpsData*)calloc(1, sizeof(GpsData));
     OxidizerTankPressureData* oxidizerTankPressureData =
-        malloc(sizeof(OxidizerTankPressureData));
+        (OxidizerTankPressureData*)malloc(sizeof(OxidizerTankPressureData));
 
     osMutexDef(ACCEL_GYRO_MAGNETISM_DATA_MUTEX);
     accelGyroMagnetismData->mutex_ = osMutexCreate(osMutex(ACCEL_GYRO_MAGNETISM_DATA_MUTEX));
@@ -224,7 +226,7 @@ int main(void)
 
     // Data containers
     AllData* allData =
-        malloc(sizeof(AllData));
+        (AllData*)malloc(sizeof(AllData));
     allData->accelGyroMagnetismData_ = accelGyroMagnetismData;
     allData->barometerData_ = barometerData;
     allData->combustionChamberPressureData_ = combustionChamberPressureData;
@@ -232,7 +234,7 @@ int main(void)
     allData->oxidizerTankPressureData_ = oxidizerTankPressureData;
 
     ParachutesControlData* parachutesControlData =
-        malloc(sizeof(ParachutesControlData));
+        (ParachutesControlData*)malloc(sizeof(ParachutesControlData));
     parachutesControlData->accelGyroMagnetismData_ = accelGyroMagnetismData;
     parachutesControlData->barometerData_ = barometerData;
   /* USER CODE END 2 */
@@ -953,7 +955,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         static char rx_buffer[NMEA_MAX_LENGTH + 1];
         static int rx_index = 0;
         static int gpggaDetected = 0;
-        char message[6] = "$GPGGA";
+        char message[7] = "$GPGGA"; //TODO: Check originally messsage[6]
 
         for (int i = 0; i < NMEA_MAX_LENGTH + 1; i++)
         {
@@ -1042,9 +1044,9 @@ void StartDefaultTask(void const * argument)
         // blink 5 times for MAIN_DESCENT phase
         for (int i = -1; i < getCurrentFlightPhase(); i++)
         {
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_1);
+            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_0);
+            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 0);
             osDelay(FLIGHT_PHASE_BLINK_FREQ);
         }
     }

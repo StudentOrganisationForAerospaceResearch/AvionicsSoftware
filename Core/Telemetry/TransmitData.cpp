@@ -10,6 +10,8 @@
 #include <string.h>
 #include "Data.h"
 
+#include "SystemDefines.h"
+
 
 static const int TRANSMIT_DATA_PERIOD = 1000;
 
@@ -137,7 +139,7 @@ void transmitImuData(AllData* data)
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
     //Dynamic allocate a buffer because variable length arrays are not allowed
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     //Encode the message and send it to ground systems and radio
     encodeMessage(message, IMU_SERIAL_MSG_SIZE, buffer);
 
@@ -181,7 +183,7 @@ void transmitBarometerData(AllData* data)
     }
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     encodeMessage(message, BAROMETER_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
@@ -245,7 +247,7 @@ void transmitGpsData(AllData* data)
     }
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     encodeMessage(message, GPS_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
@@ -285,7 +287,7 @@ void transmitOxidizerTankData(AllData* data)
     }
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)(uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     encodeMessage(message, OXIDIZER_TANK_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
@@ -325,7 +327,7 @@ void transmitCombustionChamberData(AllData* data)
     }
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     encodeMessage(message, COMBUSTION_CHAMBER_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
@@ -356,7 +358,7 @@ void transmitFlightPhaseData(AllData* data)
     }
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     encodeMessage(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
@@ -386,15 +388,15 @@ void transmitInjectionValveStatus()
     }
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     encodeMessage(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
+        HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+    HAL_UART_Transmit(&huart1, buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
@@ -416,15 +418,15 @@ void transmitLowerVentValveStatus()
     }
 
     int bufferLength = encodedMessageLength + FLAGS_AND_CRC_SIZE;
-    uint8_t* buffer = malloc(bufferLength * sizeof(uint8_t));
+    uint8_t* buffer = (uint8_t*)malloc(bufferLength * sizeof(uint8_t));
     encodeMessage(message, ONE_BYTE_SERIAL_MSG_SIZE, buffer);
 
     if ((getCurrentFlightPhase() == PRELAUNCH) || (getCurrentFlightPhase() == ARM) || (getCurrentFlightPhase() == BURN) || (IS_ABORT_PHASE))
     {
-        HAL_UART_Transmit(&huart2, &buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
+        HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), UART_TIMEOUT); // Ground Systems
     }
 
-    HAL_UART_Transmit(&huart1, &buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
+    HAL_UART_Transmit(&huart1, buffer, sizeof(buffer), UART_TIMEOUT);  // Radio
     free(buffer);
 }
 
