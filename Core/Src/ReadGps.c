@@ -18,23 +18,6 @@ void readGpsTask(void const* arg)
     GpsData* data = (GpsData*) arg;
     uint32_t prevWakeTime = osKernelSysTick();
 
-
-    /** Used to program GPS  TODO: separate from reading thread
-   	 * send a UBX ConfigValSet message to set the RAM of the gps receiver
-   	 * key value pair will be CFG-NMEA NMEA protocol configuration
-   	 * the CFG-NMEA config table tells us it's type L (1 byte for the value)
-   	 * */
-   //    char configGpsBuffer[17] = {  0xb5, 0x62,					// header
-   //   								0x06, 0x8a,					// class ID
-   //       							0x0a,						// length
-   //       							0x00, 0x01, 0x00, 0x00,     // payload head: 0 - layer - 0 - 0
-   //   								0x30, 0x21, 0x00, 0x01,		// key
-   //   								0x01, 0xf4,					// U2 value
-   //   								0xe2, 0xfb 					// checksum
-   //       							};
-   //
-   //    HAL_StatusTypeDef configstatus = HAL_UART_Transmit(&huart4, (uint8_t*) &configGpsBuffer, 17, 500);
-
     HAL_UART_Receive_DMA(&huart4, (uint8_t*) &dma_rx_buffer, NMEA_MAX_LENGTH + 1);
 
     for (;;)

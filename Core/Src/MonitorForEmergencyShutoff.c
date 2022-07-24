@@ -45,10 +45,10 @@ void monitorForEmergencyShutoffTask(void const* arg)
                 {
                     newFlightPhase(ABORT_COMMAND_RECEIVED);
                 }
-//                else if (prelaunchCheckStatus == 2)
-//                {
-//                    newFlightPhase(ABORT_COMMUNICATION_ERROR);
-//                }
+                else if (prelaunchCheckStatus == 2)
+                {
+                    newFlightPhase(ABORT_COMMUNICATION_ERROR);
+                }
 
                 break;
 
@@ -89,10 +89,10 @@ int prelaunchChecks()
     }
 
     // If heartbeatTimer reaches 0, no heartbeat was received for HEARTBEAT_TIMEOUT
-//    if (heartbeatTimer <= 0)
-//    {
-//        return 2;
-//    }
+    if (heartbeatTimer <= 0)
+    {
+        return 2;
+    }
 
     return 0;
 }

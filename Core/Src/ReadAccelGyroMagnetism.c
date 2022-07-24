@@ -2,7 +2,6 @@
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
-#include "FlightPhase.h"
 #include "ReadAccelGyroMagnetism.h"
 
 #include "Data.h"
@@ -89,8 +88,6 @@ void readAccelGyroMagnetismTask(void const* arg)
     int16_t gyroX, gyroY, gyroZ;
     int16_t magnetoX, magnetoY, magnetoZ;
 
-    uint8_t num_launching_readings = 0;
-
     for (;;)
     {
         osDelayUntil(&prevWakeTime, READ_ACCEL_GYRO_MAGNETISM);
@@ -136,15 +133,5 @@ void readAccelGyroMagnetismTask(void const* arg)
         // data->magnetoY_ = magnetoY * MAGENTO_SENSITIVITY; // mgauss
         // data->magnetoZ_ = magnetoZ * MAGENTO_SENSITIVITY; // mgauss
         osMutexRelease(data->mutex_);
-
-        if (num_launching_readings < 40 && data->accelY_ >= 3000) {
-          num_launching_readings++;
-        } else if (num_launching_readings > 0 && data->accelY_ < 3000) {
-          num_launching_readings--;
-        }
-
-        if (num_launching_readings >= 30 && (getCurrentFlightPhase() == PRELAUNCH || getCurrentFlightPhase() == ARM)) {
-          newFlightPhase(BURN);
-        }
     }
 }

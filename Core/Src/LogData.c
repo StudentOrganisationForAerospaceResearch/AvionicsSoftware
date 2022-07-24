@@ -120,7 +120,7 @@ void updateLogEntry(AllData* data, LogEntry* givenLog)
  * @param data, pointer to AllData struct sent to updateLogEntry to update the LogEntry struct
  * @param givenLog, pointer to a log initialized at the start of task
  * @param logStartAddress, pointer to the start of memory for flight logging
- * @return True if the log was written, false if the chip is full
+ * @return True if the log was written, false otherwise
  */
 bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAddress)
 {
@@ -129,6 +129,14 @@ bool logEntryOnceRoutine(AllData* data, LogEntry* givenLog, uint16_t* logStartAd
     }
 
     updateLogEntry(data, givenLog);
+
+    /*
+     * Loop over sectors in order to log a contiguous section of data across as many sectors as needed.
+     * For each loop, determine which is smaller: THe bytes free in the current sector, or the number
+     * of bytes in the log left to log. Take this smaller value, and write that many bytes to the current
+     * sector. If you're at the end of the current sector, transfer to the next sector. Repeat until
+     * the entire log is written!
+     */
 
     uint8_t* logPtr = (uint8_t*)(givenLog);
     uint32_t internalLogOffset = 0;
@@ -169,9 +177,8 @@ void logDataTask(void const* arg)
     AllData* data = (AllData*) arg;
     LogEntry log;
     initializeLogEntry(&log);
-    char flightStartflag[] = "**flight**";
     uint32_t prevWakeTime, beforeLogTime;
-    isOkayToLog = HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin);
+    isOkayToLog = HAL_GPIO_ReadPin(AUX_1_GPIO_Port, AUX_1_Pin); // Don't log in debug mode! Otherwise, log.
     for (;;)
     {
       if (isErasing) {
