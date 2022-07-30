@@ -2,81 +2,131 @@
 
 ## Table of Contents
 
-1. [About Us](#about-us)
-    1. [Code Base](#code-base)
-    2. [Boards](#boards)
-2. [Setting Up Development Environment](#setting-up-development)
-    1. [Download Git](#download-git)
-        1. [On Linux](#on-linux)
-        2. [On Windows](#on-windows)
-    2. [IDEs](#development)
-    3. [Documentation](#documentation)
-3. [TODO](#todo)
+1. [About This](#about-us)
+    1. [Timeline](#timeline)
+    2. [Links](#links)
+    3. [IDE support](#ide-support)
+2. [Motivation](#motivation)
+3. [MVP Requirements](#mvp-requirements)
+4. [Design Decisions](#design-decisions)
+    1. [Diagrams](#diagrams)
+        1. [Sensor Poll](#sensor-poll)
+        2. [UART poll](#uart-poll)
+        3. [Class Diagram](#class-diagram)
+        4. [Module & Folder Structure](#module-and-folder-structure)
+5. [Formatting Guidelines](#formatting-guidelines)
+6. [Milestones](#milestones)
 
-# About US
+## About This
 
-This is the code repository for the Student Organisation for Aerospace Research.
+This is the code repository for staging the
+Student Organisation for Aerospace Research (SOAR's) C++ rewrite.
 
-The original code in this repository was moved without history from the 2017-2018 repository. The old repository can be found [here](https://github.com/StudentOrganisationForAerospaceResearch/VanderAvionics).
+The original code in this repository was written in C,
+The old repository can be found [here](https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware).
 
+### Timeline
 
-## Code base
+- [ ] Layout desired requirements
+- [ ] Design and document architecture
+  - [ ] Diagram
+  - [ ] Reference other teams (if possible)
+- [ ] Scope MVP
+  - [ ] Before September 6th (Classes begin)
+- [ ] Build MVP
+  - [ ] PREREQ: Merge A3.3, Clang Format
+  - [ ] Integration test on hardware
+  - [ ] Full SW team approval
+- [ ] Create tasks and documentation to update each code section
+- [ ] Create on-boarding presentation
+  - [ ] What it is
+  - [ ] How it works
+  - [ ] Why decisions were made
+- [ ] Merge MVP into master
 
-The majority of this codebase is written in C, with [additional scripting tools written in python](https://github.com/StudentOrganisationForAerospaceResearch/SoftwareTestingTools).
+1. Design Freeze
+    - [ ] End of August
+2. Design Review
+    - [x] July 30th
+3. Testing Schedule
+    - [ ] Build MVP
+4. Presentation
+    - [ ] Mid September
+5. Competition Data
+    - June 2023
 
-Standard POSIX and standard library features of the C language are not available for embedded devices.
-As a result we use FreeRTOS (Free Real Time Operating System) for handling standard Operating System tasks like threading.
+### Links
 
-## Boards
+1. [Brainstorming Document](https://docs.google.com/document/d/19tSGNcbYLIuioOCkpJu3X-sNt-DKgJVUJyrzreMyuKA/edit)
+2. [Formal Document](https://docs.google.com/document/d/1YyJIRSh0NKUMdpxNTZI0eOd3DQ4soUk3D-bQbSyjYyE/edit?usp=sharing )
 
-We program for multiple boards. The two boards we are currently using are STM32 boards and ESP S3 boards.
+The most relevant information from both documents is distributed in
+this repo.
 
+### IDE support
 
-# Setting Up Development
+By default we are using the [STMCubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#get-software).
 
-The following tools are required for making changes to the repo.
+Use the `_IDE` folder to add support for your IDE.\
+Make sure to update the `.gitignore`.
 
-## Download Git
+## Motivation
 
-Git is our chosen version control system.
-### On Linux
+- Readable
+- Robust
+- Modular
+- Consistent
+- Easier for new members
+- Documented from the start
+- Test Driven Design
 
-#### Debian/Ubuntu
-```bash
-sudo apt-get install git
-```
-#### Fedora 21
-```bash
-sudo yum install git
-```
-#### Fedora 22+
-```bash
-sudo dnf install git
-```
-#### Arch
-```bash
-sudo pacman -S git
-```
+## MVP Requirements
 
-### On Windows
+- [ ] Compile flags/`#ifdef` flag for solid vs hybrid.
+- [ ] Base Task Communication
+- [ ] UART poll and debug logging
+- [ ] Sensor log output over UART5
+- [ ] Queue
+- [ ] Abstractions for important systems
+  - [ ] Class Diagrams
+- [ ] Module
+- [ ] Well documented
+- [ ] Testing Framework
 
-[Download Git](https://git-scm.com/download/win) for Windows.
-Select all the recommended and default options.
+## Design Decisions
 
-## IDEs
+- Tasks are contained and communicate using queues.
+  - Possibly look into a priority queue to handle queues getting too
+      full.
+- Abstract Base Classes for things like `Sensor` or `Task`.
+- Pointer hierarchy
+    1. References
+    2. Smart Pointers
+        - Beware RTOS support
+    3. Pointers
+- Reduce cognitive overhead by documenting your thought process
+  for complicated tasks.
+  - Especially in non-trivial ifs or big loops.
 
-Development requires both the STM32CubeIDE for the STM32 boards and Espressif IDF for ESP boards.
+### Diagrams
 
-* [Download STMCubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#get-software)
-* [Download the Espressif IDF](https://idf.espressif.com/)
-  * Select the S3 model.
+#### Sensor Poll
 
-## Documentation
+#### UART Poll
 
-* [Getting started with STM32 ARM Cortex MCUs](https://deepbluembedded.com/getting-started-with-stm32-arm-cortex-mcus/)
-* [Using FreeRTOS in small embedded systems](https://www.freertos.org/tutorial/index.html)
-* [FreeRTOS documentation](https://www.freertos.org/fr-content-src/uploads/2018/07/161204_Mastering_the_FreeRTOS_Real_Time_Kernel-A_Hands-On_Tutorial_Guide.pdf)
+#### Class Diagram
 
-# TODO
+#### Module and Folder Structure
 
-- [ ] Document this thing
+## Formatting Guidelines
+
+- Functions are lowercase.
+  - Class related functions are uppercase.
+- Infinite Loops are written with `while(1)`
+  as oppose to `for(;;)`.
+
+## Milestones
+
+- [ ] Architecture Design Complete
+- [ ] MVP Complete
+- [ ] Rest of Codebase complete
