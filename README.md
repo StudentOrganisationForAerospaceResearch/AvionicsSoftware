@@ -7,8 +7,15 @@
     2. [Links](#links)
     3. [IDE support](#ide-support)
 2. [Motivation](#motivation)
-3. [Requirements](#requirements)
-4. [Formatting Guidelines](#formatting-guidelines)
+3. [MVP Requirements](#mvp-requirements)
+4. [Design Decisions](#design-decisions)
+    1. [Diagrams](#diagrams)
+        1. [Sensor Poll](#sensor-poll)
+        2. [UART poll](#uart-poll)
+        3. [Class Diagram](#class-diagram)
+        4. [Module & Folder Structure](#module-and-folder-structure)
+5. [Formatting Guidelines](#formatting-guidelines)
+6. [Milestones](#milestones)
 
 ## About This
 
@@ -37,6 +44,17 @@ The old repository can be found [here](https://github.com/StudentOrganisationFor
   - [ ] Why decisions were made
 - [ ] Merge MVP into master
 
+1. Design Freeze
+    - [ ] End of August
+2. Design Review
+    - [x] July 30th
+3. Testing Schedule
+    - [ ] Build MVP
+4. Presentation
+    - [ ] Mid September
+5. Competition Data
+    - June 2023
+
 ### Links
 
 1. [Brainstorming Document](https://docs.google.com/document/d/19tSGNcbYLIuioOCkpJu3X-sNt-DKgJVUJyrzreMyuKA/edit)
@@ -62,13 +80,16 @@ Make sure to update the `.gitignore`.
 - Documented from the start
 - Test Driven Design
 
-## Requirements
+## MVP Requirements
 
 - [ ] Compile flags/`#ifdef` flag for solid vs hybrid.
-- [ ] Debug printing system
+- [ ] Base Task Communication
+- [ ] UART poll and debug logging
 - [ ] Sensor log output over UART5
 - [ ] Queue
 - [ ] Abstractions for important systems
+  - [ ] Class Diagrams
+- [ ] Module
 - [ ] Well documented
 - [ ] Testing Framework
 
@@ -87,9 +108,25 @@ Make sure to update the `.gitignore`.
   for complicated tasks.
   - Especially in non-trivial ifs or big loops.
 
+### Diagrams
+
+#### Sensor Poll
+
+#### UART Poll
+
+#### Class Diagram
+
+#### Module and Folder Structure
+
 ## Formatting Guidelines
 
 - Functions are lowercase.
   - Class related functions are uppercase.
 - Infinite Loops are written with `while(1)`
   as oppose to `for(;;)`.
+
+## Milestones
+
+- [ ] Architecture Design Complete
+- [ ] MVP Complete
+- [ ] Rest of Codebase complete
