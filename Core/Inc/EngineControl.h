@@ -1,5 +1,7 @@
 #pragma once
 
+#include "main.h"
+
 extern UART_HandleTypeDef huart1;
 extern uint8_t launchCmdReceived;
 extern uint8_t systemIsArmed;

@@ -1,21 +1,21 @@
 /**
-  ******************************************************************************
-  * File Name          : Debug.c
-  * Description        : Utilities for debugging the flight board.
-  ******************************************************************************
-*/
+ ******************************************************************************
+ * File Name          : Debug.c
+ * Description        : Utilities for debugging the flight board.
+ ******************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
+#include "Debug.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "LogData.h"
+#include "cmsis_os.h"
+#include "main.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
-#include "cmsis_os.h"
-
-#include "Debug.h"
-#include "LogData.h"
-#include "main.h"
-
-#include <string.h>
-#include <stdlib.h>
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -25,7 +25,7 @@
 static const int DEBUG_TASK_PERIOD = 100;
 
 /* Variables -----------------------------------------------------------------*/
-uint8_t debugMsg[DEBUG_RX_BUFFER_SZ_B + 1]; // Ensure last byte always 0
+uint8_t debugMsg[DEBUG_RX_BUFFER_SZ_B + 1];  // Ensure last byte always 0
 uint8_t debugMsgIdx = 0;
 uint8_t isDebugMsgReady = 0;
 
@@ -68,7 +68,7 @@ void debugTask(void const* arg) {
     } else {
       switch (debugMsg[0]) {
         case 'p':
-          asm volatile ("nop"); // Labels can't point to declarations?
+          asm volatile("nop");  // Labels can't point to declarations?
           uint32_t page_num = str2uint32(&debugMsg[1], DEBUG_RX_BUFFER_SZ_B - 1);
           if (page_num >= w25qxx.PageCount) {
             HAL_UART_Transmit(&huart5, "BAD INDEX\n", 10, 1000);
@@ -84,7 +84,7 @@ void debugTask(void const* arg) {
           break;
 
         case 's':
-          asm volatile ("nop"); // Labels can't point to declarations?
+          asm volatile("nop");  // Labels can't point to declarations?
           uint32_t sector_num = str2uint32(&debugMsg[1], DEBUG_RX_BUFFER_SZ_B - 1);
           if (sector_num >= w25qxx.SectorCount) {
             HAL_UART_Transmit(&huart5, "BAD INDEX\n", 10, 1000);
@@ -100,7 +100,7 @@ void debugTask(void const* arg) {
           break;
 
         case 'b':
-          asm volatile ("nop"); // Labels can't point to declarations?
+          asm volatile("nop");  // Labels can't point to declarations?
           uint32_t block_num = str2uint32(&debugMsg[1], DEBUG_RX_BUFFER_SZ_B - 1);
           if (block_num >= w25qxx.BlockCount) {
             HAL_UART_Transmit(&huart5, "BAD INDEX\n", 10, 1000);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "main.h"
+
 void transmitDataTask(void const* arg);
 
 #define GS_CMD_SZ_B 5
