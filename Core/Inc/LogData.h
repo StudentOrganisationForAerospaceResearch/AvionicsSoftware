@@ -1,8 +1,8 @@
 #pragma once
 
-#include "main.h"
-#include "Data.h"
 #include "../../Drivers/w25qxx/w25qxx.h"
+#include "Data.h"
+#include "main.h"
 
 extern UART_HandleTypeDef huart5;
 extern SPI_HandleTypeDef hspi2;

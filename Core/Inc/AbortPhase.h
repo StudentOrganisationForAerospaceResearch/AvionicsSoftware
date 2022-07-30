@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #define ABORT_VALVE_PULSE_MAX_TIME (8000)
 
 extern uint8_t launchCmdReceived;
