@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\Components\Core\Command.cpp" />
     <ClCompile Include="..\..\Components\Core\Queue.cpp" />
     <ClCompile Include="..\..\Components\Core\Task.cpp" />
+    <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
     <ClCompile Include="..\..\Components\SoarDebug\Debug.cpp" />
     <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp" />
@@ -70,6 +71,8 @@
     <ClInclude Include="..\..\Components\Core\Inc\Command.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Queue.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp" />
+    <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp" />
+    <ClInclude Include="..\..\Components\GPIO.hpp" />
     <ClInclude Include="..\..\Components\main_avionics.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Debug.h" />
@@ -260,7 +263,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\Components\SoarDebug\Inc;$(SolutionDir)\..\..\Components;$(SolutionDir)\..\..\Core\Inc;$(SolutionDir)\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;$(SolutionDir)\..\..\Drivers\CMSIS\Include;$(SolutionDir)\..\..\Components\Core\Inc;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\include;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\Components\SoarDebug\Inc;$(SolutionDir)\..\..\Components;$(SolutionDir)\..\..\Core\Inc;$(SolutionDir)\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;$(SolutionDir)\..\..\Drivers\CMSIS\Include;$(SolutionDir)\..\..\Components\Core\Inc;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\include;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;$(SolutionDir)\..\..\Components\FlightControl\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

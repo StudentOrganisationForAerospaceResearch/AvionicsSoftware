@@ -10,6 +10,8 @@
 
 #include "SystemDefines.hpp"
 #include "main_avionics.hpp"
+
+#include "FlightTask.hpp"
 #include "stm32f4xx_hal_uart.h"
 
 /* Interface Functions ------------------------------------------------------------*/
@@ -18,7 +20,16 @@
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
 */
 void run_main() {
+	// Note the errors, may need to implement newlib
+	// https://stackoverflow.com/questions/19258847/stm32-c-operator-new-coide
+	// Init Tasks
+	//	FlightTask::Inst().InitTask();
+	
+	// Start the Scheduler
     osKernelStart();
+
+	// Should never reach here
+	SOAR_ASSERT(false, "osKernelStart() failed");
 
     while (1)
     {
@@ -46,7 +57,7 @@ void run_StartDefaultTask()
  * @param str Optional message to print if assertion fails. Must be less than 192 characters AFTER formatting
  * @param ... Additional arguments to print if assertion fails, in same format as printf
  */
-void soar_assert_debug(bool condition, uint8_t* file, const uint16_t line, const char* str, ...) {
+void soar_assert_debug(bool condition, const char* file, const uint16_t line, const char* str, ...) {
 	// If assertion succeeds, do nothing
 	if (condition) {
 		return;
@@ -55,29 +66,34 @@ void soar_assert_debug(bool condition, uint8_t* file, const uint16_t line, const
 	// We have an assert fail, we pause everything else and take full control of the system
 	vTaskSuspendAll();
 
-	// Print out the assertion message through the supported interface, we don't have a UART task running, so we directly use HAL
-	uint8_t header_buf[160] = {};
-	int16_t res = snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "-- ASSERTION FAILED --\r\nFile [%s]\r\nLine # [%d]\r\n", file, line);
-	if(res < 0) {
-		// If we failed to generate the header, just format the line number
-		snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "-- ASSERTION FAILED --\r\nFile [PATH_TOO_LONG]\r\nLine # [%d]\r\n", line);
-	}
+	// This doesn't work, we don't have __sbrk inside the ARM env.
+	// Look into newlib, or make our own version of __sbrk / snprintf etc. to parse the VA list
+	// https://nadler.com/embedded/newlibAndFreeRTOS.html
 
-	// Output the header to the debug port
-	HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, header_buf, strlen(reinterpret_cast<char*>(header_buf)), 250);
 
-	// Extract the string into a new buffer, and null terminate it
-	if(str != nullptr) {
-		uint8_t str_buffer[160] = {};
-		va_list argument_list;
-		va_start(argument_list, str);
-		int16_t buflen = vsnprintf(reinterpret_cast<char*>(str_buffer), sizeof(str_buffer) - 1, str, argument_list);
-		va_end(argument_list);
-		if(buflen > 0) {
-			str_buffer[buflen] = '\0';
-			HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, str_buffer, buflen, 250);
-		}
-	}
+	//// Print out the assertion message through the supported interface, we don't have a UART task running, so we directly use HAL
+	//uint8_t header_buf[160] = {};
+	//int16_t res = snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "-- ASSERTION FAILED --\r\nFile [%s]\r\nLine # [%d]\r\n", file, line);
+	//if(res < 0) {
+	//	// If we failed to generate the header, just format the line number
+	//	snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "-- ASSERTION FAILED --\r\nFile [PATH_TOO_LONG]\r\nLine # [%d]\r\n", line);
+	//}
+
+	//// Output the header to the debug port
+	//HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, header_buf, strlen(reinterpret_cast<char*>(header_buf)), 250);
+
+	//// Extract the string into a new buffer, and null terminate it
+	//if(str != nullptr) {
+	//	uint8_t str_buffer[160] = {};
+	//	va_list argument_list;
+	//	va_start(argument_list, str);
+	//	int16_t buflen = vsnprintf(reinterpret_cast<char*>(str_buffer), sizeof(str_buffer) - 1, str, argument_list);
+	//	va_end(argument_list);
+	//	if(buflen > 0) {
+	//		str_buffer[buflen] = '\0';
+	//		HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, str_buffer, buflen, 250);
+	//	}
+	//}
 
 	HAL_NVIC_SystemReset();
 }

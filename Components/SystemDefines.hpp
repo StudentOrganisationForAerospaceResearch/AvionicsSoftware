@@ -28,7 +28,14 @@
 #include "cmsis_os.h"	// CMSIS RTOS definitions
 #include "main_avionics.hpp"  // Main avionics definitions
 
-/* Type Definitions ------------------------------------------------------------------*/
+/* Task Definitions ------------------------------------------------------------------*/
+
+// FLIGHT PHASE
+constexpr uint8_t FLIGHT_TASK_PRIORITY = 2;			// Priority of the flight task
+constexpr uint8_t FLIGHT_TASK_QUEUE_SIZE = 10;		// Size of the flight task queue
+constexpr uint16_t FLIGHT_TASK_STACK_SIZE = 512;	// Size of the flight task stack
+
+constexpr uint16_t FLIGHT_PHASE_DISPLAY_FREQ = 1000;	// Display frequency for flight phase information
 
 /* System Defines ------------------------------------------------------------------*/
 /* - Each define / constexpr must have a comment explaining what it is used for     */
@@ -38,7 +45,7 @@ constexpr uint8_t DEFAULT_QUEUE_SIZE = 10;					// Default size of the queue
 constexpr uint16_t MAX_NUMBER_OF_COMMAND_ALLOCATIONS = 100;	// Let's assume ~128B per allocation, 100 x 128B = 12800B = 12.8KB
 constexpr uint8_t MAX_DEBUG_MESSAGE_LENGTH = 100;			// Max length of a debug message, not including null terminator
 
-constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = &SystemHandles::huart5;	// Default Assert Failed UART Handle
+constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::UART_Debug;	// Default Assert Failed UART Handle
 
 /* System Functions ------------------------------------------------------------------*/
 //- Any system functions with an implementation here should be inline, and inline for a good reason (performance)
@@ -46,7 +53,7 @@ constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = &SystemHandles:
 
 // Assert macro, use this for checking all possible program errors eg. malloc success etc. supports a custom message in printf format
 // Example Usage: SOAR_ASSERT(ptr != 0, "Pointer on loop index %d is null!", index);
-#define SOAR_ASSERT(expr, ...) ((expr) ? (void)0U : soar_assert_debug(false, (uint8_t *)__FILE__, __LINE__, ##__VA_ARGS__))
+#define SOAR_ASSERT(expr, ...) ((expr) ? (void)0U : soar_assert_debug(false, (const char *)__FILE__, __LINE__, ##__VA_ARGS__))
 
 
 

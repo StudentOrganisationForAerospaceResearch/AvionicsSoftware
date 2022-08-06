@@ -38,6 +38,10 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+namespace SystemHandles
+{
+	namespace HAL
+    {
 
 /* USER CODE END PM */
 
@@ -59,7 +63,22 @@ UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
+	}
+}
+ADC_HandleTypeDef& hadc1 = SystemHandles::HAL::hadc1;
+ADC_HandleTypeDef& hadc2 = SystemHandles::HAL::hadc2;
 
+CRC_HandleTypeDef& hcrc = SystemHandles::HAL::hcrc;
+
+I2C_HandleTypeDef& hi2c1 = SystemHandles::HAL::hi2c1;
+
+SPI_HandleTypeDef& hspi1 = SystemHandles::HAL::hspi1;
+SPI_HandleTypeDef& hspi3 = SystemHandles::HAL::hspi3;
+
+UART_HandleTypeDef& huart4 = SystemHandles::HAL::huart4;
+UART_HandleTypeDef& huart5 = SystemHandles::HAL::huart5;
+UART_HandleTypeDef& huart1 = SystemHandles::HAL::huart1;
+UART_HandleTypeDef& huart2 = SystemHandles::HAL::huart2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

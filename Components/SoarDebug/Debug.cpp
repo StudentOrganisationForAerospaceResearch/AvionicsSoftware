@@ -29,7 +29,7 @@ static const int DEBUG_TASK_PERIOD = 100;
 // TODO: Only run thread when appropriate GPIO pin pulled HIGH
 void debugTask(void const* arg) {
     uint32_t prevWakeTime = osKernelSysTick();
-    uint8_t buffer = 0x00;
+    //uint8_t buffer = 0x00;
 
 	while (1) {
 		osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD);

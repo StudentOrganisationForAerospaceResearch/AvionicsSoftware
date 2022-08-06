@@ -40,6 +40,12 @@
     <Filter Include="Source Files\Components\SoarDebug\Inc">
       <UniqueIdentifier>{987b358d-9b93-4180-9409-db43f59fad24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\FlightControl">
+      <UniqueIdentifier>{5fd20c94-3e9e-4366-9f65-d6cb9e67deb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\FlightControl\Inc">
+      <UniqueIdentifier>{521f33f6-956a-4b0f-8751-e7f1d6295574}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvionicsSoftware.cpp">
@@ -179,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp">
       <Filter>Source Files\Components\SoarDebug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -463,6 +472,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.h">
       <Filter>Source Files\Components\SoarDebug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\GPIO.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp">
+      <Filter>Source Files\Components\FlightControl\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
