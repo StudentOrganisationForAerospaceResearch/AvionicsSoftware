@@ -54,4 +54,4 @@ STM32L152-Discovery.elf.launch
 *.launch
 
 # VS2022
-*.vs/*
+.vs/
