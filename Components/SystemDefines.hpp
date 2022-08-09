@@ -55,6 +55,7 @@ constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::
 // Example Usage: SOAR_ASSERT(ptr != 0, "Pointer on loop index %d is null!", index);
 #define SOAR_ASSERT(expr, ...) ((expr) ? (void)0U : soar_assert_debug(false, (const char *)__FILE__, __LINE__, ##__VA_ARGS__))
 
+// Implement SOAR_DEBUG or SOAR_PRINT
 
 
 /**
@@ -71,6 +72,14 @@ inline uint8_t* Malloc(uint32_t size) {
 	
 	SOAR_ASSERT(ret, "Malloc failed");
 	return ret;
+}
+
+inline void Free(void* ptr) {
+#ifdef POSIX_ENVIRONMENT
+	free(ptr);
+#else
+	vPortFree(ptr);
+#endif
 }
 
 /* STM32 HAL C++ Wrappers ------------------------------------------------------------------*/

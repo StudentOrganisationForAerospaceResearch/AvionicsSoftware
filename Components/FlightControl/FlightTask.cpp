@@ -38,6 +38,8 @@ void FlightTask::Run(void * pvParams)
 		// poll the event queue once every cycle.
 
 		// This task below with the display would be a 'Synchronous-Non-Blocking' we want to handle queue events instantly, but keep a fixed delay
+		// Could consider a universal queue that directs and handles commands to specific tasks, and a task that handles the queue events and then calls the
+		// Mappings between X command and P subscribers (tasks that are expecting it).
 
 		GPIO::LED1::On();
 		osDelay(500);

@@ -22,7 +22,7 @@ public:
 	Task(void);
 	Task(uint16_t depth);
 
-	virtual void InitTask();
+	void InitTask();
 
 	Queue* GetEventQueue() const { return qEvtQueue; }
 

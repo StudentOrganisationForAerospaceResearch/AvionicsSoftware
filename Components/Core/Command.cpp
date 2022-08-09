@@ -48,7 +48,7 @@ Command::Command(uint16_t taskCommand)
 //Command::~Command()
 //{
 //    if(bShouldFreeData && data != nullptr) {
-//        delete data;
+//        delete data; - Not this, pvPortFree
 //    }
 //}
 
@@ -98,7 +98,7 @@ bool Command::SetCommandData(uint8_t* dataPtr, uint16_t size, bool bFreeMemory)
 void Command::Reset()
 {
     if(bShouldFreeData && data != nullptr) {
-        delete data;
+        Free(data);
         statAllocationCounter -= 1;
     }
 }

@@ -26,8 +26,6 @@ namespace GPIO
 		void Off() { HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_RESET); }
 		void Toggle() { HAL_GPIO_TogglePin(GPIOx, GPIO_Pin); }
 	}
-
-
 	
 }
 

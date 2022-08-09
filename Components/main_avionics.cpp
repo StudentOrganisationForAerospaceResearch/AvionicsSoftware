@@ -23,7 +23,8 @@ void run_main() {
 	// Note the errors, may need to implement newlib
 	// https://stackoverflow.com/questions/19258847/stm32-c-operator-new-coide
 	// Init Tasks
-	//	FlightTask::Inst().InitTask();
+	FlightTask::Inst().InitTask();
+
 	
 	// Start the Scheduler
     osKernelStart();
