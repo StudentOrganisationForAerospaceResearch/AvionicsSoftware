@@ -189,6 +189,9 @@
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
       <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\Core\Mutex.cpp">
+      <Filter>Source Files\Components\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -478,6 +481,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp">
       <Filter>Source Files\Components\FlightControl\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Core\Inc\Mutex.hpp">
+      <Filter>Source Files\Components\Core\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
