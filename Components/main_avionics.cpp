@@ -10,6 +10,7 @@
 
 #include "SystemDefines.hpp"
 #include "main_avionics.hpp"
+#include "Mutex.hpp"
 
 #include "FlightTask.hpp"
 #include "stm32f4xx_hal_uart.h"
@@ -24,6 +25,7 @@ void run_main() {
 	// https://stackoverflow.com/questions/19258847/stm32-c-operator-new-coide
 	// Init Tasks
 	FlightTask::Inst().InitTask();
+	Mutex mtx;
 
 	
 	// Start the Scheduler
@@ -65,6 +67,7 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
 	}
 
 	// We have an assert fail, we pause everything else and take full control of the system
+	// Be careful! If using this code in for a standard debug function ALL calls to any vsnprint functions MUST have a mutex lock/unlock
 	vTaskSuspendAll();
 
 	// This doesn't work, we don't have __sbrk inside the ARM env.

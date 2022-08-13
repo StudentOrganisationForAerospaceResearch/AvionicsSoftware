@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Components\Core\Command.cpp" />
+    <ClCompile Include="..\..\Components\Core\Mutex.cpp" />
     <ClCompile Include="..\..\Components\Core\Queue.cpp" />
     <ClCompile Include="..\..\Components\Core\Task.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
@@ -69,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Command.hpp" />
+    <ClInclude Include="..\..\Components\Core\Inc\Mutex.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Queue.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp" />
