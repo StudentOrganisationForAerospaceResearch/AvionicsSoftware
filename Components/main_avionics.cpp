@@ -29,6 +29,9 @@ void run_main() {
 
 	
 	// Start the Scheduler
+	// Guidelines:
+	// - Be CAREFUL with race conditions after osKernelStart
+	// - Recommended to not use new and delete after this point
     osKernelStart();
 
 	// Should never reach here
