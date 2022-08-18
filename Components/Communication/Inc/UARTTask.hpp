@@ -4,10 +4,15 @@
  * Description        :
  ******************************************************************************
 */
-#ifndef SOAR_UARTTASK_HPP_
-#define SOAR_UARTTASK_HPP_
+#ifndef SOAR_COMMS_UARTTASK_HPP_
+#define SOAR_COMMS_UARTTASK_HPP_
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
+class UARTTask : Task
+{
+	// Things go here!
+};
 
-#endif	// SOAR_UARTTASK_HPP_
+
+#endif	// SOAR_COMMS_UARTTASK_HPP_
