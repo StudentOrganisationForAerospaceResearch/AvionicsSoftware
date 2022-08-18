@@ -192,6 +192,9 @@
     <ClCompile Include="..\..\Components\Core\Mutex.cpp">
       <Filter>Source Files\Components\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\Core\Timer.cpp">
+      <Filter>Source Files\Components\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -483,6 +486,9 @@
       <Filter>Source Files\Components\FlightControl\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Core\Inc\Mutex.hpp">
+      <Filter>Source Files\Components\Core\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Core\Inc\Timer.hpp">
       <Filter>Source Files\Components\Core\Inc</Filter>
     </ClInclude>
   </ItemGroup>
