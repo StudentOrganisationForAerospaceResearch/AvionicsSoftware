@@ -1,4 +1,6 @@
+<div align="center">
 <img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/185337251-e8da5b86-772f-4e64-9f8b-6669e7fdacce.png" width="400" height="80"/>
+</div>
 
 
 ## Table of Contents
