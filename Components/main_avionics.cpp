@@ -39,7 +39,7 @@ void run_main() {
 
     while (1)
     {
-        osDelay(1);
+        osDelay(100);
     }
 
 }

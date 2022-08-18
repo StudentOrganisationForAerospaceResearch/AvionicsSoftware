@@ -41,6 +41,8 @@ void FlightTask::Run(void * pvParams)
 		// Could consider a universal queue that directs and handles commands to specific tasks, and a task that handles the queue events and then calls the
 		// Mappings between X command and P subscribers (tasks that are expecting it).
 
+		// Since FlightTask is so critical to managing the system, it may make sense to make this a Async task that handles commands as they come in, and have these display commands be routed over to the DisplayTask
+		// or maybe HID (Human Interface Device) task that handles both updating buzzer frequencies and LED states.
 		GPIO::LED1::On();
 		osDelay(500);
 		GPIO::LED1::Off();
