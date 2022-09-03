@@ -17,13 +17,12 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "main_avionics.hpp"
 #include "main.h"
 #include "cmsis_os.h"
-#include "SystemDefines.hpp"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "main_avionics.hpp"
 
 /* USER CODE END Includes */
 
@@ -637,9 +636,9 @@ static void MX_GPIO_Init(void)
                           |MEM_WP_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PC13 PC1 PC6 PC7
-                           PC8 */
+                           PC9 */
   GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_1|GPIO_PIN_6|GPIO_PIN_7
-                          |GPIO_PIN_8;
+                          |GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);

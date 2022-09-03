@@ -10,15 +10,15 @@
 
 void FlightTask::InitTask()
 {
-	//BaseType_t rtValue = 
-	//	xTaskCreate( (TaskFunction_t)FlightTask::Run ,
-	//							(const char *) "FlightTask",
-	//							(uint16_t)FLIGHT_TASK_STACK_SIZE,
-	//							(void *)this,
-	//							(UBaseType_t)FLIGHT_TASK_PRIORITY,
-	//							(TaskHandle_t *)&rtTaskHandle);
+	BaseType_t rtValue =
+		xTaskCreate( (TaskFunction_t)FlightTask::Run ,
+								(const char *) "FlightTask",
+								(uint16_t)FLIGHT_TASK_STACK_SIZE,
+								(void *)this,
+								(UBaseType_t)FLIGHT_TASK_PRIORITY,
+								(TaskHandle_t *)&rtTaskHandle);
 
-	//SOAR_ASSERT(rtValue == pdPASS, "FlightTask::InitTask() - xTaskCreate() failed");
+	SOAR_ASSERT(rtValue == pdPASS, "FlightTask::InitTask() - xTaskCreate() failed");
 }
 
 void FlightTask::Run(void * pvParams)

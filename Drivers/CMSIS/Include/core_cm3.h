@@ -31,6 +31,7 @@
 #ifndef __CORE_CM3_H_GENERIC
 #define __CORE_CM3_H_GENERIC
 
+#include <stdint.h>
 
 #ifdef __cplusplus
  extern "C" {

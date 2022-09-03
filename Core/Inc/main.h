@@ -97,7 +97,7 @@ void Error_Handler(void);
 #define INJECTION_VALVE_GPIO_Port GPIOB
 #define PROPULSION_3_VALVE_Pin GPIO_PIN_11
 #define PROPULSION_3_VALVE_GPIO_Port GPIOB
-#define LED_1_Pin GPIO_PIN_9
+#define LED_1_Pin GPIO_PIN_8
 #define LED_1_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_8
 #define LAUNCH_GPIO_Port GPIOA
