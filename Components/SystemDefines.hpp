@@ -37,6 +37,13 @@ constexpr uint16_t FLIGHT_TASK_STACK_SIZE = 512;	// Size of the flight task stac
 
 constexpr uint16_t FLIGHT_PHASE_DISPLAY_FREQ = 1000;	// Display frequency for flight phase information
 
+// UART TASK
+constexpr uint8_t UART_TASK_PRIORITY = 2;			// Priority of the flight task
+constexpr uint8_t UART_TASK_QUEUE_SIZE = 10;		// Size of the flight task queue
+constexpr uint16_t UART_TASK_STACK_SIZE = 512;	// Size of the flight task stack
+
+
+
 /* System Defines ------------------------------------------------------------------*/
 /* - Each define / constexpr must have a comment explaining what it is used for     */
 /* - Each define / constexpr must be all-caps. Prefer constexpr unless it's a string, or a calculation (eg. mathematical expression being more readable) */

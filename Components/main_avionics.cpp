@@ -11,6 +11,7 @@
 #include "SystemDefines.hpp"
 #include "main_avionics.hpp"
 #include "Mutex.hpp"
+#include "UARTTask.hpp"
 
 #include "FlightTask.hpp"
 #include "stm32f4xx_hal_uart.h"
@@ -25,6 +26,7 @@ void run_main() {
 	// https://stackoverflow.com/questions/19258847/stm32-c-operator-new-coide
 	// Init Tasks
 	FlightTask::Inst().InitTask();
+	UARTTask::Inst().InitTask();
 	Mutex mtx;
 
 	
@@ -39,7 +41,7 @@ void run_main() {
 
     while (1)
     {
-        osDelay(1);
+        osDelay(100);
     }
 
 }

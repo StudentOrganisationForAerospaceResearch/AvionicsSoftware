@@ -46,6 +46,12 @@
     <Filter Include="Source Files\Components\FlightControl\Inc">
       <UniqueIdentifier>{521f33f6-956a-4b0f-8751-e7f1d6295574}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\Communication">
+      <UniqueIdentifier>{2f67f104-8f51-424d-9afd-f4852bb2358e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\Communication\Inc">
+      <UniqueIdentifier>{bb4a71ab-b042-4209-b1c5-5a3760756c6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvionicsSoftware.cpp">
@@ -191,6 +197,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\Core\Mutex.cpp">
       <Filter>Source Files\Components\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Core\Timer.cpp">
+      <Filter>Source Files\Components\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Communication\UARTTask.cpp">
+      <Filter>Source Files\Components\Communication</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -484,6 +496,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\Core\Inc\Mutex.hpp">
       <Filter>Source Files\Components\Core\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Core\Inc\Timer.hpp">
+      <Filter>Source Files\Components\Core\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Communication\Inc\UARTTask.hpp">
+      <Filter>Source Files\Components\Communication\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
