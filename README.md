@@ -19,6 +19,7 @@
         4. [Module & Folder Structure](#module-and-folder-structure)
 5. [Formatting Guidelines](#formatting-guidelines)
 6. [Milestones](#milestones)
+7. [Processes](#processes)
 
 ## About This
 
@@ -133,3 +134,12 @@ Make sure to update the `.gitignore`.
 - [ ] Architecture Design Complete
 - [ ] MVP Complete
 - [ ] Rest of Codebase complete
+
+## Processes
+### Changing .ioc file
+- This should be improved in the future using a rename script, or by modifying CMake file if necessary. There may be a setting in CubeIDE
+- Whenever you change the .ioc file the following must be done
+1. Rename Core/main.cpp to Core/main.c
+2. Generate code from .ioc change
+3. Rename back to Core/main.cpp
+
