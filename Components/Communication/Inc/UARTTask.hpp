@@ -30,9 +30,10 @@ public:
 protected:
 	static void Run(void* pvParams); // Task loop
 
+	void ConfigureUART();
 
 private:
-	UARTTask() : Task(FLIGHT_TASK_QUEUE_SIZE) {}	// Private constructor
+	UARTTask() : Task(UART_TASK_QUEUE_SIZE) {}	// Private constructor
 	UARTTask(const UARTTask&);						// Prevent copy-construction
 	UARTTask& operator=(const UARTTask&);			// Prevent assignment
 

@@ -29,5 +29,4 @@ namespace GPIO
 	
 }
 
-
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_GPIO_H */

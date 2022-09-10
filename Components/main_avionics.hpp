@@ -7,6 +7,7 @@
 */
 #ifndef AVIONICS_INCLUDE_SOAR_MAIN_H
 #define AVIONICS_INCLUDE_SOAR_MAIN_H
+#include "Mutex.hpp"
 #include "stm32f4xx_hal.h"
 
 /* Interface Functions ------------------------------------------------------------------*/
@@ -16,6 +17,12 @@ void run_StartDefaultTask();
 
 /* Global Functions ------------------------------------------------------------------*/
 void soar_assert_debug(bool condition, const char* file, uint16_t line, const char* str = nullptr, ...);
+
+/* Global Variable Interfaces ------------------------------------------------------------------*/
+namespace Global
+{
+	extern Mutex vaListMutex;
+}
 
 
 /* System Handles ------------------------------------------------------------------*/
