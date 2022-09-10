@@ -13,11 +13,15 @@
 
 
 /* Macros ------------------------------------------------------------------*/
-
+enum UART_TASK_COMMANDS {
+	UART_TASK_COMMAND_NONE = 0,
+	UART_TASK_COMMAND_SEND_DEBUG,
+	UART_TASK_COMMAND_MAX
+};
 
 
 /* Class ------------------------------------------------------------------*/
-class UARTTask : Task
+class UARTTask : public Task
 {
 public:
 	static UARTTask& Inst() {

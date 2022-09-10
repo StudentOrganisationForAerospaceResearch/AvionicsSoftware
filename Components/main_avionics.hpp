@@ -16,9 +16,11 @@ void run_main();
 void run_StartDefaultTask();
 
 /* Global Functions ------------------------------------------------------------------*/
+void print(const char* format, ...);
 void soar_assert_debug(bool condition, const char* file, uint16_t line, const char* str = nullptr, ...);
 
 /* Global Variable Interfaces ------------------------------------------------------------------*/
+/* All must be externed from main_avionics.cpp -------------------------------------------------*/
 namespace Global
 {
 	extern Mutex vaListMutex;

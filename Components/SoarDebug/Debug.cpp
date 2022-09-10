@@ -18,7 +18,7 @@
 /* Structs -------------------------------------------------------------------*/
 
 /* Constants -----------------------------------------------------------------*/
-static const int DEBUG_TASK_PERIOD = 100;
+constexpr uint8_t DEBUG_TASK_PERIOD = 100;
 
 /* Variables -----------------------------------------------------------------*/
 
@@ -34,8 +34,6 @@ void debugTask(void const* arg) {
 	while (1) {
 		osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD);
 
-		//HAL_UART_Receive(&huart5, &buffer, 1, 1000);
-
-		// LOGIC
+		//HAL_UART_Receive(&huart5, &buffer, 1, 1000); // This should be in UART Task (UART Task's job is to poll these buffers)
 	}
 }

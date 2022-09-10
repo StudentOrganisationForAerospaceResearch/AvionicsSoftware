@@ -53,6 +53,7 @@ constexpr uint16_t MAX_NUMBER_OF_COMMAND_ALLOCATIONS = 100;	// Let's assume ~128
 constexpr uint8_t MAX_DEBUG_MESSAGE_LENGTH = 100;			// Max length of a debug message, not including null terminator
 constexpr uint8_t DEBUG_TAKE_MAX_TIME_MS = 100;		// Max time in ms to take the debug semaphore
 constexpr uint16_t DEBUG_SEND_MAX_TIME_MS = 500;		// Max time the assert fail is allowed to wait to send header and message to HAL (will take up to 2x this since it sends 2 segments)
+constexpr uint16_t DEBUG_PRINT_MAX_SIZE = 192;			// Max size in bytes of message print buffers
 
 constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::UART_Debug;	// Default Assert Failed UART Handle
 

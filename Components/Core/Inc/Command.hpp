@@ -17,6 +17,7 @@ enum GLOBAL_COMMANDS : uint8_t
 {
 	COMMAND_NONE = 0,		// No command, packet can probably be ignored
 	TASK_SPECIFIC_COMMAND,	// Runs a task specific command when given this object
+	DATA_COMMAND			// Data command, used to send data to a task. Target is stored in taskCommand
 };
 
 /* Class -----------------------------------------------------------------*/
@@ -45,9 +46,12 @@ public:
 
 	// Getters
 	uint16_t GetDataSize() const;
-	const uint8_t* GetDataPointer() const { return data; }
+	uint8_t* GetDataPointer() const { return data; }
 	GLOBAL_COMMANDS GetCommand() const { return command; }
 	uint16_t GetTaskCommand() const { return taskCommand; }
+
+	// Setters
+	void SetTaskCommand(uint16_t taskCommand) { this->taskCommand = taskCommand; }
 
 
 protected:

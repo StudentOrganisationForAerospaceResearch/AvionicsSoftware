@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * File Name          : Main.cpp
+ * File Name          : main_avionics.cpp
  * Description        : This file acts as an interface supporting CubeIDE Codegen
 	while having a clean interface for development.
  ******************************************************************************
@@ -12,6 +12,7 @@
 #include "main_avionics.hpp"
 #include "Mutex.hpp"
 #include "UARTTask.hpp"
+#include "Command.hpp"
 
 #include "FlightTask.hpp"
 #include "stm32f4xx_hal_uart.h"
@@ -58,6 +59,45 @@ void run_StartDefaultTask()
 
 
 /* System Functions ------------------------------------------------------------*/
+
+/**
+* @brief Variadic print function, sends a command packet to the queue
+* @param str String to print with printf style formatting
+* @param ... Additional arguments to print if assertion fails, in same format as printf
+*/
+void print(const char* str, ...)
+{
+	//Try to take the VA list mutex
+	if (Global::vaListMutex.Lock(DEBUG_TAKE_MAX_TIME_MS)) {
+		// If we have a message, and can use VA list, extract the string into a new buffer, and null terminate it
+		uint8_t str_buffer[DEBUG_PRINT_MAX_SIZE] = {};
+		va_list argument_list;
+		va_start(argument_list, str);
+		int16_t buflen = vsnprintf(reinterpret_cast<char*>(str_buffer), sizeof(str_buffer) - 1, str, argument_list);
+		va_end(argument_list);
+		if (buflen > 0) {
+			str_buffer[buflen] = '\0';
+		}
+
+		//Generate a command packet with the data
+		Command cmd(DATA_COMMAND);
+		cmd.SetTaskCommand((uint16_t)UART_TASK_COMMAND_SEND_DEBUG);
+		cmd.AllocateData(buflen);
+		cmd.SetTaskCommand(5); // Set the UART channel to send data on
+		uint8_t* ptr = cmd.GetDataPointer();
+		
+		//Write the string buffer into this buffer
+		memcpy(ptr, str_buffer, buflen);
+		
+		//Send this packet off to the UART Task
+		UARTTask::Inst().GetEventQueue()->Send(cmd);
+	}
+	else
+	{
+		//TODO: Print out that we could not acquire the VA list mutex
+		SOAR_ASSERT(false, "Could not acquire VA_LIST mutex");
+	}
+}
 
 /**
  * @brief Variadic assertion function, wraps assert for multi-platform support and debug builds
