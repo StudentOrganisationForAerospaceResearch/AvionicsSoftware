@@ -71,7 +71,7 @@ this repo.
 
 By default we are using the [STMCubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#get-software).
 
-Use the `_IDE` folder to add support for your IDE.\
+Use the `_IDE` folder to add support for your IDE of choice if needed.\
 Make sure to update the `.gitignore`.
 
 ## Motivation
