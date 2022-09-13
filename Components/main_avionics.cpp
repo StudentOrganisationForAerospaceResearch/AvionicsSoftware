@@ -153,7 +153,7 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
 
 	HAL_NVIC_SystemReset();
 
-	// We should not reach this code, but if we do, we need to resume the scheduler
+	// We should not reach this code, but if we do, we should resume the scheduler
 	xTaskResumeAll();
 }
 

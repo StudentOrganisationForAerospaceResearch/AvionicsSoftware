@@ -18,7 +18,7 @@ void UARTTask::InitTask()
 {
 	// Start the task
 	BaseType_t rtValue =
-		xTaskCreate((TaskFunction_t)UARTTask::Run,
+		xTaskCreate((TaskFunction_t)UARTTask::RunTask,
 			(const char*)"UARTTask",
 			(uint16_t)UART_TASK_STACK_SIZE,
 			(void*)this,
@@ -31,15 +31,35 @@ void UARTTask::InitTask()
 
 }
 
-void UARTTask::Run(void* pvParams)
+void UARTTask::Run(void * pvParams)
 {
 	while(1) {
+		Command cm;
 
-		// Replace this with HAL_UART_Receive or something to check DMA buffers based on interrupt flags etc.
-		osDelay(100);
+		//Wait forever for a command
+		Inst().GetEventQueue()->ReceiveWait(cm);
 
-		// 
+		//Process the command
+		Inst().HandleCommand(cm);
 	}
 }
 
-
+void UARTTask::HandleCommand(Command& cm)
+{
+	switch (cm.GetCommand()) {
+	case DATA_COMMAND: {
+		switch (cm.GetTaskCommand()) {
+		case UART_TASK_COMMAND_SEND_DEBUG:
+			HAL_UART_Transmit(SystemHandles::UART_Debug, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
+			break;
+		default:
+			break;
+		}
+	}
+	case TASK_SPECIFIC_COMMAND: {
+		break;
+	}
+	default:
+		break;
+	}
+}

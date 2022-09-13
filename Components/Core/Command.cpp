@@ -8,6 +8,13 @@
  ******************************************************************************
 */
 
+/* Static Variable Init ------------------------------------------------------------------*/
+uint16_t Command::statAllocationCounter = 0; // Static variable init
+
+
+
+/* Function Implementation ------------------------------------------------------------------*/
+
 /**
  * @brief Default constructor
  * @param None

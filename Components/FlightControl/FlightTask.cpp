@@ -21,6 +21,7 @@ void FlightTask::InitTask()
 	SOAR_ASSERT(rtValue == pdPASS, "FlightTask::InitTask() - xTaskCreate() failed");
 }
 
+//TODO: Need to convert to UARTTask style RunTask and Inst Run() to enable Run() to have direct access to inst variables without constantly calling Inst()
 void FlightTask::Run(void * pvParams)
 {
 	GPIO::LED1::Off();
@@ -47,6 +48,9 @@ void FlightTask::Run(void * pvParams)
 		osDelay(500);
 		GPIO::LED1::Off();
 		osDelay(500);
+
+		//Every cycle, print something out (for testing)
+		SOAR_PRINT("FlightTask::Run() - Running");
 
 
 

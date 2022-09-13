@@ -32,16 +32,17 @@ public:
 	void InitTask();
 
 protected:
-	static void Run(void* pvParams); // Task loop
+	static void RunTask(void* pvParams) { UARTTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+
+	void Run(void* pvParams);	// Main run code
 
 	void ConfigureUART();
+	void HandleCommand(Command& cm);
 
 private:
 	UARTTask() : Task(UART_TASK_QUEUE_SIZE) {}	// Private constructor
 	UARTTask(const UARTTask&);						// Prevent copy-construction
 	UARTTask& operator=(const UARTTask&);			// Prevent assignment
-
-
 };
 
 
