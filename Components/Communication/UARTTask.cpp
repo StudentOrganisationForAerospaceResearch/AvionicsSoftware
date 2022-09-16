@@ -37,10 +37,10 @@ void UARTTask::Run(void * pvParams)
 		Command cm;
 
 		//Wait forever for a command
-		Inst().GetEventQueue()->ReceiveWait(cm);
-
+		qEvtQueue->ReceiveWait(cm);
+		
 		//Process the command
-		Inst().HandleCommand(cm);
+		HandleCommand(cm);
 	}
 }
 
@@ -53,6 +53,7 @@ void UARTTask::HandleCommand(Command& cm)
 			HAL_UART_Transmit(SystemHandles::UART_Debug, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
 			break;
 		default:
+			SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\r\n", cm.GetTaskCommand());
 			break;
 		}
 	}
@@ -60,6 +61,7 @@ void UARTTask::HandleCommand(Command& cm)
 		break;
 	}
 	default:
+		SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\r\n", cm.GetCommand());
 		break;
 	}
 }
