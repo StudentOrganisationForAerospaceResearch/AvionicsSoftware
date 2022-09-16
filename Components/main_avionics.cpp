@@ -31,9 +31,11 @@ void run_main() {
 	FlightTask::Inst().InitTask();
 	UARTTask::Inst().InitTask();
 
-	// Print System Boot Info
+	// Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts, may want to change to use HAL for SOAR_PRINT directly for this reason.. but then tasks are dependant on UART transmit speed which is not ideal
 	SOAR_PRINT("\r\n-- SOAR AVIONICS --\r\n");
 	SOAR_PRINT("System Reset Reason: [TODO]\r\n"); //TODO: If we want a system reset reason we need to save it on flash
+	SOAR_PRINT("Current System Heap Use: %d", xPortGetFreeHeapSize());
+	SOAR_PRINT("Lowest ever Heap size: %d", xPortGetMinimumEverFreeHeapSize());
 
 
 	

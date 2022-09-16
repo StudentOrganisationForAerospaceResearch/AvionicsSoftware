@@ -64,4 +64,7 @@ void UARTTask::HandleCommand(Command& cm)
 		SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\r\n", cm.GetCommand());
 		break;
 	}
+
+	//No matter what we happens, we must reset allocated data
+	cm.Reset();
 }
