@@ -30,7 +30,11 @@ void run_main() {
 	// Init Tasks
 	FlightTask::Inst().InitTask();
 	UARTTask::Inst().InitTask();
-	Mutex mtx;
+
+	// Print System Boot Info
+	SOAR_PRINT("\r\n-- SOAR AVIONICS --\r\n");
+	SOAR_PRINT("System Reset Reason: [TODO]\r\n"); //TODO: If we want a system reset reason we need to save it on flash
+
 
 	
 	// Start the Scheduler
