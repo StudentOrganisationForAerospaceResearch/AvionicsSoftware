@@ -34,7 +34,7 @@ Mutex::~Mutex()
 */
 bool Mutex::Lock(uint32_t timeout_ms)
 {
-	return xSemaphoreTake(rtSemaphoreHandle, timeout_ms) == pdTRUE;
+	return xSemaphoreTake(rtSemaphoreHandle, timeout_ms/portTICK_RATE_MS) == pdTRUE;
 }
 
 

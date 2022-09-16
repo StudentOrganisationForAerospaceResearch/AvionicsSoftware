@@ -9,7 +9,7 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
-class FlightTask : Task
+class FlightTask : public Task
 {
 public:
 	static FlightTask& Inst() {
