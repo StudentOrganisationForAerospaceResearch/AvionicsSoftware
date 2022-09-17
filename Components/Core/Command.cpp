@@ -25,6 +25,7 @@ Command::Command(void)
     taskCommand = 0;
     data = nullptr;
     dataSize = 0;
+    bShouldFreeData = false;
 }
 
 /**
@@ -37,6 +38,7 @@ Command::Command(GLOBAL_COMMANDS command)
     taskCommand = 0;
     data = nullptr;
     dataSize = 0;
+    bShouldFreeData = false;
 }
 
 /**
@@ -50,6 +52,7 @@ Command::Command(uint16_t taskCommand)
     this->taskCommand = taskCommand;
     data = nullptr;
     dataSize = 0;
+    bShouldFreeData = false;
 }
 
 //Command::~Command()

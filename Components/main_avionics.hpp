@@ -20,7 +20,7 @@ void print(const char* format, ...);
 void soar_assert_debug(bool condition, const char* file, uint16_t line, const char* str = nullptr, ...);
 
 /* Global Variable Interfaces ------------------------------------------------------------------*/
-/* All must be externed from main_avionics.cpp -------------------------------------------------*/
+/* All must be extern from main_avionics.cpp -------------------------------------------------*/
 namespace Global
 {
 	extern Mutex vaListMutex;

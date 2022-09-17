@@ -50,7 +50,7 @@ void FlightTask::Run(void * pvParams)
 		osDelay(500);
 
 		//Every cycle, print something out (for testing)
-		SOAR_PRINT("FlightTask::Run() - Running");
+		SOAR_PRINT("FlightTask::Run() - Running\r\n");
 
 
 

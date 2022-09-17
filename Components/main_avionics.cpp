@@ -25,17 +25,21 @@ Mutex Global::vaListMutex;
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
 */
 void run_main() {
+	HAL_UART_Transmit(SystemHandles::UART_Debug, (uint8_t*)"Hello World!\r\n", 15, 10000);
+
 	// Note the errors, may need to implement newlib
 	// https://stackoverflow.com/questions/19258847/stm32-c-operator-new-coide
 	// Init Tasks
 	FlightTask::Inst().InitTask();
 	UARTTask::Inst().InitTask();
 
+
+
 	// Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts, may want to change to use HAL for SOAR_PRINT directly for this reason.. but then tasks are dependant on UART transmit speed which is not ideal
-	SOAR_PRINT("\r\n-- SOAR AVIONICS --\r\n");
-	SOAR_PRINT("System Reset Reason: [TODO]\r\n"); //TODO: If we want a system reset reason we need to save it on flash
-	SOAR_PRINT("Current System Heap Use: %d", xPortGetFreeHeapSize());
-	SOAR_PRINT("Lowest ever Heap size: %d", xPortGetMinimumEverFreeHeapSize());
+//	SOAR_PRINT("\r\n-- SOAR AVIONICS --\r\n");
+//	SOAR_PRINT("System Reset Reason: [TODO]\r\n"); //TODO: If we want a system reset reason we need to save it on flash
+//	SOAR_PRINT("Current System Heap Use: %d", xPortGetFreeHeapSize());
+//	SOAR_PRINT("Lowest ever Heap size: %d", xPortGetMinimumEverFreeHeapSize());
 
 
 	
@@ -85,11 +89,13 @@ void print(const char* str, ...)
 			str_buffer[buflen] = '\0';
 		}
 
+		// Release the VA List Mutex
+		Global::vaListMutex.Unlock();
+
 		//Generate a command packet with the data
 		Command cmd(DATA_COMMAND);
-		cmd.SetTaskCommand((uint16_t)UART_TASK_COMMAND_SEND_DEBUG);
 		cmd.AllocateData(buflen);
-		cmd.SetTaskCommand(5); // Set the UART channel to send data on
+		cmd.SetTaskCommand((uint16_t)UART_TASK_COMMAND_SEND_DEBUG); // Set the UART channel to send data on
 		uint8_t* ptr = cmd.GetDataPointer();
 		
 		//Write the string buffer into this buffer
