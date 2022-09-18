@@ -129,8 +129,8 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
 	// NOTE: Look into newlib, or make our own version of __sbrk / snprintf etc. to parse the VA list
 	// NOTE: https://nadler.com/embedded/newlibAndFreeRTOS.html
 
-	// We have an assert fail, we try to take control of the Debug semaphore, and suspend all other parts of the system
-	if (Global::vaListMutex.Lock(DEBUG_TAKE_MAX_TIME_MS)) {
+	// We have an assert fail, we try to take control of the Debug semaphore, and then suspend all other parts of the system
+	if (str != nullptr && Global::vaListMutex.Lock(DEBUG_TAKE_MAX_TIME_MS)) {
 		// We have the mutex, we can now safely print the message
 		printMessage = true;
 	}
