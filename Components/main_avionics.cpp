@@ -37,7 +37,7 @@ void run_main() {
 	SOAR_PRINT("\n-- SOAR AVIONICS --\n");
 	SOAR_PRINT("System Reset Reason: [TODO]\n"); //TODO: If we want a system reset reason we need to save it on flash
 	SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
-	SOAR_PRINT("Lowest ever Heap size: %d Bytes\n", xPortGetMinimumEverFreeHeapSize());
+	SOAR_PRINT("Lowest Ever Heap Size: %d Bytes\n\n", xPortGetMinimumEverFreeHeapSize());
 	
 	// Start the Scheduler
 	// Guidelines:
