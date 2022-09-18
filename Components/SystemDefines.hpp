@@ -62,6 +62,7 @@ constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::
 //- Otherwise the function may have a better place in main_avionics.cpp
 
 // Assert macro, use this for checking all possible program errors eg. malloc success etc. supports a custom message in printf format
+// This is our version of the stm32f4xx_hal_conf.h 'assert_param' macro with support for optional messages
 // Example Usage: SOAR_ASSERT(ptr != 0, "Pointer on loop index %d is null!", index);
 #define SOAR_ASSERT(expr, ...) ((expr) ? (void)0U : soar_assert_debug(false, (const char *)__FILE__, __LINE__, ##__VA_ARGS__))
 
