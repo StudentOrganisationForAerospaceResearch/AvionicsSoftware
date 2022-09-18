@@ -479,15 +479,6 @@
     <ClInclude Include="..\..\Core\Inc\main.h">
       <Filter>Source Files\Core_CubeIDE\Inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h">
-      <Filter>Source Files\Components\SoarDebug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Debug.h">
-      <Filter>Source Files\Components\SoarDebug</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.h">
-      <Filter>Source Files\Components\SoarDebug</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Components\GPIO.hpp">
       <Filter>Source Files\Components</Filter>
     </ClInclude>
@@ -502,6 +493,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\Communication\Inc\UARTTask.hpp">
       <Filter>Source Files\Components\Communication\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h">
+      <Filter>Source Files\Components\SoarDebug\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarDebug\Inc\Debug.h">
+      <Filter>Source Files\Components\SoarDebug\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.h">
+      <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

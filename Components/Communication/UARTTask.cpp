@@ -7,15 +7,24 @@
  ******************************************************************************
 */
 
+/**
+ * TODO: Currently not used, would be used for DMA buffer configuration or interrupt setup
+ * @brief Configures UART DMA buffers and interrupts
+ * 
+*/
 void UARTTask::ConfigureUART()
 {
-	// UART 5 - Uses Interrupts for now (switch to DMA once SOAR-Protocol is defined)
-
-	
+	// UART 5 - Uses polling for now (switch to DMA or interrupts once SOAR-Protocol is defined)
 }
 
+/**
+ * @brief Initializes UART task with the RTOS scheduler
+*/
 void UARTTask::InitTask()
 {
+	// Make sure the task is not already initialized
+	SOAR_ASSERT(rtTaskHandle == NULL, "Cannot initialize UART task twice");
+	
 	// Start the task
 	BaseType_t rtValue =
 		xTaskCreate((TaskFunction_t)UARTTask::RunTask,
@@ -25,14 +34,20 @@ void UARTTask::InitTask()
 			(UBaseType_t)UART_TASK_PRIORITY,
 			(TaskHandle_t*)&rtTaskHandle);
 
+	//Ensure creation succeded
 	SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
 
 	// Configure UART
-
+	 
 }
 
+/**
+ * @brief Instance Run loop for the UART Task, runs on scheduler start as long as the task is initialized.
+ * @param pvParams RTOS Passed void parameters, contains a pointer to the object instance, should not be used
+*/
 void UARTTask::Run(void * pvParams)
 {
+	//UART Task loop
 	while(1) {
 		Command cm;
 
@@ -44,6 +59,11 @@ void UARTTask::Run(void * pvParams)
 	}
 }
 
+/**
+ * @brief HandleCommand handles any command passed to the UART task primary event queue. Responsible for
+ * 		  handling all commands, even if unsupported. (Unexpected commands must still be reset) 
+ * @param cm Reference to the command object to handle
+*/
 void UARTTask::HandleCommand(Command& cm)
 {
 	switch (cm.GetCommand()) {
@@ -53,7 +73,7 @@ void UARTTask::HandleCommand(Command& cm)
 			HAL_UART_Transmit(SystemHandles::UART_Debug, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
 			break;
 		default:
-			SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\r\n", cm.GetTaskCommand());
+			SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\n", cm.GetTaskCommand());
 			break;
 		}
 	}
@@ -61,7 +81,7 @@ void UARTTask::HandleCommand(Command& cm)
 		break;
 	}
 	default:
-		SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\r\n", cm.GetCommand());
+		SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\n", cm.GetCommand());
 		break;
 	}
 
