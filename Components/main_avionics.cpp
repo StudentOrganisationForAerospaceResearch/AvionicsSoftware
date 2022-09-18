@@ -38,8 +38,6 @@ void run_main() {
 	SOAR_PRINT("System Reset Reason: [TODO]\n"); //TODO: If we want a system reset reason we need to save it on flash
 	SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
 	SOAR_PRINT("Lowest ever Heap size: %d Bytes\n", xPortGetMinimumEverFreeHeapSize());
-
-
 	
 	// Start the Scheduler
 	// Guidelines:
@@ -137,12 +135,13 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
 	
 	vTaskSuspendAll();
 
+	// TODO: Technically snprintf is a va_list function, so we should be careful with this. Should probably have one that doesn't need the va_list mutex.
 	// Print out the assertion header through the supported interface, we don't have a UART task running, so we directly use HAL
 	uint8_t header_buf[160] = {};
-	int16_t res = snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "-- ASSERTION FAILED --\r\nFile [%s]\r\nLine # [%d]\r\n", file, line);
+	int16_t res = snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "\r\n\n-- ASSERTION FAILED --\r\nFile [%s] @ Line # [%d]\r\n", file, line);
 	if(res < 0) {
 		// If we failed to generate the header, just format the line number
-		snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "-- ASSERTION FAILED --\r\nFile [PATH_TOO_LONG]\r\nLine # [%d]\r\n", line);
+		snprintf(reinterpret_cast<char*>(header_buf), 160 - 1, "\r\n\n-- ASSERTION FAILED --\r\nFile [PATH_TOO_LONG] @ Line # [%d]\r\n", line);
 	}
 
 	// Output the header to the debug port
