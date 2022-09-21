@@ -35,6 +35,7 @@ public:
 	Command(void);
 	Command(GLOBAL_COMMANDS command);
 	Command(uint16_t taskCommand);
+	Command(GLOBAL_COMMANDS command, uint16_t taskCommand);
 
 	//~Command();	// We can't handle memory like this, since the object would be 'destroyed' after copying to the RTOS queue
 

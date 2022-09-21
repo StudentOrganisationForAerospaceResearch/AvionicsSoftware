@@ -16,8 +16,7 @@ uint16_t Command::statAllocationCounter = 0; // Static variable init
 /* Function Implementation ------------------------------------------------------------------*/
 
 /**
- * @brief Default constructor
- * @param None
+ * @brief Default constructor for Command
 */
 Command::Command(void)
 {
@@ -43,8 +42,7 @@ Command::Command(GLOBAL_COMMANDS command)
 
 /**
  * @brief Command with taskCommand field
- * @param command 
- * @param taskCommand 
+ * @param taskCommand Task specific command
 */
 Command::Command(uint16_t taskCommand)
 {
@@ -55,6 +53,21 @@ Command::Command(uint16_t taskCommand)
     bShouldFreeData = false;
 }
 
+/**
+ * @brief Constructor with GLOBAL_COMMANDS and taskCommand params
+ * @param command GLOBAL_COMMANDS param to initiate command with
+ * @param taskCommand taskCommand param to initiate command with
+*/
+Command::Command(GLOBAL_COMMANDS command, uint16_t taskCommand)
+{
+    this->command = command;
+    this->taskCommand = taskCommand;
+    data = nullptr;
+    dataSize = 0;
+    bShouldFreeData = false;
+}
+
+// We cannot use a Destructor, it would get destroyed at lifetime end
 //Command::~Command()
 //{
 //    if(bShouldFreeData && data != nullptr) {
