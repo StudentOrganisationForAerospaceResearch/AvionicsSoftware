@@ -14,7 +14,7 @@ void FlightTask::InitTask()
 	SOAR_ASSERT(rtTaskHandle == NULL, "Cannot initialize flight task twice");
 	
 	BaseType_t rtValue =
-		xTaskCreate((TaskFunction_t)FlightTask::Run,
+		xTaskCreate((TaskFunction_t)FlightTask::RunTask,
 			(const char*)"FlightTask",
 			(uint16_t)FLIGHT_TASK_STACK_SIZE,
 			(void*)this,
@@ -24,7 +24,10 @@ void FlightTask::InitTask()
 	SOAR_ASSERT(rtValue == pdPASS, "FlightTask::InitTask() - xTaskCreate() failed");
 }
 
-//TODO: Need to convert to UARTTask style RunTask and Inst Run() to enable Run() to have direct access to inst variables without constantly calling Inst()
+/**
+ * @brief Instance Run loop for the Flight Task, runs on scheduler start as long as the task is initialized.
+ * @param pvParams RTOS Passed void parameters, contains a pointer to the object instance, should not be used
+ */
 void FlightTask::Run(void * pvParams)
 {
 	GPIO::LED1::Off();

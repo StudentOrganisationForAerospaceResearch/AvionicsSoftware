@@ -20,7 +20,9 @@ public:
 	void InitTask();
 
 protected:
-	static void Run(void * pvParams); // Task loop
+	static void RunTask(void* pvParams) { FlightTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+
+	void Run(void * pvParams); // Main run code
 
 
 private:
