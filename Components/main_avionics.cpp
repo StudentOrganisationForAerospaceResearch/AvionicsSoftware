@@ -88,15 +88,12 @@ void print(const char* str, ...)
 		// Release the VA List Mutex
 		Global::vaListMutex.Unlock();
 
-		//Generate a command packet with the data
-		Command cmd(DATA_COMMAND);
-		cmd.AllocateData(buflen);
-		cmd.SetTaskCommand((uint16_t)UART_TASK_COMMAND_SEND_DEBUG); // Set the UART channel to send data on
-		uint8_t* ptr = cmd.GetDataPointer();
+		//Generate a command
+		Command cmd(DATA_COMMAND, (uint16_t)UART_TASK_COMMAND_SEND_DEBUG); // Set the UART channel to send data on
 		
-		//Write the string buffer into this buffer
-		memcpy(ptr, str_buffer, buflen);
-		
+		//Copy data into the command
+		cmd.CopyDataToCommand(str_buffer, buflen);
+			
 		//Send this packet off to the UART Task
 		UARTTask::Inst().GetEventQueue()->Send(cmd);
 	}

@@ -1,6 +1,7 @@
 #include "Command.hpp"
-
 #include "SystemDefines.hpp"
+
+#include <cstring> 	// Support for memcpy
 /**
  ******************************************************************************
  * File Name          : Task.cpp
@@ -98,21 +99,36 @@ bool Command::AllocateData(uint16_t dataSize)
 
 /**
  * @brief Sets the internal command data pointer to the given data pointer and given size
- * @param dataPtr byte pointer to the data
+ * @param existingPtr byte pointer to the data
  * @param size Size of the given data address
  * @param bFreeMemory Whether the command packet should try to free
  * @return TRUE on success, FALSE on failure (mem already allocated)
 */
-bool Command::SetCommandData(uint8_t* dataPtr, uint16_t size, bool bFreeMemory)
+bool Command::SetCommandDataExternal(uint8_t* existingPtr, uint16_t size, bool bFreeMemory)
 {
     // If we don't have anything allocated, set it and return success
     if(this->data == nullptr && !bShouldFreeData) {
-        this->data = dataPtr;
+        this->data = existingPtr;
         this->bShouldFreeData = bFreeMemory;
         this->dataSize = size;
         return true;
     }
     return false;
+}
+
+/**
+ * @brief Copies data from the source array into memory owned by Command and sets the internal data pointer to the new array
+ */
+bool Command::CopyDataToCommand(uint8_t* dataSrc, uint16_t size)
+{
+	// If we successfully allocate, copy the data and return success
+    if(this->AllocateData(size)
+		&& this->data != nullptr) {
+		memcpy(this->data, dataSrc, size);
+		return true;
+	}
+
+	return false;
 }
 
 /**
