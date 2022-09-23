@@ -20,10 +20,11 @@
 
 /* System Wide Includes ------------------------------------------------------------------*/
 #include <cstdint>		// For uint32_t, etc.
+#include <cstdio>		// Standard c printf, vsnprintf, etc.
+#ifdef POSIX_ENVIRONMENT// POSIX -------------------------------------------------
 #include <cassert>		// Standard c assert, not needed except on POSIX
-#include <cstdio>		// Standard c printf, not needed except on POSIX
 #include <cstdlib>		// Standard c malloc, not needed except on POSIX
-
+#endif
 
 #include "cmsis_os.h"	// CMSIS RTOS definitions
 #include "main_avionics.hpp"  // Main avionics definitions
@@ -47,14 +48,20 @@ constexpr uint16_t UART_TASK_STACK_SIZE = 512;	// Size of the flight task stack
 /* System Defines ------------------------------------------------------------------*/
 /* - Each define / constexpr must have a comment explaining what it is used for     */
 /* - Each define / constexpr must be all-caps. Prefer constexpr unless it's a string, or a calculation (eg. mathematical expression being more readable) */
-
+// RTOS
 constexpr uint8_t DEFAULT_QUEUE_SIZE = 10;					// Default size of the queue
 constexpr uint16_t MAX_NUMBER_OF_COMMAND_ALLOCATIONS = 100;	// Let's assume ~128B per allocation, 100 x 128B = 12800B = 12.8KB
 constexpr uint8_t MAX_DEBUG_MESSAGE_LENGTH = 100;			// Max length of a debug message, not including null terminator
+
+// DEBUG
 constexpr uint16_t DEBUG_TAKE_MAX_TIME_MS = 500;		// Max time in ms to take the debug semaphore
-constexpr uint16_t DEBUG_SEND_MAX_TIME_MS = 500;		// Max time the assert fail is allowed to wait to send header and message to HAL (will take up to 2x this since it sends 2 segments)
+constexpr uint16_t DEBUG_SEND_MAX_TIME_MS = 500;		// Max time the assert fail is allowed to wait to send header and message to HAL
 constexpr uint16_t DEBUG_PRINT_MAX_SIZE = 192;			// Max size in bytes of message print buffers
 
+// ASSERT
+constexpr uint16_t ASSERT_BUFFER_MAX_SIZE = 160;		// Max size in bytes of assert buffers (assume x2 as we have two message segments)
+constexpr uint16_t ASSERT_SEND_MAX_TIME_MS = 250;		// Max time the assert fail is allowed to wait to send header and message to HAL (will take up to 2x this since it sends 2 segments)
+constexpr uint16_t ASSERT_TAKE_MAX_TIME_MS = 500;		// Max time in ms to take the assert semaphore
 constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::UART_Debug;	// Default Assert Failed UART Handle
 
 /* System Functions ------------------------------------------------------------------*/
