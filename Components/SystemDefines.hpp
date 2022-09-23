@@ -43,6 +43,11 @@ constexpr uint8_t UART_TASK_PRIORITY = 2;			// Priority of the flight task
 constexpr uint8_t UART_TASK_QUEUE_SIZE = 10;		// Size of the flight task queue
 constexpr uint16_t UART_TASK_STACK_SIZE = 512;	// Size of the flight task stack
 
+// DEBUG TASK
+constexpr uint8_t TASK_DEBUG_PRIORITY = 2;			// Priority of the debug task
+constexpr uint8_t TASK_DEBUG_QUEUE_SIZE = 10;		// Size of the debug task queue
+constexpr uint16_t TASK_DEBUG_STACK_SIZE = 512;		// Size of the debug task stack
+
 
 
 /* System Defines ------------------------------------------------------------------*/

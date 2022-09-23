@@ -27,7 +27,7 @@
     <ClCompile Include="..\..\Components\Core\Timer.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
-    <ClCompile Include="..\..\Components\SoarDebug\Debug.cpp" />
+    <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp" />
     <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp" />
     <ClCompile Include="..\..\Core\Src\freertos.c" />
     <ClCompile Include="..\..\Core\Src\main.cpp" />
@@ -81,7 +81,7 @@
     <ClInclude Include="..\..\Components\GPIO.hpp" />
     <ClInclude Include="..\..\Components\main_avionics.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h" />
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Debug.h" />
+    <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.h" />
     <ClInclude Include="..\..\Components\SystemDefines.hpp" />
     <ClInclude Include="..\..\Core\Inc\FreeRTOSConfig.h" />

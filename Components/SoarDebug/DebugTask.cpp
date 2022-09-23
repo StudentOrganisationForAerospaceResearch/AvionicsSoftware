@@ -6,11 +6,7 @@
 */
 
 /* Includes ------------------------------------------------------------------*/
-#include "Debug.h"
-
-#include "stm32f4xx.h"
-#include "stm32f4xx_hal_conf.h"
-#include "cmsis_os.h"
+#include "DebugTask.hpp"
 
 
 /* Macros --------------------------------------------------------------------*/
@@ -25,9 +21,27 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
 /* Prototypes ----------------------------------------------------------------*/
 
 /* Functions -----------------------------------------------------------------*/
+void DebugTask::InitTask()
+{
+	// Make sure the task is not already initialized
+	SOAR_ASSERT(rtTaskHandle == NULL, "Cannot initialize Debug task twice");
+
+	// Start the task
+	BaseType_t rtValue =
+		xTaskCreate((TaskFunction_t)DebugTask::RunTask,
+			(const char*)"DebugTask",
+			(uint16_t)TASK_DEBUG_STACK_SIZE,
+			(void*)this,
+			(UBaseType_t)TASK_DEBUG_PRIORITY,
+			(TaskHandle_t*)&rtTaskHandle);
+
+	//Ensure creation succeded
+	SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
+}
 
 // TODO: Only run thread when appropriate GPIO pin pulled HIGH
-void debugTask(void const* arg) {
+void DebugTask::Run(void * pvParams)
+{
     uint32_t prevWakeTime = osKernelSysTick();
     //uint8_t buffer = 0x00;
 

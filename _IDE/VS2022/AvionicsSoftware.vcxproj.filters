@@ -186,7 +186,7 @@
     <ClCompile Include="..\..\Core\Src\main.cpp">
       <Filter>Source Files\Core_CubeIDE\Src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\SoarDebug\Debug.cpp">
+    <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp">
       <Filter>Source Files\Components\SoarDebug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp">
@@ -497,7 +497,7 @@
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h">
       <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Debug.h">
+    <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp">
       <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.h">
