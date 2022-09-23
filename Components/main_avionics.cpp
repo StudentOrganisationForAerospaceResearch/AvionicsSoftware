@@ -10,12 +10,15 @@
 
 #include "SystemDefines.hpp"
 #include "main_avionics.hpp"
+#include "stm32f4xx_hal_uart.h"
 #include "Mutex.hpp"
-#include "UARTTask.hpp"
 #include "Command.hpp"
 
+// Tasks
+#include "UARTTask.hpp"
 #include "FlightTask.hpp"
-#include "stm32f4xx_hal_uart.h"
+#include "DebugTask.hpp"
+
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
@@ -28,6 +31,7 @@ void run_main() {
 	// Init Tasks
 	FlightTask::Inst().InitTask();
 	UARTTask::Inst().InitTask();
+	DebugTask::Inst().InitTask();
 
 
 
