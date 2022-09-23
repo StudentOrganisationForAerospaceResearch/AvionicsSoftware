@@ -87,18 +87,18 @@ constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::
  * @param size Size of data to malloc in bytes
  * @return Returns the pointer to the allocated data
 */
-inline uint8_t* Malloc(uint32_t size) {
+inline uint8_t* soar_malloc(uint32_t size) {
 #ifdef POSIX_ENVIRONMENT
 	uint8_t* ret = (uint8_t*)malloc(size);
 #else
 	uint8_t* ret = (uint8_t*)pvPortMalloc(size);
 #endif
 	
-	SOAR_ASSERT(ret, "Malloc failed");
+	SOAR_ASSERT(ret, "soar_malloc failed");
 	return ret;
 }
 
-inline void Free(void* ptr) {
+inline void soar_free(void* ptr) {
 #ifdef POSIX_ENVIRONMENT
 	free(ptr);
 #else
