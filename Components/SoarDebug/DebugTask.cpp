@@ -24,7 +24,7 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
 void DebugTask::InitTask()
 {
 	// Make sure the task is not already initialized
-	SOAR_ASSERT(rtTaskHandle == NULL, "Cannot initialize Debug task twice");
+	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Debug task twice");
 
 	// Start the task
 	BaseType_t rtValue =

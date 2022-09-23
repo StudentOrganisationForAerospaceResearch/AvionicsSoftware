@@ -11,7 +11,7 @@
 void FlightTask::InitTask()
 {
 	// Make sure the task is not already initialized
-	SOAR_ASSERT(rtTaskHandle == NULL, "Cannot initialize flight task twice");
+	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize flight task twice");
 	
 	BaseType_t rtValue =
 		xTaskCreate((TaskFunction_t)FlightTask::RunTask,

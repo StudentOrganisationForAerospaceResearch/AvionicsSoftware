@@ -12,6 +12,7 @@
 Task::Task(void)
 {
 	qEvtQueue = new Queue();
+	rtTaskHandle = nullptr;
 }
 
 /**
@@ -24,4 +25,5 @@ Task::Task(uint16_t depth)
 		qEvtQueue = nullptr;
 	else
 		qEvtQueue = new Queue(depth);
+	rtTaskHandle = nullptr;
 }

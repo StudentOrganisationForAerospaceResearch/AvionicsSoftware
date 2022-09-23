@@ -23,7 +23,7 @@ void UARTTask::ConfigureUART()
 void UARTTask::InitTask()
 {
 	// Make sure the task is not already initialized
-	SOAR_ASSERT(rtTaskHandle == NULL, "Cannot initialize UART task twice");
+	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize UART task twice");
 	
 	// Start the task
 	BaseType_t rtValue =

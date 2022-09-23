@@ -65,7 +65,7 @@ protected:
 	uint16_t dataSize;			// Size of optional data
 
 private:
-	bool bShouldFreeData;		// Should the Command handle freeing the data pointer
+	bool bShouldFreeData;		// Should the Command handle freeing the data pointer (necessary to enable Command object to handle static memory ptrs)
 
 	static uint16_t statAllocationCounter;	// Static allocation counter shared by all command objects
 };
