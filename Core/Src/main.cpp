@@ -66,6 +66,8 @@ osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
 	}
 }
+
+// Handles for codegen init, please give a reference to all handles above (wrapped in global namespace) here
 ADC_HandleTypeDef& hadc1 = SystemHandles::HAL::hadc1;
 ADC_HandleTypeDef& hadc2 = SystemHandles::HAL::hadc2;
 
@@ -80,6 +82,10 @@ UART_HandleTypeDef& huart4 = SystemHandles::HAL::huart4;
 UART_HandleTypeDef& huart5 = SystemHandles::HAL::huart5;
 UART_HandleTypeDef& huart1 = SystemHandles::HAL::huart1;
 UART_HandleTypeDef& huart2 = SystemHandles::HAL::huart2;
+
+DMA_HandleTypeDef& hdma_uart5_rx = SystemHandles::HAL::hdma_uart5_rx;
+DMA_HandleTypeDef& hdma_uart5_tx = SystemHandles::HAL::hdma_uart5_tx;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
