@@ -52,7 +52,7 @@ namespace SystemHandles
 		extern SPI_HandleTypeDef hspi3;      // SPI3 - Barometer MOSI/MISO/CLK
 
 		//CRC Handles
-		extern CRC_HandleTypeDef hcrc;       // CRC -
+		extern CRC_HandleTypeDef hcrc;       // CRC - Hardware CRC System Handle
 	}
 
 	// Aliases
@@ -69,7 +69,7 @@ namespace SystemHandles
 	//constexpr SPI_HandleTypeDef* SPI_Radio = &HAL::hspi1; // TODO: Specify
 	constexpr SPI_HandleTypeDef* SPI_Barometer = &HAL::hspi3;
 
-	//constexpr CRC_HandleTypeDef* CRC_Something = &HAL::hcrc; // TODO: Specify
+	//constexpr CRC_HandleTypeDef* CRC_Handle = &HAL::hcrc; // TODO: Specify
 }
 
 #endif /* AVIONICS_INCLUDE_SOAR_MAIN_H */
