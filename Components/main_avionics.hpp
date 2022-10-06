@@ -45,7 +45,7 @@ namespace SystemHandles
 		extern ADC_HandleTypeDef hadc2;      // ADC2 - Battery
 
 		//I2C Handles
-		extern I2C_HandleTypeDef hi2c1;      // I2C1 -- EEPROM (? - Do we still have an I2C EEPROM)
+		//extern I2C_HandleTypeDef hi2c1;      // I2C1 -- EEPROM (? - Do we still have an I2C EEPROM)
 
 		//SPI Handles
 		extern SPI_HandleTypeDef hspi1;      // SPI1 - 
@@ -63,8 +63,6 @@ namespace SystemHandles
 
 	constexpr ADC_HandleTypeDef* ADC_CombustionChamber = &HAL::hadc1;
 	constexpr ADC_HandleTypeDef* ADC_Battery = &HAL::hadc2;
-
-	constexpr I2C_HandleTypeDef* I2C_EEPROM = &HAL::hi2c1;
 
 	//constexpr SPI_HandleTypeDef* SPI_Radio = &HAL::hspi1; // TODO: Specify
 	constexpr SPI_HandleTypeDef* SPI_Barometer = &HAL::hspi3;
