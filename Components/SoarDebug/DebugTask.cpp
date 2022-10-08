@@ -30,7 +30,7 @@ void DebugTask::InitTask()
 	BaseType_t rtValue =
 		xTaskCreate((TaskFunction_t)DebugTask::RunTask,
 			(const char*)"DebugTask",
-			(uint16_t)TASK_DEBUG_STACK_SIZE,
+			(uint16_t)TASK_DEBUG_STACK_DEPTH_WORDS,
 			(void*)this,
 			(UBaseType_t)TASK_DEBUG_PRIORITY,
 			(TaskHandle_t*)&rtTaskHandle);

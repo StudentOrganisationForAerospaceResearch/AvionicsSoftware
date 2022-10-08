@@ -33,21 +33,21 @@
 /* - Lower priority number means lower priority task ---------------------------------*/
 
 // FLIGHT PHASE
-constexpr uint8_t FLIGHT_TASK_PRIORITY = 2;			// Priority of the flight task
-constexpr uint8_t FLIGHT_TASK_QUEUE_SIZE = 10;		// Size of the flight task queue
-constexpr uint16_t FLIGHT_TASK_STACK_SIZE = 512;	// Size of the flight task stack
+constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 2;			// Priority of the flight task
+constexpr uint8_t FLIGHT_TASK_QUEUE_DEPTH_OBJS = 10;		// Size of the flight task queue
+constexpr uint16_t FLIGHT_TASK_STACK_DEPTH_WORDS = 512;	// Size of the flight task stack
 
 constexpr uint16_t FLIGHT_PHASE_DISPLAY_FREQ = 1000;	// Display frequency for flight phase information
 
 // UART TASK
-constexpr uint8_t UART_TASK_PRIORITY = 2;			// Priority of the flight task
-constexpr uint8_t UART_TASK_QUEUE_SIZE = 10;		// Size of the flight task queue
-constexpr uint16_t UART_TASK_STACK_SIZE = 512;	// Size of the flight task stack
+constexpr uint8_t UART_TASK_RTOS_PRIORITY = 2;			// Priority of the flight task
+constexpr uint8_t UART_TASK_QUEUE_DEPTH_OBJS = 10;		// Size of the flight task queue
+constexpr uint16_t UART_TASK_STACK_DEPTH_WORDS = 512;	// Size of the flight task stack
 
 // DEBUG TASK
 constexpr uint8_t TASK_DEBUG_PRIORITY = 2;			// Priority of the debug task
-constexpr uint8_t TASK_DEBUG_QUEUE_SIZE = 10;		// Size of the debug task queue
-constexpr uint16_t TASK_DEBUG_STACK_SIZE = 512;		// Size of the debug task stack
+constexpr uint8_t TASK_DEBUG_QUEUE_DEPTH_OBJS = 10;		// Size of the debug task queue
+constexpr uint16_t TASK_DEBUG_STACK_DEPTH_WORDS = 512;		// Size of the debug task stack
 
 
 
@@ -81,7 +81,6 @@ constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::
 // SOAR_PRINT macro, acts as an interface to the print function which sends a packet to the UART Task to print data
 #define SOAR_PRINT(str, ...) (print(str, ##__VA_ARGS__))
 
-
 /**
  * @brief Malloc inline function, wraps malloc for multi-platform support, asserts successful allocation
  * @param size Size of data to malloc in bytes
@@ -98,6 +97,10 @@ inline uint8_t* soar_malloc(uint32_t size) {
 	return ret;
 }
 
+/**
+ * @brief Free inline function, wraps free for multi-platform support
+ * @param ptr Pointer to the data to free
+ */
 inline void soar_free(void* ptr) {
 #ifdef COMPUTER_ENVIRONMENT
 	free(ptr);

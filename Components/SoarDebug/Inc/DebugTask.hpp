@@ -34,7 +34,7 @@ protected:
 	void HandleCommand(Command& cm);
 
 private:
-	DebugTask() : Task(TASK_DEBUG_STACK_SIZE) {}	// Private constructor
+	DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS) {}	// Private constructor
 	DebugTask(const DebugTask&);						// Prevent copy-construction
 	DebugTask& operator=(const DebugTask&);			// Prevent assignment
 };

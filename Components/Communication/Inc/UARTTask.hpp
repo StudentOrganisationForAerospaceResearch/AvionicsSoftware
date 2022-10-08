@@ -40,7 +40,7 @@ protected:
 	void HandleCommand(Command& cm);
 
 private:
-	UARTTask() : Task(UART_TASK_QUEUE_SIZE) {}	// Private constructor
+	UARTTask() : Task(UART_TASK_QUEUE_DEPTH_OBJS) {}	// Private constructor
 	UARTTask(const UARTTask&);						// Prevent copy-construction
 	UARTTask& operator=(const UARTTask&);			// Prevent assignment
 };

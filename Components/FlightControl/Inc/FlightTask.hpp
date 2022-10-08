@@ -26,7 +26,7 @@ protected:
 
 
 private:
-	FlightTask() : Task(FLIGHT_TASK_QUEUE_SIZE) {}		// Private constructor
+	FlightTask() : Task(FLIGHT_TASK_QUEUE_DEPTH_OBJS) {}		// Private constructor
 	FlightTask(const FlightTask&);						// Prevent copy-construction
 	FlightTask& operator=(const FlightTask&);			// Prevent assignment
 };

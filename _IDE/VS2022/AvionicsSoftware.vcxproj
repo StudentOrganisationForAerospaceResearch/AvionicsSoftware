@@ -82,7 +82,7 @@
     <ClInclude Include="..\..\Components\main_avionics.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp" />
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.h" />
+    <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.hpp" />
     <ClInclude Include="..\..\Components\SystemDefines.hpp" />
     <ClInclude Include="..\..\Core\Inc\FreeRTOSConfig.h" />
     <ClInclude Include="..\..\Core\Inc\main.h" />

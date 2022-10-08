@@ -8,6 +8,7 @@
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
 
+//TODO: Consider moving all InitTask functions to the bottom of the cpp file, since it shouldn't need to be changed that much
 void FlightTask::InitTask()
 {
 	// Make sure the task is not already initialized
@@ -16,9 +17,9 @@ void FlightTask::InitTask()
 	BaseType_t rtValue =
 		xTaskCreate((TaskFunction_t)FlightTask::RunTask,
 			(const char*)"FlightTask",
-			(uint16_t)FLIGHT_TASK_STACK_SIZE,
+			(uint16_t)FLIGHT_TASK_STACK_DEPTH_WORDS,
 			(void*)this,
-			(UBaseType_t)FLIGHT_TASK_PRIORITY,
+			(UBaseType_t)FLIGHT_TASK_RTOS_PRIORITY,
 			(TaskHandle_t*)&rtTaskHandle);
 
 	SOAR_ASSERT(rtValue == pdPASS, "FlightTask::InitTask() - xTaskCreate() failed");

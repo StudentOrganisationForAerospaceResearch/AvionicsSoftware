@@ -50,11 +50,10 @@ void run_main() {
 	// Should never reach here
 	SOAR_ASSERT(false, "osKernelStart() failed");
 
-    while (1)
-    {
-        osDelay(100);
-    }
-
+	while (1)
+	{
+		osDelay(100);
+	}
 }
 
 /**
@@ -160,6 +159,7 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
 		}
 	}
 	else {
+		//TODO: Should manually print out the assertion header
 		HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, (uint8_t*)"-- ASSERTION FAILED --\r\nCould not acquire vaListMutex\r\n", 55, ASSERT_SEND_MAX_TIME_MS);
 	}
 

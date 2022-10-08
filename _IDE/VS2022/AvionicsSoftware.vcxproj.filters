@@ -189,9 +189,6 @@
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp">
       <Filter>Source Files\Components\SoarDebug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp">
-      <Filter>Source Files\Components\SoarDebug</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
       <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
@@ -203,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\Communication\UARTTask.cpp">
       <Filter>Source Files\Components\Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -500,8 +500,8 @@
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp">
       <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.h">
-      <Filter>Source Files\Components\SoarDebug\Inc</Filter>
+    <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.hpp">
+      <Filter>Source Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

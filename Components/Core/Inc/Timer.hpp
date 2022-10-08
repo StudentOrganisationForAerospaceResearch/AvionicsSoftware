@@ -8,11 +8,12 @@
 #define AVIONICS_INCLUDE_SOAR_CORE_TIMER_H
 /* Includes ------------------------------------------------------------------*/
 #include "cmsis_os.h"
+#include "Utils.hpp"
 
 /* Macros --------------------------------------------------------------------*/
-constexpr uint32_t DEFAULT_TIMER_COMMAND_WAIT_PERIOD = 15 / portTICK_RATE_MS; // Default time to block a task if a command cannot be issued to the timer
+constexpr uint32_t DEFAULT_TIMER_COMMAND_WAIT_PERIOD = MS_TO_TICKS(15); // Default time to block a task if a command cannot be issued to the timer
 
-#define DEFAULT_TIMER_PERIOD (1000 / portTICK_RATE_MS) // 1s
+#define DEFAULT_TIMER_PERIOD (MS_TO_TICKS(1000)) // 1s
 
 /* Class -----------------------------------------------------------------*/
 

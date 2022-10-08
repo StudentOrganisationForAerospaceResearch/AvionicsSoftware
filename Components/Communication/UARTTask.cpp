@@ -29,15 +29,15 @@ void UARTTask::InitTask()
 	BaseType_t rtValue =
 		xTaskCreate((TaskFunction_t)UARTTask::RunTask,
 			(const char*)"UARTTask",
-			(uint16_t)UART_TASK_STACK_SIZE,
+			(uint16_t)UART_TASK_STACK_DEPTH_WORDS,
 			(void*)this,
-			(UBaseType_t)UART_TASK_PRIORITY,
+			(UBaseType_t)UART_TASK_RTOS_PRIORITY,
 			(TaskHandle_t*)&rtTaskHandle);
 
 	//Ensure creation succeded
 	SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
 
-	// Configure UART
+	// Configure DMA
 	 
 }
 
@@ -66,8 +66,10 @@ void UARTTask::Run(void * pvParams)
 */
 void UARTTask::HandleCommand(Command& cm)
 {
+	//Switch for the GLOBAL_COMMAND
 	switch (cm.GetCommand()) {
 	case DATA_COMMAND: {
+		//Switch for task specific command within DATA_COMMAND
 		switch (cm.GetTaskCommand()) {
 		case UART_TASK_COMMAND_SEND_DEBUG:
 			HAL_UART_Transmit(SystemHandles::UART_Debug, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);

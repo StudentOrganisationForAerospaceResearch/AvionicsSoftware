@@ -16,12 +16,13 @@
 #include "cmsis_os.h"
 #include "Command.hpp"
 #include "FreeRTOS.h"
+#include "Utils.hpp"
 
 /* Macros --------------------------------------------------------------------*/
-#define DEFAULT_QUEUE_SEND_WAIT_TICKS (15 / portTICK_RATE_MS)	// We wait a max of 15ms to send to a queue
+#define DEFAULT_QUEUE_SEND_WAIT_TICKS (MS_TO_TICKS(15))	// We wait a max of 15ms to send to a queue
 
 /* Constants -----------------------------------------------------------------*/
-//constexpr uint16_t MAX_TICKS_TO_WAIT_SEND = 1000 / portTICK_RATE_MS;
+//constexpr uint16_t MAX_TICKS_TO_WAIT_SEND = MS_TO_TICKS(1000);
 
 /* Class -----------------------------------------------------------------*/
 
