@@ -2,25 +2,24 @@
 <img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/185337251-e8da5b86-772f-4e64-9f8b-6669e7fdacce.png" width="400" height="80"/>
 </div>
 
-
 ## Table of Contents
-
-1. [About This](#about-us)
-    1. [Timeline](#timeline)
-    2. [Links](#links)
-    3. [IDE support](#ide-support)
-2. [Motivation](#motivation)
-3. [MVP Requirements](#mvp-requirements)
-4. [Design Decisions](#design-decisions)
+1. [About This](#about-this)
+    1. [IDE support](#ide-support)
+    2. [Timeline](#timeline)
+    3. [Links](#links)
+2. [Languages](#languages)
+3. [Motivation](#motivation)
+4. [MVP Requirements](#mvp-requirements)
+5. [Design Decisions](#design-decisions)
     1. [Diagrams](#diagrams)
         1. [Sensor Poll](#sensor-poll)
         2. [UART poll](#uart-poll)
         3. [Class Diagram](#class-diagram)
         4. [Module & Folder Structure](#module-and-folder-structure)
-5. [Formatting Guidelines](#formatting-guidelines)
-6. [Milestones](#milestones)
-7. [Processes](#processes)
-8. [Folder Structure](#folder-structure)
+6. [Formatting Guidelines](#formatting-guidelines)
+7. [Milestones](#milestones)
+8. [Processes](#processes)
+9. [Folder Structure](#folder-structure)
 
 ## About This
 
@@ -28,7 +27,15 @@ This is the code repository for staging the
 Student Organisation for Aerospace Research (SOAR's) C++ rewrite.
 
 The original code in this repository was written in C,
-The old repository can be found [here](https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware).
+The old repository can be found [here](https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware/tree/Andromeda_V3.31_Legacy).
+
+### IDE support
+
+By default we are using the [STMCubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#get-software).
+
+Use the `_IDE` folder to add support for your IDE of choice if needed.\
+Make sure to update the `.gitignore`.
+
 
 ### Timeline
 
@@ -68,12 +75,10 @@ The old repository can be found [here](https://github.com/StudentOrganisationFor
 The most relevant information from both documents is distributed in
 this repo.
 
-### IDE support
-
-By default we are using the [STMCubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#get-software).
-
-Use the `_IDE` folder to add support for your IDE of choice if needed.\
-Make sure to update the `.gitignore`.
+## Languages
+Embedded software is written primarily in C/C++, using [CMSIS](https://www.keil.com/pack/doc/CMSIS/RTOS/html/index.html) with [FreeRTOS](https://www.freertos.org/) as the underlying operating system. </br>
+Scripts and Tools are written in various languages, primarily [Python](https://docs.python.org/3/reference/). </br>
+Diagrams are designed with a variety of software, code based diagrams are written in [PlantUML](https://plantuml.com/), other diagrams are designed in [Diagrams.net](https://app.diagrams.net/)
 
 ## Motivation
 
