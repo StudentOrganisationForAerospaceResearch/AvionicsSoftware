@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\Components\Communication\UARTTask.cpp" />
     <ClCompile Include="..\..\Components\Core\Command.cpp" />
+    <ClCompile Include="..\..\Components\Core\DMAController.cpp" />
     <ClCompile Include="..\..\Components\Core\Mutex.cpp" />
     <ClCompile Include="..\..\Components\Core\Queue.cpp" />
     <ClCompile Include="..\..\Components\Core\Task.cpp" />
@@ -73,6 +74,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\Components\Communication\Inc\UARTTask.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Command.hpp" />
+    <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Mutex.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Queue.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp" />

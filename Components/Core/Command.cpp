@@ -1,13 +1,13 @@
-#include "Command.hpp"
-#include "SystemDefines.hpp"
-
-#include <cstring> 	// Support for memcpy
 /**
  ******************************************************************************
  * File Name          : Task.cpp
  * Description        : Task contains the core component base class for all tasks.
  ******************************************************************************
 */
+#include "Command.hpp"
+#include "SystemDefines.hpp"
+
+#include <cstring> 	// Support for memcpy
 
 /* Static Variable Init ------------------------------------------------------------------*/
 std::atomic<uint16_t> Command::statAllocationCounter; // Static variable init

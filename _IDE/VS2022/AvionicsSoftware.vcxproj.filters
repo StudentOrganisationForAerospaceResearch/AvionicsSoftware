@@ -204,6 +204,9 @@
     <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\Core\DMAController.cpp">
+      <Filter>Source Files\Components\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -502,6 +505,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.hpp">
       <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp">
+      <Filter>Source Files\Components\Core\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
