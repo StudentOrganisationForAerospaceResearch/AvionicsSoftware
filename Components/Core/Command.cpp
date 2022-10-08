@@ -10,7 +10,7 @@
 */
 
 /* Static Variable Init ------------------------------------------------------------------*/
-uint16_t Command::statAllocationCounter = 0; // Static variable init
+std::atomic<uint16_t> Command::statAllocationCounter; // Static variable init
 
 
 

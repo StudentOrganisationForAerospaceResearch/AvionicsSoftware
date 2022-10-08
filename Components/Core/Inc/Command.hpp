@@ -8,6 +8,8 @@
 #ifndef AVIONICS_INCLUDE_SOAR_CORE_COMMAND_H
 #define AVIONICS_INCLUDE_SOAR_CORE_COMMAND_H
 /* Includes ------------------------------------------------------------------*/
+#include <atomic>
+
 #include "cmsis_os.h"
 
 /* Macros --------------------------------------------------------------------*/
@@ -67,7 +69,7 @@ protected:
 private:
 	bool bShouldFreeData;		// Should the Command handle freeing the data pointer (necessary to enable Command object to handle static memory ptrs)
 
-	static uint16_t statAllocationCounter;	// Static allocation counter shared by all command objects
+	static std::atomic<uint16_t> statAllocationCounter;	// Static allocation counter shared by all command objects
 };
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_COMMAND_H */
