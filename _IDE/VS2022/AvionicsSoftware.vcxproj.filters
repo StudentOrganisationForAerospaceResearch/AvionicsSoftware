@@ -201,11 +201,11 @@
     <ClCompile Include="..\..\Components\Communication\UARTTask.cpp">
       <Filter>Source Files\Components\Communication</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\SoarDebug\Utils.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Components\Core\DMAController.cpp">
       <Filter>Source Files\Components\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Utils.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -503,11 +503,11 @@
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp">
       <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Utils.hpp">
-      <Filter>Source Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp">
       <Filter>Source Files\Components\Core\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Utils.hpp">
+      <Filter>Source Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,8 +10,8 @@
 
 // Math macros and conversions
 constexpr double MATH_PI = 3.14159265358979323846;
-#define DEG_TO_RAD(x) ((x) * 0.01745329251994329576923690768489f)	// Degrees to radians (PI/180)
-#define RAD_TO_DEG(x) ((x) * 57.295779513082320876798154814105f)	// Radians to degrees (180/PI)
+#define DEG_TO_RAD(degrees) ((degrees) * 0.01745329251994329576923690768489f)	// Degrees to radians (PI/180)
+#define RAD_TO_DEG(radians) ((radians) * 57.295779513082320876798154814105f)	// Radians to degrees (180/PI)
 
 // Conversion macros (SYSTEM)
 #define TICKS_TO_MS(time_ticks) ((time_ticks) * 1000 / osKernelSysTickFrequency) // System ticks to milliseconds
