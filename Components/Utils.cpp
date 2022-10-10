@@ -11,7 +11,7 @@
 #include "cmsis_os.h"
 
 
-uint16_t averageArray(uint16_t array[], int size)
+uint16_t Utils::averageArray(uint16_t array[], int size)
 {
     uint16_t sum = 0;
 
@@ -27,7 +27,7 @@ uint16_t averageArray(uint16_t array[], int size)
  * @brief converts an int32 to a uint8_t array
  * right shift to put bytes in LSB slots, & with 0x00ff
  */
-void writeInt32ToArray(uint8_t* array, int startIndex, int32_t value)
+void Utils::writeInt32ToArray(uint8_t* array, int startIndex, int32_t value)
 {
     array[startIndex + 0] = (value >> 24) & 0xFF;
     array[startIndex + 1] = (value >> 16) & 0xFF;
@@ -41,7 +41,7 @@ void writeInt32ToArray(uint8_t* array, int startIndex, int32_t value)
  * @param startIndex, where the data field starts in the array
  * @param value, pointer to the data field that should be updated
  */
-void readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* value)
+void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* value)
 {
     uint32_t temp = 0;
     temp += (array[startIndex + 0] << 24); // eeprom reads little or big endian?
