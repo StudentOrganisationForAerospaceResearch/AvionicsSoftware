@@ -93,10 +93,10 @@ void Error_Handler(void);
 #define PMB_CONTROL_GPIO_Port GPIOC
 #define LED_3_Pin GPIO_PIN_7
 #define LED_3_GPIO_Port GPIOC
-#define LED_2_Pin GPIO_PIN_8
-#define LED_2_GPIO_Port GPIOC
-#define LED_1_Pin GPIO_PIN_9
+#define LED_1_Pin GPIO_PIN_8
 #define LED_1_GPIO_Port GPIOC
+#define LED_2_Pin GPIO_PIN_9
+#define LED_2_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_8
 #define LAUNCH_GPIO_Port GPIOA
 #define BUZZER_PWM_Pin GPIO_PIN_15
