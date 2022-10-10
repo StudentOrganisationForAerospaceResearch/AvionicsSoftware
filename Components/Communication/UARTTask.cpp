@@ -1,11 +1,11 @@
-#include "UARTTask.hpp"
-#include "Inc/UARTTask.hpp"
 /**
  ******************************************************************************
  * File Name          : UARTTask.cpp
  * Description        : UART
  ******************************************************************************
 */
+
+#include "UARTTask.hpp"
 
 /**
  * TODO: Currently not used, would be used for DMA buffer configuration or interrupt setup

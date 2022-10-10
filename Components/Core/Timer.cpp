@@ -1,11 +1,11 @@
-#include "SystemDefines.hpp"
-#include "Timer.hpp"
 /**
  ******************************************************************************
  * File Name          : Timer.cpp
  * Description        : FreeRTOS Timer Wrapper
  ******************************************************************************
 */
+#include "SystemDefines.hpp"
+#include "Timer.hpp"
 
 /**
  * @brief Empty callback function, used internally for default polling timers
