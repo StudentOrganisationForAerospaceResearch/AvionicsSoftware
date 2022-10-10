@@ -26,9 +26,9 @@ Timer::Timer()
 /**
  * @brief Changes this timer object's RTOS timer period, returns true on success, returns false on failure (timer command queue full)
  */
-bool Timer::ChangePeriod(const uint32_t period)
+bool Timer::ChangePeriod(const uint32_t period_ms)
 {
-	if (xTimerChangePeriod(rtTimerHandle, period / portTICK_RATE_MS, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE)
+	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE)
 		return true;
 	return false;
 }

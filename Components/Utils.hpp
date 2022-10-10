@@ -1,7 +1,10 @@
 /**
  ******************************************************************************
  * File Name          : Utils.hpp
- * Description        : Utility functions
+ * Description        : Utility functions, accessible system wide.
+ *				Includes functions for converting between data types
+ *				Use specific naming, or namespace to avoid conflicts
+ *				Keep namespace Utils to avoid conflicts with other libraries
  ******************************************************************************
 */
 #ifndef AVIONICS_INCLUDE_SOAR_UTILS_HPP_

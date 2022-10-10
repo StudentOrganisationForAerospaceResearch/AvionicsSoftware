@@ -28,6 +28,7 @@
 
 #include "cmsis_os.h"	// CMSIS RTOS definitions
 #include "main_avionics.hpp"  // Main avionics definitions
+#include "Utils.hpp"	// Utility functions
 
 /* Task Definitions ------------------------------------------------------------------*/
 /* - Lower priority number means lower priority task ---------------------------------*/

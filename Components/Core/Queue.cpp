@@ -54,7 +54,7 @@ bool Queue::Send(Command& command)
 */
 bool Queue::Receive(Command& cm, uint32_t timeout_ms)
 {
-	if(xQueueReceive(rtQueueHandle, &cm, timeout_ms / portTICK_RATE_MS) == pdTRUE) {
+	if(xQueueReceive(rtQueueHandle, &cm, MS_TO_TICKS(timeout_ms)) == pdTRUE) {
 		return true;
 	}
 	return false;
