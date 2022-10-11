@@ -35,7 +35,7 @@ void run_main() {
 
 
 
-	// Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts, may want to change to use HAL for SOAR_PRINT directly for this reason.. but then tasks are dependant on UART transmit speed which is not ideal
+	// Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
 	SOAR_PRINT("\n-- SOAR AVIONICS --\n");
 	SOAR_PRINT("System Reset Reason: [TODO]\n"); //TODO: If we want a system reset reason we need to save it on flash
 	SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());

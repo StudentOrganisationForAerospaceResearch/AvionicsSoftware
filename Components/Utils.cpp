@@ -10,7 +10,12 @@
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
 
-
+/**
+ * @brief Calculates the average from a list of unsigned shorts
+ * @param array: The array of unsigned shorts to average
+ * @param size: The size of the array
+ * @return Returns the average as a uint16_t
+ */
 uint16_t Utils::averageArray(uint16_t array[], int size)
 {
     uint16_t sum = 0;
@@ -26,6 +31,9 @@ uint16_t Utils::averageArray(uint16_t array[], int size)
 /**
  * @brief converts an int32 to a uint8_t array
  * right shift to put bytes in LSB slots, & with 0x00ff
+ * @param array: The array to store the bytes in
+ * @param startIndex: The index to start storing the bytes at
+ * @param value: The int32 to convert
  */
 void Utils::writeInt32ToArray(uint8_t* array, int startIndex, int32_t value)
 {
