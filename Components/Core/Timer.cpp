@@ -12,11 +12,6 @@
 */
 void empty_callback(TimerHandle_t rtTimerHandle) {};
 
-//CurrentState Timer::completed()
-//{
-//	timerState = COMPLETE;
-//}
-
 /**
  * @brief Default constructor makes a timer that can only be polled for state
 */
@@ -25,55 +20,64 @@ Timer::Timer()
 	// We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
 	// The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
 	// The timer is created in the dormant state.
-	assert (rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, empty_callback));
+	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, empty_callback);
+	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
 	timerState = UNINITIALIZED;
 }
+
+
 
 /**
  * @brief Changes this timer object's RTOS timer period, returns true on success, returns false on failure (timer command queue full)
  */
 bool Timer::ChangePeriod(const uint32_t period_ms)
 {
-	if (xTimerChangePeriod(rtTimerHandle, period / portTICK_RATE_MS, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
-		timerState = COUNTING;
-		return true;
-	}
-	return false;
-}
-
-
-bool Timer::StartTimer()
-{
-	if (xTimerStart(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-		timerState = COUNTING;
-		return true;
-	}
-	return false;
-}
-
-bool Timer::StopTimer()
-{
-	if (xTimerStart(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
+		StopTimer();
 		timerState = PAUSED;
 		return true;
 	}
 	return false;
 }
 
-CurrentState Timer::completed(TimerHandle_t xTimer)
+/**
+ * @brief Starts the timer, returns true on success, returns false on failure
+*/
+bool Timer::StartTimer()
 {
-	if ((remainingTime = TICKS_TO_MS(xTimerGetExpiryTime(rtTimerHandle) - xTaskGetTickCount()) == 0)) {
-		return COMPLETE;
+	if ((timerState == COMPLETE) || (timerState == COUNTING)) {
+		return false;
 	}
+	else if (xTimerStart(rtTimerHandle, 0) == pdPASS) {
+		timerState = COUNTING;
+		return true;
+	}
+	return false;
 }
 
-CurrentState Timer::GetState(TimerHandle_t xTimer)
+/**
+ * @brief Stops the timer, returns true on success, returns false on failure
+*/
+bool Timer::StopTimer()
 {
-	if (xTimerIsTimerActive(rtTimerHandle) != pdFALSE)
-		return COUNTING;
-	return (completed(rtTimerHandle));
+	if ((timerState == COMPLETE) || (timerState == UNINITIALIZED) || (timerState == PAUSED)) {
+		return false;
+	}
+	else if (xTimerStop(rtTimerHandle, 0) == pdPASS) {
+		timerState = PAUSED;
+		return true;
+	}
+	return false;
+}
+
+
+CurrentState Timer::GetState()
+{
+	if (xTimerIsTimerActive(rtTimerHandle) != pdFALSE){
+		timerState = COUNTING;
+	}
+	else if ((xTimerIsTimerActive(rtTimerHandle) == pdFALSE) && (timerState == COUNTING)) {
+		timerState = COMPLETE;
+	}
 	return timerState;
 }
-
-
-
