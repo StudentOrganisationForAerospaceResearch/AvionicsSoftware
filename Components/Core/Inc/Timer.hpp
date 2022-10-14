@@ -15,6 +15,13 @@ constexpr uint32_t DEFAULT_TIMER_COMMAND_WAIT_PERIOD = MS_TO_TICKS(15); // Defau
 
 #define DEFAULT_TIMER_PERIOD (MS_TO_TICKS(1000)) // 1s
 
+enum CurrentState
+			{
+				UNINITIALIZED=0,
+				COUNTING,
+				PAUSED,
+				COMPLETE
+			};
 /* Class -----------------------------------------------------------------*/
 
 /**
@@ -28,7 +35,10 @@ public:
 	Timer();
 
 	bool ChangePeriod(const uint32_t period);
-
+	bool StartTimer();
+	bool StopTimer();
+	CurrentState GetState(TimerHandle_t xTimer);
+	CurrentState completed(TimerHandle_t xTimer);
 	// WORK-IN-PROGRESS
 	// NOTES:
 	// - I can think of several timer types
@@ -39,7 +49,11 @@ public:
 
 protected:
 	TimerHandle_t rtTimerHandle;
+	CurrentState timerState;
+	TickType_t remainingTime;
 
 };
+
+
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_COMMAND_H */
