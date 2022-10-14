@@ -33,7 +33,10 @@ void run_main() {
 	UARTTask::Inst().InitTask();
 	DebugTask::Inst().InitTask();
 
-
+	//TODO: TEST CODE
+	//uint8_t buf[100];
+	//uint32_t crcVal = Utils::getCRC32(buf, 100);
+	//SOAR_PRINT("\n** TEST CODE: CRC = %d", crcVal);
 
 	// Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
 	SOAR_PRINT("\n-- SOAR AVIONICS --\n");

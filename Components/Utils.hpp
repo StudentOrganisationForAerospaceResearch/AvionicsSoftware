@@ -23,9 +23,13 @@ constexpr double MATH_PI = 3.14159265358979323846;
 // Utility functions
 namespace Utils
 {
+	// Arrays
 	uint16_t averageArray(uint16_t array[], int size);
 	void writeInt32ToArray(uint8_t* array, int startIndex, int32_t value);
 	void readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* value);
+
+	// CRC
+	uint32_t getCRC32(uint8_t* data, uint32_t size);
 }
 
 

@@ -67,7 +67,7 @@ namespace SystemHandles
 	//constexpr SPI_HandleTypeDef* SPI_Radio = &HAL::hspi1; // TODO: Specify
 	constexpr SPI_HandleTypeDef* SPI_Barometer = &HAL::hspi3;
 
-	//constexpr CRC_HandleTypeDef* CRC_Handle = &HAL::hcrc; // TODO: Specify
+	constexpr CRC_HandleTypeDef* CRC_Handle = &HAL::hcrc;
 }
 
 #endif /* AVIONICS_INCLUDE_SOAR_MAIN_H */

@@ -6,9 +6,13 @@
 */
 #include "Utils.hpp"
 
+#include <cstring>
+
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_conf.h"
 #include "cmsis_os.h"
+#include "main_avionics.hpp"
+#include "SystemDefines.hpp"
 
 /**
  * @brief Calculates the average from a list of unsigned shorts
@@ -57,4 +61,28 @@ void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* va
     temp += (array[startIndex + 2] << 8);
     temp += (array[startIndex + 3]);
     *value = temp;
+}
+
+/**
+ * @brief Generates a CRC32 checksum for a given array of data using CRC Peripheral
+ * @param data The data to generate the checksum for
+ * @param size The size of the data array in uint8_t
+ */
+uint32_t Utils::getCRC32(uint8_t* data, uint32_t size)
+{
+	// Generate a buffer padded to uint32_t
+    uint8_t pad = size % 4;
+    uint32_t buffer[(size + pad) / 4];
+    uint8_t* tempPtr = (uint8_t*)(&buffer[0]);
+
+    // Bytewise copy and pad
+	memcpy(tempPtr, data, size);
+	memset(tempPtr + size, 0, pad);
+
+    // TODO: TEST THIS THING, also note there's a more efficient way (0-copy) that just involves loop accumulating 4x uint8_t's into 1x uint32_t's but this is more readable, ish
+    // TODO: To be fair, G++ is very good at compiling memcpy though, so honestly other than instantaneous stack usage this may actually be more efficient
+	SOAR_PRINT("Warning, HCRC is not tested!\n");
+
+	// Calculate the CRC32
+	return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, size/4);
 }

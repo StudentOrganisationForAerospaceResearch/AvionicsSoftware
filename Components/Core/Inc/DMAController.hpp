@@ -30,6 +30,8 @@ public:
 
 	// Setters
 
+	// Static/Setup
+	static void SetupCallbacks();	// Register the DMA callbacks
 
 protected:
 

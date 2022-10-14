@@ -59,6 +59,8 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_uart4_rx;
+DMA_HandleTypeDef hdma_uart5_rx;
+DMA_HandleTypeDef hdma_uart5_tx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
@@ -84,8 +86,8 @@ TIM_HandleTypeDef& htim2 = SystemHandles::HAL::htim2; //TODO: Add to SystemHandl
 
 DMA_HandleTypeDef& hdma_uart4_rx = SystemHandles::HAL::hdma_uart4_rx; //TODO: Add to SystemHandles::HAL
 
-//DMA_HandleTypeDef& hdma_uart5_rx = SystemHandles::HAL::hdma_uart5_rx;
-//DMA_HandleTypeDef& hdma_uart5_tx = SystemHandles::HAL::hdma_uart5_tx;
+DMA_HandleTypeDef& hdma_uart5_rx = SystemHandles::HAL::hdma_uart5_rx;
+DMA_HandleTypeDef& hdma_uart5_tx = SystemHandles::HAL::hdma_uart5_tx;
 
 /* USER CODE END PV */
 
@@ -606,9 +608,15 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
+  /* DMA1_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
   /* DMA1_Stream2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
+  /* DMA1_Stream7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
 
 }
 
