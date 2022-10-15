@@ -33,6 +33,8 @@ Timer::~Timer()
 {
 	xTimerDelete(rtTimerHandle,(DEFAULT_TIMER_COMMAND_WAIT_PERIOD*2));
 	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer could not be deleted");
+	// Added for testing purposes. WILL BE REMOVED LATER
+	SOAR_PRINT("TIMER HAS BEEN DELETED");
 }
 
 
@@ -186,7 +188,6 @@ uint32_t Timer::GetRemainingTime()
 		return 0;
 	}
 }
-
 
 
 /**
