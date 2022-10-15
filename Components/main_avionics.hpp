@@ -53,6 +53,11 @@ namespace SystemHandles
 
 		//CRC Handles
 		extern CRC_HandleTypeDef hcrc;       // CRC - Hardware CRC System Handle
+
+		//DMA Handles
+		extern DMA_HandleTypeDef hdma_uart4_rx; // DMA UART 4 RX -
+		extern DMA_HandleTypeDef hdma_uart5_rx; // DMA UART 5 RX -
+		extern DMA_HandleTypeDef hdma_uart5_tx; // DMA UART 5 TX -
 	}
 
 	// Aliases
@@ -68,6 +73,9 @@ namespace SystemHandles
 	constexpr SPI_HandleTypeDef* SPI_Barometer = &HAL::hspi3;
 
 	constexpr CRC_HandleTypeDef* CRC_Handle = &HAL::hcrc;
+
+	// DMA Alises
+
 }
 
 #endif /* AVIONICS_INCLUDE_SOAR_MAIN_H */

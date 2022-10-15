@@ -70,8 +70,14 @@ void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* va
  */
 uint32_t Utils::getCRC32(uint8_t* data, uint32_t size)
 {
-	// Generate a buffer padded to uint32_t
-    uint8_t pad = size % 4;
+	// Figure out the number of bytes to pad by
+    uint8_t pad = 0;
+
+	// If the buffer is not a multiple of 4 bytes, then we need to pad the buffer by the remaining bytes
+    if(size % 4 == 0)
+        pad = 4 - (size % 4);
+
+    // Generate a buffer padded to uint32_t
     uint32_t buffer[(size + pad) / 4];
     uint8_t* tempPtr = (uint8_t*)(&buffer[0]);
 
