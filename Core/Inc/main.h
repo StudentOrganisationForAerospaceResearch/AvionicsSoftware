@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -60,8 +59,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define PMB_GPIO_1_Pin GPIO_PIN_14
-#define PMB_GPIO_1_GPIO_Port GPIOC
 #define BATT_SENSE_ADC_Pin GPIO_PIN_0
 #define BATT_SENSE_ADC_GPIO_Port GPIOC
 #define AUX_2_Pin GPIO_PIN_2
@@ -86,32 +83,20 @@ void Error_Handler(void);
 #define IMU_SPI_MOSI_GPIO_Port GPIOA
 #define MAG_CS_Pin GPIO_PIN_4
 #define MAG_CS_GPIO_Port GPIOC
-#define COMBUSTION_CHAMBER_ADC_Pin GPIO_PIN_5
-#define COMBUSTION_CHAMBER_ADC_GPIO_Port GPIOC
-#define OXIDIZER_TANK_ADC_Pin GPIO_PIN_0
-#define OXIDIZER_TANK_ADC_GPIO_Port GPIOB
-#define PROPULSION_3_VALVE_ADC_Pin GPIO_PIN_1
-#define PROPULSION_3_VALVE_ADC_GPIO_Port GPIOB
-#define LOWER_VENT_VALVE_Pin GPIO_PIN_2
-#define LOWER_VENT_VALVE_GPIO_Port GPIOB
-#define INJECTION_VALVE_Pin GPIO_PIN_10
-#define INJECTION_VALVE_GPIO_Port GPIOB
-#define PROPULSION_3_VALVE_Pin GPIO_PIN_11
-#define PROPULSION_3_VALVE_GPIO_Port GPIOB
 #define SPI_FLASH_SCK_Pin GPIO_PIN_13
 #define SPI_FLASH_SCK_GPIO_Port GPIOB
 #define SPI_FLASH_MISO_Pin GPIO_PIN_14
 #define SPI_FLASH_MISO_GPIO_Port GPIOB
 #define SPI_FLASH_MOSI_Pin GPIO_PIN_15
 #define SPI_FLASH_MOSI_GPIO_Port GPIOB
-#define KLB_CONTROL_Pin GPIO_PIN_6
-#define KLB_CONTROL_GPIO_Port GPIOC
+#define PMB_CONTROL_Pin GPIO_PIN_6
+#define PMB_CONTROL_GPIO_Port GPIOC
 #define LED_3_Pin GPIO_PIN_7
 #define LED_3_GPIO_Port GPIOC
-#define LED_2_Pin GPIO_PIN_8
-#define LED_2_GPIO_Port GPIOC
-#define LED_1_Pin GPIO_PIN_9
+#define LED_1_Pin GPIO_PIN_8
 #define LED_1_GPIO_Port GPIOC
+#define LED_2_Pin GPIO_PIN_9
+#define LED_2_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_8
 #define LAUNCH_GPIO_Port GPIOA
 #define BUZZER_PWM_Pin GPIO_PIN_15

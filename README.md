@@ -1,82 +1,156 @@
-# AvionicsSoftware
+<div align="center">
+<img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/185337251-e8da5b86-772f-4e64-9f8b-6669e7fdacce.png" width="400" height="80"/>
+</div>
 
 ## Table of Contents
+1. [About This](#about-this)
+    1. [IDE support](#ide-support)
+    2. [Timeline](#timeline)
+    3. [Links](#links)
+2. [Languages](#languages)
+3. [Motivation](#motivation)
+4. [MVP Requirements](#mvp-requirements)
+5. [Design Decisions](#design-decisions)
+    1. [Diagrams](#diagrams)
+        1. [Sensor Poll](#sensor-poll)
+        2. [UART poll](#uart-poll)
+        3. [Class Diagram](#class-diagram)
+        4. [Module & Folder Structure](#module-and-folder-structure)
+6. [Formatting Guidelines](#formatting-guidelines)
+7. [Milestones](#milestones)
+8. [Processes](#processes)
+9. [Folder Structure](#folder-structure)
 
-1. [About Us](#about-us)
-    1. [Code Base](#code-base)
-    2. [Boards](#boards)
-2. [Setting Up Development Environment](#setting-up-development)
-    1. [Download Git](#download-git)
-        1. [On Linux](#on-linux)
-        2. [On Windows](#on-windows)
-    2. [IDEs](#development)
-    3. [Documentation](#documentation)
-3. [TODO](#todo)
+## About This
 
-# About US
+This is the code repository for staging the
+Student Organisation for Aerospace Research (SOAR's) C++ rewrite.
 
-This is the code repository for the Student Organisation for Aerospace Research.
+The original code in this repository was written in C,
+The old repository can be found [here](https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware/tree/Andromeda_V3.31_Legacy).
 
-The original code in this repository was moved without history from the 2017-2018 repository. The old repository can be found [here](https://github.com/StudentOrganisationForAerospaceResearch/VanderAvionics).
+### IDE support
+
+By default we are using the [STMCubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#get-software).
+
+Use the `_IDE` folder to add support for your IDE of choice if needed.\
+Make sure to update the `.gitignore`.
 
 
-## Code base
+### Timeline
 
-The majority of this codebase is written in C, with [additional scripting tools written in python](https://github.com/StudentOrganisationForAerospaceResearch/SoftwareTestingTools).
+- [ ] Layout desired requirements
+- [ ] Design and document architecture
+  - [ ] Diagram
+  - [ ] Reference other teams (if possible)
+- [ ] Scope MVP
+  - [ ] Before September 6th (Classes begin)
+- [ ] Build MVP
+  - [ ] PREREQ: Merge A3.3, Clang Format
+  - [ ] Integration test on hardware
+  - [ ] Full SW team approval
+- [ ] Create tasks and documentation to update each code section
+- [ ] Create on-boarding presentation
+  - [ ] What it is
+  - [ ] How it works
+  - [ ] Why decisions were made
+- [ ] Merge MVP into master
 
-Standard POSIX and standard library features of the C language are not available for embedded devices.
-As a result we use FreeRTOS (Free Real Time Operating System) for handling standard Operating System tasks like threading.
+1. Design Freeze
+    - [ ] End of August
+2. Design Review
+    - [x] July 30th
+3. Testing Schedule
+    - [ ] Build MVP
+4. Presentation
+    - [ ] Mid September
+5. Competition Data
+    - June 2023
 
-## Boards
+### Links
 
-We program for multiple boards. The two boards we are currently using are STM32 boards and ESP S3 boards.
+1. [Brainstorming Document](https://docs.google.com/document/d/19tSGNcbYLIuioOCkpJu3X-sNt-DKgJVUJyrzreMyuKA/edit)
+2. [Formal Document](https://docs.google.com/document/d/1YyJIRSh0NKUMdpxNTZI0eOd3DQ4soUk3D-bQbSyjYyE/edit?usp=sharing )
+
+The most relevant information from both documents is distributed in
+this repo.
+
+## Languages
+Embedded software is written primarily in C/C++, using [CMSIS](https://www.keil.com/pack/doc/CMSIS/RTOS/html/index.html) with [FreeRTOS](https://www.freertos.org/) as the underlying operating system. </br>
+Scripts and Tools are written in various languages, primarily [Python](https://docs.python.org/3/reference/). </br>
+Diagrams are designed with a variety of software, code based diagrams are written in [PlantUML](https://plantuml.com/), other diagrams are designed in [Diagrams.net](https://app.diagrams.net/)
+
+## Motivation
+
+- Readable
+- Robust
+- Modular
+- Consistent
+- Easier for new members
+- Documented from the start
+- Test Driven Design
+
+## MVP Requirements
+
+- [ ] Compile flags/`#ifdef` flag for solid vs hybrid.
+- [ ] Base Task Communication
+- [ ] UART poll and debug logging
+- [ ] Sensor log output over UART5
+- [ ] Queue
+- [ ] Abstractions for important systems
+  - [ ] Class Diagrams
+- [ ] Module
+- [ ] Well documented
+- [ ] Testing Framework
+
+## Design Decisions
+
+- Tasks are contained and communicate using queues.
+  - Possibly look into a priority queue to handle queues getting too
+      full.
+- Abstract Base Classes for things like `Sensor` or `Task`.
+- Pointer hierarchy
+    1. References
+    2. Smart Pointers
+        - Beware RTOS support
+    3. Pointers
+- Reduce cognitive overhead by documenting your thought process
+  for complicated tasks.
+  - Especially in non-trivial ifs or big loops.
+
+### Diagrams
+
+#### Sensor Poll
+
+#### UART Poll
+
+#### Class Diagram
+
+#### Module and Folder Structure
+
+## Formatting Guidelines
+
+- Functions are lowercase.
+  - Class related functions are uppercase.
+- Infinite Loops are written with `while(1)`
+  as oppose to `for(;;)`.
+
+## Milestones
+
+- [ ] Architecture Design Complete
+- [ ] MVP Complete
+- [ ] Rest of Codebase complete
+
+## Processes
+### Changing .ioc file
+- This should be improved in the future using a rename script, or by modifying CMake file if necessary. There may be a setting in CubeIDE
+- Whenever you change the .ioc file the following must be done
+1. Rename Core/main.cpp to Core/main.c
+2. Generate code from .ioc change
+3. Rename back to Core/main.cpp
+
+## Folder Structure
+- The `Core` directory contains code primarily generated by STM32CubeIDE, or for other Middlewares such as FreeRTOS.
+- Most of the written code should go into `Components` under the most appropriate sub-directory.
 
 
-# Setting Up Development
-
-The following tools are required for making changes to the repo.
-
-## Download Git
-
-Git is our chosen version control system.
-### On Linux
-
-#### Debian/Ubuntu
-```bash
-sudo apt-get install git
-```
-#### Fedora 21
-```bash
-sudo yum install git
-```
-#### Fedora 22+
-```bash
-sudo dnf install git
-```
-#### Arch
-```bash
-sudo pacman -S git
-```
-
-### On Windows
-
-[Download Git](https://git-scm.com/download/win) for Windows.
-Select all the recommended and default options.
-
-## IDEs
-
-Development requires both the STM32CubeIDE for the STM32 boards and Espressif IDF for ESP boards.
-
-* [Download STMCubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#get-software)
-* [Download the Espressif IDF](https://idf.espressif.com/)
-  * Select the S3 model.
-
-## Documentation
-
-* [Getting started with STM32 ARM Cortex MCUs](https://deepbluembedded.com/getting-started-with-stm32-arm-cortex-mcus/)
-* [Using FreeRTOS in small embedded systems](https://www.freertos.org/tutorial/index.html)
-* [FreeRTOS documentation](https://www.freertos.org/fr-content-src/uploads/2018/07/161204_Mastering_the_FreeRTOS_Real_Time_Kernel-A_Hands-On_Tutorial_Guide.pdf)
-
-# TODO
-
-- [ ] Document this thing
