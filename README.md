@@ -1,5 +1,5 @@
 <div align="center">
-<img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/194971475-40b42a4f-bcb2-423e-96fe-d8b0756077d5.png" width="410"/>
+<img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/194971475-40b42a4f-bcb2-423e-96fe-d8b0756077d5.png" width="500"/>
 </div>
 
 <a href="https://en.cppreference.com/w/" rel="CppReference">![Foo](https://user-images.githubusercontent.com/78698227/185344746-ace6a502-a9a3-43d6-9379-daad6f4ffcd3.svg)</a>
