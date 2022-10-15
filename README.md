@@ -1,5 +1,5 @@
 <div align="center">
-<img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/194971475-40b42a4f-bcb2-423e-96fe-d8b0756077d5.png" width="450"/>
+<img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/194971475-40b42a4f-bcb2-423e-96fe-d8b0756077d5.png" width="600"/>
 </div>
 
 ---
