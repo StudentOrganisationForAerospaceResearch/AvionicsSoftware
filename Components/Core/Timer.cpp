@@ -25,6 +25,15 @@ Timer::Timer()
 	timerState = UNINITIALIZED;
 }
 
+/**
+ * @brief Default de-constructor makes a timer that can only be polled for state
+*/
+
+Timer::~Timer()
+{
+	xTimerDelete(rtTimerHandle,(DEFAULT_TIMER_COMMAND_WAIT_PERIOD*2));
+	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer could not be deleted");
+}
 
 
 /**
@@ -33,8 +42,18 @@ Timer::Timer()
 bool Timer::ChangePeriod(const uint32_t period_ms)
 {
 	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
-		StopTimer();
-		timerState = PAUSED;
+		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+			timerState = PAUSED;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Timer::ChangePeriodAndStart(const uint32_t period_ms)
+{
+	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
+		timerState = COUNTING;
 		return true;
 	}
 	return false;
@@ -48,7 +67,7 @@ bool Timer::StartTimer()
 	if ((timerState == COMPLETE) || (timerState == COUNTING)) {
 		return false;
 	}
-	else if (xTimerStart(rtTimerHandle, 0) == pdPASS) {
+	if (xTimerStart(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 		timerState = COUNTING;
 		return true;
 	}
@@ -60,24 +79,121 @@ bool Timer::StartTimer()
 */
 bool Timer::StopTimer()
 {
-	if ((timerState == COMPLETE) || (timerState == UNINITIALIZED) || (timerState == PAUSED)) {
+	if (timerState != COUNTING) {
 		return false;
 	}
-	else if (xTimerStop(rtTimerHandle, 0) == pdPASS) {
+	// Calculates the time left on the timer before it is paused
+	remainingTimeBetweenPauses = rtosTimeRemaning();
+	if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 		timerState = PAUSED;
 		return true;
 	}
 	return false;
 }
 
+/**
+ * @brief Restarts timer without starting to count
+*/
+bool Timer::ResetTimer()
+{
+	if (timerState == UNINITIALIZED) {
+		return false;
+	}
+	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+			timerState = PAUSED;
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * @brief Restarts Timer and starts counting
+*/
+bool Timer::ResetTimerAndStart()
+{
+	if (timerState == UNINITIALIZED) {
+		return false;
+	}
+	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+		timerState = COUNTING;
+		return true;
+	}
+	return false;
+}
+
+/**
+ * @brief Sets timer to auto-reload if parameter is set to true, Sets timer to one shot if parameter is set to false
+*/
+void Timer::SetAutoReload(bool setReloadOn)
+{
+	if (setReloadOn == true){
+		vTimerSetReloadMode(rtTimerHandle, pdTRUE);
+	}
+	if (setReloadOn == false){
+		vTimerSetReloadMode(rtTimerHandle, pdFALSE);
+	}
+}
+
+/**
+ * @brief Sets timer to auto-reload if parameter is set to true, Sets timer to one shot if parameter is set to false
+*/
+bool Timer::GetAutoReload()
+{
+	if ((uxTimerGetReloadMode(rtTimerHandle)) == pdTRUE) {
+		return true;
+	}
+	return false;
+}
 
 TimerState Timer::GetState()
 {
-	if (xTimerIsTimerActive(rtTimerHandle) != pdFALSE){
-		timerState = COUNTING;
+	if (timerState == COUNTING) {
+		if (xTimerIsTimerActive(rtTimerHandle) != pdFALSE){
+			timerState = COUNTING;
+		}
 	}
-	else if ((xTimerIsTimerActive(rtTimerHandle) == pdFALSE) && (timerState == COUNTING)) {
+	else if ((timerState == COUNTING) && (xTimerIsTimerActive(rtTimerHandle) == pdFALSE)) {
 		timerState = COMPLETE;
 	}
 	return timerState;
+}
+
+/**
+ * @brief Returns the timers' period
+*/
+uint32_t Timer::GetPeriod()
+{
+	return (TICKS_TO_MS(xTimerGetPeriod(rtTimerHandle)));
+}
+
+/**
+ * @brief Returns remaining time on timer
+*/
+uint32_t Timer::GetRemainingTime()
+{
+	if (timerState == UNINITIALIZED){
+		return (GetPeriod());
+		}
+	else if (timerState == COUNTING){
+		return (rtosTimeRemaning());
+	}
+	else if (timerState == PAUSED){
+		return remainingTimeBetweenPauses;
+	}
+	else {
+		return 0;
+	}
+}
+
+
+
+/**
+ * @brief Calculates remaining time on timer
+ */
+uint32_t Timer::rtosTimeRemaning()
+{
+	remainingTime = (TICKS_TO_MS(xTimerGetExpiryTime(rtTimerHandle) - xTaskGetTickCount()));
+	return remainingTime;
 }

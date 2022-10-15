@@ -33,11 +33,22 @@ class Timer
 {
 public:
 	Timer();
-
+	~Timer();
 	bool ChangePeriod(const uint32_t period_ms);
+	bool ChangePeriodAndStart(const uint32_t period_ms);
 	bool StartTimer();
 	bool StopTimer();
+	bool ResetTimer();
+	bool ResetTimerAndStart();
+	void SetAutoReload(bool setReloadOn);
+
+	bool GetAutoReload();
 	TimerState GetState();
+	uint32_t GetPeriod();
+	uint32_t GetRemainingTime();
+
+
+
 	// WORK-IN-PROGRESS
 	// NOTES:
 	// - I can think of several timer types
@@ -47,9 +58,11 @@ public:
 
 
 protected:
+	uint32_t rtosTimeRemaning();
 	TimerHandle_t rtTimerHandle;
 	TimerState timerState;
-
+	uint32_t remainingTime;
+	uint32_t remainingTimeBetweenPauses;
 };
 
 
