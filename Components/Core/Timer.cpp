@@ -71,7 +71,7 @@ bool Timer::StopTimer()
 }
 
 
-CurrentState Timer::GetState()
+TimerState Timer::GetState()
 {
 	if (xTimerIsTimerActive(rtTimerHandle) != pdFALSE){
 		timerState = COUNTING;

@@ -15,7 +15,7 @@ constexpr uint32_t DEFAULT_TIMER_COMMAND_WAIT_PERIOD = MS_TO_TICKS(15); // Defau
 
 #define DEFAULT_TIMER_PERIOD (MS_TO_TICKS(1000)) // 1s
 
-enum CurrentState {
+enum TimerState {
 	UNINITIALIZED=0,
 	COUNTING,
 	PAUSED,
@@ -37,7 +37,7 @@ public:
 	bool ChangePeriod(const uint32_t period_ms);
 	bool StartTimer();
 	bool StopTimer();
-	CurrentState GetState();
+	TimerState GetState();
 	// WORK-IN-PROGRESS
 	// NOTES:
 	// - I can think of several timer types
@@ -48,7 +48,7 @@ public:
 
 protected:
 	TimerHandle_t rtTimerHandle;
-	CurrentState timerState;
+	TimerState timerState;
 
 };
 
