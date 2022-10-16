@@ -7,7 +7,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "DebugTask.hpp"
+#include <cstring>
 
+#include "GPIO.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -21,6 +23,19 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
 /* Prototypes ----------------------------------------------------------------*/
 
 /* Functions -----------------------------------------------------------------*/
+/**
+ * @brief Constructor, sets all member variables
+ */
+DebugTask::DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS)
+{
+	memset(debugBuffer, 0, sizeof(debugBuffer));
+	debugMsgIdx = 0;
+	isDebugMsgReady = false;
+}
+
+/**
+ * @brief Inits task for RTOS
+ */
 void DebugTask::InitTask()
 {
 	// Make sure the task is not already initialized
@@ -40,6 +55,9 @@ void DebugTask::InitTask()
 }
 
 // TODO: Only run thread when appropriate GPIO pin pulled HIGH
+/**
+ *	@brief Runcode for the DebugTask
+ */
 void DebugTask::Run(void * pvParams)
 {
     uint32_t prevWakeTime = osKernelSysTick();
@@ -48,6 +66,71 @@ void DebugTask::Run(void * pvParams)
 	while (1) {
 		osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD);
 
-		//HAL_UART_Receive(&huart5, &buffer, 1, 1000); // This should be in UART Task (UART Task's job is to poll these buffers)
+		//Poll for Rx data, if we have a ready message, process it
+		if(ReceiveData()) {
+			HandleDebugMessage(reinterpret_cast<const char*>(debugBuffer));
+		}
 	}
+}
+
+/**
+ * @brief Handles debug messages, assumes msg is null terminated
+ * @param msg Message to read, must be null termianted
+ */
+void DebugTask::HandleDebugMessage(const char* msg)
+{
+	if (strcmp(msg, "sysreset") == 0) {
+		// Reset the system
+		SOAR_ASSERT(false, "System reset requested");
+	}
+	else if (strcmp(msg, "sysprint") == 0) {
+		// Print message
+		SOAR_PRINT("Debug, 'sysprint' command requested\n");
+	}
+	else if (strcmp(msg, "blinkled") == 0) {
+		// Print message
+		SOAR_PRINT("Debug 'LED blink' command requested\n");
+		GPIO::LED1::On();
+		// TODO: Send to HID task to blink LED, this shouldn't delay
+	}
+	else {
+		// Single character command
+		switch (msg[0]) {
+		default:
+			SOAR_PRINT("Debug, unknown command: %s\n", msg);
+			break;
+		}
+	}
+}
+
+/**
+ * @brief Receive data to the buffer
+ * @return Whether the debugBuffer is ready or not
+ */
+bool DebugTask::ReceiveData()
+{
+	uint8_t debugRxChar = 0;
+	HAL_UART_Receive(SystemHandles::UART_Debug, &debugRxChar, 1, MAX_DELAY_MS);
+
+	// Check if the debug message is ready
+	if (!isDebugMsgReady) {
+		HAL_UART_Transmit(SystemHandles::UART_Debug, &debugRxChar, 1, 100);
+		if (!Utils::IsAsciiChar(debugRxChar)) { // If not an ASCII number character...
+			debugRxChar |= 0x20; // Set bit 5, so capital ASCII letters are now lowercase
+			if (!Utils::IsAsciiLowercase(debugRxChar)) { // If not an ASCII lowercase letter...
+				debugBuffer[debugMsgIdx] = 0; // Terminate the string
+				debugMsgIdx = 0;
+				isDebugMsgReady = true;
+				return true;
+			}
+			debugBuffer[debugMsgIdx] = debugRxChar;
+		}
+
+		//If we have too many bytes for the buffer, parse it anyway
+		if (debugMsgIdx++ == DEBUG_RX_BUFFER_SZ_BYTES) {
+			isDebugMsgReady = true;
+		}
+	}
+
+	return isDebugMsgReady;
 }

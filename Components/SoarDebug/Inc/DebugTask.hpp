@@ -12,7 +12,7 @@
 
 
 /* Macros ------------------------------------------------------------------*/
-
+constexpr uint16_t DEBUG_RX_BUFFER_SZ_BYTES = 16;
 
 /* Class ------------------------------------------------------------------*/
 class DebugTask : public Task
@@ -31,10 +31,19 @@ protected:
 	void Run(void* pvParams);	// Main run code
 
 	void ConfigureUART();
-	void HandleCommand(Command& cm);
+	void HandleDebugMessage(const char* msg);
+	//void HandleCommand(Command& cm);
+
+	bool ReceiveData();
+	
+
+	// Member variables
+	uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];
+	uint8_t debugMsgIdx;
+	bool isDebugMsgReady;
 
 private:
-	DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS) {}	// Private constructor
+	DebugTask(); // Private constructor
 	DebugTask(const DebugTask&);						// Prevent copy-construction
 	DebugTask& operator=(const DebugTask&);			// Prevent assignment
 };
