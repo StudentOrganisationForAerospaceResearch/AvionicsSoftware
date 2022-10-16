@@ -9,6 +9,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "Task.hpp"
 #include "SystemDefines.hpp"
+#include "DMAController.hpp"
 
 
 /* Macros ------------------------------------------------------------------*/
@@ -41,6 +42,7 @@ protected:
 	uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];
 	uint8_t debugMsgIdx;
 	bool isDebugMsgReady;
+	DMAController* dmaController;
 
 private:
 	DebugTask(); // Private constructor

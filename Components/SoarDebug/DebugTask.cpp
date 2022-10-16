@@ -31,6 +31,7 @@ DebugTask::DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS)
 	memset(debugBuffer, 0, sizeof(debugBuffer));
 	debugMsgIdx = 0;
 	isDebugMsgReady = false;
+	dmaController = new DMAController(SystemHandles::UART_Debug, DEBUG_RX_BUFFER_SZ_BYTES);
 }
 
 /**
@@ -101,6 +102,9 @@ void DebugTask::HandleDebugMessage(const char* msg)
 			break;
 		}
 	}
+
+	// We 'ate' this buffer
+	isDebugMsgReady = false;
 }
 
 /**
@@ -109,28 +113,41 @@ void DebugTask::HandleDebugMessage(const char* msg)
  */
 bool DebugTask::ReceiveData()
 {
-	uint8_t debugRxChar = 0;
-	HAL_UART_Receive(SystemHandles::UART_Debug, &debugRxChar, 1, MAX_DELAY_MS);
+	// Receive using the DMAController
+	uint8_t* bufPtr = nullptr;
+	uint16_t bytesRead = dmaController->BlockUntilDataRead(bufPtr);
 
-	// Check if the debug message is ready
-	if (!isDebugMsgReady) {
-		HAL_UART_Transmit(SystemHandles::UART_Debug, &debugRxChar, 1, 100);
-		if (!Utils::IsAsciiChar(debugRxChar)) { // If not an ASCII number character...
-			debugRxChar |= 0x20; // Set bit 5, so capital ASCII letters are now lowercase
-			if (!Utils::IsAsciiLowercase(debugRxChar)) { // If not an ASCII lowercase letter...
-				debugBuffer[debugMsgIdx] = 0; // Terminate the string
-				debugMsgIdx = 0;
-				isDebugMsgReady = true;
-				return true;
-			}
-			debugBuffer[debugMsgIdx] = debugRxChar;
-		}
-
-		//If we have too many bytes for the buffer, parse it anyway
-		if (debugMsgIdx++ == DEBUG_RX_BUFFER_SZ_BYTES) {
-			isDebugMsgReady = true;
-		}
+	// If we have data, copy to our buffer
+	if(bytesRead && bufPtr) {
+		memcpy(debugBuffer, bufPtr, bytesRead);
+		isDebugMsgReady = true;
 	}
-
+	dmaController->Release(bufPtr);
 	return isDebugMsgReady;
+
+	// Receive data using polling -- not used, won't work at high baud, may not be reliable based on system load event at low baud
+	//uint8_t debugRxChar = 0;
+	//HAL_UART_Receive(SystemHandles::UART_Debug, &debugRxChar, 1, MAX_DELAY_MS);
+
+	//// Check if the debug message is ready
+	//if (!isDebugMsgReady) {
+	//	HAL_UART_Transmit(SystemHandles::UART_Debug, &debugRxChar, 1, 100);
+	//	if (!Utils::IsAsciiChar(debugRxChar)) { // If not an ASCII number character...
+	//		debugRxChar |= 0x20; // Set bit 5, so capital ASCII letters are now lowercase
+	//		if (!Utils::IsAsciiLowercase(debugRxChar)) { // If not an ASCII lowercase letter...
+	//			debugBuffer[debugMsgIdx] = 0; // Terminate the string
+	//			debugMsgIdx = 0;
+	//			isDebugMsgReady = true;
+	//			return true;
+	//		}
+	//		debugBuffer[debugMsgIdx] = debugRxChar;
+	//	}
+
+	//	//If we have too many bytes for the buffer, parse it anyway
+	//	if (debugMsgIdx++ == DEBUG_RX_BUFFER_SZ_BYTES) {
+	//		isDebugMsgReady = true;
+	//	}
+	//}
+
+	//return isDebugMsgReady;
 }
