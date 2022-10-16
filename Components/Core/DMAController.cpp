@@ -33,7 +33,7 @@ constexpr uint16_t BLOCK_TIME_FLUSH_TASK_MS = 50;	//Time to wait to flush buffer
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size)
 {
 	// We will assume the DMA has a linked controller (otherwise it should NEVER be armed!)
-	DMAController* dmaController = (DMAController*)huart->hdmarx->Parent;
+	DMAController* dmaController = (DMAController*)huart->Controller;
 
 	//TODO: Sanity check, controller buffer is the same as the handle buffer ?? is the UART handle buffer supposed to be the same??
 
@@ -49,9 +49,9 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size)
  */
 DMAController::DMAController(UART_HandleTypeDef* uartHandle, uint16_t bufferSize)
 {
-	// I REALLY don't know if this is safe, but if it is it makes this SO much easier
+	// This doesn't work... it's parent is the UART Handle itself :p
 	SOAR_ASSERT(uartHandle->hdmarx != nullptr, "Cannot create DMAController with a UART handle that does not have a DMA Rx handle!"); //fyi if this fails take in the hdma and set it here...
-	uartHandle->hdmarx->Parent = this;
+	uartHandle->Controller = this;
 
 	// Set member variables and objects
 	this->uartHandle = uartHandle;
