@@ -75,6 +75,7 @@ namespace SystemHandles
 	constexpr CRC_HandleTypeDef* CRC_Handle = &HAL::hcrc;
 
 	// DMA Alises
+	constexpr DMA_HandleTypeDef* DMA_UART4_RX = &HAL::hdma_uart4_rx;
 
 }
 

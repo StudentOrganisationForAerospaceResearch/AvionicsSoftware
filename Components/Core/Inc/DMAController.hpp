@@ -22,7 +22,7 @@ class DMAController
 {
 public:
 	// Constructors
-	DMAController(void);
+	DMAController(DMA_HandleTypeDef* dmaHandle, uint16_t bufferSize);
 
 	// Functions
 
@@ -34,6 +34,10 @@ public:
 	static void SetupCallbacks();	// Register the DMA callbacks
 
 protected:
+	DMA_HandleTypeDef* dmaHandle;	// DMA handle
+	uint16_t dmaBufferSize;			// Size of the DMA buffer
+	uint8_t* activeBuffer;			// Pointer to the active DMA buffer
+	uint8_t* nextBuffer;			// Pointer to the next DMA buffer
 
 private:
 

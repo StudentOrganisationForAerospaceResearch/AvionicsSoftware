@@ -8,10 +8,19 @@
 #include "stm32f4xx_hal.h"
 
 /**
- * @brief Default constructor
+ * @brief Constructor with the DMA handle and DMA buffer size
  */
-DMAController::DMAController()
+DMAController::DMAController(DMA_HandleTypeDef* dmaHandle, uint16_t bufferSize)
 {
+	// Set member variables
+	this->dmaHandle = dmaHandle;
+	this->dmaBufferSize = bufferSize;
+
+	// Each DMA controller has two buffers, one for the current DMA transfer and one for the next, allocate these
+	activeBuffer = (uint8_t*)soar_malloc(bufferSize);
+	nextBuffer = (uint8_t*)soar_malloc(bufferSize);
+
+	// Ready DMA for the first transfers
 }
 
 /**
