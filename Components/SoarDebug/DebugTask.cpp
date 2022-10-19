@@ -1,15 +1,17 @@
 /**
   ******************************************************************************
-  * File Name          : Debug.c
+  * File Name          : Debug.cpp
   * Description        : Utilities for debugging the flight board.
   ******************************************************************************
 */
 
 /* Includes ------------------------------------------------------------------*/
 #include "DebugTask.hpp"
+#include "Command.hpp"
 #include <cstring>
 
 #include "GPIO.hpp"
+#include "stm32f4xx_hal.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -21,6 +23,18 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
 /* Variables -----------------------------------------------------------------*/
 
 /* Prototypes ----------------------------------------------------------------*/
+
+/* HAL Callbacks ----------------------------------------------------------------*/
+/**
+ * @brief HAL Callback for DMA/Interrupt Complete
+ *
+ * TODO: This should eventually be in DMAController or main_avionics.cpp depending on how many tasks use DMA vs Interrupt vs Polling
+ */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
+{
+	if (huart->Instance == SystemHandles::UART_Debug->Instance)
+		DebugTask::Inst().InterruptRxData();
+}
 
 /* Functions -----------------------------------------------------------------*/
 /**
@@ -60,16 +74,21 @@ void DebugTask::InitTask()
  */
 void DebugTask::Run(void * pvParams)
 {
-    uint32_t prevWakeTime = osKernelSysTick();
-    //uint8_t buffer = 0x00;
+	// Arm the interrupt
+	ReceiveData();
 
 	while (1) {
-		osDelayUntil(&prevWakeTime, DEBUG_TASK_PERIOD);
+		Command cm;
 
-		//Poll for Rx data, if we have a ready message, process it
-		if(ReceiveData()) {
-			HandleDebugMessage(reinterpret_cast<const char*>(debugBuffer));
+		//Wait forever for a command
+		qEvtQueue->ReceiveWait(cm);
+
+		//Process the command
+		if(cm.GetCommand() == DATA_COMMAND && cm.GetTaskCommand() == EVENT_DEBUG_RX_COMPLETE) {
+			HandleDebugMessage((const char*)debugBuffer);
 		}
+
+		cm.Reset();
 	}
 }
 
@@ -104,33 +123,36 @@ void DebugTask::HandleDebugMessage(const char* msg)
 }
 
 /**
- * @brief Receive data to the buffer
- * @return Whether the debugBuffer is ready or not
+ * @brief Receive data, currently receives by arming interrupt
  */
 bool DebugTask::ReceiveData()
 {
-	uint8_t debugRxChar = 0;
-	HAL_UART_Receive(SystemHandles::UART_Debug, &debugRxChar, 1, MAX_DELAY_MS);
+	HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1);
+	return true;
+}
 
-	// Check if the debug message is ready
+/**
+ * @brief Receive data to the buffer
+ * @return Whether the debugBuffer is ready or not
+ */
+void DebugTask::InterruptRxData()
+{
+	// If we already have an unprocessed debug message, ignore this byte
 	if (!isDebugMsgReady) {
-		HAL_UART_Transmit(SystemHandles::UART_Debug, &debugRxChar, 1, 100);
-		if (!Utils::IsAsciiChar(debugRxChar)) { // If not an ASCII number character...
-			debugRxChar |= 0x20; // Set bit 5, so capital ASCII letters are now lowercase
-			if (!Utils::IsAsciiLowercase(debugRxChar)) { // If not an ASCII lowercase letter...
-				debugBuffer[debugMsgIdx] = 0; // Terminate the string
-				debugMsgIdx = 0;
-				isDebugMsgReady = true;
-				return true;
-			}
-			debugBuffer[debugMsgIdx] = debugRxChar;
-		}
+		// Check byte for end of message
+		if (debugRxChar != '\r' || debugRxChar == '\0' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
+			// Null terminate and process
+			debugBuffer[debugMsgIdx++] = '\0';
 
-		//If we have too many bytes for the buffer, parse it anyway
-		if (debugMsgIdx++ == DEBUG_RX_BUFFER_SZ_BYTES) {
-			isDebugMsgReady = true;
+			// Notify the debug task
+			Command cm(DATA_COMMAND, EVENT_DEBUG_RX_COMPLETE);
+			qEvtQueue->SendFromISR(cm);
+		}
+		else {
+			debugBuffer[debugMsgIdx++] = debugRxChar;
 		}
 	}
 
-	return isDebugMsgReady;
+	//Re-arm the interrupt
+	ReceiveData();
 }

@@ -10,6 +10,11 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
+/* Enums ------------------------------------------------------------------*/
+enum DEBUG_TASK_COMMANDS {
+	DEBUG_TASK_COMMAND_NONE = 0,
+	EVENT_DEBUG_RX_COMPLETE
+};
 
 /* Macros ------------------------------------------------------------------*/
 constexpr uint16_t DEBUG_RX_BUFFER_SZ_BYTES = 16;
@@ -25,6 +30,9 @@ public:
 
 	void InitTask();
 
+	//Functions exposed to HAL callbacks
+	void InterruptRxData();
+
 protected:
 	static void RunTask(void* pvParams) { DebugTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
@@ -36,11 +44,12 @@ protected:
 
 	bool ReceiveData();
 	
-
 	// Member variables
 	uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];
 	uint8_t debugMsgIdx;
 	bool isDebugMsgReady;
+
+	uint8_t debugRxChar; // Character received from UART Interrupt
 
 private:
 	DebugTask(); // Private constructor
