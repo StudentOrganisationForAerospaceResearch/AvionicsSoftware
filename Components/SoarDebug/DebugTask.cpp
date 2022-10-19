@@ -120,6 +120,10 @@ void DebugTask::HandleDebugMessage(const char* msg)
 			break;
 		}
 	}
+
+	//We've read the data, clear the buffer
+	debugMsgIdx = 0;
+	isDebugMsgReady = false;
 }
 
 /**
@@ -139,8 +143,8 @@ void DebugTask::InterruptRxData()
 {
 	// If we already have an unprocessed debug message, ignore this byte
 	if (!isDebugMsgReady) {
-		// Check byte for end of message
-		if (debugRxChar != '\r' || debugRxChar == '\0' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
+		// Check byte for end of message - note if using termite you must turn on append CR
+		if (debugRxChar == '\r' || debugRxChar == '\0' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
 			// Null terminate and process
 			debugBuffer[debugMsgIdx++] = '\0';
 
