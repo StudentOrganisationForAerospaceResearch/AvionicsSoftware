@@ -48,7 +48,7 @@ DebugTask::DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS)
 }
 
 /**
- * @brief Inits task for RTOS
+ * @brief Init task for RTOS
  */
 void DebugTask::InitTask()
 {
@@ -68,7 +68,7 @@ void DebugTask::InitTask()
 	SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
 }
 
-// TODO: Only run thread when appropriate GPIO pin pulled HIGH
+// TODO: Only run thread when appropriate GPIO pin pulled HIGH (or by define)
 /**
  *	@brief Runcode for the DebugTask
  */
@@ -102,9 +102,11 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		// Reset the system
 		SOAR_ASSERT(false, "System reset requested");
 	}
-	else if (strcmp(msg, "sysprint") == 0) {
+	else if (strcmp(msg, "sysinfo") == 0) {
 		// Print message
-		SOAR_PRINT("Debug, 'sysprint' command requested\n");
+		SOAR_PRINT("\n-- SOAR System Info --\n");
+		SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
+		SOAR_PRINT("Lowest Ever Heap Size: %d Bytes\n\n", xPortGetMinimumEverFreeHeapSize());
 	}
 	else if (strcmp(msg, "blinkled") == 0) {
 		// Print message
