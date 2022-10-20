@@ -8,6 +8,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "DebugTask.hpp"
 #include "Command.hpp"
+#include "Utils.hpp"
 #include <cstring>
 
 #include "GPIO.hpp"
@@ -104,9 +105,10 @@ void DebugTask::HandleDebugMessage(const char* msg)
 	}
 	else if (strcmp(msg, "sysinfo") == 0) {
 		// Print message
-		SOAR_PRINT("\n-- SOAR System Info --\n");
+		SOAR_PRINT("\n\t-- SOAR System Info --\n");
 		SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
-		SOAR_PRINT("Lowest Ever Heap Size: %d Bytes\n\n", xPortGetMinimumEverFreeHeapSize());
+		SOAR_PRINT("Lowest Ever Heap Size\t: %d Bytes\n", xPortGetMinimumEverFreeHeapSize());
+		SOAR_PRINT("Debug Task Runtime  \t: %d ms\n\n", TICKS_TO_MS(xTaskGetTickCount()));
 	}
 	else if (strcmp(msg, "blinkled") == 0) {
 		// Print message
@@ -115,7 +117,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		// TODO: Send to HID task to blink LED, this shouldn't delay
 	}
 	else {
-		// Single character command
+		// Single character command, or unknown command
 		switch (msg[0]) {
 		default:
 			SOAR_PRINT("Debug, unknown command: %s\n", msg);
@@ -149,10 +151,17 @@ void DebugTask::InterruptRxData()
 		if (debugRxChar == '\r' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
 			// Null terminate and process
 			debugBuffer[debugMsgIdx++] = '\0';
+			isDebugMsgReady = true;
 
 			// Notify the debug task
 			Command cm(DATA_COMMAND, EVENT_DEBUG_RX_COMPLETE);
-			qEvtQueue->SendFromISR(cm);
+			bool res = qEvtQueue->SendFromISR(cm);
+
+			// If we failed to send the event, we should reset the buffer, that way DebugTask doesn't stall
+			if (res == false) {
+				debugMsgIdx = 0;
+				isDebugMsgReady = false;
+			}
 		}
 		else {
 			debugBuffer[debugMsgIdx++] = debugRxChar;
