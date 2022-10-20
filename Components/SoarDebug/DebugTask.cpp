@@ -148,13 +148,20 @@ void DebugTask::InterruptRxData()
 	// If we already have an unprocessed debug message, ignore this byte
 	if (!isDebugMsgReady) {
 		// Check byte for end of message - note if using termite you must turn on append CR
-		if (debugRxChar == '\r' || debugRxChar == '\0' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
+		if (debugRxChar == '\r' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
 			// Null terminate and process
 			debugBuffer[debugMsgIdx++] = '\0';
+			isDebugMsgReady = true;
 
 			// Notify the debug task
 			Command cm(DATA_COMMAND, EVENT_DEBUG_RX_COMPLETE);
-			qEvtQueue->SendFromISR(cm);
+			bool res = qEvtQueue->SendFromISR(cm);
+
+			// If we failed to send the event, we should reset the buffer, that way DebugTask doesn't stall
+			if (res == false) {
+				debugMsgIdx = 0;
+				isDebugMsgReady = false;
+			}
 		}
 		else {
 			debugBuffer[debugMsgIdx++] = debugRxChar;
