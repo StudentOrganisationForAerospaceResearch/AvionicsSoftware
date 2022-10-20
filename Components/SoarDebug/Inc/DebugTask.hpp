@@ -53,7 +53,7 @@ protected:
 
 private:
 	DebugTask(); // Private constructor
-	DebugTask(const DebugTask&);						// Prevent copy-construction
+	DebugTask(const DebugTask&);					// Prevent copy-construction
 	DebugTask& operator=(const DebugTask&);			// Prevent assignment
 };
 

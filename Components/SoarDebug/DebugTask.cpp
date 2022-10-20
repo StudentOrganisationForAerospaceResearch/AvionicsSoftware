@@ -28,7 +28,7 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
 /**
  * @brief HAL Callback for DMA/Interrupt Complete
  *
- * TODO: This should eventually be in DMAController or main_avionics.cpp depending on how many tasks use DMA vs Interrupt vs Polling
+ * TODO: This should eventually be in DMAController/main_avionics/UARTTask depending on how many tasks use DMA vs Interrupt vs Polling
  */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
@@ -146,7 +146,7 @@ void DebugTask::InterruptRxData()
 	// If we already have an unprocessed debug message, ignore this byte
 	if (!isDebugMsgReady) {
 		// Check byte for end of message - note if using termite you must turn on append CR
-		if (debugRxChar == '\r' || debugRxChar == '\0' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
+		if (debugRxChar == '\r' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
 			// Null terminate and process
 			debugBuffer[debugMsgIdx++] = '\0';
 
