@@ -52,6 +52,12 @@
     <Filter Include="Source Files\Components\Communication\Inc">
       <UniqueIdentifier>{bb4a71ab-b042-4209-b1c5-5a3760756c6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\Sensors">
+      <UniqueIdentifier>{55d4aad5-e8ff-4124-9a84-d0615596e5d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\Sensors\Inc">
+      <UniqueIdentifier>{c144919d-e821-4914-a74b-aa665f312a1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvionicsSoftware.cpp">
@@ -204,9 +210,21 @@
     <ClCompile Include="..\..\Components\Core\DMAController.cpp">
       <Filter>Source Files\Components\Core</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
     <ClCompile Include="..\..\Components\Utils.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+=======
+<<<<<<< Updated upstream
+=======
+    <ClCompile Include="..\..\Components\Utils.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Sensors\SensorTask.cpp">
+      <Filter>Source Files\Components\Sensors</Filter>
+    </ClCompile>
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -497,17 +515,32 @@
     <ClInclude Include="..\..\Components\Communication\Inc\UARTTask.hpp">
       <Filter>Source Files\Components\Communication\Inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h">
-      <Filter>Source Files\Components\SoarDebug\Inc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp">
       <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
+<<<<<<< Updated upstream
+=======
     <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp">
       <Filter>Source Files\Components\Core\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Utils.hpp">
       <Filter>Source Files\Components</Filter>
     </ClInclude>
+>>>>>>> Stashed changes
+    <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp">
+      <Filter>Source Files\Components\Core\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Utils.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+<<<<<<< Updated upstream
+=======
+    <ClInclude Include="..\..\Components\Sensors\Inc\SensorTask.hpp">
+      <Filter>Source Files\Components\Sensors\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Sensors\Inc\Data.h">
+      <Filter>Source Files\Components\Sensors\Inc</Filter>
+    </ClInclude>
+>>>>>>> Stashed changes
   </ItemGroup>
 </Project>
