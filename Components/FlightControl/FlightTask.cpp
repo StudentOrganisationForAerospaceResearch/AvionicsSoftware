@@ -7,6 +7,160 @@
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
+#include "Timer.hpp"
+
+void test_timer_state () {
+    Timer testTimer1;
+    SOAR_PRINT("Expected Output: 0 (UNINITIALIZED)\n");
+    SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+    SOAR_PRINT("Starting Timer...\n");
+    testTimer1.StartTimer();
+    SOAR_PRINT("Expected Output: 1 (COUNTING)\n");
+	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+	SOAR_PRINT("Stopping Timer...\n");
+	testTimer1.StopTimer();
+	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
+	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+	osDelay(1100);
+	SOAR_PRINT("Expected Output: 3 (COMPLETE)\n");
+	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
+}
+
+void test_destructor() {
+	SOAR_PRINT("\n Testing destructor...\n");
+	SOAR_PRINT("Expected Output: 'TIMER HAS BEEN DELETED'\n");
+	{
+		Timer testTimer2;
+	}
+}
+
+void test_period () {
+	Timer testTimer3;
+
+	testTimer3.StartTimer();
+	SOAR_PRINT("\n Testing GetPeriod function...\n");
+	SOAR_PRINT("Expected Output: 1000 ms\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetPeriod());
+
+	SOAR_PRINT("Changing Period to 5000ms\n");
+	SOAR_PRINT("Expected Result: 5000ms\n");
+	SOAR_PRINT("Actual Result: %d\n\n", testTimer3.GetPeriod());
+
+	SOAR_PRINT("Testing GetState function...\n");
+	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetState());
+
+	SOAR_PRINT("Testing to see if the timer restarts if timer period is changed\n");
+	SOAR_PRINT("Using GetPeriod function ...\n");
+	SOAR_PRINT("Expected Output: 5000 ms\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetRemainingTime());
+
+	SOAR_PRINT("Testing ChangePeriodAndStart function...\n");
+	testTimer3.ChangePeriodAndStart(7000);
+	SOAR_PRINT("Expected Output: 7000 ms\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetPeriod());
+
+	SOAR_PRINT("Testing GetState function...\n");
+	SOAR_PRINT("Expected Output: 1 (COUNTING)\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetState());
+
+	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
+}
+
+void test_autoreload () {
+	Timer testTimer4;
+
+	SOAR_PRINT("\n Testing GetAutoReload function...\n");
+	SOAR_PRINT("Expected Output: 'Timer is set to autoreload'\n");
+	if (testTimer4.GetAutoReload() == true) {
+		SOAR_PRINT("Actual Output : 'Timer is set to autoreload'\n\n");
+	}
+	else {
+		SOAR_PRINT("ERROR OCCURRED!!!\n\n");
+	}
+
+	SOAR_PRINT("Changing timer to one-shot...\n");
+	testTimer4.SetAutoReload(false);
+	SOAR_PRINT("Expected Output: 'Timer is set to one-shot'\n");
+	if (testTimer4.GetAutoReload() == false) {
+		SOAR_PRINT("Actual Output : 'Timer is set to one-shot'\n\n");
+	}
+	else {
+		SOAR_PRINT("ERROR OCCURRED!!!\n\n");
+	}
+
+	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
+}
+
+void test_reset(){
+	Timer testTimer5;
+	SOAR_PRINT("\n Trying to reset timer in UNINITIALIZED state\n");
+	SOAR_PRINT("Expected Output: Timer did not reset\n");
+	if (testTimer5.ResetTimer() == false) {
+		SOAR_PRINT("Actual Output: Timer did not reset\n\n");
+	}
+	else {
+		SOAR_PRINT("ERROR OCCURRED!!!\n\n");
+	}
+
+	testTimer5.StartTimer();
+	osDelay(300);
+	SOAR_PRINT("Testing reset function...\n");
+	testTimer5.ResetTimer();
+	SOAR_PRINT("Expected Result: Timer Reset Successfully\n");
+	if (testTimer5.ResetTimer() == true) {
+		SOAR_PRINT("Actual Output: Timer Reset Successfully\n\n");
+	}
+	else {
+		SOAR_PRINT("ERROR OCCURRED!!!\n\n");
+	}
+
+	SOAR_PRINT("Testing GetState function...\n");
+	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer5.GetState());
+
+	SOAR_PRINT("Testing ResetTimerAndStart function..\n");
+	if (testTimer5.ResetTimerAndStart() == true) {
+		SOAR_PRINT("Actual Output: Timer Reset Successfully\n\n");
+	}
+	else {
+		SOAR_PRINT("ERROR OCCURRED!!!\n\n");
+	}
+
+	SOAR_PRINT("Testing GetState function...\n");
+	SOAR_PRINT("Expected Output: 1 (COUNTING)\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer5.GetState());
+
+	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
+}
+
+void test_get_time () {
+	Timer testTimer6;
+
+	SOAR_PRINT("Testing GetRemainingTime function ...\n");
+	SOAR_PRINT("Expected Output: 1000 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
+
+	osDelay(300);
+	SOAR_PRINT("Expected Output: 700 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
+
+	osDelay(300);
+	testTimer6.StopTimer();
+	SOAR_PRINT("Expected Output: 400 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
+
+	osDelay(500);
+	SOAR_PRINT("Expected Output: 0 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
+
+	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
+}
 
 //TODO: Consider moving all InitTask functions to the bottom of the cpp file, since it shouldn't need to be changed that much
 void FlightTask::InitTask()
@@ -33,6 +187,13 @@ void FlightTask::Run(void * pvParams)
 {
 	uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
 	GPIO::LED1::Off();
+
+    test_timer_state();
+    test_destructor();
+    test_period ();
+    test_autoreload ();
+    test_reset();
+    test_get_time ();
 
 	while (1) {
 		// There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
