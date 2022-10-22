@@ -1,11 +1,12 @@
+#include "SystemDefines.hpp"
+#include "Timer.hpp"
+
 /**
  ******************************************************************************
  * File Name          : Timer.cpp
  * Description        : FreeRTOS Timer Wrapper
  ******************************************************************************
 */
-#include "SystemDefines.hpp"
-#include "Timer.hpp"
 
 /**
  * @brief Empty callback function, used internally for default polling timers
@@ -36,7 +37,6 @@ Timer::~Timer()
 	// Added for testing purposes. WILL BE REMOVED LATER
 	SOAR_PRINT("TIMER HAS BEEN DELETED");
 }
-
 
 /**
  * @brief Changes this timer object's RTOS timer period, returns true on success, returns false on failure (timer command queue full)

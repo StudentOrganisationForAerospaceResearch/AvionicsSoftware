@@ -18,6 +18,7 @@
 #include "UARTTask.hpp"
 #include "FlightTask.hpp"
 #include "DebugTask.hpp"
+#include "Timer.hpp"
 
 
 /* Global Variables ------------------------------------------------------------------*/
@@ -44,6 +45,8 @@ void run_main() {
 	// - Be CAREFUL with race conditions after osKernelStart
 	// - Recommended to not use new and delete after this point
     osKernelStart();
+
+    Timer testTimer1;
 
 	// Should never reach here
 	SOAR_ASSERT(false, "osKernelStart() failed");
