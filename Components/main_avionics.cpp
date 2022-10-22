@@ -24,6 +24,34 @@
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
 
+void test_timer_state () {
+    Timer testTimer1;
+    SOAR_PRINT("Expected Output: 0 (UNINITIALIZED)\n");
+    SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+    SOAR_PRINT("Starting Timer...\n");
+    testTimer1.StartTimer();
+    SOAR_PRINT("Expected Output: 1 (COUNTING)\n");
+	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+	SOAR_PRINT("Stopping Timer...\n");
+	testTimer1.StopTimer();
+	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
+	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+	osDelay(1100);
+	SOAR_PRINT("Expected Output: 3 (COMPLETE)\n");
+	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+}
+void test_destructor() {
+	SOAR_PRINT("Testing destructor...\n");
+	SOAR_PRINT("Expected Output: 'TIMER HAS BEEN DELETED'");
+	{
+		Timer testTimer2;
+	}
+
+}
+
 /* Interface Functions ------------------------------------------------------------*/
 /**
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
@@ -48,9 +76,8 @@ void run_main() {
 	// - Recommended to not use new and delete after this point
     osKernelStart();
 
-    Timer testTimer1;
-    SOAR_PRINT("Expected Output: UNINITIALIZED (0)\n");
-    SOAR_PRINT("The current timer state is: %d", testTimer1.GetState());
+    test_timer_state();
+    test_destructor();
 
 	// Should never reach here
 	SOAR_ASSERT(false, "osKernelStart() failed");
