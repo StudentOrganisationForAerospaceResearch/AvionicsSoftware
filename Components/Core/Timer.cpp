@@ -139,7 +139,7 @@ void Timer::SetAutoReload(bool setReloadOn)
 }
 
 /**
- * @brief Sets timer to auto-reload if parameter is set to true, Sets timer to one shot if parameter is set to false
+ * @brief Returns true if timer is an autoreload timer and false if it is one-shot
 */
 bool Timer::GetAutoReload()
 {

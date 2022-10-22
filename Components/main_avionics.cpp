@@ -42,15 +42,79 @@ void test_timer_state () {
 	osDelay(1100);
 	SOAR_PRINT("Expected Output: 3 (COMPLETE)\n");
 	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
+
+	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
 }
+
 void test_destructor() {
 	SOAR_PRINT("Testing destructor...\n");
 	SOAR_PRINT("Expected Output: 'TIMER HAS BEEN DELETED'");
 	{
 		Timer testTimer2;
 	}
-
 }
+
+void test_period () {
+	Timer testTimer3;
+
+	testTimer3.StartTimer();
+	SOAR_PRINT("Testing GetPeriod function...\n");
+	SOAR_PRINT("Expected Output: 1000 ms\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetPeriod());
+
+	SOAR_PRINT("Changing Period to 5000ms\n");
+	SOAR_PRINT("Expected Result: 5000ms\n");
+	SOAR_PRINT("Actual Result: %d\n\n", testTimer3.GetPeriod());
+
+	SOAR_PRINT("Testing GetState function...\n");
+	SOAR_PRINT("Expected Output: 2 (PAUSED)");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetState());
+
+	SOAR_PRINT("Testing to see if the timer restarts if timer period is changed\n");
+	SOAR_PRINT("Using GetPeriod function ...\n");
+	SOAR_PRINT("Expected Output: 5000 ms\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetRemainingTime());
+
+	SOAR_PRINT("Testing ChangePeriodAndStart function...\n");
+	testTimer3.ChangePeriodAndStart(7000);
+	SOAR_PRINT("Expected Output: 7000 ms\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetPeriod());
+
+	SOAR_PRINT("Testing GetState function...\n");
+	SOAR_PRINT("Expected Output: 1 (COUNTING)");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetState());
+
+	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n\n");
+}
+
+void test_autoreload () {
+	Timer testTimer4;
+
+	SOAR_PRINT("Testing GetAutoReload function...\n");
+	SOAR_PRINT("Expected Output: 'Timer is set to autoreload'\n");
+	if (testTimer4.GetAutoReload() == true) {
+		SOAR_PRINT("Actual Output : 'Timer is set to autoreload'\n");
+	}
+	else {
+		SOAR_PRINT("ERROR OCCURRED!!!\n\n");
+	}
+
+	SOAR_PRINT("Changing timer to one-shot...\n");
+	testTimer4.SetAutoReload(false);
+	SOAR_PRINT("Expected Output: 'Timer is set to one-shot'\n");
+	if (testTimer4.GetAutoReload() == false) {
+		SOAR_PRINT("Actual Output : 'Timer is set to one-shot'\n");
+	}
+	else {
+		SOAR_PRINT("ERROR OCCURRED!!!\n\n");
+	}
+}
+
+//void test_reset(){
+//	Timer testTimer5;
+//	testTimer5.StartTimer();
+//	SOAR_PRINT("");
+//}
 
 /* Interface Functions ------------------------------------------------------------*/
 /**
@@ -76,6 +140,9 @@ void run_main() {
 
     test_timer_state();
     test_destructor();
+    test_period ();
+    test_autoreload ();
+    //test_reset();
 
 	// Should never reach here
 	SOAR_ASSERT(false, "osKernelStart() failed");
