@@ -47,6 +47,8 @@ void run_main() {
     osKernelStart();
 
     Timer testTimer1;
+    SOAR_PRINT("Expected Output: UNINITIALIZED (0)\n");
+    SOAR_PRINT("The current timer state is: %d", testTimer1.GetState());
 
 	// Should never reach here
 	SOAR_ASSERT(false, "osKernelStart() failed");
