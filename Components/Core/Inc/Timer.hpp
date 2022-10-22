@@ -9,6 +9,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "cmsis_os.h"
 #include "Utils.hpp"
+#include "FreeRTOS.h"
 
 /* Macros --------------------------------------------------------------------*/
 constexpr uint32_t DEFAULT_TIMER_COMMAND_WAIT_PERIOD = MS_TO_TICKS(15); // Default time to block a task if a command cannot be issued to the timer
