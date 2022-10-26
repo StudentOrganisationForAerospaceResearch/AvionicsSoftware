@@ -1,6 +1,15 @@
 <div align="center">
-<img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/185337251-e8da5b86-772f-4e64-9f8b-6669e7fdacce.png" width="400" height="80"/>
+<img alt="Avionics" src="https://user-images.githubusercontent.com/78698227/194971475-40b42a4f-bcb2-423e-96fe-d8b0756077d5.png" width="550"/>
 </div>
+
+<a href="https://en.cppreference.com/w/" rel="CppReference">![Foo](https://user-images.githubusercontent.com/78698227/185344746-ace6a502-a9a3-43d6-9379-daad6f4ffcd3.svg)</a>
+<a href="https://www.st.com/resource/en/reference_manual/dm00031020-stm32f405-415-stm32f407-417-stm32f427-437-and-stm32f429-439-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf" rel="STM32F4 Reference Manual">![STMicro](https://user-images.githubusercontent.com/78698227/185344511-0296b5ed-15a3-4013-a98a-6dcd38222382.svg)</a>
+<a href="https://www.freertos.org/features.html" rel="FreeRTOS">![FreeRTOS](https://camo.githubusercontent.com/da874464f191d72e47b3f6834b0ae26e8c3b5edbaeafcdacf526a844a972f87c/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4672656552544f532d2532333234373133332e7376673f7374796c653d666f722d7468652d6261646765)</a>
+<a href="https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware.git" rel="GitHub">![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)</a>
+
+![](https://img.shields.io/github/repo-size/StudentOrganisationForAerospaceResearch/AvionicsSoftware?label=Size)
+![](https://img.shields.io/github/commit-activity/m/StudentOrganisationForAerospaceResearch/AvionicsSoftware)
+![](https://img.shields.io/github/contributors/StudentOrganisationForAerospaceResearch/AvionicsSoftware)
 
 ## Table of Contents
 1. [About This](#about-this)
