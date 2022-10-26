@@ -90,5 +90,5 @@ uint32_t Utils::getCRC32(uint8_t* data, uint32_t size)
 	SOAR_PRINT("Warning, HCRC is not tested!\n");
 
 	// Calculate the CRC32
-	return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, size/4);
+	return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, (size+pad)/4);
 }
