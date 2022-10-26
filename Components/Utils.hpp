@@ -20,6 +20,10 @@ constexpr double MATH_PI = 3.14159265358979323846;
 #define TICKS_TO_MS(time_ticks) ((time_ticks) * 1000 / osKernelSysTickFrequency) // System ticks to milliseconds
 #define MS_TO_TICKS(time_ms) ((time_ms) * osKernelSysTickFrequency / 1000) // Milliseconds to system ticks
 
+// System Time Macros
+constexpr uint32_t MAX_DELAY_MS = TICKS_TO_MS(portMAX_DELAY);
+constexpr uint32_t MAX_DELAY_TICKS = portMAX_DELAY;
+
 // Utility functions
 namespace Utils
 {
@@ -30,6 +34,12 @@ namespace Utils
 
 	// CRC
 	uint32_t getCRC32(uint8_t* data, uint32_t size);
+
+	// String Manipulation
+	inline bool IsAsciiNum(uint8_t c) { return (c >= '0' && c <= '9'); }
+	inline bool IsAsciiChar(uint8_t c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
+	inline bool IsAsciiLowercase(uint8_t c) { return (c >= 'a' && c <= 'z'); }
+
 }
 
 

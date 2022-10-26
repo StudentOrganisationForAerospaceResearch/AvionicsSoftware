@@ -37,11 +37,6 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-namespace SystemHandles
-{
-	namespace HAL
-    {
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -64,31 +59,6 @@ DMA_HandleTypeDef hdma_uart5_tx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
-	}
-}
-
-// Handles for codegen init, please give a reference to all handles above (wrapped in global namespace) here
-ADC_HandleTypeDef& hadc1 = SystemHandles::HAL::hadc1;
-ADC_HandleTypeDef& hadc2 = SystemHandles::HAL::hadc2;
-
-CRC_HandleTypeDef& hcrc = SystemHandles::HAL::hcrc;
-
-SPI_HandleTypeDef& hspi1 = SystemHandles::HAL::hspi1;
-SPI_HandleTypeDef& hspi2 = SystemHandles::HAL::hspi2; //TODO: Add to SystemHandles::HAL
-SPI_HandleTypeDef& hspi3 = SystemHandles::HAL::hspi3;
-
-UART_HandleTypeDef& huart4 = SystemHandles::HAL::huart4;
-UART_HandleTypeDef& huart5 = SystemHandles::HAL::huart5;
-UART_HandleTypeDef& huart1 = SystemHandles::HAL::huart1;
-UART_HandleTypeDef& huart2 = SystemHandles::HAL::huart2;
-
-TIM_HandleTypeDef& htim2 = SystemHandles::HAL::htim2; //TODO: Add to SystemHandles::HAL
-
-DMA_HandleTypeDef& hdma_uart4_rx = SystemHandles::HAL::hdma_uart4_rx; //TODO: Add to SystemHandles::HAL
-
-DMA_HandleTypeDef& hdma_uart5_rx = SystemHandles::HAL::hdma_uart5_rx;
-DMA_HandleTypeDef& hdma_uart5_tx = SystemHandles::HAL::hdma_uart5_tx;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

@@ -10,9 +10,14 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
+/* Enums ------------------------------------------------------------------*/
+enum DEBUG_TASK_COMMANDS {
+	DEBUG_TASK_COMMAND_NONE = 0,
+	EVENT_DEBUG_RX_COMPLETE
+};
 
 /* Macros ------------------------------------------------------------------*/
-
+constexpr uint16_t DEBUG_RX_BUFFER_SZ_BYTES = 16;
 
 /* Class ------------------------------------------------------------------*/
 class DebugTask : public Task
@@ -25,17 +30,30 @@ public:
 
 	void InitTask();
 
+	//Functions exposed to HAL callbacks
+	void InterruptRxData();
+
 protected:
 	static void RunTask(void* pvParams) { DebugTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
 	void Run(void* pvParams);	// Main run code
 
 	void ConfigureUART();
-	void HandleCommand(Command& cm);
+	void HandleDebugMessage(const char* msg);
+	//void HandleCommand(Command& cm);
+
+	bool ReceiveData();
+	
+	// Member variables
+	uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];
+	uint8_t debugMsgIdx;
+	bool isDebugMsgReady;
+
+	uint8_t debugRxChar; // Character received from UART Interrupt
 
 private:
-	DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS) {}	// Private constructor
-	DebugTask(const DebugTask&);						// Prevent copy-construction
+	DebugTask(); // Private constructor
+	DebugTask(const DebugTask&);					// Prevent copy-construction
 	DebugTask& operator=(const DebugTask&);			// Prevent assignment
 };
 
