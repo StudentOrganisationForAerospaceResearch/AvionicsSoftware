@@ -213,7 +213,7 @@
     <ClCompile Include="..\..\Components\Utils.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\Sensors\SensorTask.cpp">
+    <ClCompile Include="..\..\Components\Sensors\BarometerTask.cpp">
       <Filter>Source Files\Components\Sensors</Filter>
     </ClCompile>
   </ItemGroup>
@@ -515,7 +515,7 @@
     <ClInclude Include="..\..\Components\Utils.hpp">
       <Filter>Source Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\Sensors\Inc\SensorTask.hpp">
+    <ClInclude Include="..\..\Components\Sensors\Inc\BarometerTask.hpp">
       <Filter>Source Files\Components\Sensors\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Sensors\Inc\Data.h">

@@ -1,11 +1,11 @@
 /**
  ******************************************************************************
- * File Name          : DebugTask.hpp
+ * File Name          : BarometerTask.hpp
  * Description        :
  ******************************************************************************
 */
-#ifndef SOAR_SYSTEM_DEBUG_TASK_HPP_
-#define SOAR_SYSTEM_DEBUG_TASK_HPP_
+#ifndef SOAR_SENSOR_BAROMETER_TASK_HPP_
+#define SOAR_SENSOR_BAROMETER_TASK_HPP_
 /* Includes ------------------------------------------------------------------*/
 #include "Task.hpp"
 #include "SystemDefines.hpp"
@@ -15,28 +15,27 @@
 
 
 /* Class ------------------------------------------------------------------*/
-class DebugTask : public Task
+class BarometerTask : public Task
 {
 public:
-	static DebugTask& Inst() {
-		static DebugTask inst;
+	static BarometerTask& Inst() {
+		static BarometerTask inst;
 		return inst;
 	}
 
 	void InitTask();
 
 protected:
-	static void RunTask(void* pvParams) { DebugTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+	static void RunTask(void* pvParams) { BarometerTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
 	void Run(void* pvParams);	// Main run code
-
-	void ConfigureUART();
+	
 	void HandleCommand(Command& cm);
 
 private:
-	DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS) {}	// Private constructor
-	DebugTask(const DebugTask&);						// Prevent copy-construction
-	DebugTask& operator=(const DebugTask&);			// Prevent assignment
+	BarometerTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS) {}	// Private constructor
+	BarometerTask(const BarometerTask&);					// Prevent copy-construction
+	BarometerTask& operator=(const BarometerTask&);			// Prevent assignment
 };
 
-#endif	// SOAR_SYSTEM_DEBUG_TASK_HPP_
+#endif	// SOAR_SENSOR_BAROMETER_TASK_HPP_

@@ -66,7 +66,7 @@ void DebugTask::InitTask()
 			(TaskHandle_t*)&rtTaskHandle);
 
 	//Ensure creation succeded
-	SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
+	SOAR_ASSERT(rtValue == pdPASS, "DebugTask::InitTask - xTaskCreate() failed");
 }
 
 // TODO: Only run thread when appropriate GPIO pin pulled HIGH (or by define)
