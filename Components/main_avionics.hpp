@@ -29,52 +29,47 @@ namespace Global
 
 /* System Handles ------------------------------------------------------------------*/
 /* This should be the only place externs are allowed -------------------------------*/
-namespace SystemHandles
-{
-	// Handles for the system
-	namespace HAL
-	{
-		//UART Handles
-		extern UART_HandleTypeDef huart1;   // UART1 - Launch Systems  ... Confirm
-		extern UART_HandleTypeDef huart2;   // UART2 - Logging (Radio)
-		extern UART_HandleTypeDef huart4;   // UART4 - GPS
-		extern UART_HandleTypeDef huart5;   // UART5 - Debug
+//UART Handles
+extern UART_HandleTypeDef huart1;   // UART1 - Launch Systems  ... Confirm
+extern UART_HandleTypeDef huart2;   // UART2 - Logging (Radio)
+extern UART_HandleTypeDef huart4;   // UART4 - GPS
+extern UART_HandleTypeDef huart5;   // UART5 - Debug
 
-		//ADC Handles
-		extern ADC_HandleTypeDef hadc1;      // ADC1 - Combustion Chamber ADC
-		extern ADC_HandleTypeDef hadc2;      // ADC2 - Battery
+//ADC Handles
+extern ADC_HandleTypeDef hadc1;      // ADC1 - Combustion Chamber ADC
+extern ADC_HandleTypeDef hadc2;      // ADC2 - Battery
 
-		//I2C Handles
-		//extern I2C_HandleTypeDef hi2c1;      // I2C1 -- EEPROM (? - Do we still have an I2C EEPROM)
+//I2C Handles
+//extern I2C_HandleTypeDef hi2c1;      // I2C1 -- EEPROM (? - Do we still have an I2C EEPROM)
 
-		//SPI Handles
-		extern SPI_HandleTypeDef hspi1;      // SPI1 - 
-		extern SPI_HandleTypeDef hspi3;      // SPI3 - Barometer MOSI/MISO/CLK
+//SPI Handles
+extern SPI_HandleTypeDef hspi1;      // SPI1 -
+extern SPI_HandleTypeDef hspi3;      // SPI3 - Barometer MOSI/MISO/CLK
 
-		//CRC Handles
-		extern CRC_HandleTypeDef hcrc;       // CRC - Hardware CRC System Handle
+//CRC Handles
+extern CRC_HandleTypeDef hcrc;       // CRC - Hardware CRC System Handle
 
-		//DMA Handles
-		extern DMA_HandleTypeDef hdma_uart4_rx; // DMA UART 4 RX -
-		extern DMA_HandleTypeDef hdma_uart5_rx; // DMA UART 5 RX -
-		extern DMA_HandleTypeDef hdma_uart5_tx; // DMA UART 5 TX -
-	}
+//DMA Handles
+extern DMA_HandleTypeDef hdma_uart4_rx; // DMA UART 4 RX -
+extern DMA_HandleTypeDef hdma_uart5_rx; // DMA UART 5 RX -
+extern DMA_HandleTypeDef hdma_uart5_tx; // DMA UART 5 TX -
 
+namespace SystemHandles {
 	// Aliases
-	constexpr UART_HandleTypeDef* UART_LaunchSystems = &HAL::huart1;
-	constexpr UART_HandleTypeDef* UART_Radio = &HAL::huart2;
-	constexpr UART_HandleTypeDef* UART_GPS = &HAL::huart4;
-	constexpr UART_HandleTypeDef* UART_Debug = &HAL::huart5;
+	constexpr UART_HandleTypeDef* UART_LaunchSystems = &huart1;
+	constexpr UART_HandleTypeDef* UART_Radio = &huart2;
+	constexpr UART_HandleTypeDef* UART_GPS = &huart4;
+	constexpr UART_HandleTypeDef* UART_Debug = &huart5;
 
-	constexpr ADC_HandleTypeDef* ADC_CombustionChamber = &HAL::hadc1;
-	constexpr ADC_HandleTypeDef* ADC_Battery = &HAL::hadc2;
+	constexpr ADC_HandleTypeDef* ADC_CombustionChamber = &hadc1;
+	constexpr ADC_HandleTypeDef* ADC_Battery = &hadc2;
 
 	//constexpr SPI_HandleTypeDef* SPI_Radio = &HAL::hspi1; // TODO: Specify
-	constexpr SPI_HandleTypeDef* SPI_Barometer = &HAL::hspi3;
+	constexpr SPI_HandleTypeDef* SPI_Barometer = &hspi3;
 
-	constexpr CRC_HandleTypeDef* CRC_Handle = &HAL::hcrc;
+	constexpr CRC_HandleTypeDef* CRC_Handle = &hcrc;
 
-	// DMA Alises
+	// DMA Aliases
 
 }
 
