@@ -23,7 +23,7 @@ void test_timer_state () {
 	testTimer1.StopTimer();
 	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
 	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
-
+	testTimer1.StartTimer();
 	osDelay(1100);
 	SOAR_PRINT("Expected Output: 3 (COMPLETE)\n");
 	SOAR_PRINT("The current timer state is: %d\n\n", testTimer1.GetState());
@@ -47,7 +47,9 @@ void test_period () {
 	SOAR_PRINT("Expected Output: 1000 ms\n");
 	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetPeriod());
 
-	SOAR_PRINT("Changing Period to 5000ms\n");
+	SOAR_PRINT("Changing Period to 5000ms...\n");
+	testTimer3.ChangePeriod(5000);
+	osDelay(500);
 	SOAR_PRINT("Expected Result: 5000ms\n");
 	SOAR_PRINT("Actual Result: %d\n\n", testTimer3.GetPeriod());
 
@@ -55,10 +57,10 @@ void test_period () {
 	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
 	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetState());
 
-	SOAR_PRINT("Testing to see if the timer restarts if timer period is changed\n");
-	SOAR_PRINT("Using GetPeriod function ...\n");
-	SOAR_PRINT("Expected Output: 5000 ms\n");
-	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetRemainingTime());
+//	SOAR_PRINT("Testing to see if the timer restarts if timer period is changed\n");
+//	SOAR_PRINT("Using GetPeriod function ...\n");
+//	SOAR_PRINT("Expected Output: 5000 ms\n");
+//	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetRemainingTime());
 
 	SOAR_PRINT("Testing ChangePeriodAndStart function...\n");
 	testTimer3.ChangePeriodAndStart(7000);
@@ -68,6 +70,11 @@ void test_period () {
 	SOAR_PRINT("Testing GetState function...\n");
 	SOAR_PRINT("Expected Output: 1 (COUNTING)\n");
 	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetState());
+
+	SOAR_PRINT("Making sure timer is couting... \n");
+	osDelay(1000);
+	SOAR_PRINT("Expected Output: 6000 ms\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer3.GetRemainingTime());
 
 	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
 }
@@ -121,10 +128,11 @@ void test_reset(){
 	}
 
 	SOAR_PRINT("Testing GetState function...\n");
-	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
+	SOAR_PRINT("Expected Output: 0 (UNINITIALIZED)\n");  // Ask chris is i should make rest to paused state
 	SOAR_PRINT("Actual Output: %d\n\n", testTimer5.GetState());
 
 	SOAR_PRINT("Testing ResetTimerAndStart function..\n");
+	SOAR_PRINT("Expected Output: Timer Reset Successfully\n");
 	if (testTimer5.ResetTimerAndStart() == true) {
 		SOAR_PRINT("Actual Output: Timer Reset Successfully\n\n");
 	}
@@ -142,7 +150,8 @@ void test_reset(){
 void test_get_time () {
 	Timer testTimer6;
 
-	SOAR_PRINT("Testing GetRemainingTime function ...\n");
+	testTimer6.StartTimer();
+	SOAR_PRINT("\nTesting GetRemainingTime function ...\n");
 	SOAR_PRINT("Expected Output: 1000 ms\n");
 	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
 
@@ -154,9 +163,20 @@ void test_get_time () {
 	testTimer6.StopTimer();
 	SOAR_PRINT("Expected Output: 400 ms\n");
 	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
+	SOAR_PRINT("Pausing Timer ... \n\n");
 
-	osDelay(500);
-	SOAR_PRINT("Expected Output: 0 ms\n");
+	SOAR_PRINT("Testing GetState function...\n");
+	SOAR_PRINT("Expected Output: 2 (PAUSED)\n");
+	SOAR_PRINT("Actual Output: %d\n\n", testTimer6.GetState());
+
+	osDelay(1000);
+	SOAR_PRINT("Expected Output: 400 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
+
+	SOAR_PRINT("Starting Timer ... \n");
+	testTimer6.StartTimer();
+	osDelay(200);
+	SOAR_PRINT("Expected Output: 200 ms\n");
 	SOAR_PRINT("Actual Output: %d ms \n\n", testTimer6.GetRemainingTime());
 
 	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");

@@ -103,7 +103,7 @@ bool Timer::ResetTimer()
 	}
 	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-			timerState = PAUSED;
+			timerState = UNINITIALIZED;
 			return true;
 		}
 	}
@@ -179,7 +179,7 @@ uint32_t Timer::GetRemainingTime()
 		return (GetPeriod());
 		}
 	else if (timerState == COUNTING){
-		return (rtosTimeRemaning());
+		return rtosTimeRemaning();
 	}
 	else if (timerState == PAUSED){
 		return remainingTimeBetweenPauses;
