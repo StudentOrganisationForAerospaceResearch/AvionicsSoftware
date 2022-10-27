@@ -210,21 +210,12 @@
     <ClCompile Include="..\..\Components\Core\DMAController.cpp">
       <Filter>Source Files\Components\Core</Filter>
     </ClCompile>
-<<<<<<< Updated upstream
-    <ClCompile Include="..\..\Components\Utils.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-=======
-<<<<<<< Updated upstream
-=======
     <ClCompile Include="..\..\Components\Utils.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Components\Sensors\SensorTask.cpp">
       <Filter>Source Files\Components\Sensors</Filter>
     </ClCompile>
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -518,29 +509,17 @@
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp">
       <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
-<<<<<<< Updated upstream
-=======
     <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp">
       <Filter>Source Files\Components\Core\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Utils.hpp">
       <Filter>Source Files\Components</Filter>
     </ClInclude>
->>>>>>> Stashed changes
-    <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp">
-      <Filter>Source Files\Components\Core\Inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Components\Utils.hpp">
-      <Filter>Source Files\Components</Filter>
-    </ClInclude>
-<<<<<<< Updated upstream
-=======
     <ClInclude Include="..\..\Components\Sensors\Inc\SensorTask.hpp">
       <Filter>Source Files\Components\Sensors\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Sensors\Inc\Data.h">
       <Filter>Source Files\Components\Sensors\Inc</Filter>
     </ClInclude>
->>>>>>> Stashed changes
   </ItemGroup>
 </Project>
