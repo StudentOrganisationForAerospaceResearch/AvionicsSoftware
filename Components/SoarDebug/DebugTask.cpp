@@ -133,7 +133,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
 	}
 	else if (strcmp(msg, "barometer") == 0) {
 		// Send a request to the barometer task to print the data
-		SOAR_PRINT("Debug 'Barometer Read' command requested\n");
+		SOAR_PRINT("Debug 'Barometer Poll+Read' command requested\n");
 		Command cmd(REQUEST_COMMAND, BARO_REQUEST_NEW_SAMPLE);
 		BarometerTask::Inst().GetEventQueue()->Send(cmd);
 		Command cmd2(REQUEST_COMMAND, BARO_REQUEST_DEBUG);

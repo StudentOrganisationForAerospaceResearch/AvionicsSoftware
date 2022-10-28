@@ -32,6 +32,7 @@ constexpr int TEMP_VERY_LOW = -1500;
 constexpr int CMD_SIZE = 1;
 constexpr int CMD_TIMEOUT = 150;
 
+// Barometer Commands (should not be modified, non-const due to HAL and C++ strictness)
 static uint8_t ADC_D1_512_CONV_CMD = 0x42;
 static uint8_t ADC_D2_512_CONV_CMD = 0x52;
 static uint8_t ADC_READ_CMD = 0x00;
@@ -102,7 +103,7 @@ void BarometerTask::Run(void * pvParams)
  */
 void BarometerTask::HandleCommand(Command& cm)
 {
-    //TODO: Since this task will stall for a while, we need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
+    //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
     //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
 
 	//Switch for the GLOBAL_COMMAND
