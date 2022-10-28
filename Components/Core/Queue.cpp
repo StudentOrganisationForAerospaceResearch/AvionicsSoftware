@@ -42,6 +42,8 @@ bool Queue::SendFromISR(Command& command)
 	if (xQueueSendFromISR(rtQueueHandle, &command, NULL) == pdPASS)
 		return true;
 
+	command.Reset();
+
 	return false;
 }
 
@@ -57,6 +59,7 @@ bool Queue::SendToFront(Command& command)
 		return true;
 
 	SOAR_PRINT("Could not send data to front of queue!");
+	command.Reset();
 
 	return false;
 }
@@ -71,7 +74,10 @@ bool Queue::Send(Command& command)
 	if (xQueueSend(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
 		return true;
 
+	//TODO: It may be possible to have this automatically set the command to not free data externally as we've "passed" control of the data over, which might let us use a destructor to free the data
+
 	SOAR_PRINT("Could not send data to queue!");
+	command.Reset();
 
 	return false;
 }
