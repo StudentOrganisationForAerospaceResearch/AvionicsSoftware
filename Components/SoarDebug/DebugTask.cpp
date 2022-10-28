@@ -131,6 +131,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		Command cmd(REQUEST_COMMAND, BARO_REQUEST_DEBUG);
 		BarometerTask::Inst().GetEventQueue()->Send(cmd);
 	}
+	else if (strcmp(msg, "barometer") == 0) {
+		// Send a request to the barometer task to print the data
+		SOAR_PRINT("Debug 'Barometer Read' command requested\n");
+		Command cmd(REQUEST_COMMAND, BARO_REQUEST_NEW_SAMPLE);
+		BarometerTask::Inst().GetEventQueue()->Send(cmd);
+		Command cmd2(REQUEST_COMMAND, BARO_REQUEST_DEBUG);
+		BarometerTask::Inst().GetEventQueue()->Send(cmd2);
+	}
 	else {
 		// Single character command, or unknown command
 		switch (msg[0]) {
