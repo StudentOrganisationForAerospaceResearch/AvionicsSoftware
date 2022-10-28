@@ -26,7 +26,7 @@
 
 /* Class -----------------------------------------------------------------*/
 
-class Queue{
+class Queue {
 public:
 	//Constructors
 	Queue(void);
@@ -36,10 +36,13 @@ public:
 	bool Send(Command& command);
 	bool SendFromISR(Command& command);
 
+	bool SendToFront(Command& command);
+
 	bool Receive(Command& cm, uint32_t timeout_ms = 0);
 	bool ReceiveWait(Command& cm); //Blocks until a command is received
 
 	//Getters
+	uint16_t GetQueueMessageCount() const { return uxQueueMessagesWaiting(rtQueueHandle); }
 	uint16_t GetQueueDepth() const { return queueDepth; }
 
 protected:

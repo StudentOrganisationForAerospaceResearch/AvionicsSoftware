@@ -46,7 +46,23 @@ bool Queue::SendFromISR(Command& command)
 }
 
 /**
- * @brief Sends a command object to the queue
+ * @brief Sends a command object to the front of the queue, use for high priority commands
+ * @param command Command object reference to send
+ * @return true on success, false on failure (queue full)
+ */
+bool Queue::SendToFront(Command& command)
+{
+	//Send to the back of the queue
+	if (xQueueSendToFront(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
+		return true;
+
+	SOAR_PRINT("Could not send data to front of queue!");
+
+	return false;
+}
+
+/**
+ * @brief Sends a command object to the queue (sends to back of queue in FIFO order)
  * @param command Command object reference to send
  * @return true on success, false on failure (queue full)
 */
