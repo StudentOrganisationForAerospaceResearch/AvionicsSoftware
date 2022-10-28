@@ -138,9 +138,9 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case BARO_REQUEST_DEBUG:
         SOAR_PRINT("\t-- Barometer Data --\n");
-        SOAR_PRINT(" Temp (C)       : %lf\n", (double)data->pressure_ / 100.0);
-        SOAR_PRINT(" Pressure (mbar): %lf\n", (double)data->temperature_ / 100.0);
-        SOAR_PRINT(" Pressure (kPa) : %lf\n", (double)data->temperature_ / 1000.0);
+        SOAR_PRINT(" Temp (C)       : %d.%d\n", data->temperature_ / 100, data->temperature_ % 100);
+        SOAR_PRINT(" Pressure (mbar): %d.%d\n", data->pressure_ / 100, data->pressure_ % 100);
+        SOAR_PRINT(" Pressure (kPa) : %d.%d\n\n", data->pressure_ / 1000, data->pressure_ % 1000);
         break;
     default:
         SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
