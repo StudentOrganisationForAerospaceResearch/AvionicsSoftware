@@ -8,11 +8,17 @@
 #define SOAR_SENSOR_BAROMETER_TASK_HPP_
 /* Includes ------------------------------------------------------------------*/
 #include "Task.hpp"
+#include "Data.h"
 #include "SystemDefines.hpp"
 
 
-/* Macros ------------------------------------------------------------------*/
-
+/* Macros/Enums ------------------------------------------------------------*/
+enum BARO_TASK_COMMANDS {
+	BARO_NONE = 0,
+	BARO_REQUEST_NEW_SAMPLE,// Get a new barometer sample, task will be blocked for polling time
+	BARO_REQUEST_TRANSMIT,	// Send the current barometer data over the Radio
+	BARO_REQUEST_DEBUG		// Send the current barometer data over the Debug UART
+};
 
 /* Class ------------------------------------------------------------------*/
 class BarometerTask : public Task
@@ -31,9 +37,17 @@ protected:
 	void Run(void* pvParams);	// Main run code
 	
 	void HandleCommand(Command& cm);
+	void HandleRequestCommand(uint16_t taskCommand);
+
+	// Sampling
+	void SampleBarometer();
+	uint16_t ReadCalibrationCoefficients(uint8_t PROM_READ_CMD);
+
+	// Data
+	BarometerData* data;
 
 private:
-	BarometerTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS) {}	// Private constructor
+	BarometerTask();										// Private constructor
 	BarometerTask(const BarometerTask&);					// Prevent copy-construction
 	BarometerTask& operator=(const BarometerTask&);			// Prevent assignment
 };
