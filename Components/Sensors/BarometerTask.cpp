@@ -186,7 +186,7 @@ void BarometerTask::SampleBarometer()
 
     // Reset the barometer
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi3, &RESET_CMD, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &RESET_CMD, CMD_SIZE, CMD_TIMEOUT);
     osDelay(3); // 2.8ms reload after Reset command
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
@@ -207,25 +207,25 @@ void BarometerTask::SampleBarometer()
 
     // Tell the barometer to convert the pressure to a digital value with an over-sampling ratio of 512
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi3, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
     osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-    HAL_SPI_Transmit(&hspi3, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
     // Read the first byte (bits 23-16)
-    HAL_SPI_TransmitReceive(&hspi3, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     pressureReading = dataInBuffer << 16;
 
     // Read the second byte (bits 15-8)
-    HAL_SPI_TransmitReceive(&hspi3, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     pressureReading += dataInBuffer << 8;
 
     // Read the third byte (bits 7-0)
-    HAL_SPI_TransmitReceive(&hspi3, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     pressureReading += dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
@@ -234,25 +234,25 @@ void BarometerTask::SampleBarometer()
 
     // Tell the barometer to convert the temperature to a digital value with an over-sampling ratio of 512
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi3, &ADC_D2_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D2_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
     osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-    HAL_SPI_Transmit(&hspi3, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
     // Read the first byte (bits 23-16)
-    HAL_SPI_TransmitReceive(&hspi3, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     temperatureReading = dataInBuffer << 16;
 
     // Read the second byte (bits 15-8)
-    HAL_SPI_TransmitReceive(&hspi3, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     temperatureReading += dataInBuffer << 8;
 
     // Read the third byte (bits 7-0)
-    HAL_SPI_TransmitReceive(&hspi3, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     temperatureReading += dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
@@ -310,14 +310,14 @@ uint16_t BarometerTask::ReadCalibrationCoefficients(uint8_t PROM_READ_CMD)
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-    HAL_SPI_Transmit(&hspi3, &PROM_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &PROM_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
     // Read the first byte (bits 15-8)
-    HAL_SPI_TransmitReceive(&hspi3, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     coefficient = dataInBuffer << 8;
 
     // Read the second byte (bits 7-0)
-    HAL_SPI_TransmitReceive(&hspi3, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     coefficient += dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
