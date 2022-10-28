@@ -16,6 +16,7 @@
 
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
+#include "IMUTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -138,6 +139,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		BarometerTask::Inst().GetEventQueue()->Send(cmd);
 		Command cmd2(REQUEST_COMMAND, BARO_REQUEST_DEBUG);
 		BarometerTask::Inst().GetEventQueue()->Send(cmd2);
+	}
+	else if (strcmp(msg, "imu") == 0) {
+		// Send a request to the IMU task to poll and print the data
+		SOAR_PRINT("Debug 'IMU Poll+Read' command requested\n");
+		Command cmd(REQUEST_COMMAND, IMU_REQUEST_NEW_SAMPLE);
+		IMUTask::Inst().GetEventQueue()->Send(cmd);
+		Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
+		IMUTask::Inst().GetEventQueue()->Send(cmd2);
 	}
 	else {
 		// Single character command, or unknown command

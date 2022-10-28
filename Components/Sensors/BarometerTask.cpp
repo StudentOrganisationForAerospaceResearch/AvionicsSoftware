@@ -65,7 +65,7 @@ BarometerTask::BarometerTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS)
 void BarometerTask::InitTask()
 {
 	// Make sure the task is not already initialized
-	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Debug task twice");
+	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Baro task twice");
 
 	// Start the task
 	BaseType_t rtValue =
@@ -306,8 +306,7 @@ void BarometerTask::SampleBarometer()
  */
 uint16_t BarometerTask::ReadCalibrationCoefficients(uint8_t PROM_READ_CMD)
 {
-    uint16_t coefficient;
-    uint8_t dataInBuffer;
+	uint8_t dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
@@ -315,7 +314,7 @@ uint16_t BarometerTask::ReadCalibrationCoefficients(uint8_t PROM_READ_CMD)
 
     // Read the first byte (bits 15-8)
     HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
-    coefficient = dataInBuffer << 8;
+    uint16_t coefficient = dataInBuffer << 8;
 
     // Read the second byte (bits 7-0)
     HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
