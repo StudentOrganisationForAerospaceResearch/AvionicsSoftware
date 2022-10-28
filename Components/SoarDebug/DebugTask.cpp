@@ -14,6 +14,9 @@
 #include "GPIO.hpp"
 #include "stm32f4xx_hal.h"
 
+// External Tasks (to send debug commands to)
+#include "BarometerTask.hpp"
+
 /* Macros --------------------------------------------------------------------*/
 
 /* Structs -------------------------------------------------------------------*/
@@ -115,6 +118,18 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		SOAR_PRINT("Debug 'LED blink' command requested\n");
 		GPIO::LED1::On();
 		// TODO: Send to HID task to blink LED, this shouldn't delay
+	}
+	else if (strcmp(msg, "baropoll") == 0) {
+		// Send a request to the barometer task to poll the barometer
+		SOAR_PRINT("Debug 'Barometer Poll' command requested\n");
+		Command cmd(REQUEST_COMMAND, BARO_REQUEST_NEW_SAMPLE);
+		BarometerTask::Inst().GetEventQueue()->Send(cmd);
+	}
+	else if (strcmp(msg, "baroread") == 0) {
+		// Send a request to the barometer task to print the data
+		SOAR_PRINT("Debug 'Barometer Read' command requested\n");
+		Command cmd(REQUEST_COMMAND, BARO_REQUEST_DEBUG);
+		BarometerTask::Inst().GetEventQueue()->Send(cmd);
 	}
 	else {
 		// Single character command, or unknown command
