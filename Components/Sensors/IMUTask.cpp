@@ -63,7 +63,7 @@ static const uint8_t ACTIVATE_MAGNETO_DATA = 0x80;
 
 static uint8_t READ_GYRO_X_G_LOW_CMD = GYRO_X_G_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 static uint8_t READ_ACCEL_X_LOW_CMD = ACCEL_X_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
-static const uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
+static uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
 // static const uint8_t READ_WHOAMI_CMD = WHOAMI_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 // static const uint8_t READ_WHOAMIM_CMD = WHOAMIM_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
 
@@ -75,7 +75,7 @@ static const uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ
 /**
  * @brief Default constructor, sets and sets up storage for member variables
  */
-IMUTask::IMUTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS)
+IMUTask::IMUTask() : Task(TASK_IMU_QUEUE_DEPTH_OBJS)
 {
     data = (AccelGyroMagnetismData*)soar_malloc(sizeof(AccelGyroMagnetismData));
 }
@@ -180,7 +180,7 @@ void IMUTask::SampleIMU()
     uint8_t dataBuffer[6];
     int16_t accelX, accelY, accelZ;
     int16_t gyroX, gyroY, gyroZ;
-    //int16_t magnetoX, magnetoY, magnetoZ;
+    int16_t magnetoX, magnetoY, magnetoZ;
 	
     //READ------------------------------------------------------
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
@@ -199,13 +199,13 @@ void IMUTask::SampleIMU()
     accelY = (dataBuffer[3] << 8) | (dataBuffer[2]);
     accelZ = (dataBuffer[5] << 8) | (dataBuffer[4]);
 
-    // HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_RESET);
-    // HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_MAGNETO_X_LOW_CMD, 1, CMD_TIMEOUT);
-    // HAL_SPI_Receive(SystemHandles::SPI_IMU, &dataBuffer[0], 6, CMD_TIMEOUT);
-    // HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_SET);
-    // magnetoX = (dataBuffer[1] << 8) | (dataBuffer[0]);
-    // magnetoY = (dataBuffer[3] << 8) | (dataBuffer[2]);
-    // magnetoZ = (dataBuffer[5] << 8) | (dataBuffer[4]);
+     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_RESET);
+     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_MAGNETO_X_LOW_CMD, 1, CMD_TIMEOUT);
+     HAL_SPI_Receive(SystemHandles::SPI_IMU, &dataBuffer[0], 6, CMD_TIMEOUT);
+     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_SET);
+     magnetoX = (dataBuffer[1] << 8) | (dataBuffer[0]);
+     magnetoY = (dataBuffer[3] << 8) | (dataBuffer[2]);
+     magnetoZ = (dataBuffer[5] << 8) | (dataBuffer[4]);
 
     // Write to storage
     data->accelX_ = accelX * ACCEL_SENSITIVITY; // mg
@@ -214,7 +214,7 @@ void IMUTask::SampleIMU()
     data->gyroX_ = gyroX * GYRO_SENSITIVITY; // mdps
     data->gyroY_ = gyroY * GYRO_SENSITIVITY; // mdps
     data->gyroZ_ = gyroZ * GYRO_SENSITIVITY; // mdps
-    // data->magnetoX_ = magnetoX * MAGENTO_SENSITIVITY; // mgauss
-    // data->magnetoY_ = magnetoY * MAGENTO_SENSITIVITY; // mgauss
-    // data->magnetoZ_ = magnetoZ * MAGENTO_SENSITIVITY; // mgauss
+	data->magnetoX_ = magnetoX * MAGENTO_SENSITIVITY; // mgauss
+	data->magnetoY_ = magnetoY * MAGENTO_SENSITIVITY; // mgauss
+	data->magnetoZ_ = magnetoZ * MAGENTO_SENSITIVITY; // mgauss
 }

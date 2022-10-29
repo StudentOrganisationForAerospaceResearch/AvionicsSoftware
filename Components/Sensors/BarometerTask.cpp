@@ -54,7 +54,7 @@ static uint8_t RESET_CMD = 0x1E;
 /**
  * @brief Default constructor, sets and sets up storage for member variables
  */
-BarometerTask::BarometerTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS)
+BarometerTask::BarometerTask() : Task(TASK_BAROMETER_QUEUE_DEPTH_OBJS)
 {
     data = (BarometerData*)soar_malloc(sizeof(BarometerData));
 }

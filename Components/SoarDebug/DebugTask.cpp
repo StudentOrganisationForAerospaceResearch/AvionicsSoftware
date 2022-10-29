@@ -45,7 +45,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 /**
  * @brief Constructor, sets all member variables
  */
-DebugTask::DebugTask() : Task(TASK_DEBUG_STACK_DEPTH_WORDS)
+DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS)
 {
 	memset(debugBuffer, 0, sizeof(debugBuffer));
 	debugMsgIdx = 0;
