@@ -37,8 +37,8 @@ constexpr int CMD_TIMEOUT = 150;
 #define G1_CTRL_REGISTER_ADDR 0x10 // CTRL_REG1_G (10h)
 #define XL6_CTRL_REGISTER_ADDR 0x20 // CTRL_REG6_XL (20h)
 #define M3_CTRL_REGISTER_ADDR 0x22 // CTRL_REG3_M (22h)
-//#define WHOAMI_REGISTER_ADDR 0x0F
-#define WHOAMIM_REGISTER_ADDR 0x0F
+#define WHOAMI_REGISTER_ADDR 0x0F  // WHO_AM_I_A/G (Accel/Gyro - expected value is 104)
+#define WHOAMIM_REGISTER_ADDR 0x0F // WHO_AM_I_M (Magnetometer - expected value is 61)
 
 #define GYRO_X_G_LOW_REGISTER_ADDR 0x18
 #define ACCEL_X_LOW_REGISTER_ADDR 0x28
@@ -64,7 +64,7 @@ static uint8_t ACTIVATE_MAGNETO_DATA = 0x80;
 static uint8_t READ_GYRO_X_G_LOW_CMD = GYRO_X_G_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 static uint8_t READ_ACCEL_X_LOW_CMD = ACCEL_X_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 static uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
-//static uint8_t READ_WHOAMI_CMD = WHOAMI_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
+static uint8_t READ_WHOAMI_CMD = WHOAMI_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
 static uint8_t READ_WHOAMIM_CMD = WHOAMIM_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
 
 /* Variables -----------------------------------------------------------------*/
@@ -108,11 +108,7 @@ void IMUTask::InitTask()
 void IMUTask::Run(void* pvParams)
 {
     //Setup the IMU
-    uint8_t whoami = SetupIMU();
-    if (whoami != 104)
-    {
-        SOAR_PRINT("Non-Fatal-Warning: IMU WHOAMI failed\n");
-    }
+    SetupIMU();
 
     //Task run loop
     while (1) {
@@ -169,8 +165,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
     case IMU_REQUEST_DEBUG:
         SOAR_PRINT("\t-- IMU Data --\n");
         SOAR_PRINT(" Accel (x,y,z) : (%d, %d, %d) milli-Gs\n", data->accelX_, data->accelY_, data->accelZ_);
-        SOAR_PRINT(" Accel (x,y,z) : (%d, %d, %d) m/s^2\n", MILLIG_TO_MPS2(data->accelX_), MILLIG_TO_MPS2(data->accelY_), MILLIG_TO_MPS2(data->accelZ_));
-        SOAR_PRINT(" Gyro (x,y,z)  : (%d, %d, %d) rad/s\n", data->gyroX_, data->gyroY_, data->gyroZ_);
+        SOAR_PRINT(" Gyro (x,y,z)  : (%d, %d, %d) deg/s\n", data->gyroX_, data->gyroY_, data->gyroZ_);
         SOAR_PRINT(" Mag (x,y,z)   : (%d, %d, %d) milli-gauss\n", data->magnetoX_, data->magnetoY_, data->magnetoZ_);
         break;
     default:
@@ -229,10 +224,11 @@ void IMUTask::SampleIMU()
 
 /**
  * @brief Sets up IMU
- * @return WHOAMI register value if read, 0xDE if not
+ * @return WHOAMI_M register value if read
  */
 uint8_t IMUTask::SetupIMU()
 {
+	/* Setup the Accel / Gyro */
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
@@ -247,17 +243,32 @@ uint8_t IMUTask::SetupIMU()
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &SET_ACCEL_SCALE_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
 
+    /* Read WHO AM I register for verification, should read 104. */
+    uint8_t whoami = 0xDE;
+    HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_WHOAMI_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Receive(SystemHandles::SPI_IMU, &whoami, 1, CMD_TIMEOUT);
+    HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
+
+    /* Setup the Magnetometer */
     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_MAGNETO_CMD, 1, CMD_TIMEOUT);
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_MAGNETO_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_SET);
 
-    /* Read WHO AM I register for verification, should read 104. */
-    uint8_t whoami = 0xDE;
+    /* Read WHO AM I MAG register for verification, should read 61. */
+    uint8_t whoami_m = 0xDE;
     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_WHOAMIM_CMD, 1, CMD_TIMEOUT);
-    HAL_SPI_Receive(SystemHandles::SPI_IMU, &whoami, 1, CMD_TIMEOUT);
+    HAL_SPI_Receive(SystemHandles::SPI_IMU, &whoami_m, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(MAG_CS_GPIO_Port, MAG_CS_Pin, GPIO_PIN_SET);
+
+    /* Verify the two WHOAMI registers */
+    if(whoami != 104)
+    	SOAR_PRINT("Non-Fatal-Warning: IMU WHOAMI failed   [%d]\n", whoami);
+    if (whoami_m != 61)
+        SOAR_PRINT("Non-Fatal-Warning: IMU WHOAMI_M failed [%d]\n", whoami_m);
+
 
     return whoami;
 }
