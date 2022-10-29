@@ -42,6 +42,9 @@ protected:
 	// Sampling
 	void SampleIMU();
 
+	// Setup Functions
+	uint8_t SetupIMU();
+
 	// Data
 	AccelGyroMagnetismData* data;
 
