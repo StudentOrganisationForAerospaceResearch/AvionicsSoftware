@@ -37,11 +37,6 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-namespace SystemHandles
-{
-	namespace HAL
-    {
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -59,34 +54,11 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_uart4_rx;
+DMA_HandleTypeDef hdma_uart5_rx;
+DMA_HandleTypeDef hdma_uart5_tx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
-	}
-}
-
-// Handles for codegen init, please give a reference to all handles above (wrapped in global namespace) here
-ADC_HandleTypeDef& hadc1 = SystemHandles::HAL::hadc1;
-ADC_HandleTypeDef& hadc2 = SystemHandles::HAL::hadc2;
-
-CRC_HandleTypeDef& hcrc = SystemHandles::HAL::hcrc;
-
-SPI_HandleTypeDef& hspi1 = SystemHandles::HAL::hspi1;
-SPI_HandleTypeDef& hspi2 = SystemHandles::HAL::hspi2; //TODO: Add to SystemHandles::HAL
-SPI_HandleTypeDef& hspi3 = SystemHandles::HAL::hspi3;
-
-UART_HandleTypeDef& huart4 = SystemHandles::HAL::huart4;
-UART_HandleTypeDef& huart5 = SystemHandles::HAL::huart5;
-UART_HandleTypeDef& huart1 = SystemHandles::HAL::huart1;
-UART_HandleTypeDef& huart2 = SystemHandles::HAL::huart2;
-
-TIM_HandleTypeDef& htim2 = SystemHandles::HAL::htim2; //TODO: Add to SystemHandles::HAL
-
-DMA_HandleTypeDef& hdma_uart4_rx = SystemHandles::HAL::hdma_uart4_rx; //TODO: Add to SystemHandles::HAL
-
-//DMA_HandleTypeDef& hdma_uart5_rx = SystemHandles::HAL::hdma_uart5_rx;
-//DMA_HandleTypeDef& hdma_uart5_tx = SystemHandles::HAL::hdma_uart5_tx;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -606,9 +578,15 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
+  /* DMA1_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
   /* DMA1_Stream2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
+  /* DMA1_Stream7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
 
 }
 
@@ -632,8 +610,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, IMU_CS_Pin|LAUNCH_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, MAG_CS_Pin|PMB_CONTROL_Pin|LED_3_Pin|LED_2_Pin
-                          |LED_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, MAG_CS_Pin|PMB_CONTROL_Pin|LED_3_Pin|LED_1_Pin
+                          |LED_2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, BARO_CS_Pin|MEM_WP_Pin|SPI_FLASH_CS_Pin, GPIO_PIN_RESET);
@@ -665,10 +643,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MAG_CS_Pin PMB_CONTROL_Pin LED_3_Pin LED_2_Pin
-                           LED_1_Pin */
-  GPIO_InitStruct.Pin = MAG_CS_Pin|PMB_CONTROL_Pin|LED_3_Pin|LED_2_Pin
-                          |LED_1_Pin;
+  /*Configure GPIO pins : MAG_CS_Pin PMB_CONTROL_Pin LED_3_Pin LED_1_Pin
+                           LED_2_Pin */
+  GPIO_InitStruct.Pin = MAG_CS_Pin|PMB_CONTROL_Pin|LED_3_Pin|LED_1_Pin
+                          |LED_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

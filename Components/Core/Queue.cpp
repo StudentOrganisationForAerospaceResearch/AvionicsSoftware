@@ -32,6 +32,20 @@ Queue::Queue(uint16_t depth)
 }
 
 /**
+ * @brief Sends a command object to the queue, safe to call from ISR
+ * @param command Command object reference to send
+ * @return true on success, false on failure (queue full)
+*/
+bool Queue::SendFromISR(Command& command)
+{
+	//Note: There NULL param here could be used to wake a task right after after exiting the ISR
+	if (xQueueSendFromISR(rtQueueHandle, &command, NULL) == pdPASS)
+		return true;
+
+	return false;
+}
+
+/**
  * @brief Sends a command object to the queue
  * @param command Command object reference to send
  * @return true on success, false on failure (queue full)
@@ -41,7 +55,7 @@ bool Queue::Send(Command& command)
 	if (xQueueSend(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
 		return true;
 
-	//TODO: Probably should have a debug message printing here if we're getting a queue full error
+	SOAR_PRINT("Could not send data to queue!");
 
 	return false;
 }
@@ -54,7 +68,7 @@ bool Queue::Send(Command& command)
 */
 bool Queue::Receive(Command& cm, uint32_t timeout_ms)
 {
-	if(xQueueReceive(rtQueueHandle, &cm, timeout_ms / portTICK_RATE_MS) == pdTRUE) {
+	if(xQueueReceive(rtQueueHandle, &cm, MS_TO_TICKS(timeout_ms)) == pdTRUE) {
 		return true;
 	}
 	return false;

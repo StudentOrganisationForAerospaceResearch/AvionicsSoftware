@@ -7,6 +7,7 @@
 
 #include "Mutex.hpp"
 #include "SystemDefines.hpp"
+#include "Utils.hpp"
 
 /**
  * @brief Constructor for the Mutex class.
@@ -34,7 +35,7 @@ Mutex::~Mutex()
 */
 bool Mutex::Lock(uint32_t timeout_ms)
 {
-	return xSemaphoreTake(rtSemaphoreHandle, timeout_ms/portTICK_RATE_MS) == pdTRUE;
+	return xSemaphoreTake(rtSemaphoreHandle, MS_TO_TICKS(timeout_ms)) == pdTRUE;
 }
 
 

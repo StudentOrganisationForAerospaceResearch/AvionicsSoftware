@@ -1,10 +1,10 @@
-#include "Task.hpp"
 /**
  ******************************************************************************
  * File Name          : Task.cpp
  * Description        : Task contains the core component base class for all tasks.
  ******************************************************************************
 */
+#include "Task.hpp"
 
 /**
  * @brief Default constructor, instantiates event queue with default size
