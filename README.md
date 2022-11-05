@@ -39,22 +39,22 @@ Make sure to update the `.gitignore`.
 
 ### Timeline
 
-- [ ] Layout desired requirements
-- [ ] Design and document architecture
-  - [ ] Diagram
-  - [ ] Reference other teams (if possible)
-- [ ] Scope MVP
-  - [ ] Before September 6th (Classes begin)
-- [ ] Build MVP
-  - [ ] PREREQ: Merge A3.3, Clang Format
+- [x] Layout desired requirements
+- [x] Design and document architecture
+  - [x] Diagram
+  - [x] Reference other teams (if possible)
+- [x] Scope MVP
+  - [x] Before September 6th (Classes begin)
+- [x] Build MVP
+  - [x] PREREQ: Merge A3.3, Clang Format
   - [ ] Integration test on hardware
-  - [ ] Full SW team approval
-- [ ] Create tasks and documentation to update each code section
-- [ ] Create on-boarding presentation
-  - [ ] What it is
-  - [ ] How it works
-  - [ ] Why decisions were made
-- [ ] Merge MVP into master
+  - [x] Full SW team approval
+- [x] Create tasks and documentation to update each code section
+- [x] Create on-boarding presentation
+  - [x] What it is
+  - [x] How it works
+  - [x] Why decisions were made
+- [x] Merge MVP into master
 
 1. Design Freeze
     - [ ] End of August
@@ -92,7 +92,7 @@ Diagrams are designed with a variety of software, code based diagrams are writte
 
 ## MVP Requirements
 
-- [ ] Compile flags/`#ifdef` flag for solid vs hybrid.
+- [x] Compile flags/`#ifdef` flag for solid vs hybrid.
 - [ ] Base Task Communication
 - [ ] UART poll and debug logging
 - [ ] Sensor log output over UART5
@@ -137,7 +137,7 @@ Diagrams are designed with a variety of software, code based diagrams are writte
 
 ## Milestones
 
-- [ ] Architecture Design Complete
+- [x] Architecture Design Complete
 - [ ] MVP Complete
 - [ ] Rest of Codebase complete
 
