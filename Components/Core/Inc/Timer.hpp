@@ -37,8 +37,8 @@ public:
 	~Timer();
 	bool ChangePeriod(const uint32_t period_ms);
 	bool ChangePeriodAndStart(const uint32_t period_ms);
-	bool StartTimer();
-	bool StopTimer();
+	bool Start();
+	bool Stop();
 	bool ResetTimer();
 	bool ResetTimerAndStart();
 	void SetAutoReload(bool setReloadOn);
@@ -47,7 +47,8 @@ public:
 	TimerState GetState();
 	uint32_t GetPeriod();
 	uint32_t GetRemainingTime();
-
+	uint32_t rtosTimeRemaning();
+	static void vCallbackFunction( TimerHandle_t xTimer );
 
 
 	// WORK-IN-PROGRESS
@@ -59,7 +60,7 @@ public:
 
 
 protected:
-	uint32_t rtosTimeRemaning();
+
 	TimerHandle_t rtTimerHandle;
 	TimerState timerState;
 	uint32_t remainingTime;
