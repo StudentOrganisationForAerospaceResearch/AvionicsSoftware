@@ -19,9 +19,6 @@
 #include "FlightTask.hpp"
 #include "DebugTask.hpp"
 
-// ETL
-#include "etl/vector.h"
-
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
