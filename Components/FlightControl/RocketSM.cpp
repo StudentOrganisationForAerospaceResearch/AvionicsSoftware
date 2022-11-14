@@ -27,6 +27,10 @@ RocketControl::RocketControl()
  */
 RocketState RocketControl::TransitionState(RocketState nextState)
 {
+	// Check if we're already in the next state (TransitionState does not allow entry into the existing state)
+    if (nextState == rs_currentState->GetStateName())
+        return rs_currentState->GetStateName();
+
 	// Exit the current state
 	rs_currentState->OnExit();
 
