@@ -27,7 +27,6 @@
     <ClCompile Include="..\..\Components\Core\Task.cpp" />
     <ClCompile Include="..\..\Components\Core\Timer.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
-    <ClCompile Include="..\..\Components\FlightControl\Inc\RocketSM.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp" />
