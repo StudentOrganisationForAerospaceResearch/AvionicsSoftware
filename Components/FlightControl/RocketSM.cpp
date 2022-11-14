@@ -12,12 +12,12 @@
  */
 RocketControl::RocketControl()
 {
-	// Setup the internal array of states
-	stateArray[RS_PRELAUNCH] = new PreLaunch();
+    // Setup the internal array of states
+    stateArray[RS_PRELAUNCH] = new PreLaunch();
 
-	// Verify all states are initialized
-	for (uint8_t i = 0; i < RS_NONE-1; i++)
-		SOAR_ASSERT(stateArray[i] != nullptr);
+    // Verify all states are initialized
+    for (uint8_t i = 0; i < RS_NONE-1; i++)
+        SOAR_ASSERT(stateArray[i] != nullptr);
 }
 
 /**
@@ -27,21 +27,21 @@ RocketControl::RocketControl()
  */
 RocketState RocketControl::TransitionState(RocketState nextState)
 {
-	// Check if we're already in the next state (TransitionState does not allow entry into the existing state)
+    // Check if we're already in the next state (TransitionState does not allow entry into the existing state)
     if (nextState == rs_currentState->GetStateName())
         return rs_currentState->GetStateName();
 
-	// Exit the current state
-	rs_currentState->OnExit();
+    // Exit the current state
+    rs_currentState->OnExit();
 
-	// Set the next state
-	rs_currentState = stateArray[nextState];
+    // Set the next state
+    rs_currentState = stateArray[nextState];
 
-	// Enter the current state
-	rs_currentState->OnEnter();
+    // Enter the current state
+    rs_currentState->OnEnter();
 
-	// Return the state after the transition
-	return rs_currentState->GetStateName();
+    // Return the state after the transition
+    return rs_currentState->GetStateName();
 }
 
 
@@ -51,7 +51,7 @@ RocketState RocketControl::TransitionState(RocketState nextState)
  */
 PreLaunch::PreLaunch()
 {
-	stateName = RS_PRELAUNCH;
+    stateName = RS_PRELAUNCH;
 }
 
 /**
@@ -60,9 +60,9 @@ PreLaunch::PreLaunch()
  */
 RocketState PreLaunch::OnEnter()
 {
-	// We don't do anything upon entering prelaunch
+    // We don't do anything upon entering prelaunch
 
-	return stateName;
+    return stateName;
 }
 
 /**
@@ -71,9 +71,9 @@ RocketState PreLaunch::OnEnter()
  */
 RocketState PreLaunch::OnExit()
 {
-	// We don't do anything upon exiting prelaunch
+    // We don't do anything upon exiting prelaunch
 
-	return stateName;
+    return stateName;
 }
 
 
