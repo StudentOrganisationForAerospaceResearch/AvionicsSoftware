@@ -210,10 +210,10 @@
     <ClCompile Include="..\..\Components\Utils.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp">
       <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
   </ItemGroup>

@@ -38,7 +38,7 @@ enum RocketState
     //-- DESCENT / POSTAPOGEE --
     // Automatic Venting AND Vent Control ALLOWED
     RS_DESCENT,  // Vents open (well into the descent)
-    RS_POSTLAUNCH,  // Vents open, MEV closed, transmit all data over radio and accept vent commands
+    RS_RECOVERY,  // Vents open, MEV closed, transmit all data over radio and accept vent commands
 
     //-- RECOVERY / TECHNICAL --
     RS_ABORT,       // Abort sequence, vents open, MEV closed, ignitors off
@@ -92,10 +92,122 @@ public:
     RocketState OnExit();
 };
 
+/**
+ * @brief Fill state, N2 Prefill/Purge/Leak-check/Load-cell Tare check sub-sequences, full control of valves (except MEV) allowed
+ */
+class Fill : public BaseRocketState
+{
+public:
+    Fill();
 
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
 
+/**
+ * @brief Arm state, we don't allow fill etc. 1-2 minutes before launch : Cannot fill rocket with N2 etc. unless you return to FILL
+ */
+class Arm : public BaseRocketState
+{
+public:
+    Arm();
 
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
 
+/**
+ * @brief Ignition state, ignition of the ignitors
+ */
+class Ignition : public BaseRocketState
+{
+public:
+    Ignition();
+
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
+
+/**
+ * @brief Launch state, launch triggered by confirmation of ignition (from ignitor) is nominal : MEV Open Sequence
+ */
+class Launch : public BaseRocketState
+{
+public:
+    Launch();
+
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
+
+/**
+ * @brief Burn state, main burn (vents closed MEV open) - 5-6 seconds (TBD) :
+ */
+class Burn : public BaseRocketState
+{
+public:
+    Burn();
+
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
+
+/**
+ * @brief Coast state, coasting (MEV closed, vents closed) - 30 seconds (TBD) ^ Vents closed applies here too, in part. Includes APOGEE
+ */
+class Coast : public BaseRocketState
+{
+public:
+    Coast();
+
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
+
+/**
+ * @brief Descent state, vents open (well into the descent)
+ */
+class Descent : public BaseRocketState
+{
+public:
+    Descent();
+
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
+
+/**
+ * @brief PostLaunch state, vents open, MEV closed, transmit all data over radio and accept vent commands
+ */
+class Recovery : public BaseRocketState
+{
+public:
+    Recovery();
+
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
+
+/**
+ * @brief Abort state, abort sequence, vents open, MEV closed, ignitors off
+ */
+class Abort : public BaseRocketState
+{
+public:
+    Abort();
+
+    void HandleCommand(Command& cm);
+    RocketState OnEnter();
+    RocketState OnExit();
+};
 
 
 #endif // SOAR_AVIONICS_ROCKET_SM

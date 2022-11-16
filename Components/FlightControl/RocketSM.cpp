@@ -12,8 +12,17 @@
  */
 RocketControl::RocketControl()
 {
-    // Setup the internal array of states
+    // Setup the internal array of states. Setup in order of enum.
     stateArray[RS_PRELAUNCH] = new PreLaunch();
+    stateArray[RS_FILL] = new Fill();
+    stateArray[RS_ARM] = new Arm();
+    stateArray[RS_IGNITION] = new Ignition();
+    stateArray[RS_LAUNCH] = new Launch();
+    stateArray[RS_BURN] = new Burn();
+    stateArray[RS_COAST] = new Coast();
+    stateArray[RS_DESCENT] = new Descent();
+    stateArray[RS_RECOVERY] = new Recovery();
+    stateArray[RS_ABORT] = new Abort();
 
     // Verify all states are initialized
     for (uint8_t i = 0; i < RS_NONE-1; i++)
