@@ -72,6 +72,24 @@ void RocketControl::HandleCommand(Command& cm)
     rs_currentState->HandleCommand(cm);
 }
 
+/* Base State ------------------------------------------------------------------*/
+/**
+ * @brief General handler for actions that should be supported by all rocket state machines
+ */
+RocketState BaseRocketState::HandleGeneralStateCommands(RocketControlCommands rcAction)
+{
+    switch (rcAction) {
+    case RSC_PAUSE_LOGGING:
+        //TODO: Send pause logging command
+        break;
+    case RSC_START_LOGGING:
+        //TODO: Send start logging command
+        break;
+    default:
+        return GetStateID();
+    }
+}
+
 
 /* PreLaunch State ------------------------------------------------------------------*/
 /**
@@ -105,14 +123,69 @@ RocketState PreLaunch::OnExit()
 }
 
 /**
- * @brief HandleCommand for PreLaunch state
+ * @brief Handles control actions generally, can be used for derived states that allow full vent control
+ * @return The rocket state to transition to or stay in. The current rocket state if no transition
  */
-void PreLaunch::HandleCommand(Command& cm)
+RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction)
 {
-    
+    switch (rcAction) {
+    case RSC_ABORT:
+        // Transition to abort state
+        return RS_ABORT;
+    case RSC_OPEN_VENT:
+        //TODO: Open the vent valve
+        break;
+    case RSC_CLOSE_VENT:
+        //TODO: Close the vent valve
+        break;
+    case RSC_OPEN_DRAIN:
+        //TODO: Close the drain
+        break;
+    case RSC_CLOSE_DRAIN:
+        //TODO: Open the drain
+        break;
+    case RSC_MEV_CLOSE:
+        //TODO: Close the MEV
+        break;
+    default:
+        return GetStateID();
+    }
+}
+
+/**
+ * @brief HandleCommand for PreLaunch state
+ * @return The rocket state to transition or stay in
+ */
+RocketState PreLaunch::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch(cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_BEGIN_FILL:
+            // Transition to fill state
+            nextStateID = RS_FILL;
+            break;
+        default:
+            // Handle as a general control action
+            nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
+            break;
+        }
+        break;
+    }
+    default:
+        // Do nothing
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
 }
 
 
 
-/* Some State ------------------------------------------------------------------*/
+/* Fill State ------------------------------------------------------------------*/
 

@@ -19,7 +19,8 @@ enum GLOBAL_COMMANDS : uint8_t
 {
 	COMMAND_NONE = 0,		// No command, packet can probably be ignored
 	TASK_SPECIFIC_COMMAND,	// Runs a task specific command when given this object
-	DATA_COMMAND			// Data command, used to send data to a task. Target is stored in taskCommand
+	DATA_COMMAND,			// Data command, used to send data to a task. Target is stored in taskCommand
+    CONTROL_ACTION,			// Control actions, used in Rocket State Machine, direct translation to RCU<->DMB Protocol
 };
 
 /* Class -----------------------------------------------------------------*/

@@ -122,11 +122,13 @@ enum RocketControlCommands
 class BaseRocketState
 {
 public:
-    virtual void HandleCommand(Command& cm) = 0; //Handle a command based on the current state
+    virtual RocketState HandleCommand(Command& cm) = 0; //Handle a command based on the current state
     virtual RocketState OnEnter() = 0;  //Returns the state we're entering
     virtual RocketState OnExit() = 0;   //Returns the state we're exiting
 
-    RocketState GetStateID() { return rsStateID; }
+    virtual RocketState GetStateID() { return rsStateID; }
+
+    RocketState HandleGeneralStateCommands(RocketControlCommands rcAction);
 protected:
     RocketState rsStateID = RS_NONE;    //The name of the state we're in
 
@@ -158,20 +160,25 @@ class PreLaunch : public BaseRocketState
 public:
     PreLaunch();
 
-    void HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    // Base class
+    virtual RocketState HandleCommand(Command& cm);
+    virtual RocketState OnEnter();
+    virtual RocketState OnExit();
+
+protected:
+    // Class specific
+    RocketState HandleNonIgnitionCommands(RocketControlCommands rcAction);
 };
 
 /**
  * @brief Fill state, N2 Prefill/Purge/Leak-check/Load-cell Tare check sub-sequences, full control of valves (except MEV) allowed
  */
-class Fill : public BaseRocketState
+class Fill : public PreLaunch
 {
 public:
     Fill();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -184,7 +191,7 @@ class Arm : public BaseRocketState
 public:
     Arm();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -197,7 +204,7 @@ class Ignition : public BaseRocketState
 public:
     Ignition();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -210,7 +217,7 @@ class Launch : public BaseRocketState
 public:
     Launch();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -223,7 +230,7 @@ class Burn : public BaseRocketState
 public:
     Burn();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -236,7 +243,7 @@ class Coast : public BaseRocketState
 public:
     Coast();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -249,7 +256,7 @@ class Descent : public BaseRocketState
 public:
     Descent();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -262,7 +269,7 @@ class Recovery : public BaseRocketState
 public:
     Recovery();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
@@ -275,7 +282,7 @@ class Abort : public BaseRocketState
 public:
     Abort();
 
-    void HandleCommand(Command& cm);
+    RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
 };
