@@ -50,11 +50,26 @@ RocketState RocketControl::TransitionState(RocketState nextState)
     // Set the next state
     rs_currentState = stateArray[nextState];
 
+    // Assert the next state is valid
+    SOAR_ASSERT(rs_currentState != nullptr, "rs_currentState is nullptr in TransitionState");
+
     // Enter the current state
     rs_currentState->OnEnter();
 
     // Return the state after the transition
     return rs_currentState->GetStateID();
+}
+
+/**
+ * @brief Handles current command
+ * @param cm The command to handle
+ */
+void RocketControl::HandleCommand(Command& cm)
+{
+    SOAR_ASSERT(rs_currentState != nullptr, "Command received before state machine initialized");
+
+    // Handle the command based on the current state
+    rs_currentState->HandleCommand(cm);
 }
 
 
@@ -88,6 +103,15 @@ RocketState PreLaunch::OnExit()
 
     return rsStateID;
 }
+
+/**
+ * @brief HandleCommand for PreLaunch state
+ */
+void PreLaunch::HandleCommand(Command& cm)
+{
+    
+}
+
 
 
 /* Some State ------------------------------------------------------------------*/

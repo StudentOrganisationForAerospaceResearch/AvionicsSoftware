@@ -46,6 +46,79 @@ enum RocketState
 };
 
 /**
+ * @brief Rocket State Commands, all fall under the GLOBAL_COMMAND -> STATE_ACTION umbrella
+ *
+ *        All commands in this list are only activated if the state allows them.
+ */
+enum RocketStateCommands
+{
+    //-- STATE TRANSITION --
+    RST_ABORT,      // Abort the rocket - transition to ABORT if available
+
+
+    RSC_MAX         // Invalid command, must be last
+};
+
+/**
+ * @brief External Rocket Control Commands, all fall under GLOBAL_COMMAND -> CONTROL_ACTION umbrella
+ *
+ *        State specific commands, must be all in-order to avoid duplicate command IDs
+ */
+enum RocketControlCommands
+{
+    //-- PRE-IGNITION and RECOVERY --
+    RSC_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
+    RSC_OPEN_VENT,   // Open the vent valve
+    RSC_CLOSE_VENT,  // Close the vent valve
+    RSC_OPEN_DRAIN,  // Open the drain valve
+    RSC_CLOSE_DRAIN, // Close the drain valve
+    RSC_MEV_CLOSE,   // Forces MEV to close - ONLY supported in states where it is safe to close the MEV
+
+    //-- PRELAUNCH --
+    RSC_BEGIN_FILL, // Transition to the FILL state
+
+    //-- FILL --
+    RSC_FILLTEST,   // Fill the rocket with N2, confirm pressure data, and purge/close vents
+    RSC_ARM_CONFIRM_1,   // Enable first ARM confirmation flag
+    RSC_ARM_CONFIRM_2,   // Enable second ARM confirmation flag
+    RSC_ARM_CONFIRM_3,   // Enable third ARM confirmation flag
+    RSC_ARM_ACTION,      // Transition to the ARM state
+
+    //-- ARM -
+    RSC_POWER_TRANSITION_ONBOARD,      // Change power source to onboard
+    RSC_POWER_TRANSITION_EXTERNAL,     // Change power source to external power
+    RSC_FILLARM_DISCONNECT, // Depressurize fill arm, remove fill arm, irreversible
+    RSC_INSULATION_REMOVE,  // Remove insulation
+    RSC_INSULATION_APPLY,   // Apply insulation
+    RSC_READY_FOR_IGNITION, // Ready for ignition sequence - Transition to IGNITION state
+
+    //-- IGNITION --
+    //* TBD - To ensure we don't get stuck unable to vent, we have override actions allowing a transition to ABORT
+    RSC_CRITICAL_IGNITION_ALLOW_ABORT, // Enable flag allowing us to abort in the ignition state
+    RSC_CONFIRM_IGNITION,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
+
+    //-- LAUNCH/BURN --
+    //* TBD - To ensure we don't get stuck unable to vent, we have override actions for LAUNCH/BURN
+    RSC_CRITICAL_MEV_CLOSE_OVERRIDE_CONFIRM, // Enable confirmation flag for MEV close override
+    RSC_CRITICAL_MEV_CLOSE_OVERRIDE_ACTION,  // Action for MEV override, requires override flag is set
+    RSC_CRITICAL_VENT_OVERRIDE_CONFIRM,      // Enable confirmation flag for venting override
+    RSC_CRITICAL_VENT_OVERRIDE_ACTION,       // Action for venting, requires override flag is set
+    RSC_CRITICAL_DRAIN_OVERRIDE_CONFIRM,     // Enable confirmation flag for drain override
+    RSC_CRITICAL_DRAIN_OVERRIDE_ACTION,      // Action for drain, requires override flag is set
+    RSC_CRITICAL_CLEAR_OVERRIDE,             // Clears all override flag
+
+    //-- ABORT --
+    RSC_TRANSITION_PRELAUNCH, // Confirm transition back into prelaunch state
+
+    //-- GENERAL --
+    RSC_PAUSE_LOGGING,      // Disable logging - this is supported by ALL states (should be handled in parent class)
+    RSC_START_LOGGING,      // Enable logging - this is supported by ALL states
+
+    //-- TECHNICAL --
+    RSC_NONE   // Invalid command, must be last
+};
+
+/**
  * @brief Base class for Rocket State Machine
  */
 class BaseRocketState
