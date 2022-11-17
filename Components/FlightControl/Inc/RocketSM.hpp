@@ -84,7 +84,7 @@ enum RocketControlCommands
     RSC_ARM_CONFIRM_3,   // Enable third ARM confirmation flag
     RSC_ARM_ACTION,      // Transition to the ARM state
 
-    //-- ARM -
+    //-- ARM --
     RSC_POWER_TRANSITION_ONBOARD,      // Change power source to onboard
     RSC_POWER_TRANSITION_EXTERNAL,     // Change power source to external power
     RSC_FILLARM_DISCONNECT, // Depressurize fill arm, remove fill arm, irreversible
@@ -93,26 +93,24 @@ enum RocketControlCommands
     RSC_READY_FOR_IGNITION, // Ready for ignition sequence - Transition to IGNITION state
 
     //-- IGNITION --
+    RSC_CONFIRM_IGNITION,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
     //* TBD - To ensure we don't get stuck unable to vent, we have override actions allowing a transition to ABORT
     RSC_CRITICAL_IGNITION_ALLOW_ABORT, // Enable flag allowing us to abort in the ignition state
-    RSC_CONFIRM_IGNITION,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
+    
 
     //-- LAUNCH/BURN --
     //* TBD - To ensure we don't get stuck unable to vent, we have override actions for LAUNCH/BURN
     RSC_CRITICAL_MEV_CLOSE_OVERRIDE_CONFIRM, // Enable confirmation flag for MEV close override
     RSC_CRITICAL_MEV_CLOSE_OVERRIDE_ACTION,  // Action for MEV override, requires override flag is set
-    RSC_CRITICAL_VENT_OVERRIDE_CONFIRM,      // Enable confirmation flag for venting override
-    RSC_CRITICAL_VENT_OVERRIDE_ACTION,       // Action for venting, requires override flag is set
-    RSC_CRITICAL_DRAIN_OVERRIDE_CONFIRM,     // Enable confirmation flag for drain override
-    RSC_CRITICAL_DRAIN_OVERRIDE_ACTION,      // Action for drain, requires override flag is set
-    RSC_CRITICAL_CLEAR_OVERRIDE,             // Clears all override flag
+    RSC_CRITICAL_BURN_ALLOW_ABORT, // Enable flag allowing us to abort in the ignition state
+    RSC_CRITICAL_CLEAR_OVERRIDE_FLAGS,      // Clears any override flags in either IGNITION/LAUNCH/BURN
 
     //-- ABORT --
     RSC_TRANSITION_PRELAUNCH, // Confirm transition back into prelaunch state
 
     //-- GENERAL --
     RSC_PAUSE_LOGGING,      // Disable logging - this is supported by ALL states (should be handled in parent class)
-    RSC_START_LOGGING,      // Enable logging - this is supported by ALL states
+    RSC_START_LOGGING,      // Enable logging - this is supported by ALL states (should be handled in parent class)
 
     //-- TECHNICAL --
     RSC_NONE   // Invalid command, must be last
