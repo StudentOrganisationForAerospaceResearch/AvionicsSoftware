@@ -37,8 +37,12 @@ RocketControl::RocketControl()
 RocketState RocketControl::TransitionState(RocketState nextState)
 {
     // Check if we're already in the next state (TransitionState does not allow entry into the existing state)
-    if (nextState == rs_currentState->GetStateName())
-        return rs_currentState->GetStateName();
+    if (nextState == rs_currentState->GetStateID())
+        return rs_currentState->GetStateID();
+
+    // Check the next state is valid
+    if (nextState >= RS_NONE)
+        return rs_currentState->GetStateID();
 
     // Exit the current state
     rs_currentState->OnExit();
@@ -50,7 +54,7 @@ RocketState RocketControl::TransitionState(RocketState nextState)
     rs_currentState->OnEnter();
 
     // Return the state after the transition
-    return rs_currentState->GetStateName();
+    return rs_currentState->GetStateID();
 }
 
 
@@ -60,7 +64,7 @@ RocketState RocketControl::TransitionState(RocketState nextState)
  */
 PreLaunch::PreLaunch()
 {
-    stateName = RS_PRELAUNCH;
+    rsStateID = RS_PRELAUNCH;
 }
 
 /**
@@ -71,7 +75,7 @@ RocketState PreLaunch::OnEnter()
 {
     // We don't do anything upon entering prelaunch
 
-    return stateName;
+    return rsStateID;
 }
 
 /**
@@ -82,7 +86,7 @@ RocketState PreLaunch::OnExit()
 {
     // We don't do anything upon exiting prelaunch
 
-    return stateName;
+    return rsStateID;
 }
 
 

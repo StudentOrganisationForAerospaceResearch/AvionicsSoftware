@@ -55,9 +55,9 @@ public:
     virtual RocketState OnEnter() = 0;  //Returns the state we're entering
     virtual RocketState OnExit() = 0;   //Returns the state we're exiting
 
-    RocketState GetStateName() { return stateName; }
+    RocketState GetStateID() { return rsStateID; }
 protected:
-    RocketState stateName = RS_NONE;    //The name of the state we're in
+    RocketState rsStateID = RS_NONE;    //The name of the state we're in
 
 };
 
