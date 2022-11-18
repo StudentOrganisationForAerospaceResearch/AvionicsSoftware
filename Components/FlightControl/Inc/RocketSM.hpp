@@ -181,6 +181,9 @@ public:
     RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
+
+private:
+    bool arrArmConfirmFlags[3]; // we have three arm confirm flags
 };
 
 /**
