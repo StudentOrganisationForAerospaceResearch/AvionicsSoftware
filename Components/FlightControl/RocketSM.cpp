@@ -164,6 +164,9 @@ RocketState PreLaunch::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
 
+    // Handle general commands - these do not support state transitions
+    HandleGeneralStateCommands(cm.GetCommand());
+
     // Switch for the given command
     switch(cm.GetCommand()) {
     case CONTROL_ACTION: {
@@ -198,6 +201,10 @@ RocketState PreLaunch::HandleCommand(Command& cm)
 Fill::Fill()
 {
     rsStateID = RS_FILL;
+
+    // Clear the arm flags
+    for (uint8_t i = 0; i < 3; i++)
+        arrArmConfirmFlags[i] = false;
 }
 
 /**
@@ -206,7 +213,10 @@ Fill::Fill()
  */
 RocketState Fill::OnEnter()
 {
-    // We don't do anything upon entering fill
+    // Clear the arm flags
+    for (uint8_t i = 0; i < 3; i++)
+        arrArmConfirmFlags[i] = false;
+
     // TODO: Consider automatically beginning fill sequence (since we've already explicitly entered the fill state)
 
     return rsStateID;
@@ -232,6 +242,9 @@ RocketState Fill::OnExit()
 RocketState Fill::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
+
+    // Handle general commands - these do not support state transitions
+    HandleGeneralStateCommands(cm.GetCommand());
 
     // Switch for the given command
     switch (cm.GetCommand()) {
@@ -272,3 +285,91 @@ RocketState Fill::HandleCommand(Command& cm)
     cm.Reset();
     return nextStateID;
 }
+
+/* Arm State ------------------------------------------------------------------*/
+/**
+ * @brief Arm state constructor
+ */
+Arm::Arm()
+{
+    rsStateID = RS_ARM;
+}
+
+/**
+ * @brief Entry to Arm state
+ * @return The state we're entering
+ */
+RocketState Arm::OnEnter()
+{
+    // We don't do anything upon entering arm
+    // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
+
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Arm state
+ * @return The state we're exiting
+ */
+RocketState Arm::OnExit()
+{
+
+
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for PreLaunch state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Arm::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_POWER_TRANSITION_EXTERNAL:
+            // TODO: Transition to umbilical power - we should check to make sure umbilical power is available before doing so
+            break;
+        case RSC_POWER_TRANSITION_ONBOARD:
+            //TODO: Transition to onboard power
+            break;
+        case RSC_FILLARM_DISCONNECT:
+            //TODO: Fill arm disconnect sequence
+            break;
+        case RSC_INSULATION_REMOVE:
+            //TODO: Remove insulation
+            break;
+        case RSC_INSULATION_APPLY:
+            //TODO: Apply insulation
+            break;
+        case RSC_READY_FOR_IGNITION:
+            // Transition to ready for ignition state
+            nextStateID = RS_IGNITION;
+            break;
+        case RSC_MANUAL_OVERRIDE_ENABLE:
+            isManualOverrideEnabled = true;
+            break;
+        default:
+            // If manual override is enabled, handle the command as a non ignition command
+            if (isManualOverrideEnabled) {
+                nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
+                isManualOverrideEnabled = false;
+            }
+            break;
+        }
+        break;
+    }
+    default:
+        // Do nothing
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+

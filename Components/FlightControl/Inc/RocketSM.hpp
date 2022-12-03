@@ -84,6 +84,9 @@ enum RocketControlCommands
     RSC_ARM_CONFIRM_3,   // Enable third ARM confirmation flag
     RSC_ARM_ACTION,      // Transition to the ARM state
 
+    //-- ARM/IGNITION/LAUNCH/BURN --
+    RSC_MANUAL_OVERRIDE_ENABLE, // For any states with locked out capability. If this flag is set using a command the NEXT command will be allowed to directly control valves/vents
+
     //-- ARM --
     RSC_POWER_TRANSITION_ONBOARD,      // Change power source to onboard
     RSC_POWER_TRANSITION_EXTERNAL,     // Change power source to external power
@@ -189,7 +192,7 @@ private:
 /**
  * @brief Arm state, we don't allow fill etc. 1-2 minutes before launch : Cannot fill rocket with N2 etc. unless you return to FILL
  */
-class Arm : public BaseRocketState
+class Arm : public PreLaunch
 {
 public:
     Arm();
@@ -197,6 +200,9 @@ public:
     RocketState HandleCommand(Command& cm);
     RocketState OnEnter();
     RocketState OnExit();
+
+private:
+    bool isManualOverrideEnabled;
 };
 
 /**
