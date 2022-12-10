@@ -78,10 +78,8 @@ enum RocketControlCommands
     RSC_BEGIN_FILL, // Transition to the FILL state
 
     //-- FILL --
-    RSC_FILLTEST,   // Fill the rocket with N2, confirm pressure data, and purge/close vents
     RSC_ARM_CONFIRM_1,   // Enable first ARM confirmation flag
     RSC_ARM_CONFIRM_2,   // Enable second ARM confirmation flag
-    RSC_ARM_CONFIRM_3,   // Enable third ARM confirmation flag
     RSC_ARM_ACTION,      // Transition to the ARM state
 
     //-- ARM/IGNITION/LAUNCH/BURN --
@@ -90,9 +88,6 @@ enum RocketControlCommands
     //-- ARM --
     RSC_POWER_TRANSITION_ONBOARD,      // Change power source to onboard
     RSC_POWER_TRANSITION_EXTERNAL,     // Change power source to external power
-    RSC_FILLARM_DISCONNECT, // Depressurize fill arm, remove fill arm, irreversible
-    RSC_INSULATION_REMOVE,  // Remove insulation
-    RSC_INSULATION_APPLY,   // Apply insulation
     RSC_READY_FOR_IGNITION, // Ready for ignition sequence - Transition to IGNITION state
 
     //-- IGNITION --
@@ -186,7 +181,7 @@ public:
     RocketState OnExit();
 
 private:
-    bool arrArmConfirmFlags[3]; // we have three arm confirm flags
+    bool arrArmConfirmFlags[2]; // we have three arm confirm flags
 };
 
 /**
