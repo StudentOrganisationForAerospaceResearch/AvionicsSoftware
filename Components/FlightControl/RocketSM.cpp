@@ -72,7 +72,8 @@ void RocketControl::HandleCommand(Command& cm)
     RocketState nextRocketState = rs_currentState->HandleCommand(cm);
 
 	// Run transition state - if the next state is the current state this does nothing
-	TransitionState(nextRocketState);
+	if (nextRocketState != rs_currentState->GetStateID())
+		TransitionState(nextRocketState);
 }
 
 /* Base State ------------------------------------------------------------------*/
