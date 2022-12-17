@@ -39,6 +39,7 @@ enum RocketState
     // Automatic Venting AND Vent Control ALLOWED
     RS_DESCENT,  // Vents open (well into the descent)
     RS_RECOVERY,  // Vents open, MEV closed, transmit all data over radio and accept vent commands
+				  // Supports general commands (e.g. venting) and logs/transmits slowly (maybe stop logging after close to full memory?)
 
     //-- RECOVERY / TECHNICAL --
     RS_ABORT,       // Abort sequence, vents open, MEV closed, ignitors off
@@ -53,41 +54,43 @@ enum RocketState
 enum RocketControlCommands
 {
     //-- PRE-IGNITION and RECOVERY --
-    RSC_TRANSITION_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
+    RSC_ANY_TO_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
 
     //-- PRELAUNCH --
-    RSC_TRANSITION_FILL, // Transition to the FILL state
+    RSC_PRELAUNCH_TO_FILL, // Transition to the FILL state
 
     //-- FILL --
     RSC_ARM_CONFIRM_1,   // Enable first ARM confirmation flag
     RSC_ARM_CONFIRM_2,   // Enable second ARM confirmation flag
-    RSC_TRANSITION_ARM,      // Transition to the ARM state (not allowed without the confirm flags set)
+    RSC_FILL_TO_ARM,      // Transition to the ARM state (not allowed without the confirm flags set)
+    RSC_FILL_TO_PRELAUNCH, // Transition to the PRELAUNCH state from FILL
 
     //-- ARM/IGNITION/LAUNCH/BURN --
-    RSC_MANUAL_OVERRIDE_ENABLE, // For any states with locked out capability. If this flag is set using a command the NEXT command will be allowed to directly control valves/vents
 
     //-- ARM --
     RSC_POWER_TRANSITION_ONBOARD,      // Change power source to onboard
     RSC_POWER_TRANSITION_EXTERNAL,     // Change power source to external power
-    RSC_READY_FOR_IGNITION, // Ready for ignition sequence - Transition to IGNITION state
+    RSC_ARM_TO_FILL, // Ready for ignition sequence - Transition to IGNITION state
+    RSC_ARM_TO_IGNITION,
 
     //-- IGNITION --
-    RSC_TRANSITION_CONFIRM_IGNITION,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
-    //* TBD - To ensure we don't get stuck unable to vent, we have override actions allowing a transition to ABORT
-    RSC_CRITICAL_IGNITION_ALLOW_ABORT, // Enable flag allowing us to abort in the ignition state
-    
+    RSC_IGNITION_TO_LAUNCH,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
+    RSC_IGNITION_TO_ARM,      // Non-confirm igniter actuation - Transition back to ARM state   
 
-    //-- LAUNCH/BURN --
-    //* TBD - To ensure we don't get stuck unable to vent, we have override actions for LAUNCH/BURN
-    RSC_CRITICAL_MEV_CLOSE_OVERRIDE_CONFIRM, // Enable confirmation flag for MEV close override
-    RSC_CRITICAL_MEV_CLOSE_OVERRIDE_ACTION,  // Action for MEV override, requires override flag is set
-    RSC_CRITICAL_BURN_ALLOW_ABORT, // Enable flag allowing us to abort in the ignition state
-    RSC_CRITICAL_CLEAR_OVERRIDE_FLAGS,      // Clears any override flags in either IGNITION/LAUNCH/BURN
+    //-- LAUNCH --
+    // * These flight sequence commands can be replaced with direct calls to transition state IF possible
+    RSC_LAUNCH_TO_BURN, // Internal command, should not be triggered externally
+    //-- BURN --
+    RSC_BURN_TO_COAST, // Internal command, should not be triggered externally
+    //-- COAST --
+    RSC_COAST_TO_DESCENT, // Internal command, should not be triggered externally
+    //-- DESCENT --
+    RSC_DESCENT_TO_RECOVERY, // Internal command, should not be triggered externally
 
     //-- ABORT --
-    RSC_TRANSITION_PRELAUNCH, // Confirm transition back into prelaunch state
+    RSC_ABORT_TO_PRELAUNCH, // Confirm transition back into prelaunch state
 
-    //-- GENERAL --
+    //-- GENERAL(NOT LAUNCH SEQUENCE) --
     RSC_OPEN_VENT,   // Open the vent valve
     RSC_CLOSE_VENT,  // Close the vent valve
     RSC_OPEN_DRAIN,  // Open the drain valve
