@@ -53,7 +53,7 @@ enum RocketState
 enum RocketControlCommands
 {
     //-- PRE-IGNITION and RECOVERY --
-    RSC_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
+    RSC_TRANSITION_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
     RSC_OPEN_VENT,   // Open the vent valve
     RSC_CLOSE_VENT,  // Close the vent valve
     RSC_OPEN_DRAIN,  // Open the drain valve
@@ -61,12 +61,12 @@ enum RocketControlCommands
     RSC_MEV_CLOSE,   // Forces MEV to close - ONLY supported in states where it is safe to close the MEV
 
     //-- PRELAUNCH --
-    RSC_BEGIN_FILL, // Transition to the FILL state
+    RSC_TRANSITION_FILL, // Transition to the FILL state
 
     //-- FILL --
     RSC_ARM_CONFIRM_1,   // Enable first ARM confirmation flag
     RSC_ARM_CONFIRM_2,   // Enable second ARM confirmation flag
-    RSC_ARM_ACTION,      // Transition to the ARM state
+    RSC_TRANSITION_ARM,      // Transition to the ARM state (not allowed without the confirm flags set)
 
     //-- ARM/IGNITION/LAUNCH/BURN --
     RSC_MANUAL_OVERRIDE_ENABLE, // For any states with locked out capability. If this flag is set using a command the NEXT command will be allowed to directly control valves/vents
@@ -77,7 +77,7 @@ enum RocketControlCommands
     RSC_READY_FOR_IGNITION, // Ready for ignition sequence - Transition to IGNITION state
 
     //-- IGNITION --
-    RSC_CONFIRM_IGNITION,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
+    RSC_TRANSITION_CONFIRM_IGNITION,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
     //* TBD - To ensure we don't get stuck unable to vent, we have override actions allowing a transition to ABORT
     RSC_CRITICAL_IGNITION_ALLOW_ABORT, // Enable flag allowing us to abort in the ignition state
     
