@@ -45,7 +45,7 @@ public:
 	// Functions
 	bool AllocateData(uint16_t dataSize);	// Dynamically allocates data for the command
 	bool CopyDataToCommand(uint8_t* dataSrc, uint16_t size);	// Copies the data into the command, into newly allocated memory
-	bool SetCommandDataExternal(uint8_t* existingPtr, uint16_t size, bool bFreeMemory);	// Set data pointer to a pre-allocated buffer, if bFreeMemory is set to true, responsibility for freeing memory will fall on Command
+	bool SetCommandToStaticExternalBuffer(uint8_t* existingPtr, uint16_t size);	// Set data pointer to a pre-allocated buffer, if bFreeMemory is set to true, responsibility for freeing memory will fall on Command
 
 	void Reset();	// Reset the command, equivalent of a destructor that must be called, counts allocations and deallocations, asserts an error if the allocation count is too high
 
