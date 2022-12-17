@@ -69,7 +69,10 @@ void RocketControl::HandleCommand(Command& cm)
     SOAR_ASSERT(rs_currentState != nullptr, "Command received before state machine initialized");
 
     // Handle the command based on the current state
-    rs_currentState->HandleCommand(cm);
+    RocketState nextRocketState = rs_currentState->HandleCommand(cm);
+
+	// Run transition state - if the next state is the current state this does nothing
+	TransitionState(nextRocketState);
 }
 
 /* Base State ------------------------------------------------------------------*/
@@ -131,7 +134,7 @@ RocketState PreLaunch::OnExit()
 RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction)
 {
     switch (rcAction) {
-    case RSC_ABORT:
+    case RSC_TRANSITION_ABORT:
         // Transition to abort state
         return RS_ABORT;
     case RSC_OPEN_VENT:
@@ -171,7 +174,7 @@ RocketState PreLaunch::HandleCommand(Command& cm)
     switch(cm.GetCommand()) {
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
-        case RSC_BEGIN_FILL:
+        case RSC_TRANSITION_FILL:
             // Transition to fill state
             nextStateID = RS_FILL;
             break;
@@ -256,7 +259,7 @@ RocketState Fill::HandleCommand(Command& cm)
         case RSC_ARM_CONFIRM_2:
             arrArmConfirmFlags[1] = true;
             break;
-        case RSC_ARM_ACTION:
+        case RSC_TRANSITION_ARM:
             // Check if all arm confirmations have been received
             if (arrArmConfirmFlags[0] && arrArmConfirmFlags[1]) {
                 // Transition to arm state
@@ -330,15 +333,6 @@ RocketState Arm::HandleCommand(Command& cm)
             break;
         case RSC_POWER_TRANSITION_ONBOARD:
             //TODO: Transition to onboard power
-            break;
-        case RSC_FILLARM_DISCONNECT:
-            //TODO: Fill arm disconnect sequence
-            break;
-        case RSC_INSULATION_REMOVE:
-            //TODO: Remove insulation
-            break;
-        case RSC_INSULATION_APPLY:
-            //TODO: Apply insulation
             break;
         case RSC_READY_FOR_IGNITION:
             // Transition to ready for ignition state
