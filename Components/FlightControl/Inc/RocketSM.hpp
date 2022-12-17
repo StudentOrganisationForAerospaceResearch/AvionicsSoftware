@@ -46,20 +46,6 @@ enum RocketState
 };
 
 /**
- * @brief Rocket State Commands, all fall under the GLOBAL_COMMAND -> STATE_ACTION umbrella
- *
- *        All commands in this list are only activated if the state allows them.
- */
-enum RocketStateCommands
-{
-    //-- STATE TRANSITION --
-    RST_ABORT,      // Abort the rocket - transition to ABORT if available
-
-
-    RSC_MAX         // Invalid command, must be last
-};
-
-/**
  * @brief External Rocket Control Commands, all fall under GLOBAL_COMMAND -> CONTROL_ACTION umbrella
  *
  *        State specific commands, must be all in-order to avoid duplicate command IDs
