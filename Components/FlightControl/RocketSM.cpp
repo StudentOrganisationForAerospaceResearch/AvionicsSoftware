@@ -236,7 +236,7 @@ RocketState Fill::OnExit()
 }
 
 /**
- * @brief HandleCommand for PreLaunch state
+ * @brief HandleCommand for Fill state
  * @return The rocket state to transition or stay in
  */
 RocketState Fill::HandleCommand(Command& cm)
@@ -313,7 +313,7 @@ RocketState Arm::OnExit()
 }
 
 /**
- * @brief HandleCommand for PreLaunch state
+ * @brief HandleCommand for Arm state
  * @return The rocket state to transition or stay in
  */
 RocketState Arm::HandleCommand(Command& cm)
@@ -369,7 +369,7 @@ RocketState Arm::HandleCommand(Command& cm)
 
 /* Ignition State ------------------------------------------------------------------*/
 /**
- * @brief Arm state constructor
+ * @brief Ignition state constructor
  */
 Ignition::Ignition()
 {
@@ -377,10 +377,10 @@ Ignition::Ignition()
 }
 
 /**
- * @brief Entry to Arm state
+ * @brief Entry to Ignition state
  * @return The state we're entering
  */
-RocketState Arm::OnEnter()
+RocketState Ignition::OnEnter()
 {
     // We don't do anything upon entering arm
     // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
@@ -389,10 +389,10 @@ RocketState Arm::OnEnter()
 }
 
 /**
- * @brief Exit from Arm state
+ * @brief Exit from Ignition state
  * @return The state we're exiting
  */
-RocketState Arm::OnExit()
+RocketState Ignition::OnExit()
 {
 
 
@@ -403,7 +403,7 @@ RocketState Arm::OnExit()
  * @brief HandleCommand for PreLaunch state
  * @return The rocket state to transition or stay in
  */
-RocketState Arm::HandleCommand(Command& cm)
+RocketState Ignition::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
 
@@ -412,27 +412,8 @@ RocketState Arm::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
-        case RSC_POWER_TRANSITION_EXTERNAL:
-            //TODO: Transition to umbilical power - we should check to make sure umbilical power is available before doing so
-            break;
-        case RSC_POWER_TRANSITION_ONBOARD:
-            //TODO: Transition to onboard power
-            break;
-        case RSC_FILLARM_DISCONNECT:
-            //TODO: Fill arm disconnect sequence
-            break;
-        case RSC_INSULATION_REMOVE:
-            //TODO: Remove insulation
-            break;
-        case RSC_INSULATION_APPLY:
-            //TODO: Apply insulation
-            break;
-        case RSC_READY_FOR_IGNITION:
-            // Transition to ready for ignition state
-            nextStateID = RS_IGNITION;
-            break;
-        case RSC_MANUAL_OVERRIDE_ENABLE:
-            isManualOverrideEnabled = true;
+        case RSC_CONFIRM_IGNITION:
+
             break;
         default:
             // If manual override is enabled, handle the command as a non ignition command
