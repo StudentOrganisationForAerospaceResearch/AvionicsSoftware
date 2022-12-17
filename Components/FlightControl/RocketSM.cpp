@@ -77,24 +77,24 @@ void RocketControl::HandleCommand(Command& cm)
 }
 
 /* Base State ------------------------------------------------------------------*/
-/**
- * @brief General handler for actions that should be supported by all rocket state machines
- */
-RocketState BaseRocketState::HandleGeneralStateCommands(RocketControlCommands rcAction)
-{
-    switch (rcAction) {
-    case RSC_PAUSE_LOGGING:
-        //TODO: Send pause logging command
-        break;
-    case RSC_START_LOGGING:
-        //TODO: Send start logging command
-        break;
-    default:
-        break;
-    }
-
-    return GetStateID();
-}
+///**
+// * @brief General handler for actions that should be supported by all rocket state machines
+// */
+//RocketState BaseRocketState::HandleGeneralStateCommands(RocketControlCommands rcAction)
+//{
+//    switch (rcAction) {
+//    case RSC_PAUSE_LOGGING:
+//        //TODO: Send pause logging command
+//        break;
+//    case RSC_START_LOGGING:
+//        //TODO: Send start logging command
+//        break;
+//    default:
+//        break;
+//    }
+//
+//    return GetStateID();
+//}
 
 
 /* PreLaunch State ------------------------------------------------------------------*/
@@ -135,7 +135,7 @@ RocketState PreLaunch::OnExit()
 RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction)
 {
     switch (rcAction) {
-    case RSC_TRANSITION_ABORT:
+    case RSC_ANY_TO_ABORT:
         // Transition to abort state
         return RS_ABORT;
     case RSC_OPEN_VENT:
@@ -168,8 +168,8 @@ RocketState PreLaunch::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
 
-    // Handle general commands - these do not support state transitions
-    HandleGeneralStateCommands(cm.GetCommand());
+    //// Handle general commands - these do not support state transitions
+    //HandleGeneralStateCommands(cm.GetCommand());
 
     // Switch for the given command
     switch(cm.GetCommand()) {
@@ -247,8 +247,8 @@ RocketState Fill::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
 
-    // Handle general commands - these do not support state transitions
-    HandleGeneralStateCommands(cm.GetCommand());
+    //// Handle general commands - these do not support state transitions
+    //HandleGeneralStateCommands(cm.GetCommand());
 
     // Switch for the given command
     switch (cm.GetCommand()) {
@@ -323,7 +323,6 @@ RocketState Arm::OnExit()
 RocketState Arm::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
-
 
     // Switch for the given command
     switch (cm.GetCommand()) {
@@ -406,7 +405,7 @@ RocketState Ignition::HandleCommand(Command& cm)
     // Switch for the given command
     switch (cm.GetCommand()) {
     case CONTROL_ACTION: {
-        switch (cm.GetTaskCommand()) {
+        switch (cm.GetTaskCommand())
         case RSC_CONFIRM_IGNITION:
 
             break;

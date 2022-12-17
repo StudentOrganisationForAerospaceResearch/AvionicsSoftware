@@ -57,25 +57,25 @@ enum RocketControlCommands
     RSC_ANY_TO_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
 
     //-- PRELAUNCH --
-    RSC_PRELAUNCH_TO_FILL, // Transition to the FILL state
+    RSC_GOTO_FILL, // Transition to the FILL state
 
     //-- FILL --
     RSC_ARM_CONFIRM_1,   // Enable first ARM confirmation flag
     RSC_ARM_CONFIRM_2,   // Enable second ARM confirmation flag
-    RSC_FILL_TO_ARM,      // Transition to the ARM state (not allowed without the confirm flags set)
-    RSC_FILL_TO_PRELAUNCH, // Transition to the PRELAUNCH state from FILL
+    RSC_GOTO_ARM,      // Transition to the ARM state (not allowed without the confirm flags set)
+    RSC_GOTO_PRELAUNCH, // Transition to the PRELAUNCH state from FILL
 
     //-- ARM/IGNITION/LAUNCH/BURN --
 
     //-- ARM --
     RSC_POWER_TRANSITION_ONBOARD,      // Change power source to onboard
     RSC_POWER_TRANSITION_EXTERNAL,     // Change power source to external power
-    RSC_ARM_TO_FILL, // Ready for ignition sequence - Transition to IGNITION state
-    RSC_ARM_TO_IGNITION,
+    //RSC_GOTO_FILL, // Transition back
+    RSC_GOTO_IGNITION, // Ready for ignition sequence - Transition to IGNITION state
 
     //-- IGNITION --
     RSC_IGNITION_TO_LAUNCH,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
-    RSC_IGNITION_TO_ARM,      // Non-confirm igniter actuation - Transition back to ARM state   
+    //RSC_GOTO_ARM,      // Non-confirm igniter actuation - Transition back to ARM state   
 
     //-- LAUNCH --
     // * These flight sequence commands can be replaced with direct calls to transition state IF possible
@@ -88,7 +88,7 @@ enum RocketControlCommands
     RSC_DESCENT_TO_RECOVERY, // Internal command, should not be triggered externally
 
     //-- ABORT --
-    RSC_ABORT_TO_PRELAUNCH, // Confirm transition back into prelaunch state
+    //RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state
 
     //-- GENERAL(NOT LAUNCH SEQUENCE) --
     RSC_OPEN_VENT,   // Open the vent valve
@@ -113,7 +113,7 @@ public:
 
     virtual RocketState GetStateID() { return rsStateID; }
 
-    RocketState HandleGeneralStateCommands(RocketControlCommands rcAction);
+    //RocketState HandleGeneralStateCommands(RocketControlCommands rcAction);
 protected:
     RocketState rsStateID = RS_NONE;    //The name of the state we're in
 
