@@ -55,6 +55,11 @@ enum RocketControlCommands
 {
     //-- PRE-IGNITION and RECOVERY --
     RSC_ANY_TO_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
+    RSC_OPEN_VENT,   // Open the vent valve
+    RSC_CLOSE_VENT,  // Close the vent valve
+    RSC_OPEN_DRAIN,  // Open the drain valve
+    RSC_CLOSE_DRAIN, // Close the drain valve
+    RSC_MEV_CLOSE,   // Forces MEV to close - ONLY supported in states where it is safe to close the MEV
 
     //-- PRELAUNCH --
     RSC_GOTO_FILL, // Transition to the FILL state
@@ -90,12 +95,7 @@ enum RocketControlCommands
     //-- ABORT --
     //RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state
 
-    //-- GENERAL(NOT LAUNCH SEQUENCE) --
-    RSC_OPEN_VENT,   // Open the vent valve
-    RSC_CLOSE_VENT,  // Close the vent valve
-    RSC_OPEN_DRAIN,  // Open the drain valve
-    RSC_CLOSE_DRAIN, // Close the drain valve
-    RSC_MEV_CLOSE,   // Forces MEV to close - ONLY supported in states where it is safe to close the MEV
+    //-- GENERAL --
 
     //-- TECHNICAL --
     RSC_NONE   // Invalid command, must be last
@@ -122,10 +122,10 @@ protected:
 /**
  * @brief Rocket State Machine
  */
-class RocketControl
+class RocketSM
 {
 public:
-    RocketControl();
+    RocketSM();
 
     void HandleCommand(Command& cm);
 
@@ -146,9 +146,9 @@ public:
     PreLaunch();
 
     // Base class
-    virtual RocketState HandleCommand(Command& cm);
-    virtual RocketState OnEnter();
-    virtual RocketState OnExit();
+    virtual RocketState HandleCommand(Command& cm) override;
+    virtual RocketState OnEnter() override;
+    virtual RocketState OnExit() override;
 
 protected:
     // Class specific
@@ -163,9 +163,9 @@ class Fill : public PreLaunch
 public:
     Fill();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 
 private:
     bool arrArmConfirmFlags[2]; // we have three arm confirm flags
@@ -179,12 +179,11 @@ class Arm : public PreLaunch
 public:
     Arm();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 
 private:
-    bool isManualOverrideEnabled;
 };
 
 /**
@@ -195,9 +194,9 @@ class Ignition : public BaseRocketState
 public:
     Ignition();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 };
 
 /**
@@ -208,9 +207,9 @@ class Launch : public BaseRocketState
 public:
     Launch();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 };
 
 /**
@@ -221,9 +220,9 @@ class Burn : public BaseRocketState
 public:
     Burn();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 };
 
 /**
@@ -234,9 +233,9 @@ class Coast : public BaseRocketState
 public:
     Coast();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 };
 
 /**
@@ -247,35 +246,35 @@ class Descent : public BaseRocketState
 public:
     Descent();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 };
 
 /**
  * @brief PostLaunch state, vents open, MEV closed, transmit all data over radio and accept vent commands
  */
-class Recovery : public BaseRocketState
+class Recovery : public PreLaunch
 {
 public:
     Recovery();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 };
 
 /**
  * @brief Abort state, abort sequence, vents open, MEV closed, ignitors off
  */
-class Abort : public BaseRocketState
+class Abort : public PreLaunch
 {
 public:
     Abort();
 
-    RocketState HandleCommand(Command& cm);
-    RocketState OnEnter();
-    RocketState OnExit();
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
 };
 
 

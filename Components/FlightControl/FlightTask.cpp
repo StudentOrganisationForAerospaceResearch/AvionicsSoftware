@@ -8,7 +8,17 @@
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
 
-//TODO: Consider moving all InitTask functions to the bottom of the cpp file, since it shouldn't need to be changed that much
+/**
+ * @brief Constructor for FlightTask
+ */
+FlightTask::FlightTask() : Task(FLIGHT_TASK_QUEUE_DEPTH_OBJS)
+{
+	rsm_ = new RocketSM();
+}
+
+/**
+ * @brief Initialize the FlightTask
+ */
 void FlightTask::InitTask()
 {
 	// Make sure the task is not already initialized

@@ -6,11 +6,11 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
-/* Rocket Control ------------------------------------------------------------------*/
+/* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
  */
-RocketControl::RocketControl()
+RocketSM::RocketSM()
 {
     // Setup the internal array of states. Setup in order of enum.
     stateArray[RS_PRELAUNCH] = new PreLaunch();
@@ -24,9 +24,12 @@ RocketControl::RocketControl()
     stateArray[RS_RECOVERY] = new Recovery();
     stateArray[RS_ABORT] = new Abort();
 
-    // Verify all states are initialized
-    for (uint8_t i = 0; i < RS_NONE-1; i++)
+    // Verify all states are initialized AND state IDs are consistent
+    for (uint8_t i = 0; i < RS_NONE - 1; i++) {
         SOAR_ASSERT(stateArray[i] != nullptr);
+        SOAR_ASSERT(stateArray[i]->GetStateID() == i);
+    }
+        
 }
 
 /**
@@ -34,7 +37,7 @@ RocketControl::RocketControl()
  * @param nextState The next state to transition to
  * @return The state after the transition
  */
-RocketState RocketControl::TransitionState(RocketState nextState)
+RocketState RocketSM::TransitionState(RocketState nextState)
 {
     // Check if we're already in the next state (TransitionState does not allow entry into the existing state)
     if (nextState == rs_currentState->GetStateID())
@@ -64,7 +67,7 @@ RocketState RocketControl::TransitionState(RocketState nextState)
  * @brief Handles current command
  * @param cm The command to handle
  */
-void RocketControl::HandleCommand(Command& cm)
+void RocketSM::HandleCommand(Command& cm)
 {
     SOAR_ASSERT(rs_currentState != nullptr, "Command received before state machine initialized");
 
@@ -175,7 +178,7 @@ RocketState PreLaunch::HandleCommand(Command& cm)
     switch(cm.GetCommand()) {
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
-        case RSC_TRANSITION_FILL:
+        case RSC_GOTO_IGNITION:
             // Transition to fill state
             nextStateID = RS_FILL;
             break;
@@ -260,7 +263,7 @@ RocketState Fill::HandleCommand(Command& cm)
         case RSC_ARM_CONFIRM_2:
             arrArmConfirmFlags[1] = true;
             break;
-        case RSC_TRANSITION_ARM:
+        case RSC_GOTO_ARM:
             // Check if all arm confirmations have been received
             if (arrArmConfirmFlags[0] && arrArmConfirmFlags[1]) {
                 // Transition to arm state
@@ -334,19 +337,13 @@ RocketState Arm::HandleCommand(Command& cm)
         case RSC_POWER_TRANSITION_ONBOARD:
             //TODO: Transition to onboard power
             break;
-        case RSC_READY_FOR_IGNITION:
+        case RSC_GOTO_IGNITION:
             // Transition to ready for ignition state
             nextStateID = RS_IGNITION;
             break;
-        case RSC_MANUAL_OVERRIDE_ENABLE:
-            isManualOverrideEnabled = true;
-            break;
         default:
             // If manual override is enabled, handle the command as a non ignition command
-            if (isManualOverrideEnabled) {
-                nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
-                isManualOverrideEnabled = false;
-            }
+            nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
             break;
         }
         break;
@@ -376,8 +373,7 @@ Ignition::Ignition()
  */
 RocketState Ignition::OnEnter()
 {
-    // We don't do anything upon entering arm
-    // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
+    // We don't do anything upon entering ignition
 
     return rsStateID;
 }
@@ -394,7 +390,7 @@ RocketState Ignition::OnExit()
 }
 
 /**
- * @brief HandleCommand for PreLaunch state
+ * @brief HandleCommand for Ignition state
  * @return The rocket state to transition or stay in
  */
 RocketState Ignition::HandleCommand(Command& cm)
@@ -405,22 +401,383 @@ RocketState Ignition::HandleCommand(Command& cm)
     // Switch for the given command
     switch (cm.GetCommand()) {
     case CONTROL_ACTION: {
-        switch (cm.GetTaskCommand())
-        case RSC_CONFIRM_IGNITION:
-
+        switch (cm.GetTaskCommand()) {
+        case RSC_IGNITION_TO_LAUNCH:
+            nextStateID = RS_LAUNCH;
+            break;
+        case RSC_GOTO_ARM:
+            // This is a transition directly to ARM (no checks required)
+            nextStateID = RS_ARM;
             break;
         default:
-            // If manual override is enabled, handle the command as a non ignition command
-            if (isManualOverrideEnabled) {
-                nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
-                isManualOverrideEnabled = false;
-            }
             break;
         }
-        break;
     }
     default:
         // Do nothing
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+/* Launch State ------------------------------------------------------------------*/
+/**
+ * @brief Launch state constructor
+ */
+Launch::Launch()
+{
+    rsStateID = RS_LAUNCH;
+}
+
+/**
+ * @brief Entry to Launch state
+ * @return The state we're entering
+ */
+RocketState Launch::OnEnter()
+{
+    //TODO: Disable Heartbeat Check
+    //TODO: Ensure Vent & Drain CLOSED (**Should we not ensure vent & drain are closed in ignition? and or exit of ARM?)
+    //TODO: Send command to OPEN the MEV
+    //TODO: Immedietly transition to BURN .. ? (**Actually if we're transitioning right away why is this not both? ... Otherwise just queue up a command internally to GOTO BURN)
+
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Launch state
+ * @return The state we're exiting
+ */
+RocketState Launch::OnExit()
+{
+
+
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Launch state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Launch::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_LAUNCH_TO_BURN:
+            nextStateID = RS_BURN;
+            break;
+        default:
+            break;
+        }
+    }
+    default:
+        // Do nothing
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+/* Burn State ------------------------------------------------------------------*/
+/**
+ * @brief Burn state constructor
+ */
+Burn::Burn()
+{
+    rsStateID = RS_BURN;
+}
+
+/**
+ * @brief Entry to Burn state
+ * @return The state we're entering
+ */
+RocketState Burn::OnEnter()
+{
+    //TODO: Validate Vent & Drain Closed
+    //TODO: Start the coast transition timer (7 seconds - TBD based on sims)
+
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Burn state
+ * @return The state we're exiting
+ */
+RocketState Burn::OnExit()
+{
+
+
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Burn state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Burn::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_BURN_TO_COAST:
+            nextStateID = RS_COAST;
+            break;
+        default:
+            break;
+        }
+    }
+    default:
+        // Do nothing
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+/* Coast State ------------------------------------------------------------------*/
+/**
+ * @brief Coast state constructor
+ */
+Coast::Coast()
+{
+    rsStateID = RS_COAST;
+}
+
+/**
+ * @brief Entry to Coast state
+ * @return The state we're entering
+ */
+RocketState Coast::OnEnter()
+{
+    //TODO: Start Descent Transition Timer (~25 seconds) : Should be well after apogee
+
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Coast state
+ * @return The state we're exiting
+ */
+RocketState Coast::OnExit()
+{
+
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Coast state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Coast::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_COAST_TO_DESCENT:
+            nextStateID = RS_DESCENT;
+            break;
+        default:
+            break;
+        }
+    }
+    default:
+        // Do nothing
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+/* Descent State ------------------------------------------------------------------*/
+/**
+ * @brief Descent state constructor
+ */
+Descent::Descent()
+{
+    rsStateID = RS_DESCENT;
+}
+
+/**
+ * @brief Entry to Descent state
+ * @return The state we're entering
+ */
+RocketState Descent::OnEnter()
+{
+    //TODO: Start Recovery Transition Timer (~300 seconds) : Should be well into / after descent
+    //TODO: Open Vent/Drain, Ensure MEV Closed
+
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Descent state
+ * @return The state we're exiting
+ */
+RocketState Descent::OnExit()
+{
+
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Descent state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Descent::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_DESCENT_TO_RECOVERY:
+            nextStateID = RS_RECOVERY;
+            break;
+        default:
+            break;
+        }
+    }
+    default:
+        // Do nothing
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+
+/* Recovery State ------------------------------------------------------------------*/
+/**
+ * @brief Recovery state constructor
+ */
+Recovery::Recovery()
+{
+    rsStateID = RS_RECOVERY;
+}
+
+/**
+ * @brief Entry to Recovery state
+ * @return The state we're entering
+ */
+RocketState Recovery::OnEnter()
+{
+    //TODO: Open Vent & Drain (Maybe even periodic AUTO-VENT timers every 100 seconds to make sure they're open)
+    //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
+    //TODO: Decrease log rate to 1 Hz - StorageManager should automatically stop logging after it gets near full
+
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Recovery state
+ * @return The state we're exiting
+ */
+RocketState Recovery::OnExit()
+{
+
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Recovery state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Recovery::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        default:
+            break;
+        }
+    }
+    default:
+        // Handle as a general control action
+        nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+/* Abort State ------------------------------------------------------------------*/
+/**
+ * @brief Abort state constructor
+ */
+Abort::Abort()
+{
+    rsStateID = RS_ABORT;
+}
+
+/**
+ * @brief Entry to Abort state
+ * @return The state we're entering
+ */
+RocketState Abort::OnEnter()
+{
+    //TODO: Open Vent & Drain, MEV Closed
+
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Abort state
+ * @return The state we're exiting
+ */
+RocketState Abort::OnExit()
+{
+
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Abort state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Abort::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
+            break;
+        default:
+            break;
+        }
+    }
+    default:
+        // Handle as a general control action
+        nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
         break;
     }
 

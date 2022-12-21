@@ -8,6 +8,7 @@
 #define SOAR_FLIGHTTASK_HPP_
 #include "Task.hpp"
 #include "SystemDefines.hpp"
+#include "RocketSM.hpp"
 
 class FlightTask : public Task
 {
@@ -26,9 +27,13 @@ protected:
 
 
 private:
-	FlightTask() : Task(FLIGHT_TASK_QUEUE_DEPTH_OBJS) {}		// Private constructor
+	// Private Functions
+	FlightTask();		// Private constructor
 	FlightTask(const FlightTask&);						// Prevent copy-construction
 	FlightTask& operator=(const FlightTask&);			// Prevent assignment
+
+	// Private Variables
+	RocketSM* rsm_;
 };
 
 #endif	// SOAR_FLIGHTTASK_HPP_
