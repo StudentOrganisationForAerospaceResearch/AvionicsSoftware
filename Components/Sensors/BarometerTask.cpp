@@ -26,7 +26,7 @@
 /* Structs -------------------------------------------------------------------*/
 
 /* Constants -----------------------------------------------------------------*/
-constexpr int READ_BAROMETER_PERIOD = 25;
+//constexpr int READ_BAROMETER_PERIOD = 25; //25ms
 constexpr int TEMP_LOW = 2000;
 constexpr int TEMP_VERY_LOW = -1500;
 constexpr int CMD_SIZE = 1;
