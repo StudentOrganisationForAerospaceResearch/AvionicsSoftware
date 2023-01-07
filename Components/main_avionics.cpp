@@ -18,7 +18,6 @@
 #include "UARTTask.hpp"
 #include "FlightTask.hpp"
 #include "DebugTask.hpp"
-#include "Timer.hpp"
 
 
 /* Global Variables ------------------------------------------------------------------*/
