@@ -25,20 +25,20 @@ constexpr uint32_t DEFAULT_TIMER_COMMAND_WAIT_PERIOD = MS_TO_TICKS(15); // Defau
 class Timer
 {
 public:
-    Timer();
+	Timer();
 
-    bool ChangePeriod(const uint32_t period);
+	bool ChangePeriod(const uint32_t period);
 
-    // WORK-IN-PROGRESS
-    // NOTES:
-    // - I can think of several timer types
-    // 1) Default Ctor Timer (1 second polling timer that requires polling to acquire state with no callback)
-    // 2) Callback Enabled Timer (user-provided callback)
+	// WORK-IN-PROGRESS
+	// NOTES:
+	// - I can think of several timer types
+	// 1) Default Ctor Timer (1 second polling timer that requires polling to acquire state with no callback)
+	// 2) Callback Enabled Timer (user-provided callback)
 
 
 
 protected:
-    TimerHandle_t rtTimerHandle;
+	TimerHandle_t rtTimerHandle;
 
 };
 

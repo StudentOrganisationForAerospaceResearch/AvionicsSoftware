@@ -11,7 +11,7 @@
 #include "Command.hpp"
 #include "SystemDefines.hpp"
 
-#include <cstring>     // Support for memcpy
+#include <cstring> 	// Support for memcpy
 
 /* Static Variable Init ------------------------------------------------------------------*/
 std::atomic<uint16_t> Command::statAllocationCounter; // Static variable init
@@ -127,14 +127,14 @@ bool Command::SetCommandToStaticExternalBuffer(uint8_t* existingPtr, uint16_t si
  */
 bool Command::CopyDataToCommand(uint8_t* dataSrc, uint16_t size)
 {
-    // If we successfully allocate, copy the data and return success
+	// If we successfully allocate, copy the data and return success
     if(this->AllocateData(size)
-        && this->data != nullptr) {
-        memcpy(this->data, dataSrc, size);
-        return true;
-    }
+		&& this->data != nullptr) {
+		memcpy(this->data, dataSrc, size);
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 /**

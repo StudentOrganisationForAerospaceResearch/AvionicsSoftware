@@ -14,7 +14,7 @@
 */
 void UARTTask::ConfigureUART()
 {
-    // UART 5 - Uses polling for now (switch to DMA or interrupts once SOAR-Protocol is defined)
+	// UART 5 - Uses polling for now (switch to DMA or interrupts once SOAR-Protocol is defined)
 }
 
 /**
@@ -22,23 +22,23 @@ void UARTTask::ConfigureUART()
 */
 void UARTTask::InitTask()
 {
-    // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize UART task twice");
-    
-    // Start the task
-    BaseType_t rtValue =
-        xTaskCreate((TaskFunction_t)UARTTask::RunTask,
-            (const char*)"UARTTask",
-            (uint16_t)UART_TASK_STACK_DEPTH_WORDS,
-            (void*)this,
-            (UBaseType_t)UART_TASK_RTOS_PRIORITY,
-            (TaskHandle_t*)&rtTaskHandle);
+	// Make sure the task is not already initialized
+	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize UART task twice");
+	
+	// Start the task
+	BaseType_t rtValue =
+		xTaskCreate((TaskFunction_t)UARTTask::RunTask,
+			(const char*)"UARTTask",
+			(uint16_t)UART_TASK_STACK_DEPTH_WORDS,
+			(void*)this,
+			(UBaseType_t)UART_TASK_RTOS_PRIORITY,
+			(TaskHandle_t*)&rtTaskHandle);
 
-    //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
+	//Ensure creation succeded
+	SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
 
-    // Configure DMA
-     
+	// Configure DMA
+	 
 }
 
 /**
@@ -47,46 +47,46 @@ void UARTTask::InitTask()
 */
 void UARTTask::Run(void * pvParams)
 {
-    //UART Task loop
-    while(1) {
-        Command cm;
+	//UART Task loop
+	while(1) {
+		Command cm;
 
-        //Wait forever for a command
-        qEvtQueue->ReceiveWait(cm);
-        
-        //Process the command
-        HandleCommand(cm);
-    }
+		//Wait forever for a command
+		qEvtQueue->ReceiveWait(cm);
+		
+		//Process the command
+		HandleCommand(cm);
+	}
 }
 
 /**
  * @brief HandleCommand handles any command passed to the UART task primary event queue. Responsible for
- *           handling all commands, even if unsupported. (Unexpected commands must still be reset) 
+ * 		  handling all commands, even if unsupported. (Unexpected commands must still be reset) 
  * @param cm Reference to the command object to handle
 */
 void UARTTask::HandleCommand(Command& cm)
 {
-    //Switch for the GLOBAL_COMMAND
-    switch (cm.GetCommand()) {
-    case DATA_COMMAND: {
-        //Switch for task specific command within DATA_COMMAND
-        switch (cm.GetTaskCommand()) {
-        case UART_TASK_COMMAND_SEND_DEBUG:
-            HAL_UART_Transmit(SystemHandles::UART_Debug, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
-            break;
-        default:
-            SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\n", cm.GetTaskCommand());
-            break;
-        }
-    }
-    case TASK_SPECIFIC_COMMAND: {
-        break;
-    }
-    default:
-        SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\n", cm.GetCommand());
-        break;
-    }
+	//Switch for the GLOBAL_COMMAND
+	switch (cm.GetCommand()) {
+	case DATA_COMMAND: {
+		//Switch for task specific command within DATA_COMMAND
+		switch (cm.GetTaskCommand()) {
+		case UART_TASK_COMMAND_SEND_DEBUG:
+			HAL_UART_Transmit(SystemHandles::UART_Debug, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
+			break;
+		default:
+			SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\n", cm.GetTaskCommand());
+			break;
+		}
+	}
+	case TASK_SPECIFIC_COMMAND: {
+		break;
+	}
+	default:
+		SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\n", cm.GetCommand());
+		break;
+	}
 
-    //No matter what we happens, we must reset allocated data
-    cm.Reset();
+	//No matter what we happens, we must reset allocated data
+	cm.Reset();
 }

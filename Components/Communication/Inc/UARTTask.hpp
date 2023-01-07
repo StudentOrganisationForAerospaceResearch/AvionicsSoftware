@@ -14,9 +14,9 @@
 
 /* Macros ------------------------------------------------------------------*/
 enum UART_TASK_COMMANDS {
-    UART_TASK_COMMAND_NONE = 0,
-    UART_TASK_COMMAND_SEND_DEBUG,
-    UART_TASK_COMMAND_MAX
+	UART_TASK_COMMAND_NONE = 0,
+	UART_TASK_COMMAND_SEND_DEBUG,
+	UART_TASK_COMMAND_MAX
 };
 
 
@@ -24,33 +24,33 @@ enum UART_TASK_COMMANDS {
 class UARTTask : public Task
 {
 public:
-    static UARTTask& Inst() {
-        static UARTTask inst;
-        return inst;
-    }
+	static UARTTask& Inst() {
+		static UARTTask inst;
+		return inst;
+	}
 
-    void InitTask();
+	void InitTask();
 
 protected:
-    static void RunTask(void* pvParams) { UARTTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+	static void RunTask(void* pvParams) { UARTTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
-    void Run(void* pvParams);    // Main run code
+	void Run(void* pvParams);	// Main run code
 
-    void ConfigureUART();
-    void HandleCommand(Command& cm);
+	void ConfigureUART();
+	void HandleCommand(Command& cm);
 
 private:
-    UARTTask() : Task(UART_TASK_QUEUE_DEPTH_OBJS) {}    // Private constructor
-    UARTTask(const UARTTask&);                        // Prevent copy-construction
-    UARTTask& operator=(const UARTTask&);            // Prevent assignment
+	UARTTask() : Task(UART_TASK_QUEUE_DEPTH_OBJS) {}	// Private constructor
+	UARTTask(const UARTTask&);						// Prevent copy-construction
+	UARTTask& operator=(const UARTTask&);			// Prevent assignment
 };
 
 
 /* Utility Functions ------------------------------------------------------------------*/
 namespace UARTUtils
 {
-    
+	
 }
 
 
-#endif    // SOAR_COMMS_UARTTASK_HPP_
+#endif	// SOAR_COMMS_UARTTASK_HPP_

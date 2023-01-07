@@ -23,7 +23,7 @@ void soar_assert_debug(bool condition, const char* file, uint16_t line, const ch
 /* All must be extern from main_avionics.cpp -------------------------------------------------*/
 namespace Global
 {
-    extern Mutex vaListMutex;
+	extern Mutex vaListMutex;
 }
 
 
@@ -55,21 +55,21 @@ extern DMA_HandleTypeDef hdma_uart5_rx; // DMA UART 5 RX -
 extern DMA_HandleTypeDef hdma_uart5_tx; // DMA UART 5 TX -
 
 namespace SystemHandles {
-    // Aliases
-    constexpr UART_HandleTypeDef* UART_LaunchSystems = &huart1;
-    constexpr UART_HandleTypeDef* UART_Radio = &huart2;
-    constexpr UART_HandleTypeDef* UART_GPS = &huart4;
-    constexpr UART_HandleTypeDef* UART_Debug = &huart5;
+	// Aliases
+	constexpr UART_HandleTypeDef* UART_LaunchSystems = &huart1;
+	constexpr UART_HandleTypeDef* UART_Radio = &huart2;
+	constexpr UART_HandleTypeDef* UART_GPS = &huart4;
+	constexpr UART_HandleTypeDef* UART_Debug = &huart5;
 
-    constexpr ADC_HandleTypeDef* ADC_CombustionChamber = &hadc1;
-    constexpr ADC_HandleTypeDef* ADC_Battery = &hadc2;
+	constexpr ADC_HandleTypeDef* ADC_CombustionChamber = &hadc1;
+	constexpr ADC_HandleTypeDef* ADC_Battery = &hadc2;
 
-    //constexpr SPI_HandleTypeDef* SPI_Radio = &HAL::hspi1; // TODO: Specify
-    constexpr SPI_HandleTypeDef* SPI_Barometer = &hspi3;
+	//constexpr SPI_HandleTypeDef* SPI_Radio = &HAL::hspi1; // TODO: Specify
+	constexpr SPI_HandleTypeDef* SPI_Barometer = &hspi3;
 
-    constexpr CRC_HandleTypeDef* CRC_Handle = &hcrc;
+	constexpr CRC_HandleTypeDef* CRC_Handle = &hcrc;
 
-    // DMA Aliases
+	// DMA Aliases
 
 }
 
