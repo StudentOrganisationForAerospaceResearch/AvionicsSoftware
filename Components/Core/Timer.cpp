@@ -9,11 +9,6 @@
 */
 
 /**
- * @brief Empty callback function, used internally for default polling timers
-*/
-void empty_callback(TimerHandle_t rtTimerHandle) {};
-
-/**
  * @brief Default constructor makes a timer that can only be polled for state
 */
 Timer::Timer()
@@ -21,7 +16,18 @@ Timer::Timer()
 	// We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
 	// The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
 	// The timer is created in the dormant state.
-	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, vCallbackFunction);
+	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, CallbackFunction);
+	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
+	timerState = UNINITIALIZED;
+}
+
+/**
+ * Constructor for callback enabled timer
+ * User has to add "Timer::CallbackFunction(rtTimerHandle);" in the callback function
+*/
+Timer::Timer(void (*TimerCallbackFunction_t)( TimerHandle_t xTimer ))
+{
+	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, TimerCallbackFunction_t);
 	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
 	timerState = UNINITIALIZED;
 }
@@ -32,13 +38,12 @@ Timer::Timer()
 
 Timer::~Timer()
 {
-	xTimerDelete(rtTimerHandle,(DEFAULT_TIMER_COMMAND_WAIT_PERIOD*2));
-	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer could not be deleted");
-	// Added for testing purposes. WILL BE REMOVED LATER
-	SOAR_PRINT("TIMER HAS BEEN DELETED");
+	if (xTimerDelete(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD*2) == pdPASS) {
+		SOAR_PRINT("Timer has been deleted \n\n");
+	}
 }
 
-void Timer::vCallbackFunction(TimerHandle_t xTimer){
+void Timer::CallbackFunction(TimerHandle_t xTimer){
 	Timer* ptrTimer = (Timer*)pvTimerGetTimerID(xTimer);
 	ptrTimer->timerState = COMPLETE;
 }
@@ -50,7 +55,7 @@ bool Timer::ChangePeriod(const uint32_t period_ms)
 {
 	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
 		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-			timerState = PAUSED;
+			timerState = UNINITIALIZED;
 			return true;
 		}
 	}

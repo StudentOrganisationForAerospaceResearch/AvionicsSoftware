@@ -16,12 +16,14 @@ constexpr uint32_t DEFAULT_TIMER_COMMAND_WAIT_PERIOD = MS_TO_TICKS(15); // Defau
 
 #define DEFAULT_TIMER_PERIOD (MS_TO_TICKS(1000)) // 1s
 
+// Enumeration representing the 4 timer states
 enum TimerState {
 	UNINITIALIZED=0,
 	COUNTING,
 	PAUSED,
 	COMPLETE
 };
+
 
 /* Class -----------------------------------------------------------------*/
 
@@ -33,7 +35,8 @@ enum TimerState {
 class Timer
 {
 public:
-	Timer();
+	Timer(); // Default Constructor (Polling Timer)
+	Timer(void (*TimerCallbackFunction_t)( TimerHandle_t xTimer )); // Constructor for Callback Enabled Timer
 	~Timer();
 	bool ChangePeriod(const uint32_t period_ms);
 	bool ChangePeriodAndStart(const uint32_t period_ms);
@@ -48,16 +51,7 @@ public:
 	uint32_t GetPeriod();
 	uint32_t GetRemainingTime();
 	uint32_t rtosTimeRemaning();
-	static void vCallbackFunction( TimerHandle_t xTimer );
-
-
-	// WORK-IN-PROGRESS
-	// NOTES:
-	// - I can think of several timer types
-	// 1) Default Ctor Timer (1 second polling timer that requires polling to acquire state with no callback)
-	// 2) Callback Enabled Timer (user-provided callback)
-
-
+	static void CallbackFunction( TimerHandle_t xTimer );
 
 protected:
 
