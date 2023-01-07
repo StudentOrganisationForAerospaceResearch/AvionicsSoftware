@@ -10,7 +10,7 @@
 /**
  * @brief Default constructor for Rocket SM, initializes all states
  */
-RocketSM::RocketSM()
+RocketSM::RocketSM(RocketState startingState)
 {
     // Setup the internal array of states. Setup in order of enum.
     stateArray[RS_PRELAUNCH] = new PreLaunch();
@@ -25,10 +25,14 @@ RocketSM::RocketSM()
     stateArray[RS_ABORT] = new Abort();
 
     // Verify all states are initialized AND state IDs are consistent
-    for (uint8_t i = 0; i < RS_NONE - 1; i++) {
+    for (uint8_t i = 0; i < RS_NONE; i++) {
         SOAR_ASSERT(stateArray[i] != nullptr);
         SOAR_ASSERT(stateArray[i]->GetStateID() == i);
     }
+
+    rs_currentState = stateArray[startingState];
+
+    SOAR_PRINT("Rocket State Machine Started in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()));
         
 }
 
@@ -43,11 +47,11 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     if (nextState == rs_currentState->GetStateID())
         return rs_currentState->GetStateID();
 
-    SOAR_PRINT("ROCKET STATE TRANSITION [ %s ] --> [ %s ]", BaseRocketState::StateToString(rs_currentState->GetStateID()), BaseRocketState::StateToString(nextState));
-
     // Check the next state is valid
     if (nextState >= RS_NONE)
         return rs_currentState->GetStateID();
+
+    RocketState previousState = rs_currentState->GetStateID();
 
     // Exit the current state
     rs_currentState->OnExit();
@@ -60,6 +64,8 @@ RocketState RocketSM::TransitionState(RocketState nextState)
 
     // Enter the current state
     rs_currentState->OnEnter();
+
+    SOAR_PRINT("ROCKET STATE TRANSITION [ %s ] --> [ %s ]\n", BaseRocketState::StateToString(previousState), BaseRocketState::StateToString(rs_currentState->GetStateID()));
 
     // Return the state after the transition
     return rs_currentState->GetStateID();
@@ -137,7 +143,7 @@ RocketState PreLaunch::OnExit()
  * @brief Handles control actions generally, can be used for derived states that allow full vent control
  * @return The rocket state to transition to or stay in. The current rocket state if no transition
  */
-RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction)
+RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction, RocketState currentState)
 {
     switch (rcAction) {
     case RSC_ANY_TO_ABORT:
@@ -162,7 +168,7 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction)
         break;
     }
 
-    return GetStateID();
+    return currentState ;
 }
 
 /**
@@ -180,13 +186,13 @@ RocketState PreLaunch::HandleCommand(Command& cm)
     switch(cm.GetCommand()) {
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
-        case RSC_GOTO_IGNITION:
+        case RSC_GOTO_FILL:
             // Transition to fill state
             nextStateID = RS_FILL;
             break;
         default:
             // Handle as a general control action
-            nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
+            nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;
         }
         break;
@@ -212,7 +218,7 @@ Fill::Fill()
     rsStateID = RS_FILL;
 
     // Clear the arm flags
-    for (uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < 2; i++)
         arrArmConfirmFlags[i] = false;
 }
 
@@ -223,7 +229,7 @@ Fill::Fill()
 RocketState Fill::OnEnter()
 {
     // Clear the arm flags
-    for (uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < 2; i++)
         arrArmConfirmFlags[i] = false;
 
     // TODO: Consider automatically beginning fill sequence (since we've already explicitly entered the fill state)
@@ -272,9 +278,12 @@ RocketState Fill::HandleCommand(Command& cm)
                 nextStateID = RS_ARM;
             }
             break;
+        case RSC_GOTO_PRELAUNCH:
+        	nextStateID = RS_PRELAUNCH;
+        	break;
         default:
             // Handle as a general control action
-            nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
+            nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;
         }
         break;
@@ -343,9 +352,12 @@ RocketState Arm::HandleCommand(Command& cm)
             // Transition to ready for ignition state
             nextStateID = RS_IGNITION;
             break;
+        case RSC_GOTO_FILL:
+        	nextStateID = RS_FILL;
+        	break;
         default:
             // If manual override is enabled, handle the command as a non ignition command
-            nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
+            nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;
         }
         break;
@@ -414,6 +426,7 @@ RocketState Ignition::HandleCommand(Command& cm)
         default:
             break;
         }
+        break;
     }
     default:
         // Do nothing
@@ -477,6 +490,7 @@ RocketState Launch::HandleCommand(Command& cm)
         default:
             break;
         }
+        break;
     }
     default:
         // Do nothing
@@ -538,6 +552,7 @@ RocketState Burn::HandleCommand(Command& cm)
         default:
             break;
         }
+        break;
     }
     default:
         // Do nothing
@@ -597,6 +612,7 @@ RocketState Coast::HandleCommand(Command& cm)
         default:
             break;
         }
+        break;
     }
     default:
         // Do nothing
@@ -657,6 +673,7 @@ RocketState Descent::HandleCommand(Command& cm)
         default:
             break;
         }
+        break;
     }
     default:
         // Do nothing
@@ -714,12 +731,13 @@ RocketState Recovery::HandleCommand(Command& cm)
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
         default:
+            // Handle as a general control action
+            nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;
         }
+        break;
     }
     default:
-        // Handle as a general control action
-        nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
         break;
     }
 
@@ -776,10 +794,9 @@ RocketState Abort::HandleCommand(Command& cm)
         default:
             break;
         }
+        break;
     }
     default:
-        // Handle as a general control action
-        nextStateID = HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand());
         break;
     }
 

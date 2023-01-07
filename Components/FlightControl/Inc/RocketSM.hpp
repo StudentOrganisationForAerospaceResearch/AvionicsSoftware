@@ -129,7 +129,7 @@ protected:
 class RocketSM
 {
 public:
-    RocketSM();
+    RocketSM(RocketState startingState);
 
     void HandleCommand(Command& cm);
 
@@ -137,7 +137,7 @@ protected:
     RocketState TransitionState(RocketState nextState);
 
     // Variables
-    BaseRocketState* stateArray[RS_NONE-1];
+    BaseRocketState* stateArray[RS_NONE];
     BaseRocketState* rs_currentState;
 };
 
@@ -150,19 +150,18 @@ public:
     PreLaunch();
 
     // Base class
-    virtual RocketState HandleCommand(Command& cm) override;
-    virtual RocketState OnEnter() override;
-    virtual RocketState OnExit() override;
-
-protected:
-    // Class specific
-    RocketState HandleNonIgnitionCommands(RocketControlCommands rcAction);
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
+	
+    // Non-ignition
+    static RocketState HandleNonIgnitionCommands(RocketControlCommands rcAction, RocketState currentState);
 };
 
 /**
  * @brief Fill state, N2 Prefill/Purge/Leak-check/Load-cell Tare check sub-sequences, full control of valves (except MEV) allowed
  */
-class Fill : public PreLaunch
+class Fill : public BaseRocketState
 {
 public:
     Fill();
@@ -178,7 +177,7 @@ private:
 /**
  * @brief Arm state, we don't allow fill etc. 1-2 minutes before launch : Cannot fill rocket with N2 etc. unless you return to FILL
  */
-class Arm : public PreLaunch
+class Arm : public BaseRocketState
 {
 public:
     Arm();
@@ -258,7 +257,7 @@ public:
 /**
  * @brief PostLaunch state, vents open, MEV closed, transmit all data over radio and accept vent commands
  */
-class Recovery : public PreLaunch
+class Recovery : public BaseRocketState
 {
 public:
     Recovery();
@@ -271,7 +270,7 @@ public:
 /**
  * @brief Abort state, abort sequence, vents open, MEV closed, ignitors off
  */
-class Abort : public PreLaunch
+class Abort : public BaseRocketState
 {
 public:
     Abort();

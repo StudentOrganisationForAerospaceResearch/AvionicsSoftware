@@ -13,7 +13,7 @@
  */
 FlightTask::FlightTask() : Task(FLIGHT_TASK_QUEUE_DEPTH_OBJS)
 {
-    rsm_ = new RocketSM();
+    rsm_ = nullptr;
 }
 
 /**
@@ -44,6 +44,8 @@ void FlightTask::Run(void * pvParams)
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
     GPIO::LED1::Off();
 
+    rsm_ = new RocketSM(RS_ABORT);
+
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task
@@ -69,6 +71,12 @@ void FlightTask::Run(void * pvParams)
 
         //Every cycle, print something out (for testing)
         SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
+
+        //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
+        Command cm;
+        bool res = qEvtQueue->Receive(cm);
+        if(res)
+        	rsm_->HandleCommand(cm);
 
         //osDelay(FLIGHT_PHASE_DISPLAY_FREQ);
 
