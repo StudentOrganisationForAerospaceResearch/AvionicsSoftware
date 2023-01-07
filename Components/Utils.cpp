@@ -92,3 +92,31 @@ uint32_t Utils::getCRC32(uint8_t* data, uint32_t size)
 	// Calculate the CRC32
 	return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, (size+pad)/4);
 }
+
+/**
+ * @brief Converts a c string to a int32_t
+ * @param str The string to convert, must be null terminated
+ * @return The converted int32_t, or ERRVAL on an error
+ */
+int32_t Utils::stringToLong(const char* str)
+{
+    int32_t result = 0;
+    const uint8_t size = (strlen(str) < 255) ? strlen(str) : 255;
+
+    for (uint8_t i = 0; i < size; i++)
+    {
+        const uint8_t c = str[i];
+        if (IsAsciiNum(c))
+        {
+            result *= 10;
+            result += c - '0';
+        }
+        else
+        {
+            return ERRVAL;
+        }
+    }
+
+    return result;
+
+}
