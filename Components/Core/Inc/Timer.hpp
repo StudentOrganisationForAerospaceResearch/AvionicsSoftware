@@ -48,17 +48,17 @@ public:
 
 	bool GetAutoReload();
 	TimerState GetState();
-	uint32_t GetPeriod();
-	uint32_t GetRemainingTime();
-	uint32_t rtosTimeRemaning();
+	const uint32_t GetPeriod();
+	const uint32_t GetRemainingTime();
+
 	static void CallbackFunction( TimerHandle_t xTimer );
 
 protected:
-
 	TimerHandle_t rtTimerHandle;
 	TimerState timerState;
 	uint32_t remainingTime;
 	uint32_t remainingTimeBetweenPauses;
+	uint32_t rtosTimeRemaning();
 };
 
 
