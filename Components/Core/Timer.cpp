@@ -17,10 +17,10 @@ void empty_callback(TimerHandle_t rtTimerHandle) {};
 */
 Timer::Timer()
 {
-	// We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
-	// The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
-	// The timer is created in the dormant state.
-	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, empty_callback);
+    // We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
+    // The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
+    // The timer is created in the dormant state.
+    rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, empty_callback);
 }
 
 /**
@@ -28,7 +28,7 @@ Timer::Timer()
  */
 bool Timer::ChangePeriod(const uint32_t period_ms)
 {
-	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE)
-		return true;
-	return false;
+    if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE)
+        return true;
+    return false;
 }

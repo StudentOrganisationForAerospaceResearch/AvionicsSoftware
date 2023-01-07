@@ -21,17 +21,17 @@
 class DMAController
 {
 public:
-	// Constructors
-	DMAController(void);
+    // Constructors
+    DMAController(void);
 
-	// Functions
+    // Functions
 
-	// Getters
+    // Getters
 
-	// Setters
+    // Setters
 
-	// Static/Setup
-	static void SetupCallbacks();	// Register the DMA callbacks
+    // Static/Setup
+    static void SetupCallbacks();    // Register the DMA callbacks
 
 protected:
 
