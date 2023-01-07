@@ -71,6 +71,9 @@ private:
 	bool bShouldFreeData;		// Should the Command handle freeing the data pointer (necessary to enable Command object to handle static memory ptrs)
 
 	static std::atomic<uint16_t> statAllocationCounter;	// Static allocation counter shared by all command objects
+
+	// Unavailable functions
+	Command(const Command&);	// Prevent copy-construction
 };
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_COMMAND_H */
