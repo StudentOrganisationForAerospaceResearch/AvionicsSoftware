@@ -56,7 +56,18 @@ void test_destructor() {
 }
 
 void test_period () {
+	SOAR_PRINT("\n Testing Period related functions \n\n");
+
 	Timer testTimer3;
+
+	testTimer3.ChangePeriod(3000);
+		SOAR_PRINT("Expected Output : 3000 ms \n");
+		SOAR_PRINT("Actual Output : %d ms \n", testTimer3.GetRemainingTime());
+
+	testTimer3.Start();
+	osDelay(1000);
+	SOAR_PRINT("Expected Output : 2000 ms \n");
+	SOAR_PRINT("Actual Output : %d ms \n", testTimer3.GetRemainingTime());
 
 	testTimer3.Start();
 	SOAR_PRINT("\n Testing GetPeriod function...\n");
@@ -203,6 +214,82 @@ void test_get_time () {
 	SOAR_PRINT("'TIMER HAS BEEN DELETED' should be printed:  \n");
 }
 
+void Test2 () {
+	Timer testtimer;
+	SOAR_PRINT("Expected Output: 1000 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testtimer.GetRemainingTime());
+	testtimer.Start();
+
+	osDelay(1050);
+
+	SOAR_PRINT("Expected Output: 0 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testtimer.GetRemainingTime());
+
+	testtimer.ResetTimerAndStart();
+	osDelay(5);
+	SOAR_PRINT("Expected Output: 1000 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testtimer.GetRemainingTime());
+
+	osDelay(300);
+	SOAR_PRINT("Expected Output: 700 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testtimer.GetRemainingTime());
+
+	osDelay(1050);
+
+	SOAR_PRINT("Expected Output: 0 ms\n");
+	SOAR_PRINT("Actual Output: %d ms \n\n", testtimer.GetRemainingTime());
+
+	testtimer.ResetTimer();
+
+
+}
+
+void Callback (TimerHandle_t rtTimerHandle)
+{
+	// USER HAS TO HAVE CALLBACK FUNCTION HERE
+	Timer::CallbackFunction(rtTimerHandle);
+	SOAR_PRINT("\n\n The Timer is now Complete and callback function has been executed. Test Number 520 \n\n");
+}
+
+void testCallback ()
+{
+	SOAR_PRINT("Testing CALLBACK ENABLED Timers \n\n");
+	Timer testTimer(Callback);
+	Timer testTimer2;
+
+	SOAR_PRINT("Testing GetState function...\n");
+		SOAR_PRINT("Expected Output: 0 (UNINITIALIZED)\n");
+		SOAR_PRINT("Actual Output: %d\n\n", testTimer.GetState());
+
+	testTimer.ChangePeriod(3000);
+	osDelay(20);
+	SOAR_PRINT("Expected Output : 3000 ms \n");
+	SOAR_PRINT("Actual Output : %d ms \n", testTimer.GetRemainingTime());
+	SOAR_PRINT("Testing GetState function...\n");
+			SOAR_PRINT("Expected Output: 0 (UNINITIALIZED)\n");
+			SOAR_PRINT("Actual Output: %d\n\n", testTimer.GetState());
+
+	testTimer.Start();
+	osDelay(1000);
+
+	SOAR_PRINT("Testing GetState function...\n");
+			SOAR_PRINT("Expected Output: 1 (COUNTING)\n");
+			SOAR_PRINT("Actual Output: %d\n\n", testTimer.GetState());
+	SOAR_PRINT("Expected Output : 2000 ms \n");
+	SOAR_PRINT("Actual Output : %d ms \n", testTimer.GetRemainingTime());
+	osDelay(5000);
+	SOAR_PRINT("Testing GetState function...\n");
+			SOAR_PRINT("Expected Output: 3 (COMPLETE)\n");
+			SOAR_PRINT("Actual Output: %d\n\n", testTimer.GetState());
+
+	testTimer.Start();
+	osDelay(500);
+	testTimer.ChangePeriod(5000);
+	osDelay(1000);
+	SOAR_PRINT("Expected Output : 5000 ms \n");
+		SOAR_PRINT("Actual Output : %d ms \n", testTimer.GetRemainingTime());
+}
+
 //TODO: Consider moving all InitTask functions to the bottom of the cpp file, since it shouldn't need to be changed that much
 void FlightTask::InitTask()
 {
@@ -235,6 +322,8 @@ void FlightTask::Run(void * pvParams)
     test_autoreload ();
     test_reset();
     test_get_time ();
+    Test2();
+    testCallback();
 
 	while (1) {
 		// There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
