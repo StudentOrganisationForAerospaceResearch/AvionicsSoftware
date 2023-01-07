@@ -39,7 +39,7 @@ enum RocketState
     // Automatic Venting AND Vent Control ALLOWED
     RS_DESCENT,  // Vents open (well into the descent)
     RS_RECOVERY,  // Vents open, MEV closed, transmit all data over radio and accept vent commands
-				  // Supports general commands (e.g. venting) and logs/transmits slowly (maybe stop logging after close to full memory?)
+                  // Supports general commands (e.g. venting) and logs/transmits slowly (maybe stop logging after close to full memory?)
 
     //-- RECOVERY / TECHNICAL --
     RS_ABORT,       // Abort sequence, vents open, MEV closed, ignitors off
@@ -53,6 +53,8 @@ enum RocketState
  */
 enum RocketControlCommands
 {
+    RSC_FIRST_INVALID = 0,
+
     //-- PRE-IGNITION and RECOVERY --
     RSC_ANY_TO_ABORT,       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
     RSC_OPEN_VENT,   // Open the vent valve
@@ -112,6 +114,8 @@ public:
     virtual RocketState OnExit() = 0;   //Returns the state we're exiting
 
     virtual RocketState GetStateID() { return rsStateID; }
+
+    static const char* StateToString(RocketState stateId);
 
     //RocketState HandleGeneralStateCommands(RocketControlCommands rcAction);
 protected:

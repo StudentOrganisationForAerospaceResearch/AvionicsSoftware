@@ -43,6 +43,8 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     if (nextState == rs_currentState->GetStateID())
         return rs_currentState->GetStateID();
 
+    SOAR_PRINT("ROCKET STATE TRANSITION [ %s ] --> [ %s ]", BaseRocketState::StateToString(rs_currentState->GetStateID()), BaseRocketState::StateToString(nextState));
+
     // Check the next state is valid
     if (nextState >= RS_NONE)
         return rs_currentState->GetStateID();
@@ -74,9 +76,9 @@ void RocketSM::HandleCommand(Command& cm)
     // Handle the command based on the current state
     RocketState nextRocketState = rs_currentState->HandleCommand(cm);
 
-	// Run transition state - if the next state is the current state this does nothing
-	if (nextRocketState != rs_currentState->GetStateID())
-		TransitionState(nextRocketState);
+    // Run transition state - if the next state is the current state this does nothing
+    if (nextRocketState != rs_currentState->GetStateID())
+        TransitionState(nextRocketState);
 }
 
 /* Base State ------------------------------------------------------------------*/
@@ -157,7 +159,7 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction)
         //TODO: Close the MEV
         break;
     default:
-    	break;
+        break;
     }
 
     return GetStateID();
@@ -784,4 +786,37 @@ RocketState Abort::HandleCommand(Command& cm)
     // Make sure to reset the command, and return the next state
     cm.Reset();
     return nextStateID;
+}
+
+/**
+ * @brief Returns a string for the state
+ */
+const char* BaseRocketState::StateToString(RocketState stateId)
+{
+    switch(stateId) {
+    case RS_PRELAUNCH:
+        return "Pre-launch";
+    case RS_FILL:
+        return "Fill";
+    case RS_ARM:
+        return "Arm";
+    case RS_IGNITION:
+        return "Ignition";
+    case RS_LAUNCH:
+        return "Launch";
+    case RS_BURN:
+        return "Burn";
+    case RS_COAST:
+        return "Coast";
+    case RS_DESCENT:
+        return "Descent";
+    case RS_RECOVERY:
+        return "Recovery";
+    case RS_ABORT:
+        return "Abort";
+    case RS_NONE:
+        return "None";
+    default:
+        return "WARNING: Invalid";
+    }
 }
