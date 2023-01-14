@@ -43,6 +43,9 @@ protected:
 	//void HandleCommand(Command& cm);
 
 	bool ReceiveData();
+
+	// Helper functions
+	static int32_t ExtractIntParameter(const char* msg, uint16_t identifierLen);
 	
 	// Member variables
 	uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];

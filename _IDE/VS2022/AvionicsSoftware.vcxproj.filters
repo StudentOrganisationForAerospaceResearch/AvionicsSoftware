@@ -52,6 +52,12 @@
     <Filter Include="Source Files\Components\Communication\Inc">
       <UniqueIdentifier>{bb4a71ab-b042-4209-b1c5-5a3760756c6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Libraries">
+      <UniqueIdentifier>{e4b3b680-ff38-4201-9176-8ffd6ea1b349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Libraries\embedded-template-library">
+      <UniqueIdentifier>{84dd1187-e91e-4a02-ad2a-664bff715bec}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Components\Sensors">
       <UniqueIdentifier>{55d4aad5-e8ff-4124-9a84-d0615596e5d9}</UniqueIdentifier>
     </Filter>
@@ -195,9 +201,6 @@
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp">
       <Filter>Source Files\Components\SoarDebug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
-      <Filter>Source Files\Components\FlightControl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Components\Core\Mutex.cpp">
       <Filter>Source Files\Components\Core</Filter>
     </ClCompile>
@@ -212,6 +215,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\Utils.cpp">
       <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Components\Sensors\BarometerTask.cpp">
       <Filter>Source Files\Components\Sensors</Filter>
@@ -517,6 +526,1014 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\Utils.hpp">
       <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\absolute.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\algorithm.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\alignment.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\array.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\array_view.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\array_wrapper.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\atomic\atomic_arm.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\atomic\atomic_clang_sync.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\atomic\atomic_gcc_sync.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\atomic\atomic_std.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\atomic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\basic_format_spec.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\basic_string.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\basic_string_stream.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\binary.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\bip_buffer_spsc_atomic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\bit.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\bitset.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\bit_stream.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\bloom_filter.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\bresenham_line.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\buffer_descriptors.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\byte.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\byte_stream.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\callback.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\callback_service.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\callback_timer.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\callback_timer_atomic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\callback_timer_interrupt.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\callback_timer_locked.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\char_traits.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\checksum.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\circular_buffer.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\circular_iterator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\combinations.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\compare.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\constant.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\container.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\correlation.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\covariance.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_a.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_arc.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_aug_ccitt.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_buypass.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_ccitt.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_cdma2000.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_dds110.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_dectr.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_dectx.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_dnp.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_en13757.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_genibus.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_kermit.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_maxim.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_mcrf4xx.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_modbus.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_profibus.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_riello.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_t10dif.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_teledisk.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_tms37157.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_usb.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_x25.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc16_xmodem.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_bzip2.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_c.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_d.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_jamcrc.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_mpeg2.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_posix.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_q.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc32_xfer.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc64_ecma.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_ccitt.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_cdma2000.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_darc.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_dvbs2.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_ebu.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_icode.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_itu.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_maxim.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_rohc.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\crc8_wcdma.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\cstring.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\cyclic_value.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\debounce.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\debug_count.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\delegate.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\delegate_service.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\deprecated\factory.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\deque.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\doxygen.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\endianness.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\enum_type.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\error_handler.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\exception.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\experimental\bit_cast.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\experimental\class_traits.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\experimental\icache.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\experimental\mem_cast.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\experimental\singleton.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\factorial.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\fibonacci.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\file_error_numbers.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\fixed_iterator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\fixed_sized_memory_block_allocator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\flags.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\flat_map.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\flat_multimap.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\flat_multiset.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\flat_set.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\fnv_1.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\format_spec.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\forward_list.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\frame_check_sequence.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\fsm.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\function.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\functional.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\gamma.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\fsm_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\largest_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\message_packet_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\message_router_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\smallest_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\type_lookup_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\type_select_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\type_traits_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generators\variant_pool_generator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\generic_pool.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\hash.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\hfsm.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\histogram.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\ihash.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\imemory_block_allocator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\indirect_vector.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\initializer_list.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\instance_count.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\integral_limits.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\intrusive_forward_list.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\intrusive_links.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\intrusive_list.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\intrusive_queue.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\intrusive_stack.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\invert.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\io_port.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\ipool.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\ireference_counted_message_pool.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\iterator.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\jenkins.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\largest.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\limiter.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\limits.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\list.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\log.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\macros.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\map.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\math_constants.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mean.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\memory.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\memory_model.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mem_cast.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_broker.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_bus.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_packet.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_router.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_router_registry.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_timer.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_timer_atomic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_timer_interrupt.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_timer_locked.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\message_types.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\multimap.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\multiset.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\multi_array.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\multi_range.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\multi_span.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\multi_vector.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\murmur3.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mutex\mutex_arm.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mutex\mutex_clang_sync.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mutex\mutex_cmsis_os2.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mutex\mutex_freertos.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mutex\mutex_gcc_sync.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mutex\mutex_std.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\mutex.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\negative.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\nth_type.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\nullptr.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\null_type.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\numeric.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\observer.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\optional.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\overload.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\packet.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\parameter_pack.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\parameter_type.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\pearson.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\permutations.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\placement_new.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\platform.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\poly_span.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\pool.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\power.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\priority_queue.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\bitset_legacy.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\bitset_new.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\choose_namespace.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\comparator_is_transparent.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\crc_implementation.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\crc_parameters.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\delegate_cpp03.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\delegate_cpp11.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\diagnostic_pessimizing-move_push.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\diagnostic_pop.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\diagnostic_self_assign_overloaded_push.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\diagnostic_unused_function_push.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\dynamic_extent.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\ivectorpointer.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\minmax_pop.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\minmax_push.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\pvoidvector.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\to_string_helper.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\variant_legacy.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\variant_variadic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\private\vector_base.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\arduino_arm.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\armv5.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\armv5_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\armv6.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\armv6_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\armv7.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\armv7_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\auto.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\clang_generic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\clang_generic_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp03.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp03_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp11.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp11_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp14.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp14_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp17.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\cpp17_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\determine_builtin_support.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\determine_compiler.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\determine_compiler_language_support.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\determine_compiler_version.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\determine_development_os.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\gcc_generic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\gcc_generic_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\gcc_linux_x86.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\gcc_linux_x86_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\gcc_windows_x86.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\gcc_windows_x86_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\msvc_x86.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\msvc_x86_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\segger_gcc_stlport.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\ticc.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\profiles\ticc_no_stl.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\pseudo_moving_average.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\quantize.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\queue.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\queue_lockable.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\queue_mpmc_mutex.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\queue_spsc_atomic.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\queue_spsc_isr.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\queue_spsc_locked.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\radix.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\random.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\ratio.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\reference_counted_message.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\reference_counted_message_pool.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\reference_counted_object.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\reference_flat_map.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\reference_flat_multimap.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\reference_flat_multiset.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\reference_flat_set.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\rescale.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\result.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\rms.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\scaled_rounding.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\scheduler.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\set.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\shared_message.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\singleton.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\smallest.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\span.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\sqrt.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\stack.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\standard_deviation.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\state_chart.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\static_assert.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\string.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\string_stream.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\string_utilities.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\string_view.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\successor.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\task.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\threshold.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\timer.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\to_string.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\to_u16string.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\to_u32string.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\to_wstring.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\type_def.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\type_lookup.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\type_select.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\type_traits.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\u16format_spec.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\u16string.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\u16string_stream.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\u32format_spec.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\u32string.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\u32string_stream.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\unaligned_type.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\unordered_map.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\unordered_multimap.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\unordered_multiset.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\unordered_set.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\user_type.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\utility.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\variance.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\variant.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\variant_pool.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\vector.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\version.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\visitor.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\wformat_spec.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\wstring.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\wstring_stream.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl_profile.h">
+      <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\FlightControl\Inc\RocketSM.hpp">
+      <Filter>Source Files\Components\FlightControl\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Sensors\Inc\BarometerTask.hpp">
       <Filter>Source Files\Components\Sensors\Inc</Filter>
