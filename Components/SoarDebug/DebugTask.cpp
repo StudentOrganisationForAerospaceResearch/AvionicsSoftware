@@ -11,6 +11,7 @@
 #include "Utils.hpp"
 #include <cstring>
 
+#include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "stm32f4xx_hal.h"
 
@@ -99,7 +100,16 @@ void DebugTask::Run(void * pvParams)
  */
 void DebugTask::HandleDebugMessage(const char* msg)
 {
-	if (strcmp(msg, "sysreset") == 0) {
+	//-- PARAMETRIZED COMMANDS -- (Must be first)
+    if (strncmp(msg, "rsc ", 4) == 0) {
+        // Get parameter and send as a control action to flight task
+		int32_t state = ExtractIntParameter(msg, 4);
+        if (state != ERRVAL && state > 0 && state < UINT16_MAX)
+            FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, state));
+    }
+
+	//-- SYSTEM / CHAR COMMANDS -- (Must be last)
+	else if (strcmp(msg, "sysreset") == 0) {
 		// Reset the system
 		SOAR_ASSERT(false, "System reset requested");
 	}
@@ -170,4 +180,28 @@ void DebugTask::InterruptRxData()
 
 	//Re-arm the interrupt
 	ReceiveData();
+}
+
+/* Helper Functions --------------------------------------------------------------*/
+/**
+ * @brief Extracts an integer parameter from a string
+ * @brief msg Message to extract from, MUST be at least identifierLen long, and properly null terminated
+ * @brief identifierLen Length of the identifier eg. 'rsc ' (Including the space) is 4
+ * @return ERRVAL on failure, otherwise the extracted value
+ */
+int32_t DebugTask::ExtractIntParameter(const char* msg, uint16_t identifierLen)
+{
+	// Handle a command with an int parameter at the end
+	if (static_cast<uint16_t>(strlen(msg)) < identifierLen+1) {
+		SOAR_PRINT("Int parameter command insufficient length\r\n");
+        return ERRVAL;
+	}
+    
+	// Extract the value and attempt conversion to integer
+	const int32_t val = Utils::stringToLong(&msg[identifierLen]);
+	if (val == ERRVAL) {
+		SOAR_PRINT("Int parameter command invalid value\r\n");
+	}
+
+	return val;
 }
