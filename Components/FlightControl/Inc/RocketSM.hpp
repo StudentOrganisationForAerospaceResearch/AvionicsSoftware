@@ -129,7 +129,7 @@ protected:
 class RocketSM
 {
 public:
-    RocketSM(RocketState startingState);
+    RocketSM(RocketState startingState, bool enterStartingState);
 
     void HandleCommand(Command& cm);
 

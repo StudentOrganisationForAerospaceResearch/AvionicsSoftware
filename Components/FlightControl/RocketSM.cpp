@@ -10,7 +10,7 @@
 /**
  * @brief Default constructor for Rocket SM, initializes all states
  */
-RocketSM::RocketSM(RocketState startingState)
+RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
 {
     // Setup the internal array of states. Setup in order of enum.
     stateArray[RS_PRELAUNCH] = new PreLaunch();
@@ -31,6 +31,11 @@ RocketSM::RocketSM(RocketState startingState)
     }
 
     rs_currentState = stateArray[startingState];
+
+    // If we need to run OnEnter for the starting state, do so
+	if (enterStartingState) {
+		rs_currentState->OnEnter();
+	}
 
     SOAR_PRINT("Rocket State Machine Started in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()));
         
