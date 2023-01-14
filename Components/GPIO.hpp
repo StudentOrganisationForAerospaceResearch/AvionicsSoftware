@@ -44,6 +44,20 @@ namespace GPIO
         inline bool IsOn() { return HAL_GPIO_ReadPin(LED_3_GPIO_Port, LED_3_Pin) == GPIO_PIN_SET; }
     }
 
+	namespace VENT
+	{
+
+	}
+
+	namespace DRAIN 
+	{
+
+	}	
+
+	namespace PowerSelect
+	{
+		
+	}
 }
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_GPIO_H */
