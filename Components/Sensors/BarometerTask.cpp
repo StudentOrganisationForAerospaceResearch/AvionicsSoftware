@@ -2,8 +2,8 @@
   ******************************************************************************
   * File Name          : BarometerTask.cpp
   *
-  *	Source Info		   : Based on Andromeda V3.31 Implementation
-  *						 Andromeda_V3.31_Legacy/Core/Src/ReadBarometer.c
+  *    Source Info           : Based on Andromeda V3.31 Implementation
+  *                         Andromeda_V3.31_Legacy/Core/Src/ReadBarometer.c
   *
   * Description        : This file contains constants and functions designed to
   *                      obtain accurate pressure and temperature readings from
@@ -64,20 +64,20 @@ BarometerTask::BarometerTask() : Task(TASK_BAROMETER_QUEUE_DEPTH_OBJS)
  */
 void BarometerTask::InitTask()
 {
-	// Make sure the task is not already initialized
-	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Baro task twice");
+    // Make sure the task is not already initialized
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Baro task twice");
 
-	// Start the task
-	BaseType_t rtValue =
-		xTaskCreate((TaskFunction_t)BarometerTask::RunTask,
-			(const char*)"BaroTask",
-			(uint16_t)TASK_BAROMETER_STACK_DEPTH_WORDS,
-			(void*)this,
-			(UBaseType_t)TASK_BAROMETER_PRIORITY,
-			(TaskHandle_t*)&rtTaskHandle);
+    // Start the task
+    BaseType_t rtValue =
+        xTaskCreate((TaskFunction_t)BarometerTask::RunTask,
+            (const char*)"BaroTask",
+            (uint16_t)TASK_BAROMETER_STACK_DEPTH_WORDS,
+            (void*)this,
+            (UBaseType_t)TASK_BAROMETER_PRIORITY,
+            (TaskHandle_t*)&rtTaskHandle);
 
-	//Ensure creation succeded
-	SOAR_ASSERT(rtValue == pdPASS, "BarometerTask::InitTask() - xTaskCreate() failed");
+    //Ensure creation succeded
+    SOAR_ASSERT(rtValue == pdPASS, "BarometerTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -86,15 +86,15 @@ void BarometerTask::InitTask()
  */
 void BarometerTask::Run(void * pvParams)
 {
-	while (1) {
-		Command cm;
+    while (1) {
+        Command cm;
 
-		//Wait forever for a command
+        //Wait forever for a command
         qEvtQueue->ReceiveWait(cm);
 
-		//Process the command
-		HandleCommand(cm);
-	}
+        //Process the command
+        HandleCommand(cm);
+    }
 }
 
 /**
@@ -106,21 +106,21 @@ void BarometerTask::HandleCommand(Command& cm)
     //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
     //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
 
-	//Switch for the GLOBAL_COMMAND
-	switch (cm.GetCommand()) {
-	case REQUEST_COMMAND: {
-		HandleRequestCommand(cm.GetTaskCommand());
-	}
-	case TASK_SPECIFIC_COMMAND: {
-		break;
-	}
-	default:
-		SOAR_PRINT("BarometerTask - Received Unsupported Command {%d}\n", cm.GetCommand());
-		break;
-	}
+    //Switch for the GLOBAL_COMMAND
+    switch (cm.GetCommand()) {
+    case REQUEST_COMMAND: {
+        HandleRequestCommand(cm.GetTaskCommand());
+    }
+    case TASK_SPECIFIC_COMMAND: {
+        break;
+    }
+    default:
+        SOAR_PRINT("BarometerTask - Received Unsupported Command {%d}\n", cm.GetCommand());
+        break;
+    }
 
-	//No matter what we happens, we must reset allocated data
-	cm.Reset();
+    //No matter what we happens, we must reset allocated data
+    cm.Reset();
 }
 
 /**
@@ -129,7 +129,7 @@ void BarometerTask::HandleCommand(Command& cm)
  */
 void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
 {
-	//Switch for task specific command within DATA_COMMAND
+    //Switch for task specific command within DATA_COMMAND
     switch (taskCommand) {
     case BARO_REQUEST_NEW_SAMPLE:
         SampleBarometer();
@@ -151,7 +151,7 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
 
 /**
  * @brief This function reads and updates pressure and temperature readings
- *		  from the barometer.
+ *          from the barometer.
  */
 void BarometerTask::SampleBarometer()
 {
@@ -180,7 +180,7 @@ void BarometerTask::SampleBarometer()
  *          P = (D1 * SENS) - OFF = ((D1 * SENS)/2^21 - OFF)/2^15
  */
 
-	// Variables
+    // Variables
     uint32_t pressureReading = 0;    // Stores a 24 bit value
     uint32_t temperatureReading = 0;    // Stores a 24 bit value
     uint8_t dataInBuffer;
@@ -306,7 +306,7 @@ void BarometerTask::SampleBarometer()
  */
 uint16_t BarometerTask::ReadCalibrationCoefficients(uint8_t PROM_READ_CMD)
 {
-	uint8_t dataInBuffer;
+    uint8_t dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 

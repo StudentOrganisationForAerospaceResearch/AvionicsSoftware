@@ -2,8 +2,8 @@
   ******************************************************************************
   * File Name          : IMUTask.cpp
   *
-  *	Source Info		   : Based on Andromeda V3.31 Implementation
-  *						 Andromeda_V3.31_Legacy/Core/Src/ReadAccelGyroMagnetism.c
+  *    Source Info           : Based on Andromeda V3.31 Implementation
+  *                         Andromeda_V3.31_Legacy/Core/Src/ReadAccelGyroMagnetism.c
   *
   * Description        : This file contains constants and functions designed to
   *                      obtain accurate pressure and temperature readings from
@@ -228,7 +228,7 @@ void IMUTask::SampleIMU()
  */
 uint8_t IMUTask::SetupIMU()
 {
-	/* Setup the Accel / Gyro */
+    /* Setup the Accel / Gyro */
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_SET);
@@ -265,7 +265,7 @@ uint8_t IMUTask::SetupIMU()
 
     /* Verify the two WHOAMI registers */
     if(whoami != 104)
-    	SOAR_PRINT("Non-Fatal-Warning: IMU WHOAMI failed   [%d]\n", whoami);
+        SOAR_PRINT("Non-Fatal-Warning: IMU WHOAMI failed   [%d]\n", whoami);
     if (whoami_m != 61)
         SOAR_PRINT("Non-Fatal-Warning: IMU WHOAMI_M failed [%d]\n", whoami_m);
 

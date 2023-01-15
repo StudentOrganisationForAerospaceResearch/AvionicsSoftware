@@ -33,9 +33,9 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
     rs_currentState = stateArray[startingState];
 
     // If we need to run OnEnter for the starting state, do so
-	if (enterStartingState) {
-		rs_currentState->OnEnter();
-	}
+    if (enterStartingState) {
+        rs_currentState->OnEnter();
+    }
 
     SOAR_PRINT("Rocket State Machine Started in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()));
         
@@ -284,8 +284,8 @@ RocketState Fill::HandleCommand(Command& cm)
             }
             break;
         case RSC_GOTO_PRELAUNCH:
-        	nextStateID = RS_PRELAUNCH;
-        	break;
+            nextStateID = RS_PRELAUNCH;
+            break;
         default:
             // Handle as a general control action
             nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
@@ -358,8 +358,8 @@ RocketState Arm::HandleCommand(Command& cm)
             nextStateID = RS_IGNITION;
             break;
         case RSC_GOTO_FILL:
-        	nextStateID = RS_FILL;
-        	break;
+            nextStateID = RS_FILL;
+            break;
         default:
             // If manual override is enabled, handle the command as a non ignition command
             nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());

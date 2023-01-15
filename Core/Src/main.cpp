@@ -689,7 +689,7 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	run_StartDefaultTask();
+    run_StartDefaultTask();
   /* USER CODE END 5 */
 }
 

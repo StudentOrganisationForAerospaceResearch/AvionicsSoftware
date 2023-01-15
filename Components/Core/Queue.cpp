@@ -15,9 +15,9 @@
 */
 Queue::Queue(void)
 {
-	//Initialize RTOS Queue handle
-	rtQueueHandle = xQueueCreate(DEFAULT_QUEUE_SIZE, sizeof(Command));
-	queueDepth = 0;
+    //Initialize RTOS Queue handle
+    rtQueueHandle = xQueueCreate(DEFAULT_QUEUE_SIZE, sizeof(Command));
+    queueDepth = 0;
 }
 
 /**
@@ -26,9 +26,9 @@ Queue::Queue(void)
 */
 Queue::Queue(uint16_t depth)
 {
-	//Initialize RTOS Queue handle with given depth
-	rtQueueHandle = xQueueCreate(depth, sizeof(Command));
-	queueDepth = 0;
+    //Initialize RTOS Queue handle with given depth
+    rtQueueHandle = xQueueCreate(depth, sizeof(Command));
+    queueDepth = 0;
 }
 
 /**
@@ -38,13 +38,13 @@ Queue::Queue(uint16_t depth)
 */
 bool Queue::SendFromISR(Command& command)
 {
-	//Note: There NULL param here could be used to wake a task right after after exiting the ISR
-	if (xQueueSendFromISR(rtQueueHandle, &command, NULL) == pdPASS)
-		return true;
+    //Note: There NULL param here could be used to wake a task right after after exiting the ISR
+    if (xQueueSendFromISR(rtQueueHandle, &command, NULL) == pdPASS)
+        return true;
 
-	command.Reset();
+    command.Reset();
 
-	return false;
+    return false;
 }
 
 /**
@@ -54,14 +54,14 @@ bool Queue::SendFromISR(Command& command)
  */
 bool Queue::SendToFront(Command& command)
 {
-	//Send to the back of the queue
-	if (xQueueSendToFront(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
-		return true;
+    //Send to the back of the queue
+    if (xQueueSendToFront(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
+        return true;
 
-	SOAR_PRINT("Could not send data to front of queue!");
-	command.Reset();
+    SOAR_PRINT("Could not send data to front of queue!");
+    command.Reset();
 
-	return false;
+    return false;
 }
 
 /**
@@ -71,15 +71,15 @@ bool Queue::SendToFront(Command& command)
 */
 bool Queue::Send(Command& command)
 {
-	if (xQueueSend(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
-		return true;
+    if (xQueueSend(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
+        return true;
 
-	//TODO: It may be possible to have this automatically set the command to not free data externally as we've "passed" control of the data over, which might let us use a destructor to free the data
+    //TODO: It may be possible to have this automatically set the command to not free data externally as we've "passed" control of the data over, which might let us use a destructor to free the data
 
-	SOAR_PRINT("Could not send data to queue!");
-	command.Reset();
+    SOAR_PRINT("Could not send data to queue!");
+    command.Reset();
 
-	return false;
+    return false;
 }
 
 /**
@@ -90,10 +90,10 @@ bool Queue::Send(Command& command)
 */
 bool Queue::Receive(Command& cm, uint32_t timeout_ms)
 {
-	if(xQueueReceive(rtQueueHandle, &cm, MS_TO_TICKS(timeout_ms)) == pdTRUE) {
-		return true;
-	}
-	return false;
+    if(xQueueReceive(rtQueueHandle, &cm, MS_TO_TICKS(timeout_ms)) == pdTRUE) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -103,8 +103,8 @@ bool Queue::Receive(Command& cm, uint32_t timeout_ms)
 */
 bool Queue::ReceiveWait(Command& cm)
 {
-	if (xQueueReceive(rtQueueHandle, &cm, HAL_MAX_DELAY) == pdTRUE) {
-		return true;
-	}
-	return false;
+    if (xQueueReceive(rtQueueHandle, &cm, HAL_MAX_DELAY) == pdTRUE) {
+        return true;
+    }
+    return false;
 }

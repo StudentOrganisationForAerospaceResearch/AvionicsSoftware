@@ -14,42 +14,42 @@
 
 /* Macros/Enums ------------------------------------------------------------*/
 enum BARO_TASK_COMMANDS {
-	BARO_NONE = 0,
-	BARO_REQUEST_NEW_SAMPLE,// Get a new barometer sample, task will be blocked for polling time
-	BARO_REQUEST_TRANSMIT,	// Send the current barometer data over the Radio
-	BARO_REQUEST_DEBUG		// Send the current barometer data over the Debug UART
+    BARO_NONE = 0,
+    BARO_REQUEST_NEW_SAMPLE,// Get a new barometer sample, task will be blocked for polling time
+    BARO_REQUEST_TRANSMIT,    // Send the current barometer data over the Radio
+    BARO_REQUEST_DEBUG        // Send the current barometer data over the Debug UART
 };
 
 /* Class ------------------------------------------------------------------*/
 class BarometerTask : public Task
 {
 public:
-	static BarometerTask& Inst() {
-		static BarometerTask inst;
-		return inst;
-	}
+    static BarometerTask& Inst() {
+        static BarometerTask inst;
+        return inst;
+    }
 
-	void InitTask();
+    void InitTask();
 
 protected:
-	static void RunTask(void* pvParams) { BarometerTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+    static void RunTask(void* pvParams) { BarometerTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
-	void Run(void* pvParams);	// Main run code
-	
-	void HandleCommand(Command& cm);
-	void HandleRequestCommand(uint16_t taskCommand);
+    void Run(void* pvParams);    // Main run code
+    
+    void HandleCommand(Command& cm);
+    void HandleRequestCommand(uint16_t taskCommand);
 
-	// Sampling
-	void SampleBarometer();
-	uint16_t ReadCalibrationCoefficients(uint8_t PROM_READ_CMD);
+    // Sampling
+    void SampleBarometer();
+    uint16_t ReadCalibrationCoefficients(uint8_t PROM_READ_CMD);
 
-	// Data
-	BarometerData* data;
+    // Data
+    BarometerData* data;
 
 private:
-	BarometerTask();										// Private constructor
-	BarometerTask(const BarometerTask&);					// Prevent copy-construction
-	BarometerTask& operator=(const BarometerTask&);			// Prevent assignment
+    BarometerTask();                                        // Private constructor
+    BarometerTask(const BarometerTask&);                    // Prevent copy-construction
+    BarometerTask& operator=(const BarometerTask&);            // Prevent assignment
 };
 
-#endif	// SOAR_SENSOR_BAROMETER_TASK_HPP_
+#endif    // SOAR_SENSOR_BAROMETER_TASK_HPP_

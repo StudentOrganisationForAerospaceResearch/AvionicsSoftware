@@ -153,7 +153,7 @@ public:
     RocketState HandleCommand(Command& cm) override;
     RocketState OnEnter() override;
     RocketState OnExit() override;
-	
+    
     // Non-ignition
     static RocketState HandleNonIgnitionCommands(RocketControlCommands rcAction, RocketState currentState);
 };

@@ -80,7 +80,7 @@ void FlightTask::Run(void * pvParams)
         Command cm;
         bool res = qEvtQueue->Receive(cm);
         if(res)
-        	rsm_->HandleCommand(cm);
+            rsm_->HandleCommand(cm);
 
         //osDelay(FLIGHT_PHASE_DISPLAY_FREQ);
 
