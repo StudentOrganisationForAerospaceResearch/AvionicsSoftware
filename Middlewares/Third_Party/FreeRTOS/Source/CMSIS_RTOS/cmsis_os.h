@@ -144,7 +144,7 @@ used throughout the whole project.
 #define osCMSIS           0x10002      ///< API version (main [31:16] .sub [15:0])
 
 /// \note CAN BE CHANGED: \b osCMSIS_KERNEL identifies the underlying RTOS kernel and version number.
-#define osCMSIS_KERNEL    0x10000	   ///< RTOS identification and version (main [31:16] .sub [15:0])
+#define osCMSIS_KERNEL    0x10000       ///< RTOS identification and version (main [31:16] .sub [15:0])
 
 /// \note MUST REMAIN UNCHANGED: \b osKernelSystemId shall be consistent in every CMSIS-RTOS.
 #define osKernelSystemId "KERNEL V1.00"   ///< RTOS identification string
@@ -207,11 +207,11 @@ typedef enum  {
 #if ( INCLUDE_eTaskGetState == 1 )
 /* Thread state returned by osThreadGetState */
 typedef enum {
-	osThreadRunning   = 0x0,	      /* A thread is querying the state of itself, so must be running. */
-	osThreadReady     = 0x1 ,			        /* The thread being queried is in a read or pending ready list. */
-	osThreadBlocked   = 0x2,		        /* The thread being queried is in the Blocked state. */
-	osThreadSuspended = 0x3,	      /* The thread being queried is in the Suspended state, or is in the Blocked state with an infinite time out. */
-	osThreadDeleted   = 0x4,		          /* The thread being queried has been deleted, but its TCB has not yet been freed. */   
+    osThreadRunning   = 0x0,          /* A thread is querying the state of itself, so must be running. */
+    osThreadReady     = 0x1 ,                    /* The thread being queried is in a read or pending ready list. */
+    osThreadBlocked   = 0x2,                /* The thread being queried is in the Blocked state. */
+    osThreadSuspended = 0x3,          /* The thread being queried is in the Suspended state, or is in the Blocked state with an infinite time out. */
+    osThreadDeleted   = 0x4,                  /* The thread being queried has been deleted, but its TCB has not yet been freed. */   
   osThreadError     = 0x7FFFFFFF
 } osThreadState;
 #endif /* INCLUDE_eTaskGetState */
