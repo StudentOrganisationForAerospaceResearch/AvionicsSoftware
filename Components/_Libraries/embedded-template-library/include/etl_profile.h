@@ -3,8 +3,8 @@
  * File Name          : etl_profile.h
  * Description        : Embedded template library options
  *
- * 	Info: 			  https://www.etlcpp.com/setup.html
- * 	Example Profiles: https://github.com/ETLCPP/etl/tree/master/include/etl/profiles
+ *     Info:               https://www.etlcpp.com/setup.html
+ *     Example Profiles: https://github.com/ETLCPP/etl/tree/master/include/etl/profiles
  ******************************************************************************
 */
 
