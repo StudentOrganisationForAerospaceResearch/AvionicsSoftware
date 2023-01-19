@@ -46,19 +46,21 @@ public:
 	bool ResetTimerAndStart();
 	void SetAutoReload(bool setReloadOn);
 
-	bool GetAutoReload();
-	TimerState GetState();
-	const uint32_t GetPeriod();
-	const uint32_t GetRemainingTime();
+	const bool CheckIfAutoReload();
+	const TimerState GetState();
+	const uint32_t GetPeriodMs();
+	const uint32_t GetRemainingTimeMs();
 
-	static void CallbackFunction( TimerHandle_t xTimer );
+	static void DefaultCallback( TimerHandle_t xTimer );
 
 protected:
+	const uint32_t GetRTOSTimeRemaining();
+
 	TimerHandle_t rtTimerHandle;
 	TimerState timerState;
 	uint32_t remainingTime;
 	uint32_t remainingTimeBetweenPauses;
-	uint32_t rtosTimeRemaning();
+
 };
 
 

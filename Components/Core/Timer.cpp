@@ -1,15 +1,14 @@
-#include "SystemDefines.hpp"
-#include "Timer.hpp"
-
 /**
  ******************************************************************************
  * File Name          : Timer.cpp
  * Description        : FreeRTOS Timer Wrapper
  ******************************************************************************
 */
+#include "SystemDefines.hpp"
+#include "Timer.hpp"
 
 /**
- * Default constructor makes a timer that can only be polled for state
+ * @brief Default constructor makes a timer that can only be polled for state
  * Default behaviour : ->Autoreload is set to false (One shot Timer)
  * 					   ->Timer Period is 1000ms
  * 					   ->The Callback function simply changes state to COMPLETE and has no other functionality
@@ -19,45 +18,52 @@ Timer::Timer()
 	// We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
 	// The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
 	// The timer is created in the dormant state.
-	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, CallbackFunction);
+	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, DefaultCallback);
 	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
 	timerState = UNINITIALIZED;
 }
 
 /**
  * Constructor for callback enabled timer
- * ! User has to add "Timer::CallbackFunction(rtTimerHandle);" in the callback function for accurate functioning of Timer States
+ * ! User has to add "Timer::DefaultCallback(rtTimerHandle);" in the callback function for accurate functioning of Timer States
  * Default behaviour : ->Autoreload is set to false (One shot Timer)
  * 					   ->Timer Period is 1000ms
  * 					   ->The Callback function will be provided by the user while making sure to follow instruction above
 */
-Timer::Timer(void (*TimerCallbackFunction_t)( TimerHandle_t xTimer ))
+Timer::Timer(void (*TimerDefaultCallback_t)( TimerHandle_t xTimer ))
 {
-	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, TimerCallbackFunction_t);
+	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, TimerDefaultCallback_t);
 	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
 	timerState = UNINITIALIZED;
 }
 
 /**
  * @brief Default de-constructor makes a timer that can only be polled for state
+ * @return Prints a success message if the timer is successfully deleted and a warning message if it was not deleted
 */
 Timer::~Timer()
 {
 	if (xTimerDelete(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD*2) == pdPASS) {
 		SOAR_PRINT("Timer has been deleted \n\n");
 	}
+	else {
+		SOAR_PRINT("WARNING, FAILED TO DELETE TIMER! \n\n");
+	}
 }
 
 /**
- * @brief Callback function for polling timers
+ * @brief Callback function for timers.
+ * ! MUST be used for ALL timers. Has to be called manually by the user for callback enabled timers. Visit constructor for instructions.
+ * @return Sets timer state to COMPLETE when the timer has expired
 */
-void Timer::CallbackFunction(TimerHandle_t xTimer){
+void Timer::DefaultCallback(TimerHandle_t xTimer){
 	Timer* ptrTimer = (Timer*)pvTimerGetTimerID(xTimer);
 	ptrTimer->timerState = COMPLETE;
 }
 
 /**
  * @brief Changes timer period, Sets timer state back to uninitialized and stops timer
+ * @return Returns true if the period is successfully changed and stopped and returns false otherwise
  */
 bool Timer::ChangePeriod(const uint32_t period_ms)
 {
@@ -72,6 +78,7 @@ bool Timer::ChangePeriod(const uint32_t period_ms)
 
 /**
  * @brief Changes timer period, Sets timer state back to counting and starts timer
+ * @return Returns true if the period is successfully changed and returns false otherwise
  */
 bool Timer::ChangePeriodAndStart(const uint32_t period_ms)
 {
@@ -84,6 +91,7 @@ bool Timer::ChangePeriodAndStart(const uint32_t period_ms)
 
 /**
  * @brief Starts the timer
+ * @return Returns true if timer has successfully started, otherwise returns false
 */
 bool Timer::Start()
 {
@@ -102,6 +110,7 @@ bool Timer::Start()
 
 /**
  * @brief Stops the timer
+ * @return Returns true if timer has successfully stopped, otherwise returns false
 */
 bool Timer::Stop()
 {
@@ -110,7 +119,7 @@ bool Timer::Stop()
 		return false;
 	}
 	// Calculates the time left on the timer before it is paused
-	remainingTimeBetweenPauses = rtosTimeRemaning();
+	remainingTimeBetweenPauses = GetRTOSTimeRemaining();
 	if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 		timerState = PAUSED;
 		return true;
@@ -170,7 +179,7 @@ void Timer::SetAutoReload(bool setReloadOn)
 /**
  * @brief Returns true if the timer is set to autoreload and false if it is set to one-shot
 */
-bool Timer::GetAutoReload()
+const bool Timer::CheckIfAutoReload()
 {
 	if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdTRUE)) {
 		return true;
@@ -178,12 +187,13 @@ bool Timer::GetAutoReload()
 	if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdFALSE)) {
 		return false;
 	}
+	return false;
 }
 
 /**
  * @brief Returns timer state enum
 */
-TimerState Timer::GetState()
+const TimerState Timer::GetState()
 {
 	return timerState;
 }
@@ -191,7 +201,7 @@ TimerState Timer::GetState()
 /**
  * @brief Returns the timers' period
 */
-const uint32_t Timer::GetPeriod()
+const uint32_t Timer::GetPeriodMs()
 {
 	return (TICKS_TO_MS(xTimerGetPeriod(rtTimerHandle)));
 }
@@ -199,13 +209,13 @@ const uint32_t Timer::GetPeriod()
 /**
  * @brief Returns remaining time on timer based on current state
 */
-const uint32_t Timer::GetRemainingTime()
+const uint32_t Timer::GetRemainingTimeMs()
 {
 	if (timerState == UNINITIALIZED){
-		return (GetPeriod());
+		return (GetPeriodMs());
 		}
 	else if (timerState == COUNTING){
-		return rtosTimeRemaning();
+		return GetRTOSTimeRemaining();
 	}
 	else if (timerState == PAUSED){
 		return remainingTimeBetweenPauses;
@@ -219,7 +229,7 @@ const uint32_t Timer::GetRemainingTime()
 /**
  * @brief Calculates remaining time on timer in counting state
  */
-uint32_t Timer::rtosTimeRemaning()
+const uint32_t Timer::GetRTOSTimeRemaining()
 {
 	remainingTime = (TICKS_TO_MS(xTimerGetExpiryTime(rtTimerHandle) - xTaskGetTickCount()));
 	return remainingTime;
