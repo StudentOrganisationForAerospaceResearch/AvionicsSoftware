@@ -187,7 +187,6 @@ const bool Timer::CheckIfAutoReload()
 	if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdFALSE)) {
 		return false;
 	}
-	return false;
 }
 
 /**
@@ -199,7 +198,7 @@ const TimerState Timer::GetState()
 }
 
 /**
- * @brief Returns the timers' period
+ * @brief Returns the timers' period in milliseconds (ms)
 */
 const uint32_t Timer::GetPeriodMs()
 {
@@ -207,7 +206,7 @@ const uint32_t Timer::GetPeriodMs()
 }
 
 /**
- * @brief Returns remaining time on timer based on current state
+ * @brief Returns remaining time (in milliseconds) on timer based on current state
 */
 const uint32_t Timer::GetRemainingTimeMs()
 {
