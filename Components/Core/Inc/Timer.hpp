@@ -46,6 +46,7 @@ public:
 	bool ResetTimerAndStart();
 	void SetAutoReload(bool setReloadOn);  //True for autoreload and False for One-shot
 
+	const uint32_t GetOriginalPeriodMs(){return timerPeriod;};
 	const bool GetIfAutoReload();
 	const TimerState GetState();
 	const uint32_t GetPeriodMs();
