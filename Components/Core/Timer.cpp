@@ -63,13 +63,14 @@ void Timer::DefaultCallback(TimerHandle_t xTimer){
 
 /**
  * @brief Changes timer period, Sets timer state back to uninitialized and stops timer
+ * ! This will reset the timer
  * @return Returns true if the period is successfully changed and stopped and returns false otherwise
  */
 bool Timer::ChangePeriodMs(const uint32_t period_ms)
 {
 	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
-		timerPeriod = period_ms;
 		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+			timerPeriod = period_ms;
 			timerState = UNINITIALIZED;
 			return true;
 		}
@@ -142,6 +143,7 @@ bool Timer::ResetTimer()
 	}
 	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 		ChangePeriodMs(timerPeriod);
+		return true;
 	}
 	return false;
 }
@@ -156,6 +158,7 @@ bool Timer::ResetTimerAndStart()
 	}
 	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 		ChangePeriodMsAndStart(timerPeriod);
+		return true;
 	}
 	return false;
 }
