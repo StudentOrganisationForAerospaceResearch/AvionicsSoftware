@@ -38,15 +38,15 @@ public:
 	Timer(); // Default Constructor (Polling Timer)
 	Timer(void (*TimerCallbackFunction_t)( TimerHandle_t xTimer )); // Constructor for Callback Enabled Timer
 	~Timer();
-	bool ChangePeriod(const uint32_t period_ms);
-	bool ChangePeriodAndStart(const uint32_t period_ms);
+	bool ChangePeriodMs(const uint32_t period_ms);
+	bool ChangePeriodMsAndStart(const uint32_t period_ms);
 	bool Start();
 	bool Stop();
 	bool ResetTimer();
 	bool ResetTimerAndStart();
-	void SetAutoReload(bool setReloadOn);
+	void SetAutoReload(bool setReloadOn);  //True for autoreload and False for One-shot
 
-	const bool CheckIfAutoReload();
+	const bool GetIfAutoReload();
 	const TimerState GetState();
 	const uint32_t GetPeriodMs();
 	const uint32_t GetRemainingTimeMs();
@@ -56,8 +56,8 @@ public:
 protected:
 	const uint32_t GetRTOSTimeRemaining();
 
-	TimerHandle_t rtTimerHandle;
-	TimerState timerState;
+	TimerState timerState; // Enum that holds current timer state
+	TimerHandle_t rtTimerHandle; //what
 	uint32_t remainingTime;
 	uint32_t remainingTimeBetweenPauses;
 
