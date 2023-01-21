@@ -18,7 +18,7 @@ Timer::Timer()
 	// We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
 	// The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
 	// The timer is created in the dormant state.
-	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, DefaultCallback);
+	rtTimerHandle = xTimerCreate("Timer", timerPeriod, pdFALSE, (void *)this, DefaultCallback);
 	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
 	timerState = UNINITIALIZED;
 }
@@ -32,7 +32,7 @@ Timer::Timer()
 */
 Timer::Timer(void (*TimerDefaultCallback_t)( TimerHandle_t xTimer ))
 {
-	rtTimerHandle = xTimerCreate("Timer", DEFAULT_TIMER_PERIOD, pdFALSE, (void *)this, TimerDefaultCallback_t);
+	rtTimerHandle = xTimerCreate("Timer", timerPeriod, pdFALSE, (void *)this, TimerDefaultCallback_t);
 	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
 	timerState = UNINITIALIZED;
 }
@@ -65,9 +65,10 @@ void Timer::DefaultCallback(TimerHandle_t xTimer){
  * @brief Changes timer period, Sets timer state back to uninitialized and stops timer
  * @return Returns true if the period is successfully changed and stopped and returns false otherwise
  */
-bool Timer::ChangePeriod(const uint32_t period_ms)
+bool Timer::ChangePeriodMs(const uint32_t period_ms)
 {
 	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
+		timerPeriod = period_ms;
 		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 			timerState = UNINITIALIZED;
 			return true;
@@ -80,9 +81,10 @@ bool Timer::ChangePeriod(const uint32_t period_ms)
  * @brief Changes timer period, Sets timer state back to counting and starts timer
  * @return Returns true if the period is successfully changed and returns false otherwise
  */
-bool Timer::ChangePeriodAndStart(const uint32_t period_ms)
+bool Timer::ChangePeriodMsAndStart(const uint32_t period_ms)
 {
 	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
+		timerPeriod = period_ms;
 		timerState = COUNTING;
 		return true;
 	}
@@ -95,11 +97,14 @@ bool Timer::ChangePeriodAndStart(const uint32_t period_ms)
 */
 bool Timer::Start()
 {
+	// Return in COMPLETE and COUNTING as it is not possible to start in those states
 	if ((timerState == COMPLETE) || (timerState == COUNTING)) {
 		return false;
 	}
+	// Changes timer period to time left when it was previously stopped
 	else if (timerState == PAUSED) {
-		ChangePeriod(remainingTimeBetweenPauses);
+		ChangePeriodMsAndStart(remainingTimeBetweenPauses);
+		return true;
 	}
 	if (xTimerStart(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
 		timerState = COUNTING;
@@ -136,10 +141,7 @@ bool Timer::ResetTimer()
 		return false;
 	}
 	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-			timerState = UNINITIALIZED;
-			return true;
-		}
+		ChangePeriodMs(timerPeriod);
 	}
 	return false;
 }
@@ -153,14 +155,13 @@ bool Timer::ResetTimerAndStart()
 		return false;
 	}
 	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-		timerState = COUNTING;
-		return true;
+		ChangePeriodMsAndStart(timerPeriod);
 	}
 	return false;
 }
 
 /**
- * @brief Sets timer to auto-reload if parameter is set to true, Sets timer to one shot if parameter is set to false
+ * @param Sets timer to auto-reload if parameter is set to true, Sets timer to one shot if parameter is set to false
 */
 void Timer::SetAutoReload(bool setReloadOn)
 {
@@ -177,20 +178,21 @@ void Timer::SetAutoReload(bool setReloadOn)
 }
 
 /**
- * @brief Returns true if the timer is set to autoreload and false if it is set to one-shot
+ * @return Returns true if the timer is set to autoreload and false if it is set to one-shot
 */
-const bool Timer::CheckIfAutoReload()
+const bool Timer::GetIfAutoReload()
 {
 	if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdTRUE)) {
 		return true;
 	}
-	if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdFALSE)) {
+	else {
 		return false;
 	}
 }
 
 /**
  * @brief Returns timer state enum
+ * @return Returns the current state the timer is in
 */
 const TimerState Timer::GetState()
 {
@@ -198,7 +200,7 @@ const TimerState Timer::GetState()
 }
 
 /**
- * @brief Returns the timers' period in milliseconds (ms)
+ * @return Returns the timers' period in milliseconds (ms)
 */
 const uint32_t Timer::GetPeriodMs()
 {
@@ -206,7 +208,7 @@ const uint32_t Timer::GetPeriodMs()
 }
 
 /**
- * @brief Returns remaining time (in milliseconds) on timer based on current state
+ * @return Returns remaining time (in milliseconds) on timer based on current state
 */
 const uint32_t Timer::GetRemainingTimeMs()
 {
@@ -227,9 +229,9 @@ const uint32_t Timer::GetRemainingTimeMs()
 
 /**
  * @brief Calculates remaining time on timer in counting state
+ * @return Returns remaining time in milliseconds
  */
 const uint32_t Timer::GetRTOSTimeRemaining()
 {
-	remainingTime = (TICKS_TO_MS(xTimerGetExpiryTime(rtTimerHandle) - xTaskGetTickCount()));
-	return remainingTime;
+	return (TICKS_TO_MS(xTimerGetExpiryTime(rtTimerHandle) - xTaskGetTickCount()));;
 }

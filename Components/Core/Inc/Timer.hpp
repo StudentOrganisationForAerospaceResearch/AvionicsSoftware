@@ -57,8 +57,8 @@ protected:
 	const uint32_t GetRTOSTimeRemaining();
 
 	TimerState timerState; // Enum that holds current timer state
-	TimerHandle_t rtTimerHandle; //what
-	uint32_t remainingTime;
+	TimerHandle_t rtTimerHandle;
+	uint32_t timerPeriod = DEFAULT_TIMER_PERIOD;
 	uint32_t remainingTimeBetweenPauses;
 
 };
