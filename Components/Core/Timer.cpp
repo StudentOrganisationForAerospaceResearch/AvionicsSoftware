@@ -139,6 +139,7 @@ bool Timer::Stop()
 bool Timer::ResetTimer()
 {
 	if (timerState == UNINITIALIZED) {
+		SOAR_PRINT("Cannot Restart as timer has not yet started!");
 		return false;
 	}
 	if (ChangePeriodMs(timerPeriod) == true) {
