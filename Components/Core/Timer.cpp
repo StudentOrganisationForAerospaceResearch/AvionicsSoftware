@@ -10,31 +10,31 @@
 /**
  * @brief Default constructor makes a timer that can only be polled for state
  * Default behaviour : ->Autoreload is set to false (One shot Timer)
- * 					   ->Timer Period is 1000ms
- * 					   ->The Callback function simply changes state to COMPLETE and has no other functionality
+ *                        ->Timer Period is 1000ms
+ *                        ->The Callback function simply changes state to COMPLETE and has no other functionality
 */
 Timer::Timer()
 {
-	// We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
-	// The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
-	// The timer is created in the dormant state.
-	rtTimerHandle = xTimerCreate("Timer", timerPeriod, pdFALSE, (void *)this, DefaultCallback);
-	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
-	timerState = UNINITIALIZED;
+    // We make a timer named "Timer" with a callback function that does nothing, Autoreload false, and the default period of 1s.
+    // The timer ID is specified as (void *)this to provide a unique ID for each timer object - however this is not necessary for polling timers.
+    // The timer is created in the dormant state.
+    rtTimerHandle = xTimerCreate("Timer", timerPeriod, pdFALSE, (void *)this, DefaultCallback);
+    SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
+    timerState = UNINITIALIZED;
 }
 
 /**
  * Constructor for callback enabled timer
  * ! User has to add "Timer::DefaultCallback(rtTimerHandle);" in the callback function for accurate functioning of Timer States
  * Default behaviour : ->Autoreload is set to false (One shot Timer)
- * 					   ->Timer Period is 1000ms
- * 					   ->The Callback function will be provided by the user while making sure to follow instruction above
+ *                        ->Timer Period is 1000ms
+ *                        ->The Callback function will be provided by the user while making sure to follow instruction above
 */
 Timer::Timer(void (*TimerDefaultCallback_t)( TimerHandle_t xTimer ))
 {
-	rtTimerHandle = xTimerCreate("Timer", timerPeriod, pdFALSE, (void *)this, TimerDefaultCallback_t);
-	SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
-	timerState = UNINITIALIZED;
+    rtTimerHandle = xTimerCreate("Timer", timerPeriod, pdFALSE, (void *)this, TimerDefaultCallback_t);
+    SOAR_ASSERT(rtTimerHandle, "Error Occurred, Timer not created");
+    timerState = UNINITIALIZED;
 }
 
 /**
@@ -43,12 +43,12 @@ Timer::Timer(void (*TimerDefaultCallback_t)( TimerHandle_t xTimer ))
 */
 Timer::~Timer()
 {
-	if (xTimerDelete(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD*2) == pdPASS) {
-		SOAR_PRINT("Timer has been deleted \n\n");
-	}
-	else {
-		SOAR_PRINT("WARNING, FAILED TO DELETE TIMER! \n\n");
-	}
+    if (xTimerDelete(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD*2) == pdPASS) {
+        SOAR_PRINT("Timer has been deleted \n\n");
+    }
+    else {
+        SOAR_PRINT("WARNING, FAILED TO DELETE TIMER! \n\n");
+    }
 }
 
 /**
@@ -57,8 +57,8 @@ Timer::~Timer()
  * @return Sets timer state to COMPLETE when the timer has expired
 */
 void Timer::DefaultCallback(TimerHandle_t xTimer){
-	Timer* ptrTimer = (Timer*)pvTimerGetTimerID(xTimer);
-	ptrTimer->timerState = COMPLETE;
+    Timer* ptrTimer = (Timer*)pvTimerGetTimerID(xTimer);
+    ptrTimer->timerState = COMPLETE;
 }
 
 /**
@@ -67,14 +67,14 @@ void Timer::DefaultCallback(TimerHandle_t xTimer){
  */
 bool Timer::ChangePeriodMs(const uint32_t period_ms)
 {
-	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
-		if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-			timerPeriod = period_ms;
-			timerState = UNINITIALIZED;
-			return true;
-		}
-	}
-	return false;
+    if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
+        if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+            timerPeriod = period_ms;
+            timerState = UNINITIALIZED;
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -83,12 +83,12 @@ bool Timer::ChangePeriodMs(const uint32_t period_ms)
  */
 bool Timer::ChangePeriodMsAndStart(const uint32_t period_ms)
 {
-	if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
-		timerPeriod = period_ms;
-		timerState = COUNTING;
-		return true;
-	}
-	return false;
+    if (xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(period_ms), DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdTRUE) {
+        timerPeriod = period_ms;
+        timerState = COUNTING;
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -97,21 +97,21 @@ bool Timer::ChangePeriodMsAndStart(const uint32_t period_ms)
 */
 bool Timer::Start()
 {
-	// Return in COMPLETE and COUNTING as it is not possible to start in those states
-	if ((timerState == COMPLETE) || (timerState == COUNTING)) {
-		return false;
-	}
-	// Changes timer period to time left when it was previously stopped
-	else if (timerState == PAUSED) {
-		xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(remainingTimeBetweenPauses), DEFAULT_TIMER_COMMAND_WAIT_PERIOD);
-		timerState = COUNTING;
-		return true;
-	}
-	if (xTimerStart(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-		timerState = COUNTING;
-		return true;
-	}
-	return false;
+    // Return in COMPLETE and COUNTING as it is not possible to start in those states
+    if ((timerState == COMPLETE) || (timerState == COUNTING)) {
+        return false;
+    }
+    // Changes timer period to time left when it was previously stopped
+    else if (timerState == PAUSED) {
+        xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(remainingTimeBetweenPauses), DEFAULT_TIMER_COMMAND_WAIT_PERIOD);
+        timerState = COUNTING;
+        return true;
+    }
+    if (xTimerStart(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+        timerState = COUNTING;
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -120,17 +120,17 @@ bool Timer::Start()
 */
 bool Timer::Stop()
 {
-	// Checks if timer is in counting state because it cannot be stopped in any other state
-	if (timerState != COUNTING) {
-		return false;
-	}
-	// Calculates the time left on the timer before it is paused
-	remainingTimeBetweenPauses = GetRTOSTimeRemaining();
-	if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-		timerState = PAUSED;
-		return true;
-	}
-	return false;
+    // Checks if timer is in counting state because it cannot be stopped in any other state
+    if (timerState != COUNTING) {
+        return false;
+    }
+    // Calculates the time left on the timer before it is paused
+    remainingTimeBetweenPauses = GetRTOSTimeRemaining();
+    if (xTimerStop(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
+        timerState = PAUSED;
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -138,15 +138,15 @@ bool Timer::Stop()
 */
 bool Timer::ResetTimer()
 {
-	if (timerState == UNINITIALIZED) {
-		SOAR_PRINT("Cannot Restart as timer has not yet started!");
-		return false;
-	}
-	if (ChangePeriodMs(timerPeriod) == true) {
-		return true;
-	}
+    if (timerState == UNINITIALIZED) {
+        SOAR_PRINT("Cannot Restart as timer has not yet started!");
+        return false;
+    }
+    if (ChangePeriodMs(timerPeriod) == true) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -154,14 +154,14 @@ bool Timer::ResetTimer()
 */
 bool Timer::ResetTimerAndStart()
 {
-	if (timerState == UNINITIALIZED) {
-		SOAR_PRINT("Cannot Restart as timer has not yet started!");
-		return false;
-	}
-	if (ChangePeriodMsAndStart(timerPeriod) == true) {
-		return true;
-	}
-	return false;
+    if (timerState == UNINITIALIZED) {
+        SOAR_PRINT("Cannot Restart as timer has not yet started!");
+        return false;
+    }
+    if (ChangePeriodMsAndStart(timerPeriod) == true) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -169,16 +169,16 @@ bool Timer::ResetTimerAndStart()
 */
 void Timer::SetAutoReload(bool setReloadOn)
 {
-	if (setReloadOn == true){
-		vTimerSetReloadMode(rtTimerHandle, pdTRUE);
-		//Testing purposes
-		SOAR_PRINT("Set to Auto Reload\n\n");
-	}
-	if (setReloadOn == false){
-		vTimerSetReloadMode(rtTimerHandle, pdFALSE);
-		//Testing purposes
-		SOAR_PRINT("Set to One Shot\n\n");
-	}
+    if (setReloadOn == true){
+        vTimerSetReloadMode(rtTimerHandle, pdTRUE);
+        //Testing purposes
+        SOAR_PRINT("Set to Auto Reload\n\n");
+    }
+    if (setReloadOn == false){
+        vTimerSetReloadMode(rtTimerHandle, pdFALSE);
+        //Testing purposes
+        SOAR_PRINT("Set to One Shot\n\n");
+    }
 }
 
 /**
@@ -186,12 +186,12 @@ void Timer::SetAutoReload(bool setReloadOn)
 */
 const bool Timer::GetIfAutoReload()
 {
-	if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdTRUE)) {
-		return true;
-	}
-	else {
-		return false;
-	}
+    if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdTRUE)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 /**
@@ -200,7 +200,7 @@ const bool Timer::GetIfAutoReload()
 */
 const TimerState Timer::GetState()
 {
-	return timerState;
+    return timerState;
 }
 
 /**
@@ -208,7 +208,7 @@ const TimerState Timer::GetState()
 */
 const uint32_t Timer::GetPeriodMs()
 {
-	return (TICKS_TO_MS(xTimerGetPeriod(rtTimerHandle)));
+    return (TICKS_TO_MS(xTimerGetPeriod(rtTimerHandle)));
 }
 
 /**
@@ -216,18 +216,18 @@ const uint32_t Timer::GetPeriodMs()
 */
 const uint32_t Timer::GetRemainingTimeMs()
 {
-	if (timerState == UNINITIALIZED){
-		return (GetPeriodMs());
-		}
-	else if (timerState == COUNTING){
-		return GetRTOSTimeRemaining();
-	}
-	else if (timerState == PAUSED){
-		return remainingTimeBetweenPauses;
-	}
-	else {
-		return 0;
-	}
+    if (timerState == UNINITIALIZED){
+        return (GetPeriodMs());
+        }
+    else if (timerState == COUNTING){
+        return GetRTOSTimeRemaining();
+    }
+    else if (timerState == PAUSED){
+        return remainingTimeBetweenPauses;
+    }
+    else {
+        return 0;
+    }
 }
 
 
@@ -237,5 +237,5 @@ const uint32_t Timer::GetRemainingTimeMs()
  */
 const uint32_t Timer::GetRTOSTimeRemaining()
 {
-	return (TICKS_TO_MS(xTimerGetExpiryTime(rtTimerHandle) - xTaskGetTickCount()));;
+    return (TICKS_TO_MS(xTimerGetExpiryTime(rtTimerHandle) - xTaskGetTickCount()));;
 }
