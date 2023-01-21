@@ -63,7 +63,6 @@ void Timer::DefaultCallback(TimerHandle_t xTimer){
 
 /**
  * @brief Changes timer period, Sets timer state back to uninitialized and stops timer
- * ! This will reset the timer
  * @return Returns true if the period is successfully changed and stopped and returns false otherwise
  */
 bool Timer::ChangePeriodMs(const uint32_t period_ms)
@@ -104,7 +103,8 @@ bool Timer::Start()
 	}
 	// Changes timer period to time left when it was previously stopped
 	else if (timerState == PAUSED) {
-		ChangePeriodMsAndStart(remainingTimeBetweenPauses);
+		xTimerChangePeriod(rtTimerHandle, MS_TO_TICKS(remainingTimeBetweenPauses), DEFAULT_TIMER_COMMAND_WAIT_PERIOD);
+		timerState = COUNTING;
 		return true;
 	}
 	if (xTimerStart(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
@@ -141,10 +141,10 @@ bool Timer::ResetTimer()
 	if (timerState == UNINITIALIZED) {
 		return false;
 	}
-	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-		ChangePeriodMs(timerPeriod);
+	if (ChangePeriodMs(timerPeriod) == true) {
 		return true;
 	}
+
 	return false;
 }
 
@@ -154,10 +154,10 @@ bool Timer::ResetTimer()
 bool Timer::ResetTimerAndStart()
 {
 	if (timerState == UNINITIALIZED) {
+		SOAR_PRINT("Cannot Restart as timer has not yet started!");
 		return false;
 	}
-	if (xTimerReset(rtTimerHandle, DEFAULT_TIMER_COMMAND_WAIT_PERIOD) == pdPASS) {
-		ChangePeriodMsAndStart(timerPeriod);
+	if (ChangePeriodMsAndStart(timerPeriod) == true) {
 		return true;
 	}
 	return false;
