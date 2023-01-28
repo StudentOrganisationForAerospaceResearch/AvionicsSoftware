@@ -14,9 +14,9 @@
  */
 Mutex::Mutex()
 {
-	rtSemaphoreHandle = xSemaphoreCreateMutex();
+    rtSemaphoreHandle = xSemaphoreCreateMutex();
 
-	SOAR_ASSERT(rtSemaphoreHandle != NULL, "Semaphore creation failed.");
+    SOAR_ASSERT(rtSemaphoreHandle != NULL, "Semaphore creation failed.");
 }
 
 
@@ -25,7 +25,7 @@ Mutex::Mutex()
  */
 Mutex::~Mutex()
 {
-	vSemaphoreDelete(rtSemaphoreHandle);
+    vSemaphoreDelete(rtSemaphoreHandle);
 }
 
 /**
@@ -35,7 +35,7 @@ Mutex::~Mutex()
 */
 bool Mutex::Lock(uint32_t timeout_ms)
 {
-	return xSemaphoreTake(rtSemaphoreHandle, MS_TO_TICKS(timeout_ms)) == pdTRUE;
+    return xSemaphoreTake(rtSemaphoreHandle, MS_TO_TICKS(timeout_ms)) == pdTRUE;
 }
 
 
@@ -45,6 +45,6 @@ bool Mutex::Lock(uint32_t timeout_ms)
 */
 bool Mutex::Unlock()
 {
-	return xSemaphoreGive(rtSemaphoreHandle) == pdTRUE;
+    return xSemaphoreGive(rtSemaphoreHandle) == pdTRUE;
 }
 

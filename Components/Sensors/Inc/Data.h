@@ -13,7 +13,6 @@
 
 typedef struct
 {
-    osMutexId   mutex_;
     int32_t     accelX_;
     int32_t     accelY_;
     int32_t     accelZ_;

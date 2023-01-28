@@ -1,13 +1,17 @@
 /**
  ******************************************************************************
- * File Name          : Task.cpp
- * Description        : Task contains the core component base class for all tasks.
+ * File Name          : Command.cpp
+ * Description        : Command contains the core component base class for all tasks.
+ *
+ * The order of usage for command memory requires that whenever a command is pulled out from a queue
+ * you MUST call Reset() on the command. This will free any memory that was allocated for the command if
+ * it is necessary, the logic is internal.
  ******************************************************************************
 */
 #include "Command.hpp"
 #include "SystemDefines.hpp"
 
-#include <cstring> 	// Support for memcpy
+#include <cstring>     // Support for memcpy
 
 /* Static Variable Init ------------------------------------------------------------------*/
 std::atomic<uint16_t> Command::statAllocationCounter; // Static variable init
@@ -99,17 +103,19 @@ bool Command::AllocateData(uint16_t dataSize)
 
 /**
  * @brief Sets the internal command data pointer to the given data pointer and given size
+ *        Only use this for static buffers in which the data does NOT need to be freed.
+ *        This may be subject to require synchronization across different threads as the memory
+ *        is not indepedent to the Command object.
  * @param existingPtr byte pointer to the data
  * @param size Size of the given data address
- * @param bFreeMemory Whether the command packet should try to free
  * @return TRUE on success, FALSE on failure (mem already allocated)
 */
-bool Command::SetCommandDataExternal(uint8_t* existingPtr, uint16_t size, bool bFreeMemory)
+bool Command::SetCommandToStaticExternalBuffer(uint8_t* existingPtr, uint16_t size)
 {
     // If we don't have anything allocated, set it and return success
-    if(this->data == nullptr && !bShouldFreeData) {
+    if(this->data == nullptr) {
         this->data = existingPtr;
-        this->bShouldFreeData = bFreeMemory;
+        this->bShouldFreeData = false;
         this->dataSize = size;
         return true;
     }
@@ -121,14 +127,14 @@ bool Command::SetCommandDataExternal(uint8_t* existingPtr, uint16_t size, bool b
  */
 bool Command::CopyDataToCommand(uint8_t* dataSrc, uint16_t size)
 {
-	// If we successfully allocate, copy the data and return success
+    // If we successfully allocate, copy the data and return success
     if(this->AllocateData(size)
-		&& this->data != nullptr) {
-		memcpy(this->data, dataSrc, size);
-		return true;
-	}
+        && this->data != nullptr) {
+        memcpy(this->data, dataSrc, size);
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**

@@ -58,6 +58,12 @@
     <Filter Include="Source Files\Libraries\embedded-template-library">
       <UniqueIdentifier>{84dd1187-e91e-4a02-ad2a-664bff715bec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\Sensors">
+      <UniqueIdentifier>{55d4aad5-e8ff-4124-9a84-d0615596e5d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\Sensors\Inc">
+      <UniqueIdentifier>{c144919d-e821-4914-a74b-aa665f312a1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvionicsSoftware.cpp">
@@ -195,9 +201,6 @@
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp">
       <Filter>Source Files\Components\SoarDebug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
-      <Filter>Source Files\Components\FlightControl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Components\Core\Mutex.cpp">
       <Filter>Source Files\Components\Core</Filter>
     </ClCompile>
@@ -212,6 +215,18 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\Utils.cpp">
       <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Sensors\BarometerTask.cpp">
+      <Filter>Source Files\Components\Sensors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Sensors\IMUTask.cpp">
+      <Filter>Source Files\Components\Sensors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -502,9 +517,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\Communication\Inc\UARTTask.hpp">
       <Filter>Source Files\Components\Communication\Inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Components\SoarDebug\Inc\Data.h">
-      <Filter>Source Files\Components\SoarDebug\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp">
       <Filter>Source Files\Components\SoarDebug\Inc</Filter>
@@ -1519,6 +1531,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl_profile.h">
       <Filter>Source Files\Libraries\embedded-template-library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\FlightControl\Inc\RocketSM.hpp">
+      <Filter>Source Files\Components\FlightControl\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Sensors\Inc\BarometerTask.hpp">
+      <Filter>Source Files\Components\Sensors\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Sensors\Inc\Data.h">
+      <Filter>Source Files\Components\Sensors\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Sensors\Inc\IMUTask.hpp">
+      <Filter>Source Files\Components\Sensors\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

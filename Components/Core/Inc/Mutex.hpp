@@ -20,16 +20,16 @@
 class Mutex
 {
 public:
-	// Constructors / Destructor
-	Mutex();
-	~Mutex();
+    // Constructors / Destructor
+    Mutex();
+    ~Mutex();
 
-	// Public functions
-	bool Lock(uint32_t timeout_ms = portMAX_DELAY);
-	bool Unlock();
+    // Public functions
+    bool Lock(uint32_t timeout_ms = portMAX_DELAY);
+    bool Unlock();
 
 private:
-	SemaphoreHandle_t rtSemaphoreHandle;
+    SemaphoreHandle_t rtSemaphoreHandle;
 
 };
 
