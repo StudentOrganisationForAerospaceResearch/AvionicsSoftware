@@ -44,19 +44,38 @@ namespace GPIO
         inline bool IsOn() { return HAL_GPIO_ReadPin(LED_3_GPIO_Port, LED_3_Pin) == GPIO_PIN_SET; }
     }
 
-	namespace VENT
+	namespace LED3
 	{
+		inline void On() { HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET); }
+		inline void Off() { HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET); }
+		inline void Toggle() { HAL_GPIO_TogglePin(LED_3_GPIO_Port, LED_3_Pin); }
 
+		inline bool IsOn() { return HAL_GPIO_ReadPin(LED_3_GPIO_Port, LED_3_Pin) == GPIO_PIN_SET; }
 	}
-
-	namespace DRAIN 
+	
+	namespace Vent
 	{
+		inline void Open() { HAL_GPIO_WritePin(SOL_CTRL_Port, SOL_CTRL_Pin, GPIO_PIN_RESET); }
+		inline void Close() { HAL_GPIO_WritePin(SOL_CTRL_Port, SOL_CTRL_Pin, GPIO_PIN_SET); }
 
+		inline bool IsOpen() { return HAL_GPIO_ReadPin(SOL_CTRL_Port, SOL_CTRL_Pin) == GPIO_PIN_RESET; }
+	}	
+
+	namespace Drain
+	{
+		inline void Open() { HAL_GPIO_WritePin(SOL_CTRL_Port, SOL_CTRL_Pin, GPIO_PIN_RESET); }
+		inline void Close() { HAL_GPIO_WritePin(SOL_CTRL_Port, SOL_CTRL_Pin, GPIO_PIN_SET); }
+
+		inline bool IsOpen() { return HAL_GPIO_ReadPin(SOL_CTRL_Port, SOL_CTRL_Pin) == GPIO_PIN_RESET; }
 	}	
 
 	namespace PowerSelect
 	{
+		inline void InternalPower() { HAL_GPIO_WritePin(BAT_EN_GPIO_Port, BAT_EN_Pin, GPIO_PIN_SET); }
+		inline void UmbilicalPower() { HAL_GPIO_WritePin(BAT_EN_GPIO_Port, BAT_EN_Pin, GPIO_PIN_RESET); }
+		inline void Toggle() { HAL_GPIO_TogglePin(BAT_EN_GPIO_Port, BAT_EN_Pin); }
 		
+		inline bool IsInternal() { return HAL_GPIO_ReadPin(BAT_EN_GPIO_Port, BAT_EN_Pin) == GPIO_PIN_SET; }
 	}
 }
 

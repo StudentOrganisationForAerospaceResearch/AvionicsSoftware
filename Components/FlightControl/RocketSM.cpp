@@ -129,7 +129,6 @@ PreLaunch::PreLaunch()
 RocketState PreLaunch::OnEnter()
 {
     // We don't do anything upon entering prelaunch
-
     return rsStateID;
 }
 
@@ -140,7 +139,6 @@ RocketState PreLaunch::OnEnter()
 RocketState PreLaunch::OnExit()
 {
     // We don't do anything upon exiting prelaunch
-
     return rsStateID;
 }
 
@@ -155,16 +153,16 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         // Transition to abort state
         return RS_ABORT;
     case RSC_OPEN_VENT:
-        //TODO: Open the vent valve
+        Vent::Open();
         break;
     case RSC_CLOSE_VENT:
-        //TODO: Close the vent valve
+        Vent::Close();
         break;
     case RSC_OPEN_DRAIN:
-        //TODO: Close the drain
+        Drain::Open();
         break;
     case RSC_CLOSE_DRAIN:
-        //TODO: Open the drain
+        Drain::Close();
         break;
     case RSC_MEV_CLOSE:
         //TODO: Close the MEV
@@ -172,7 +170,6 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     default:
         break;
     }
-
     return currentState ;
 }
 
@@ -348,10 +345,12 @@ RocketState Arm::HandleCommand(Command& cm)
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
         case RSC_POWER_TRANSITION_EXTERNAL:
-            //TODO: Transition to umbilical power - we should check to make sure umbilical power is available before doing so
+            PowerSelect::UmbilicalPower();
+            //TODO: we should check to make sure umbilical power is available before doing so
             break;
         case RSC_POWER_TRANSITION_ONBOARD:
-            //TODO: Transition to onboard power
+            PowerSelect::InternalPower();
+            //TODO: we should check to make sure internal power is available before doing so
             break;
         case RSC_GOTO_IGNITION:
             // Transition to ready for ignition state
@@ -522,7 +521,14 @@ Burn::Burn()
  */
 RocketState Burn::OnEnter()
 {
-    //TODO: Validate Vent & Drain Closed
+    if (Vent::IsOpen()) {
+        SOAR_PRINT("Vents were not closed in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()))
+        Vent::Close();
+    }
+    if (Drain::IsOpen()) {
+        SOAR_PRINT("Drain was not closed in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()))
+        Drain::Close();
+    }
     //TODO: Start the coast transition timer (7 seconds - TBD based on sims)
 
     return rsStateID;
@@ -534,8 +540,6 @@ RocketState Burn::OnEnter()
  */
 RocketState Burn::OnExit()
 {
-
-
     return rsStateID;
 }
 
@@ -645,7 +649,9 @@ Descent::Descent()
 RocketState Descent::OnEnter()
 {
     //TODO: Start Recovery Transition Timer (~300 seconds) : Should be well into / after descent
-    //TODO: Open Vent/Drain, Ensure MEV Closed
+    Vent::Open();
+    Drain::Open();
+    //TODO: Ensure MEV Closed
 
     return rsStateID;
 }
