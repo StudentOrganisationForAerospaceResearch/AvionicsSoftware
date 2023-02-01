@@ -4,6 +4,7 @@
  * Description        : Primary flight task, default task for the system.
  ******************************************************************************
 */
+#include <w25qxx.hpp>
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
@@ -43,6 +44,8 @@ void FlightTask::Run(void * pvParams)
 {
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
     GPIO::LED1::Off();
+
+    W25qxx_Init();
 
     rsm_ = new RocketSM(RS_ABORT, false);
 
