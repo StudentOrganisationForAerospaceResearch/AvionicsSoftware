@@ -8,6 +8,7 @@
 #include "SystemDefines.hpp"
 #include "Timer.hpp"
 #include "WatchdogTask.hpp"
+#include "FlightTask.hpp"
 
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
@@ -15,6 +16,7 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 	SOAR_PRINT("The system lost its hearbeat and had to reset!!!");
 	// SOAR_ASSERT("The system lost its hearbeat and had to reset!!!");
 	Timer::DefaultCallback(rtTimerHandle);
+	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
 
 
@@ -29,6 +31,7 @@ void WatchdogTask::Run(void * pvParams)
     GPIO::LED1::Off();
 
     static Timer HeartbeatPeriod(HeartbeatFailureCallback);
+
 
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
@@ -58,7 +61,7 @@ void WatchdogTask::Run(void * pvParams)
         osDelay(500);
 
         //Every cycle, print something out (for testing)
-        SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
+        SOAR_PRINT("WatchdogTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
 
         // TODO: Message beeps
