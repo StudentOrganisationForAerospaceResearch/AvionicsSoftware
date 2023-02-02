@@ -18,6 +18,8 @@ public:
 		static WatchdogTask inst;
 		return inst;
 	}
+	WatchdogTask();
+	WatchdogTask(int timerPeriodMs);		// Constructor that creates a heartbeat with specified time period
 
 protected:
     static void RunTask(void* pvParams) { WatchdogTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
@@ -33,6 +35,7 @@ private:
 
     static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);						// Callback for timer which aborts system in case of data ghosting
     static Timer HeartbeatPeriod(void (*Callback)());				// Timer that resets system if triggered
+    void RecieveHeartbeat();										// If it recieves a heartbeat then it resets the timer
 
 };
 
