@@ -6,6 +6,7 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "GPIO.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -153,16 +154,20 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         // Transition to abort state
         return RS_ABORT;
     case RSC_OPEN_VENT:
-        Vent::Open();
+        GPIO::Vent::Open();
+        SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_CLOSE_VENT:
-        Vent::Close();
+        GPIO::Vent::Close();
+        SOAR_PRINT("Vents were closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_OPEN_DRAIN:
-        Drain::Open();
+        GPIO::Drain::Open();
+        SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_CLOSE_DRAIN:
-        Drain::Close();
+        GPIO::Drain::Close();
+        SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_MEV_CLOSE:
         //TODO: Close the MEV
@@ -345,11 +350,13 @@ RocketState Arm::HandleCommand(Command& cm)
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
         case RSC_POWER_TRANSITION_EXTERNAL:
-            PowerSelect::UmbilicalPower();
+            GPIO::PowerSelect::UmbilicalPower();
+            SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(GetStateID()));
             //TODO: we should check to make sure umbilical power is available before doing so
             break;
         case RSC_POWER_TRANSITION_ONBOARD:
-            PowerSelect::InternalPower();
+            GPIO::PowerSelect::InternalPower();
+            SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(GetStateID()));
             //TODO: we should check to make sure internal power is available before doing so
             break;
         case RSC_GOTO_IGNITION:
@@ -521,13 +528,15 @@ Burn::Burn()
  */
 RocketState Burn::OnEnter()
 {
-    if (Vent::IsOpen()) {
-        SOAR_PRINT("Vents were not closed in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()))
-        Vent::Close();
+    if (GPIO::Vent::IsOpen()) {
+        SOAR_PRINT("Vents were not closed in [ %s ] state\n", StateToString(rsStateID));
+        GPIO::Vent::Close();
+        SOAR_PRINT("Vents were closed in [ %s ] state\n", StateToString(rsStateID));
     }
-    if (Drain::IsOpen()) {
-        SOAR_PRINT("Drain was not closed in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()))
-        Drain::Close();
+    if (GPIO::Drain::IsOpen()) {
+        SOAR_PRINT("Drain was not closed in [ %s ] state\n", StateToString(rsStateID));
+        GPIO::Drain::Close();
+        SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(rsStateID));
     }
     //TODO: Start the coast transition timer (7 seconds - TBD based on sims)
 
@@ -649,8 +658,10 @@ Descent::Descent()
 RocketState Descent::OnEnter()
 {
     //TODO: Start Recovery Transition Timer (~300 seconds) : Should be well into / after descent
-    Vent::Open();
-    Drain::Open();
+    GPIO::Vent::Open();
+    SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
+    GPIO::Drain::Open();
+    SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(rsStateID));
     //TODO: Ensure MEV Closed
 
     return rsStateID;
