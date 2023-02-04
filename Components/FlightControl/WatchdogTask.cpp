@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * File Name          : FlightTask.cpp
+ * File Name          : WatchdogTask.cpp
  * Description        : Primary flight task, default task for the system.
  ******************************************************************************
 */
@@ -14,9 +14,9 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
 
 	SOAR_PRINT("The system lost its hearbeat and had to reset!!!");
-	// SOAR_ASSERT("The system lost its hearbeat and had to reset!!!");
+	// SOAR_ASStERT("The system lost its hearbeat and had to reset!!!");
 	Timer::DefaultCallback(rtTimerHandle);
-	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
+	WatchdogTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
 
 
@@ -27,10 +27,11 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
  */
 void WatchdogTask::Run(void * pvParams)
 {
-    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
+    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless WatchdogTask is the HeartBeat task
     GPIO::LED1::Off();
 
     static Timer HeartbeatPeriod(HeartbeatFailureCallback);
+    HeartbeatPeriod.Start();
 
 
     while (1) {
@@ -49,7 +50,7 @@ void WatchdogTask::Run(void * pvParams)
         // Could consider a universal queue that directs and handles commands to specific tasks, and a task that handles the queue events and then calls the
         // Mappings between X command and P subscribers (tasks that are expecting it).
 
-        // Since FlightTask is so critical to managing the system, it may make sense to make this a Async task that handles commands as they come in, and have these display commands be routed over to the DisplayTask
+        // Since WatchdogTask is so critical to managing the system, it may make sense to make this a Async task that handles commands as they come in, and have these display commands be routed over to the DisplayTask
         // or maybe HID (Human Interface Device) task that handles both updating buzzer frequencies and LED states.
         GPIO::LED1::On();
         GPIO::LED2::On();

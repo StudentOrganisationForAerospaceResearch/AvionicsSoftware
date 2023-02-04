@@ -18,7 +18,7 @@ public:
 		static WatchdogTask inst;
 		return inst;
 	}
-	WatchdogTask();
+
 	WatchdogTask(int timerPeriodMs);		// Constructor that creates a heartbeat with specified time period
 
 protected:
