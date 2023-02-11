@@ -6,6 +6,7 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "FlashTask.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -89,7 +90,22 @@ void RocketSM::HandleCommand(Command& cm)
 
     // Run transition state - if the next state is the current state this does nothing
     if (nextRocketState != rs_currentState->GetStateID())
+    {
+        Command cmd(DATA_COMMAND, (uint16_t)1);
+        uint8_t state = rs_currentState->GetStateID();
+        cmd.CopyDataToCommand(&state, 1);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+
         TransitionState(nextRocketState);
+    }
+}
+
+/**
+ * @brief Returns current state
+ */
+BaseRocketState* RocketSM::GetCurrentState()
+{
+    return rs_currentState;
 }
 
 /* Base State ------------------------------------------------------------------*/
@@ -140,6 +156,13 @@ RocketState PreLaunch::OnEnter()
 RocketState PreLaunch::OnExit()
 {
     // We don't do anything upon exiting prelaunch
+
+    //uint8_t* crash = NULL;
+    //*crash = 5;
+
+    //if(&crash) {
+        //return RS_ABORT;
+    //}
 
     return rsStateID;
 }

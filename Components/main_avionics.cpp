@@ -17,6 +17,7 @@
 // Tasks
 #include "UARTTask.hpp"
 #include "FlightTask.hpp"
+#include "FlashTask.hpp"
 #include "DebugTask.hpp"
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
@@ -31,6 +32,7 @@ Mutex Global::vaListMutex;
 */
 void run_main() {
     // Init Tasks
+    FlashTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
     DebugTask::Inst().InitTask();

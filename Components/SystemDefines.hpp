@@ -60,6 +60,10 @@ constexpr uint8_t TASK_IMU_PRIORITY = 2;            // Priority of the barometer
 constexpr uint8_t TASK_IMU_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
 constexpr uint16_t TASK_IMU_STACK_DEPTH_WORDS = 256;        // Size of the barometer task stack
 
+// IMU TASK (ACCEL/GYRO/MAGNETO)
+constexpr uint8_t FLASH_TASK_RTOS_PRIORITY = 2;            // Priority of the flash task
+constexpr uint8_t FLASH_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flash task queue
+constexpr uint16_t FLASH_TASK_STACK_DEPTH_WORDS = 256;        // Size of the flash task stack
 
 
 /* System Defines ------------------------------------------------------------------*/
