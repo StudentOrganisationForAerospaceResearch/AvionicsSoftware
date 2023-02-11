@@ -44,6 +44,7 @@ void FlightTask::Run(void * pvParams)
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
     GPIO::LED1::Off();
 
+    //Wait until flash has sent a valid state command
     Command cm;
     while(true) {
         //Wait forever for a command

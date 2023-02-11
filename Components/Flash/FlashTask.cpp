@@ -15,7 +15,7 @@
  */
 FlashTask::FlashTask() : Task(FLASH_TASK_QUEUE_DEPTH_OBJS)
 {
-    
+    st_ = nullptr;
 }
 
 /**
@@ -50,7 +50,7 @@ void FlashTask::Run(void * pvParams)
 
     while (1) {
 
-        //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
+        //Process any commands, in non-blocking mode
         Command cm;
         bool res = qEvtQueue->Receive(cm);
         if(res)
