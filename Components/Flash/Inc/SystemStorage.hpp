@@ -31,7 +31,8 @@ public:
     void HandleCommand(Command& cm);
 
 protected:
-    bool writeStateToFlash();
+    bool WriteStateToFlash();
+    bool ReadStateFromFlash();
 
     // Variables
     StateInformation rs_currentInformation;
