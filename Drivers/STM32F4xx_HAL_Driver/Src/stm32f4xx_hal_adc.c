@@ -1174,7 +1174,7 @@ HAL_StatusTypeDef HAL_ADC_Stop_IT(ADC_HandleTypeDef* hadc)
   /* Check if ADC is effectively disabled */
   if(HAL_IS_BIT_CLR(hadc->Instance->CR2, ADC_CR2_ADON))
   {
-  	/* Disable ADC end of conversion interrupt for regular group */
+      /* Disable ADC end of conversion interrupt for regular group */
     __HAL_ADC_DISABLE_IT(hadc, (ADC_IT_EOC | ADC_IT_OVR));
 
     /* Set ADC state */
@@ -1642,7 +1642,7 @@ __weak void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
   */
   
 /** @defgroup ADC_Exported_Functions_Group3 Peripheral Control functions
- *  @brief   	Peripheral Control functions 
+ *  @brief       Peripheral Control functions 
  *
 @verbatim   
  ===============================================================================
@@ -1787,7 +1787,7 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef* hadc, ADC_ChannelConf
   *         the configuration information for the specified ADC.
   * @param  AnalogWDGConfig  pointer to an ADC_AnalogWDGConfTypeDef structure 
   *         that contains the configuration information of ADC analog watchdog.
-  * @retval HAL status	  
+  * @retval HAL status      
   */
 HAL_StatusTypeDef HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef* hadc, ADC_AnalogWDGConfTypeDef* AnalogWDGConfig)
 {
@@ -2046,8 +2046,8 @@ static void ADC_DMAConvCplt(DMA_HandleTypeDef *hdma)
       HAL_ADC_ErrorCallback(hadc);
 #endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
     }
-	else
-	{
+    else
+    {
       /* Call DMA error callback */
       hadc->DMA_Handle->XferErrorCallback(hdma);
     }

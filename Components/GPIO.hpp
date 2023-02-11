@@ -44,6 +44,15 @@ namespace GPIO
         inline bool IsOn() { return HAL_GPIO_ReadPin(LED_3_GPIO_Port, LED_3_Pin) == GPIO_PIN_SET; }
     }
 
+	namespace LED3
+	{
+		inline void On() { HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET); }
+		inline void Off() { HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET); }
+		inline void Toggle() { HAL_GPIO_TogglePin(LED_3_GPIO_Port, LED_3_Pin); }
+
+		inline bool IsOn() { return HAL_GPIO_ReadPin(LED_3_GPIO_Port, LED_3_Pin) == GPIO_PIN_SET; }
+	}
+	
 	namespace Vent
 	{
 		inline void Open() { HAL_GPIO_WritePin(SOL_CTRL_GPIO_Port, SOL_CTRL_Pin, GPIO_PIN_RESET); }
