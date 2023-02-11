@@ -59,6 +59,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LAUNCH_CONTROL_Pin GPIO_PIN_15
+#define LAUNCH_CONTROL_GPIO_Port GPIOC
 #define BATT_SENSE_ADC_Pin GPIO_PIN_0
 #define BATT_SENSE_ADC_GPIO_Port GPIOC
 #define AUX_2_Pin GPIO_PIN_2
@@ -99,6 +101,8 @@ void Error_Handler(void);
 #define LED_2_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_8
 #define LAUNCH_GPIO_Port GPIOA
+#define SOL_CONTROL_Pin GPIO_PIN_11
+#define SOL_CONTROL_GPIO_Port GPIOA
 #define BUZZER_PWM_Pin GPIO_PIN_15
 #define BUZZER_PWM_GPIO_Port GPIOA
 #define BARO_SPI_SCK_Pin GPIO_PIN_10

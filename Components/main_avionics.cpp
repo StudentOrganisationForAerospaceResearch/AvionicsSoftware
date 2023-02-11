@@ -13,6 +13,7 @@
 #include "stm32f4xx_hal_uart.h"
 #include "Mutex.hpp"
 #include "Command.hpp"
+#include "GPIO.hpp"
 
 // Tasks
 #include "UARTTask.hpp"
@@ -32,6 +33,10 @@ void run_main() {
 	FlightTask::Inst().InitTask();
 	UARTTask::Inst().InitTask();
 	DebugTask::Inst().InitTask();
+
+	// Set Default Pin States (should eventually move to a function, or inside the actual main.c to reduce response time)
+	GPIO::SOL_CTRL::On();
+	GPIO::LAUNCH_CTRL::On();
 
 	// Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
 	SOAR_PRINT("\n-- SOAR AVIONICS --\n");

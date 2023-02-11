@@ -35,6 +35,24 @@ namespace GPIO
 		inline bool IsOn() { return HAL_GPIO_ReadPin(LED_1_GPIO_Port, LED_1_Pin) == GPIO_PIN_SET; }
 	}
 	
+	namespace SOL_CTRL
+	{
+		inline void On() { HAL_GPIO_WritePin(SOL_CONTROL_GPIO_Port, SOL_CONTROL_Pin, GPIO_PIN_SET); }
+		inline void Off() { HAL_GPIO_WritePin(SOL_CONTROL_GPIO_Port, SOL_CONTROL_Pin, GPIO_PIN_RESET); }
+		inline void Toggle() { HAL_GPIO_TogglePin(SOL_CONTROL_GPIO_Port, SOL_CONTROL_Pin); }
+
+		inline bool IsOn() { return HAL_GPIO_ReadPin(SOL_CONTROL_GPIO_Port, SOL_CONTROL_Pin) == GPIO_PIN_SET; }
+	}
+
+	namespace LAUNCH_CTRL
+	{
+		inline void On() { HAL_GPIO_WritePin(LAUNCH_CONTROL_GPIO_Port, LAUNCH_CONTROL_Pin, GPIO_PIN_SET); }
+		inline void Off() { HAL_GPIO_WritePin(LAUNCH_CONTROL_GPIO_Port, LAUNCH_CONTROL_Pin, GPIO_PIN_RESET); }
+		inline void Toggle() { HAL_GPIO_TogglePin(LAUNCH_CONTROL_GPIO_Port, LAUNCH_CONTROL_Pin); }
+
+		inline bool IsOn() { return HAL_GPIO_ReadPin(LAUNCH_CONTROL_GPIO_Port, LAUNCH_CONTROL_Pin) == GPIO_PIN_SET; }
+	}
+
 }
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_GPIO_H */
