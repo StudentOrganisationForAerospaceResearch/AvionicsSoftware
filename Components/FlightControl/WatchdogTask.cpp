@@ -10,16 +10,63 @@
 #include "WatchdogTask.hpp"
 #include "FlightTask.hpp"
 
+
+/**
+ * @brief Initialize the WatchdogTask
+ * @params Must pass in the timer period, If no heartbeat in received within this period then the timerr will be reset
+ */
+WatchdogTask::WatchdogTask()
+{
+
+}
+
+/**
+ * @brief Initialize the FlightTask
+ */
+void WatchdogTask::InitTask()
+{
+    // Make sure the task is not already initialized
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize flight task twice");
+
+    BaseType_t rtValue =
+        xTaskCreate((TaskFunction_t)WatchdogTask::RunTask,
+            (const char*)"WatchdogTask",
+            (uint16_t)WATCHDOG_TASK_STACK_DEPTH_WORDS,
+            (void*)this,
+            (UBaseType_t)WATCHDOG_TASK_RTOS_PRIORITY,
+            (TaskHandle_t*)&rtTaskHandle);
+
+    SOAR_ASSERT(rtValue == pdPASS, "WatchdogTask::InitTask() - xTaskCreate() failed");
+}
+
+/**
+ * @brief This function is called if the heartbeat timer expires and it sends a command to reset the system
+ * @param Automatically passes is timer handle for callback, should not be used
+ */
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
 
-	SOAR_PRINT("The system lost its hearbeat and had to reset!!!");
-	// SOAR_ASStERT("The system lost its hearbeat and had to reset!!!");
+	SOAR_PRINT("The system lost its heartbeat and had to reset!!!\n");
+//	SOAR_ASSERT(false ,"The system lost its heartbeat and had to reset!!! \n");
 	Timer::DefaultCallback(rtTimerHandle);
 	WatchdogTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
 
-
+void WatchdogTask::ReceiveHeartbeat(Command& cm)
+{
+	if (cm.GetCommand() == REQUEST_COMMAND) {
+		switch (cm.GetTaskCommand()) {
+		case RADIOHB_REQUEST:
+			SOAR_PRINT("HEARTBEAT RECEIVED \n");
+			heartbeatTimer.ResetTimerAndStart();
+			break;
+		default:
+			SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", cm.GetTaskCommand());
+			break;
+		}
+	}
+	cm.Reset();
+}
 
 /**
  * @brief Instance Run loop for the Watchdog Task, runs on scheduler start as long as the task is initialized.
@@ -27,42 +74,24 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
  */
 void WatchdogTask::Run(void * pvParams)
 {
-    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless WatchdogTask is the HeartBeat task
     GPIO::LED1::Off();
 
-    static Timer HeartbeatPeriod(HeartbeatFailureCallback);
-    HeartbeatPeriod.Start();
+    heartbeatTimer = Timer(HeartbeatFailureCallback);
+    heartbeatTimer.ChangePeriodMs(5000);
+    heartbeatTimer.Start();
 
 
     while (1) {
-        // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
-        // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task
-        // cycle as soon as it gets an event.
-
-        // Synchronous-Non-Blocking tasks require a fixed-delay and will require something like an RTOS timer that tracks the time till the next run cycle,
-        // and will delay using xQueueReceive for the set time, but if it gets interrupted by an event will handle the event then restart a xQueueReceive with
-        // the time remaining in the timer
-
-        // Synchronous-Blocking tasks are simpler to implement, they do NOT require instant handling of queue events, and will simply delay using osDelay() and
-        // poll the event queue once every cycle.
-
-        // This task below with the display would be a 'Synchronous-Non-Blocking' we want to handle queue events instantly, but keep a fixed delay
-        // Could consider a universal queue that directs and handles commands to specific tasks, and a task that handles the queue events and then calls the
-        // Mappings between X command and P subscribers (tasks that are expecting it).
-
-        // Since WatchdogTask is so critical to managing the system, it may make sense to make this a Async task that handles commands as they come in, and have these display commands be routed over to the DisplayTask
-        // or maybe HID (Human Interface Device) task that handles both updating buzzer frequencies and LED states.
-        GPIO::LED1::On();
-        GPIO::LED2::On();
-        GPIO::LED3::On();
-        osDelay(500);
-        GPIO::LED1::Off();
-        GPIO::LED2::Off();
-        GPIO::LED3::Off();
-        osDelay(500);
-
         //Every cycle, print something out (for testing)
-        SOAR_PRINT("WatchdogTask::Run() - [%d] Seconds\n", tempSecondCounter++);
+//        SOAR_PRINT("WatchdogTask::Run() - [%d] Seconds\n", tempSecondCounter++);
+
+    	Command cm;
+
+		//Wait forever for a command
+		qEvtQueue->ReceiveWait(cm);
+
+		//Process the command
+		ReceiveHeartbeat(cm);
 
 
         // TODO: Message beeps

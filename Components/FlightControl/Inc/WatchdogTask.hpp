@@ -4,12 +4,18 @@
  * Description        : Primary flight task, default task for the system.
  ******************************************************************************
 */
-#ifndef SOAR_FLIGHTTASK_HPP_
-#define SOAR_FLIGHTTASK_HPP_
+#ifndef SOAR_WATCHDOGTASK_HPP_
+#define SOAR_WATCHDOGTASK_HPP_
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 #include "Timer.hpp"
+
+/* Macros/Enums ------------------------------------------------------------*/
+enum RADIOHB_COMMANDS {
+    RADIOHB_NONE = 0,
+    RADIOHB_REQUEST,
+};
 
 class WatchdogTask : public Task
 {
@@ -19,7 +25,8 @@ public:
 		return inst;
 	}
 
-	WatchdogTask(int timerPeriodMs);		// Constructor that creates a heartbeat with specified time period
+	void InitTask();
+
 
 protected:
     static void RunTask(void* pvParams) { WatchdogTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
@@ -33,10 +40,12 @@ private:
     WatchdogTask(const WatchdogTask&);                        // Prevent copy-construction
     WatchdogTask& operator=(const WatchdogTask&);            // Prevent assignment
 
-    static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);						// Callback for timer which aborts system in case of data ghosting
-    static Timer HeartbeatPeriod(void (*Callback)());				// Timer that resets system if triggered
-    void RecieveHeartbeat();										// If it recieves a heartbeat then it resets the timer
+    static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);	// Callback for timer which aborts system in case of data ghosting
+    void ReceiveHeartbeat(Command& cm);						// If it receives a heartbeat then it resets the timer
+
+    Timer heartbeatTimer;
+
 
 };
 
-#endif    // SOAR_FLIGHTTASK_HPP_
+#endif    // SOAR_WATCHDOGTASK_HPP_

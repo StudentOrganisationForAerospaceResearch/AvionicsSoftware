@@ -18,6 +18,7 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "WatchdogTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -157,6 +158,10 @@ void DebugTask::HandleDebugMessage(const char* msg)
         IMUTask::Inst().GetEventQueue()->Send(cmd);
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
+    }
+    else if (strcmp(msg, "radiohb") == 0) {
+		Command cmd(REQUEST_COMMAND, RADIOHB_REQUEST);
+		WatchdogTask::Inst().GetEventQueue()->Send(cmd);
     }
     else {
         // Single character command, or unknown command
