@@ -15,10 +15,7 @@
  * @brief Initialize the WatchdogTask
  * @params Must pass in the timer period, If no heartbeat in received within this period then the timerr will be reset
  */
-WatchdogTask::WatchdogTask()
-{
-
-}
+WatchdogTask::WatchdogTask(){}
 
 /**
  * @brief Initialize the FlightTask
@@ -52,20 +49,39 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 	WatchdogTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
 
-void WatchdogTask::ReceiveHeartbeat(Command& cm)
+/**
+ * @brief Handles a command
+ * @param cm Command reference to handle
+ */
+void WatchdogTask::HandleCommand(Command& cm)
 {
-	if (cm.GetCommand() == REQUEST_COMMAND) {
-		switch (cm.GetTaskCommand()) {
+    switch (cm.GetCommand()) {
+    case REQUEST_COMMAND: {
+    	ReceiveHeartbeat(cm.GetTaskCommand());
+    }
+    case TASK_SPECIFIC_COMMAND: {
+        break;
+    }
+    default:
+        SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n", cm.GetCommand());
+        break;
+    }
+
+    //No matter what we happens, we must reset allocated data
+    cm.Reset();
+}
+
+void WatchdogTask::ReceiveHeartbeat(uint16_t taskCommand)
+{
+		switch (taskCommand) {
 		case RADIOHB_REQUEST:
 			SOAR_PRINT("HEARTBEAT RECEIVED \n");
 			heartbeatTimer.ResetTimerAndStart();
 			break;
 		default:
-			SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", cm.GetTaskCommand());
+			SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
 			break;
 		}
-	}
-	cm.Reset();
 }
 
 /**
@@ -91,7 +107,7 @@ void WatchdogTask::Run(void * pvParams)
 		qEvtQueue->ReceiveWait(cm);
 
 		//Process the command
-		ReceiveHeartbeat(cm);
+		HandleCommand(cm);
 
 
         // TODO: Message beeps

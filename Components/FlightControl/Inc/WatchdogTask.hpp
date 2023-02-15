@@ -41,8 +41,8 @@ private:
     WatchdogTask& operator=(const WatchdogTask&);            // Prevent assignment
 
     static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);	// Callback for timer which aborts system in case of data ghosting
-    void ReceiveHeartbeat(Command& cm);						// If it receives a heartbeat then it resets the timer
-
+    void HandleCommand(Command& cm);
+    void ReceiveHeartbeat(uint16_t taskCommand);						// If it receives a heartbeat then it resets the timer
     Timer heartbeatTimer;
 
 
