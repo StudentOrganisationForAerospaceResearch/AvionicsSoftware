@@ -10,6 +10,8 @@ bool SystemStorage::WriteStateToFlash()
     //unused
     bool res = true;
 
+    rs_currentInformation.SequenceNumber++;
+
     uint8_t* data = new uint8_t[12];
 
     //Store state
@@ -39,15 +41,13 @@ bool SystemStorage::WriteStateToFlash()
     uint32_t addressToWrite = (rs_currentInformation.SequenceNumber % 2);
     W25qxx_WriteSector(data, addressToWrite, 0, 12);
 
-    rs_currentInformation.SequenceNumber++;
-
     uint8_t* sector1Data = new uint8_t[12];
     uint8_t* sector2Data = new uint8_t[12];
     W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 12);
     W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 12);
 
     //erase old sector
-    uint32_t addressToErase = (rs_currentInformation.SequenceNumber % 2);
+    uint32_t addressToErase = (rs_currentInformation.SequenceNumber % 2) + 1;
     W25qxx_EraseSector(addressToErase);
 
     return res;
