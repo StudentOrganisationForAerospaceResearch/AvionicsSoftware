@@ -57,11 +57,15 @@ void WatchdogTask::HandleCommand(Command& cm)
 {
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
-    	ReceiveHeartbeat(cm.GetTaskCommand());
+    	HandleHeartbeat(cm.GetTaskCommand());
     }
     case TASK_SPECIFIC_COMMAND: {
         break;
     }
+    case RADIOHB_CHANGE_PERIOD:
+		SOAR_PRINT("HB Period Changed \n");
+		heartbeatTimer.ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
+		break;
     default:
         SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n", cm.GetCommand());
         break;
@@ -71,17 +75,21 @@ void WatchdogTask::HandleCommand(Command& cm)
     cm.Reset();
 }
 
-void WatchdogTask::ReceiveHeartbeat(uint16_t taskCommand)
+void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
 {
-		switch (taskCommand) {
-		case RADIOHB_REQUEST:
-			SOAR_PRINT("HEARTBEAT RECEIVED \n");
-			heartbeatTimer.ResetTimerAndStart();
-			break;
-		default:
-			SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
-			break;
-		}
+	switch (taskCommand) {
+	case RADIOHB_REQUEST:
+		SOAR_PRINT("HEARTBEAT RECEIVED \n");
+		heartbeatTimer.ResetTimerAndStart();
+		break;
+	case RADIOHB_DISABLED:
+		SOAR_PRINT("HEARTBEAT DISABLED \n");
+		heartbeatTimer.Stop();
+		break;
+	default:
+		SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+		break;
+	}
 }
 
 /**

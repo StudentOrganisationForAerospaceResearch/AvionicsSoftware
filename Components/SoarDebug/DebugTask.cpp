@@ -169,6 +169,10 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		Command cmd(REQUEST_COMMAND, RADIOHB_REQUEST);
 		WatchdogTask::Inst().GetEventQueue()->Send(cmd);
     }
+    else if (strcmp(msg, "disablehb") == 0) {
+    	Command cmd(REQUEST_COMMAND, RADIOHB_DISABLED);
+		WatchdogTask::Inst().GetEventQueue()->Send(cmd);
+    }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {
