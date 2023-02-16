@@ -112,6 +112,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         if (state != ERRVAL && state > 0 && state < UINT16_MAX)
             FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, state));
     }
+    else if (strncmp(msg, "setradiohb ", 11) == 0) {
+        // Send the heartbeat set to the watchdog task, where val is seconds
+        int32_t val = ExtractIntParameter(msg, 11);
+        if (val != ERRVAL)
+            WatchdogTask::Inst().SendCommand(Command(RADIOHB_CHANGE_PERIOD, val));
+    }
 
     //-- SYSTEM / CHAR COMMANDS -- (Must be last)
     else if (strcmp(msg, "sysreset") == 0) {
