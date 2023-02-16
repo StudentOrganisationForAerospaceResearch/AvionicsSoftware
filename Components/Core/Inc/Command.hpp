@@ -22,7 +22,7 @@ enum GLOBAL_COMMANDS : uint8_t
     DATA_COMMAND,            // Data command, used to send data to a task. Target is stored in taskCommand
     CONTROL_ACTION,            // Control actions, used in Rocket State Machine, direct translation to RCU<->DMB Protocol
     REQUEST_COMMAND,            // Request command
-	RADIOHB_CHANGE_PERIOD,
+    RADIOHB_CHANGE_PERIOD,
 };
 
 /* Class -----------------------------------------------------------------*/
