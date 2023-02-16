@@ -704,7 +704,7 @@ void W25qxx_WriteSector(uint8_t *pBuffer, uint32_t Sector_Address, uint32_t Offs
 	if (OffsetInByte >= w25qxx.SectorSize)
 	{
 #if (_W25QXX_DEBUG == 1)
-		SOAR_PRINT("---w25qxx WriteSector Faild!\r\n");
+		SOAR_PRINT("---w25qxx WriteSector Failed!\r\n");
 		W25qxx_Delay(100);
 #endif
 		return;
