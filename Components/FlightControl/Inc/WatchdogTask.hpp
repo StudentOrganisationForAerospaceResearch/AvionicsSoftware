@@ -10,7 +10,7 @@
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 #include "Timer.hpp"
-
+    
 /* Macros/Enums ------------------------------------------------------------*/
 enum RADIOHB_COMMANDS {
     RADIOHB_NONE = 0,
@@ -21,12 +21,12 @@ enum RADIOHB_COMMANDS {
 class WatchdogTask : public Task
 {
 public:
-	static WatchdogTask& Inst() {
-		static WatchdogTask inst;
-		return inst;
-	}
+    static WatchdogTask& Inst() {
+        static WatchdogTask inst;
+        return inst;
+    }
 
-	void InitTask();
+    void InitTask();
 
 
 protected:
@@ -41,9 +41,9 @@ private:
     WatchdogTask(const WatchdogTask&);                        // Prevent copy-construction
     WatchdogTask& operator=(const WatchdogTask&);            // Prevent assignment
 
-    static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);	// Callback for timer which aborts system in case of data ghosting
+    static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);    // Callback for timer which aborts system in case of data ghosting
     void HandleCommand(Command& cm);
-    void HandleHeartbeat(uint16_t taskCommand);						// If it receives a heartbeat then it resets the timer
+    void HandleHeartbeat(uint16_t taskCommand);                        // If it receives a heartbeat then it resets the timer
     Timer heartbeatTimer;
 
 

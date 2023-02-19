@@ -43,10 +43,10 @@ void WatchdogTask::InitTask()
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
 
-	SOAR_PRINT("The system lost its heartbeat and had to reset!!!\n");
-//	SOAR_ASSERT(false ,"The system lost its heartbeat and had to reset!!! \n");
-	Timer::DefaultCallback(rtTimerHandle);
-	WatchdogTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
+    SOAR_PRINT("The system lost its heartbeat and had to reset!!!\n");
+//    SOAR_ASSERT(false ,"The system lost its heartbeat and had to reset!!! \n");
+    Timer::DefaultCallback(rtTimerHandle);
+    WatchdogTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
 
 /**
@@ -57,15 +57,15 @@ void WatchdogTask::HandleCommand(Command& cm)
 {
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
-    	HandleHeartbeat(cm.GetTaskCommand());
+        HandleHeartbeat(cm.GetTaskCommand());
     }
     case TASK_SPECIFIC_COMMAND: {
         break;
     }
     case RADIOHB_CHANGE_PERIOD:
-		SOAR_PRINT("HB Period Changed \n");
-		heartbeatTimer.ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
-		break;
+        SOAR_PRINT("HB Period Changed \n");
+        heartbeatTimer.ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
+        break;
     default:
         SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n", cm.GetCommand());
         break;
@@ -77,19 +77,19 @@ void WatchdogTask::HandleCommand(Command& cm)
 
 void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
 {
-	switch (taskCommand) {
-	case RADIOHB_REQUEST:
-		SOAR_PRINT("HEARTBEAT RECEIVED \n");
-		heartbeatTimer.ResetTimerAndStart();
-		break;
-	case RADIOHB_DISABLED:
-		SOAR_PRINT("HEARTBEAT DISABLED \n");
-		heartbeatTimer.Stop();
-		break;
-	default:
-		SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
-		break;
-	}
+    switch (taskCommand) {
+    case RADIOHB_REQUEST:
+        SOAR_PRINT("HEARTBEAT RECEIVED \n");
+        heartbeatTimer.ResetTimerAndStart();
+        break;
+    case RADIOHB_DISABLED:
+        SOAR_PRINT("HEARTBEAT DISABLED \n");
+        heartbeatTimer.Stop();
+        break;
+    default:
+        SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+        break;
+    }
 }
 
 /**
@@ -109,13 +109,13 @@ void WatchdogTask::Run(void * pvParams)
         //Every cycle, print something out (for testing)
 //        SOAR_PRINT("WatchdogTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
-    	Command cm;
+        Command cm;
 
-		//Wait forever for a command
-		qEvtQueue->ReceiveWait(cm);
+        //Wait forever for a command
+        qEvtQueue->ReceiveWait(cm);
 
-		//Process the command
-		HandleCommand(cm);
+        //Process the command
+        HandleCommand(cm);
 
 
         // TODO: Message beeps

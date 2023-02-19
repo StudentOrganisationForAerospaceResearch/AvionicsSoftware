@@ -166,12 +166,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
     else if (strcmp(msg, "radiohb") == 0) {
-		Command cmd(REQUEST_COMMAND, RADIOHB_REQUEST);
-		WatchdogTask::Inst().GetEventQueue()->Send(cmd);
+        Command cmd(REQUEST_COMMAND, RADIOHB_REQUEST);
+        WatchdogTask::Inst().GetEventQueue()->Send(cmd);
     }
     else if (strcmp(msg, "disablehb") == 0) {
-    	Command cmd(REQUEST_COMMAND, RADIOHB_DISABLED);
-		WatchdogTask::Inst().GetEventQueue()->Send(cmd);
+        Command cmd(REQUEST_COMMAND, RADIOHB_DISABLED);
+        WatchdogTask::Inst().GetEventQueue()->Send(cmd);
     }
     else {
         // Single character command, or unknown command
