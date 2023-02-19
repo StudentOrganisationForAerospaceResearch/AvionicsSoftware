@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SOAR_SYSTEM_DATA_H_
+#define SOAR_SYSTEM_DATA_H_
 
 /* Structs containing data primitives */
 
@@ -93,3 +94,5 @@ typedef struct
     AccelGyroMagnetismData* accelGyroMagnetismData_;
     BarometerData*          barometerData_;
 } ParachutesControlData;
+
+#endif
