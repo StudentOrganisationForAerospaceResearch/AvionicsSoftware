@@ -21,7 +21,8 @@ enum GLOBAL_COMMANDS : uint8_t
     TASK_SPECIFIC_COMMAND,    // Runs a task specific command when given this object
     DATA_COMMAND,            // Data command, used to send data to a task. Target is stored in taskCommand
     CONTROL_ACTION,            // Control actions, used in Rocket State Machine, direct translation to RCU<->DMB Protocol
-    REQUEST_COMMAND            // Request command
+    REQUEST_COMMAND,            // Request command
+    PROTOCOL_COMMAND,           // Protocol command, used for commands to the Protocol Task
 };
 
 /* Class -----------------------------------------------------------------*/
