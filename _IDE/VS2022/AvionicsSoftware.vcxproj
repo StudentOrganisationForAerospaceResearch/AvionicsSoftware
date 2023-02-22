@@ -32,6 +32,9 @@
     <ClCompile Include="..\..\Components\Sensors\BarometerTask.cpp" />
     <ClCompile Include="..\..\Components\Sensors\IMUTask.cpp" />
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp" />
+    <ClCompile Include="..\..\Components\SoarProtocol\DMBProtocolTask.cpp" />
+    <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\cobs.c" />
+    <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\ProtocolTask.cpp" />
     <ClCompile Include="..\..\Components\Utils.cpp" />
     <ClCompile Include="..\..\Core\Src\freertos.c" />
     <ClCompile Include="..\..\Core\Src\main.cpp" />
@@ -90,6 +93,13 @@
     <ClInclude Include="..\..\Components\Sensors\Inc\BarometerTask.hpp" />
     <ClInclude Include="..\..\Components\Sensors\Inc\IMUTask.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\cobs.h" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\ProtocolTask.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CommandMessage.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\ControlMessage.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\Core.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\Telemetry.hpp" />
     <ClInclude Include="..\..\Components\SystemDefines.hpp" />
     <ClInclude Include="..\..\Components\Utils.hpp" />
     <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\absolute.h" />
