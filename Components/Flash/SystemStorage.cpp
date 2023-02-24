@@ -54,7 +54,7 @@ bool SystemStorage::WriteStateToFlash()
     //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
 
     //erase old sector
-    uint32_t addressToErase = (rs_currentInformation.SequenceNumber % 2) + 1;
+    uint32_t addressToErase = ((rs_currentInformation.SequenceNumber + 1) % 2);
     W25qxx_EraseSector(addressToErase);
 
     return res;
