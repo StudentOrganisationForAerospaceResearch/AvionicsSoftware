@@ -336,7 +336,7 @@ void SystemStorage::UpdateBaroData(uint8_t* data)
 void SystemStorage::UpdateIMUData(uint8_t* data)
 {
     si_currentInformation.accelX_ = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
-    si_currentInformation.accelY_ = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[6]);
+    si_currentInformation.accelY_ = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[7]);
     si_currentInformation.accelZ_ = (data[8] << 24) | (data[9] << 16) | (data[10] << 8) | (data[11]);
     si_currentInformation.gyroX_ = (data[12] << 24) | (data[13] << 16) | (data[14] << 8) | (data[15]);
     si_currentInformation.gyroY_ = (data[16] << 24) | (data[17] << 16) | (data[18] << 8) | (data[19]);

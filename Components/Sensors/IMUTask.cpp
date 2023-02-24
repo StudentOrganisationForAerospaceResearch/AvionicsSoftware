@@ -165,7 +165,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
     {
         SOAR_PRINT("Implemented for testing flash\n");
         Command cmd(DATA_COMMAND);
-        uint8_t info[36] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        uint8_t info[36] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         //Store accelX_
         info[0] = (data->accelX_ >> 24) & 0xFF;
         info[1] = (data->accelX_ >> 16) & 0xFF;
