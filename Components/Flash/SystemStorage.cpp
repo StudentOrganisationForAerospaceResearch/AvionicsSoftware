@@ -12,7 +12,7 @@ bool SystemStorage::WriteStateToFlash()
 
     rs_currentInformation.SequenceNumber++;
 
-    uint8_t* data = new uint8_t[12];
+    uint8_t* data = new uint8_t[16];
 
     //Store state
     data[0] = (rs_currentInformation.State >> 24) & 0xFF;
@@ -27,24 +27,31 @@ bool SystemStorage::WriteStateToFlash()
     data[7] = (rs_currentInformation.SequenceNumber) & 0xFF;
     SOAR_PRINT("Sequence Number: %d\n", rs_currentInformation.SequenceNumber);
 
-    //Calculate and store CRC
-    uint32_t checksum = Utils::getCRC32(data, 8);
+    //Store data offset
+    data[8] = (si_currentInformation.offset >> 24) & 0xFF;
+    data[9] = (si_currentInformation.offset >> 16) & 0xFF;
+    data[10] = (si_currentInformation.offset >> 8) & 0xFF;
+    data[11] = (si_currentInformation.offset) & 0xFF;
 
-    data[8] = (checksum >> 24) & 0xFF;
-    data[9] = (checksum >> 16) & 0xFF;
-    data[10] = (checksum >> 8) & 0xFF;
-    data[11] = (checksum) & 0xFF;
+    //Calculate and store CRC
+    uint32_t checksum = Utils::getCRC32(data, 12);
+
+    data[12] = (checksum >> 24) & 0xFF;
+    data[13] = (checksum >> 16) & 0xFF;
+    data[14] = (checksum >> 8) & 0xFF;
+    data[15] = (checksum) & 0xFF;
     SOAR_PRINT("checksum: %d\n", checksum);
 
     //Write to relevant sector
     //sector address is not the same as address address but why
     uint32_t addressToWrite = (rs_currentInformation.SequenceNumber % 2);
-    W25qxx_WriteSector(data, addressToWrite, 0, 12);
+    W25qxx_WriteSector(data, addressToWrite, 0, 16);
 
-    uint8_t* sector1Data = new uint8_t[12];
-    uint8_t* sector2Data = new uint8_t[12];
-    W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 12);
-    W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 12);
+    //for debugging
+    //uint8_t* sector1Data = new uint8_t[16];
+    //uint8_t* sector2Data = new uint8_t[16];
+    //W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
+    //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
 
     //erase old sector
     uint32_t addressToErase = (rs_currentInformation.SequenceNumber % 2) + 1;
@@ -63,29 +70,29 @@ bool SystemStorage::ReadStateFromFlash()
 {
     bool res = true;
 
-    uint8_t* sector1Data = new uint8_t[12];
-    uint8_t* sector2Data = new uint8_t[12];
+    uint8_t* sector1Data = new uint8_t[16];
+    uint8_t* sector2Data = new uint8_t[16];
 
     //read state sectors
-    W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 12);
-    W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 12);
+    W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
+    W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
 
     //reconstruct and recalculate checksums
-    uint32_t sector1ReadChecksum = (sector1Data[8] << 24) | (sector1Data[9] << 16) | (sector1Data[10] << 8) | (sector1Data[11]);
-    uint32_t sector2ReadChecksum = (sector2Data[8] << 24) | (sector2Data[9] << 16) | (sector2Data[10] << 8) | (sector2Data[11]);
-    SOAR_PRINT("Read Checksum1: %d\n", sector1ReadChecksum);
-    SOAR_PRINT("Read Checksum2: %d\n", sector2ReadChecksum);
+    uint32_t sector1ReadChecksum = (sector1Data[12] << 24) | (sector1Data[13] << 16) | (sector1Data[14] << 8) | (sector1Data[15]);
+    uint32_t sector2ReadChecksum = (sector2Data[12] << 24) | (sector2Data[13] << 16) | (sector2Data[14] << 8) | (sector2Data[15]);
+    //SOAR_PRINT("Read Checksum1: %d\n", sector1ReadChecksum);
+    //SOAR_PRINT("Read Checksum2: %d\n", sector2ReadChecksum);
 
-    uint32_t sector1CalculatedChecksum = Utils::getCRC32(sector1Data, 8);
-    uint32_t sector2CalculatedChecksum = Utils::getCRC32(sector2Data, 8);
-    SOAR_PRINT("Calculated Checksum1: %d\n", sector1CalculatedChecksum);
-    SOAR_PRINT("Calculated Checksum2: %d\n", sector2CalculatedChecksum);
+    uint32_t sector1CalculatedChecksum = Utils::getCRC32(sector1Data, 12);
+    uint32_t sector2CalculatedChecksum = Utils::getCRC32(sector2Data, 12);
+    //SOAR_PRINT("Calculated Checksum1: %d\n", sector1CalculatedChecksum);
+    //SOAR_PRINT("Calculated Checksum2: %d\n", sector2CalculatedChecksum);
 
     //reconstruct sequence number
     uint32_t sector1Sequence = sector1Data[4] << 24 | sector1Data[5] << 16 | sector1Data[6] << 8 | sector1Data[7];
     uint32_t sector2Sequence = sector2Data[4] << 24 | sector2Data[5] << 16 | sector2Data[6] << 8 | sector2Data[7];
-    SOAR_PRINT("Read Sequence1: %d\n", sector1Sequence);
-    SOAR_PRINT("Read Sequence2: %d\n", sector2Sequence);
+    //SOAR_PRINT("Read Sequence1: %d\n", sector1Sequence);
+    //SOAR_PRINT("Read Sequence2: %d\n", sector2Sequence);
 
     uint8_t validSector = 0;
 
@@ -126,6 +133,8 @@ bool SystemStorage::ReadStateFromFlash()
     {
         RocketState sector1State = (RocketState) (sector1Data[0] << 24 | sector1Data[1] << 16 | sector1Data[2] << 8 | sector1Data[3]);
         rs_currentInformation = {sector1State, sector1Sequence};
+        uint32_t offset = (sector1Data[8] << 24 | sector1Data[9] << 16 | sector1Data[10] << 8 | sector1Data[11]);
+        si_currentInformation = {offset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         W25qxx_EraseSector(1);
         res = true;
     }
@@ -134,6 +143,8 @@ bool SystemStorage::ReadStateFromFlash()
     {
         RocketState sector2State = (RocketState) (sector2Data[0] << 24 | sector2Data[1] << 16 | sector2Data[2] << 8 | sector2Data[3]);
         rs_currentInformation = {sector2State, sector2Sequence};
+        uint32_t offset = (sector2Data[8] << 24 | sector2Data[9] << 16 | sector2Data[10] << 8 | sector2Data[11]);
+        si_currentInformation = {offset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         W25qxx_EraseSector(0);
         res = true;
     }
@@ -150,9 +161,12 @@ SystemStorage::SystemStorage()
     
     //read from flash to populate state struct
     bool res = ReadStateFromFlash();
-    if (res == false)
+    if (res == false) {
         rs_currentInformation = {RS_ABORT, 0};
+        si_currentInformation = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        //should probably erase all data sectors
         SOAR_PRINT("readback returned false");
+    }
     Command cmd(FLASH_RESPONSE, (uint16_t) rs_currentInformation.State);
     FlightTask::Inst().GetEventQueue()->Send(cmd);
 }

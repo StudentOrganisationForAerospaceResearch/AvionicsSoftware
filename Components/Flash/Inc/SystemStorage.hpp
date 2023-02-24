@@ -18,7 +18,26 @@ struct StateInformation
 {   
   RocketState State;
   uint32_t SequenceNumber;       
-}; 
+};
+
+/**
+ * @brief Sensor information to be written to flash
+ */
+struct SensorInformation 
+{   
+    uint32_t     offset;
+    uint32_t     accelX_;
+    uint32_t     accelY_;
+    uint32_t     accelZ_;
+    uint32_t     gyroX_;
+    uint32_t     gyroY_;
+    uint32_t     gyroZ_;
+    uint32_t     magnetoX_;
+    uint32_t     magnetoY_;
+    uint32_t     magnetoZ_;   
+    uint32_t     pressure_;
+    uint32_t     temperature_;
+};
 
 /**
  * @brief System information object
@@ -36,6 +55,7 @@ protected:
 
     // Variables
     StateInformation rs_currentInformation;
+    SensorInformation si_currentInformation;
 
 };
 
