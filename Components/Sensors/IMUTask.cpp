@@ -160,7 +160,65 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         SampleIMU();
         break;
     case IMU_REQUEST_TRANSMIT:
-        SOAR_PRINT("Stubbed: IMU task transmit not implemented\n");
+        SOAR_PRINT("Implemented for testing flash\n");
+        Command cmd(DATA_COMMAND);
+        uint8_t info[36]
+        //Store accelX_
+        info[0] = (si_currentInformation.accelX_ >> 24) & 0xFF;
+        info[1] = (si_currentInformation.accelX_ >> 16) & 0xFF;
+        info[2] = (si_currentInformation.accelX_ >> 8) & 0xFF;
+        info[3] = (si_currentInformation.accelX_) & 0xFF;
+
+        //Store accelY_
+        info[4] = (si_currentInformation.accelY_ >> 24) & 0xFF;
+        info[5] = (si_currentInformation.accelY_ >> 16) & 0xFF;
+        info[6] = (si_currentInformation.accelY_ >> 8) & 0xFF;
+        info[7] = (si_currentInformation.accelY_) & 0xFF;
+
+        //Store accelZ_
+        info[8] = (si_currentInformation.accelZ_ >> 24) & 0xFF;
+        info[9] = (si_currentInformation.accelZ_ >> 16) & 0xFF;
+        info[10] = (si_currentInformation.accelZ_ >> 8) & 0xFF;
+        info[11] = (si_currentInformation.accelZ_) & 0xFF;
+
+        //Store gyroX_
+        info[12] = (si_currentInformation.gyroX_ >> 24) & 0xFF;
+        info[13] = (si_currentInformation.gyroX_ >> 16) & 0xFF;
+        info[14] = (si_currentInformation.gyroX_ >> 8) & 0xFF;
+        info[15] = (si_currentInformation.gyroX_) & 0xFF;
+
+        //Store gyroY_
+        info[16] = (si_currentInformation.gyroY_ >> 24) & 0xFF;
+        info[17] = (si_currentInformation.gyroY_ >> 16) & 0xFF;
+        info[18] = (si_currentInformation.gyroY_ >> 8) & 0xFF;
+        info[19] = (si_currentInformation.gyroY_) & 0xFF;
+
+        //Store gyroZ_
+        info[20] = (si_currentInformation.gyroZ_ >> 24) & 0xFF;
+        info[21] = (si_currentInformation.gyroZ_ >> 16) & 0xFF;
+        info[22] = (si_currentInformation.gyroZ_ >> 8) & 0xFF;
+        info[23] = (si_currentInformation.gyroZ_) & 0xFF;
+
+        //Store magnetoX_
+        info[24] = (si_currentInformation.magnetoX_ >> 24) & 0xFF;
+        info[25] = (si_currentInformation.magnetoX_ >> 16) & 0xFF;
+        info[26] = (si_currentInformation.magnetoX_ >> 8) & 0xFF;
+        info[27] = (si_currentInformation.magnetoX_) & 0xFF;
+
+        //Store magnetoY_
+        info[28] = (si_currentInformation.magnetoY_ >> 24) & 0xFF;
+        info[29] = (si_currentInformation.magnetoY_ >> 16) & 0xFF;
+        info[30] = (si_currentInformation.magnetoY_ >> 8) & 0xFF;
+        info[31] = (si_currentInformation.magnetoY_) & 0xFF;
+
+        //Store magnetoZ_
+        info[32] = (si_currentInformation.magnetoZ_ >> 24) & 0xFF;
+        info[33] = (si_currentInformation.magnetoZ_ >> 16) & 0xFF;
+        info[34] = (si_currentInformation.magnetoZ_ >> 8) & 0xFF;
+        info[35] = (si_currentInformation.magnetoZ_) & 0xFF;
+
+        cmd.CopyDataToCommand(info, 36);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
         break;
     case IMU_REQUEST_DEBUG:
         SOAR_PRINT("\t-- IMU Data --\n");

@@ -135,7 +135,23 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         SampleBarometer();
         break;
     case BARO_REQUEST_TRANSMIT:
-        SOAR_PRINT("Stubbed: Barometer task transmit not implemented\n");
+        SOAR_PRINT("implemented for testing flash\n");
+        Command cmd(DATA_COMMAND);
+        uint8_t info[8]
+        //Store pressure_
+        info[0] = (data.pressure_ >> 24) & 0xFF;
+        info[1] = (data.pressure_ >> 16) & 0xFF;
+        info[2] = (data.pressure_ >> 8) & 0xFF;
+        info[3] = (data.pressure_) & 0xFF;
+
+        //Store temperature_
+        info[4] = (data.temperature_ >> 24) & 0xFF;
+        info[5] = (data.temperature_ >> 16) & 0xFF;
+        info[6] = (data.temperature_ >> 8) & 0xFF;
+        info[7] = (data.temperature_) & 0xFF;
+
+        cmd.CopyDataToCommand(info, 8);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
         break;
     case BARO_REQUEST_DEBUG:
         SOAR_PRINT("\t-- Barometer Data --\n");
