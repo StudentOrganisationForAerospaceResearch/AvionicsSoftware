@@ -55,6 +55,7 @@ void FlightTask::Run(void * pvParams)
     }
 
     RocketState state = (RocketState) cm.GetTaskCommand();
+    cm.Reset();
 
     rsm_ = new RocketSM(state, false);
 
