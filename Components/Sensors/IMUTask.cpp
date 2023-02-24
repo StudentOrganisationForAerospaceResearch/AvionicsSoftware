@@ -290,6 +290,7 @@ void IMUTask::SampleIMU()
  */
 uint8_t IMUTask::SetupIMU()
 {
+    osDelay(500);
     /* Setup the Accel / Gyro */
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
