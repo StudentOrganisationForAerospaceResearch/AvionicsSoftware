@@ -55,6 +55,7 @@ public:
     bool ReadSensorInfoFromFlash();
     void UpdateBaroData(uint8_t* data);
     void UpdateIMUData(uint8_t* data);
+    void EraseFlash();
 
 protected:
 

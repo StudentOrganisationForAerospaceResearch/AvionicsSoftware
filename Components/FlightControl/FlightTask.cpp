@@ -81,10 +81,10 @@ void FlightTask::Run(void * pvParams)
         
         GPIO::LED1::On();
         GPIO::LED2::On();
-        osDelay(5);
+        osDelay(50);
         GPIO::LED1::Off();
         GPIO::LED2::Off();
-        osDelay(5);
+        osDelay(50);
 
         //Every cycle, print something out (for testing)
         if(tempSecondCounter % 100 == 0) {

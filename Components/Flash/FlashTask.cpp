@@ -57,61 +57,10 @@ void FlashTask::Run(void * pvParams)
     timer.ChangePeriodMs(1000);
 
     while (1) {
-        timer.Start();
-
-        Command baroSample(REQUEST_COMMAND, BARO_REQUEST_NEW_SAMPLE);
-        BarometerTask::Inst().GetEventQueue()->Send(baroSample);
-
-        Command baroRequest(REQUEST_COMMAND, BARO_REQUEST_TRANSMIT);
-        BarometerTask::Inst().GetEventQueue()->Send(baroRequest);
-
-        //Wait until Baro has sent a valid data command
-        Command cm;
-        while(true) {
-            //Wait forever for a command
-            qEvtQueue->ReceiveWait(cm);
-            if(cm.GetCommand() == DATA_COMMAND) 
-                break;
-        }
-
-        uint8_t* data = cm.GetDataPointer();
-        cm.Reset();
-
-        st_->UpdateBaroData(data);
-
-
-
-        Command IMUSample(REQUEST_COMMAND, IMU_REQUEST_NEW_SAMPLE);
-        IMUTask::Inst().GetEventQueue()->Send(IMUSample);
-
-        Command IMURequest(REQUEST_COMMAND, IMU_REQUEST_TRANSMIT);
-        IMUTask::Inst().GetEventQueue()->Send(IMURequest);
-
-        //Wait until IMU has sent a valid data command
-        while(true) {
-            //Wait forever for a command
-            qEvtQueue->ReceiveWait(cm);
-            if(cm.GetCommand() == DATA_COMMAND) 
-                break;
-        }
-
-        data = cm.GetDataPointer();
-        cm.Reset();
-
-        st_->UpdateIMUData(data);
-
-        st_->WriteSensorInfoToFlash();
-        st_->WriteStateToFlash();
-
-        while(timer.GetState() != COMPLETE) {}
-        //{SOAR_PRINT("faster than timer\n");}
-
-        timer.ResetTimerAndStart();
-
         //Process any commands, in non-blocking mode
-        //Command cm;
-        //bool res = qEvtQueue->Receive(cm);
-        //if(res)
-            //st_->HandleCommand(cm);
+        Command cm;
+        bool res = qEvtQueue->Receive(cm);
+        if(res)
+            st_->HandleCommand(cm);
     }
 }

@@ -165,6 +165,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd(DATA_COMMAND, (uint16_t)2);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
     }
+    else if (strcmp(msg, "flasherase") == 0) {
+        // Send a request to the IMU task to poll and print the data
+        SOAR_PRINT("Erase full chip request\n");
+        Command cmd(DATA_COMMAND, (uint16_t)3);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {
