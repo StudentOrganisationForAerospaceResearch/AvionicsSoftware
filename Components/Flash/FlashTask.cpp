@@ -10,6 +10,10 @@
 #include "Utils.hpp"
 #include "RocketSM.hpp"
 
+// External Tasks (to send debug commands to)
+#include "BarometerTask.hpp"
+#include "IMUTask.hpp"
+
 /**
  * @brief Constructor for FlashTask
  */

@@ -167,7 +167,7 @@ bool SystemStorage::writeSensorInfoToFlash()
     uint32_t time = TICKS_TO_MS(xTaskGetTickCount()) / 1000;
 
     //Store beginning of packet
-    data[0] = 0b10100101
+    data[0] = 0b10100101;
     data[1] = 0b10100101;
     data[2] = 0b00000000;
     data[3] = 0b11111111;   
@@ -260,15 +260,15 @@ bool SystemStorage::writeSensorInfoToFlash()
     //SOAR_PRINT("checksum: %d\n", checksum);
 
     //Store beginning of packet
-    data[60] = 0b10100101
-    data[61] = 0b10100101;
-    data[62] = 0b00000000;
-    data[63] = 0b11111111;   
+    data[60] = 0b11111111;
+    data[61] = 0b00000000;
+    data[62] = 0b10100101;
+    data[63] = 0b10100101;   
 
     //Write to relevant sector
     //byte address is not the same as bit address
-    addressToWrite = si_currentInformation.offset + 8192;
-    for(int i = 0; i < 64; i++) {
+    uint32_t addressToWrite = si_currentInformation.offset + 8192;
+    for(uint32_t i = 0; i < 64; i++) {
         W25qxx_WriteByte(data[i], addressToWrite + i);
     }
 
@@ -277,6 +277,46 @@ bool SystemStorage::writeSensorInfoToFlash()
     //uint8_t* sector2Data = new uint8_t[16];
     //W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
     //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
+
+    return res;
+}
+
+/**
+ * @brief reads all sensor data and prints it through UART up until offset read from struct
+ */
+bool SystemStorage::readSensorInfoFromFlash()
+{
+    //unused
+    bool res = true;
+
+    uint32_t startingOffset = 8192;
+    uint8_t data[64];
+
+    for(uint32_t i = 0; i * 64 < si_currentInformation.offset; i++) {
+        W25qxx_ReadBytes(data, startingOffset + (i * 64), 64);
+
+        uint32_t startingPacket = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
+        uint32_t time = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[7]);
+        uint32_t accelX_ = (data[8] << 24) | (data[9] << 16) | (data[10] << 8) | (data[11]);
+        uint32_t accelY_ = (data[12] << 24) | (data[13] << 16) | (data[14] << 8) | (data[15]);
+        uint32_t accelZ_ = (data[16] << 24) | (data[17] << 16) | (data[18] << 8) | (data[19]);
+        uint32_t gyroX_ = (data[20] << 24) | (data[21] << 16) | (data[22] << 8) | (data[23]);
+        uint32_t gyroY_ = (data[24] << 24) | (data[25] << 16) | (data[26] << 8) | (data[27]);
+        uint32_t gyroZ_ = (data[28] << 24) | (data[29] << 16) | (data[30] << 8) | (data[31]);
+        uint32_t magnetoX_ = (data[32] << 24) | (data[33] << 16) | (data[34] << 8) | (data[35]);
+        uint32_t magnetoY_ = (data[36] << 24) | (data[37] << 16) | (data[38] << 8) | (data[39]);
+        uint32_t magnetoZ_ = (data[40] << 24) | (data[41] << 16) | (data[42] << 8) | (data[43]);
+        uint32_t pressure_ = (data[44] << 24) | (data[45] << 16) | (data[46] << 8) | (data[47]);
+        uint32_t temperature_ = (data[48] << 24) | (data[49] << 16) | (data[50] << 8) | (data[51]);
+        uint32_t offset = (data[52] << 24) | (data[53] << 16) | (data[54] << 8) | (data[55]);
+        uint32_t checksum = (data[56] << 24) | (data[57] << 16) | (data[58] << 8) | (data[59]);
+        uint32_t endingPacket = (data[60] << 24) | (data[61] << 16) | (data[62] << 8) | (data[63]);
+
+        SOAR_PRINT("%#010X   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %#010X", 
+                    startingPacket, time, accelX_, accelY_, accelZ_, gyroX_, gyroY_, gyroZ_, magnetoX_,
+                    magnetoY_, magnetoZ_, pressure_, temperature_, offset, checksum, endingPacket);
+
+    }
 
     return res;
 }
