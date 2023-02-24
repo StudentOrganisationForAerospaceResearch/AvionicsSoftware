@@ -18,6 +18,7 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "FlashTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -157,6 +158,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         IMUTask::Inst().GetEventQueue()->Send(cmd);
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
+    }
+    else if (strcmp(msg, "flashdump") == 0) {
+        // Send a request to the IMU task to poll and print the data
+        SOAR_PRINT("Dump of sensor data in flash requested requested\n");
+        Command cmd(DATA_COMMAND, (uint16_t)2);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
     }
     else {
         // Single character command, or unknown command

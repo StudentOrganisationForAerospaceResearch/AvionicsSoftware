@@ -53,7 +53,7 @@ void FlashTask::Run(void * pvParams)
 {
     st_ = new SystemStorage();
 
-    Timer timer = New Timer();
+    Timer timer = Timer();
     timer.ChangePeriodMs(500);
 
     while (1) {
@@ -103,8 +103,8 @@ void FlashTask::Run(void * pvParams)
         st_->WriteSensorInfoToFlash();
         st_->WriteStateToFlash();
 
-        while(timer.getState() != COMPLETE)
-        {SOAR_PRINT("faster than timer")}
+        while(timer.GetState() != COMPLETE)
+        {SOAR_PRINT("faster than timer");}
 
         timer.ResetTimerAndStart();
 

@@ -10,6 +10,14 @@
 #include "SystemDefines.hpp"
 #include "SystemStorage.hpp"
 
+/* Macros/Enums ------------------------------------------------------------*/
+enum FLASH_TASK_COMMANDS {
+    FLASH_NONE = 0,
+    FLASH_WRITE_STATE,// write state to flash
+    FLASH_WRITE_SENSOR,    // write new sensor data to flash
+    FLASH_DUMP_SENSOR        // dump all sensor data in flash throguh UART
+};
+
 class FlashTask : public Task
 {
 public:

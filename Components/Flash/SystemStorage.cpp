@@ -378,5 +378,9 @@ void SystemStorage::HandleCommand(Command& cm)
         WriteStateToFlash();
         SOAR_PRINT("state written to flash");
     }
+    else if(cm.GetTaskCommand() == 2) 
+    {
+        ReadSensorInfoFromFlash();
+    }
     cm.Reset();
 }
