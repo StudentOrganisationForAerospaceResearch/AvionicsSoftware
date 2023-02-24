@@ -155,7 +155,7 @@ bool SystemStorage::ReadStateFromFlash()
 /**
  * @brief Creates CRC, writes sensor info struct and CRC to flash, increases offset
  */
-bool SystemStorage::writeSensorInfoToFlash()
+bool SystemStorage::WriteSensorInfoToFlash()
 {
     //unused
     bool res = true;
@@ -284,7 +284,7 @@ bool SystemStorage::writeSensorInfoToFlash()
 /**
  * @brief reads all sensor data and prints it through UART up until offset read from struct
  */
-bool SystemStorage::readSensorInfoFromFlash()
+bool SystemStorage::ReadSensorInfoFromFlash()
 {
     //unused
     bool res = true;
@@ -319,6 +319,31 @@ bool SystemStorage::readSensorInfoFromFlash()
     }
 
     return res;
+}
+
+/**
+ * @brief updates Barometric data in Sensor Struct
+ */
+void SystemStorage::UpdateBaroData(uint8_t* data)
+{
+    si_currentInformation.pressure_ = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
+    si_currentInformation.temperature_ = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[7]);
+}
+
+/**
+ * @brief updates IMU data in Sensor Struct
+ */
+void SystemStorage::UpdateIMUData(uint8_t* data)
+{
+    si_currentInformation.accelX_ = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
+    si_currentInformation.accelY_ = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[6]);
+    si_currentInformation.accelZ_ = (data[8] << 24) | (data[9] << 16) | (data[10] << 8) | (data[11]);
+    si_currentInformation.gyroX_ = (data[12] << 24) | (data[13] << 16) | (data[14] << 8) | (data[15]);
+    si_currentInformation.gyroY_ = (data[16] << 24) | (data[17] << 16) | (data[18] << 8) | (data[19]);
+    si_currentInformation.gyroZ_ = (data[20] << 24) | (data[21] << 16) | (data[22] << 8) | (data[23]);
+    si_currentInformation.magnetoX_ = (data[24] << 24) | (data[25] << 16) | (data[26] << 8) | (data[27]);
+    si_currentInformation.magnetoY_ = (data[28] << 24) | (data[29] << 16) | (data[30] << 8) | (data[31]);
+    si_currentInformation.magnetoZ_ = (data[32] << 24) | (data[33] << 16) | (data[34] << 8) | (data[35]);
 }
 
 /**

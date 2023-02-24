@@ -49,11 +49,14 @@ public:
 
     void HandleCommand(Command& cm);
 
-protected:
     bool WriteStateToFlash();
     bool ReadStateFromFlash();
-    bool writeSensorInfoToFlash();
-    bool readSensorInfoFromFlash();
+    bool WriteSensorInfoToFlash();
+    bool ReadSensorInfoFromFlash();
+    void UpdateBaroData(uint8_t* data);
+    void UpdateIMUData(uint8_t* data);
+
+protected:
 
     // Variables
     StateInformation rs_currentInformation;
