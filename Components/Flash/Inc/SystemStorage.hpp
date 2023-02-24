@@ -52,6 +52,7 @@ public:
 protected:
     bool WriteStateToFlash();
     bool ReadStateFromFlash();
+    bool writeSensorInfoToFlash();
 
     // Variables
     StateInformation rs_currentInformation;

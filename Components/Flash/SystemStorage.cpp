@@ -153,6 +153,135 @@ bool SystemStorage::ReadStateFromFlash()
 }
 
 /**
+ * @brief Creates CRC, writes sensor info struct and CRC to flash, increases offset
+ */
+bool SystemStorage::writeSensorInfoToFlash()
+{
+    //unused
+    bool res = true;
+
+    si_currentInformation.offset = si_currentInformation.offset + 64; //address is in bytes
+
+    uint8_t* data = new uint8_t[64];
+
+    uint32_t time = TICKS_TO_MS(xTaskGetTickCount()) / 1000;
+
+    //Store beginning of packet
+    data[0] = 0b10100101
+    data[1] = 0b10100101;
+    data[2] = 0b00000000;
+    data[3] = 0b11111111;   
+
+    //Store time
+    data[4] = (time >> 24) & 0xFF;
+    data[5] = (time >> 16) & 0xFF;
+    data[6] = (time >> 8) & 0xFF;
+    data[7] = (time) & 0xFF;
+
+    //Store accelX_
+    data[8] = (si_currentInformation.accelX_ >> 24) & 0xFF;
+    data[9] = (si_currentInformation.accelX_ >> 16) & 0xFF;
+    data[10] = (si_currentInformation.accelX_ >> 8) & 0xFF;
+    data[11] = (si_currentInformation.accelX_) & 0xFF;
+
+    //Store accelY_
+    data[12] = (si_currentInformation.accelY_ >> 24) & 0xFF;
+    data[13] = (si_currentInformation.accelY_ >> 16) & 0xFF;
+    data[14] = (si_currentInformation.accelY_ >> 8) & 0xFF;
+    data[15] = (si_currentInformation.accelY_) & 0xFF;
+
+    //Store accelZ_
+    data[16] = (si_currentInformation.accelZ_ >> 24) & 0xFF;
+    data[17] = (si_currentInformation.accelZ_ >> 16) & 0xFF;
+    data[18] = (si_currentInformation.accelZ_ >> 8) & 0xFF;
+    data[19] = (si_currentInformation.accelZ_) & 0xFF;
+
+    //Store gyroX_
+    data[20] = (si_currentInformation.gyroX_ >> 24) & 0xFF;
+    data[21] = (si_currentInformation.gyroX_ >> 16) & 0xFF;
+    data[22] = (si_currentInformation.gyroX_ >> 8) & 0xFF;
+    data[23] = (si_currentInformation.gyroX_) & 0xFF;
+
+    //Store gyroY_
+    data[24] = (si_currentInformation.gyroY_ >> 24) & 0xFF;
+    data[25] = (si_currentInformation.gyroY_ >> 16) & 0xFF;
+    data[26] = (si_currentInformation.gyroY_ >> 8) & 0xFF;
+    data[27] = (si_currentInformation.gyroY_) & 0xFF;
+
+    //Store gyroZ_
+    data[28] = (si_currentInformation.gyroZ_ >> 24) & 0xFF;
+    data[29] = (si_currentInformation.gyroZ_ >> 16) & 0xFF;
+    data[30] = (si_currentInformation.gyroZ_ >> 8) & 0xFF;
+    data[31] = (si_currentInformation.gyroZ_) & 0xFF;
+
+    //Store magnetoX_
+    data[32] = (si_currentInformation.magnetoX_ >> 24) & 0xFF;
+    data[33] = (si_currentInformation.magnetoX_ >> 16) & 0xFF;
+    data[34] = (si_currentInformation.magnetoX_ >> 8) & 0xFF;
+    data[35] = (si_currentInformation.magnetoX_) & 0xFF;
+
+    //Store magnetoY_
+    data[36] = (si_currentInformation.magnetoY_ >> 24) & 0xFF;
+    data[37] = (si_currentInformation.magnetoY_ >> 16) & 0xFF;
+    data[38] = (si_currentInformation.magnetoY_ >> 8) & 0xFF;
+    data[39] = (si_currentInformation.magnetoY_) & 0xFF;
+
+    //Store magnetoZ_
+    data[40] = (si_currentInformation.magnetoZ_ >> 24) & 0xFF;
+    data[41] = (si_currentInformation.magnetoZ_ >> 16) & 0xFF;
+    data[42] = (si_currentInformation.magnetoZ_ >> 8) & 0xFF;
+    data[43] = (si_currentInformation.magnetoZ_) & 0xFF;
+
+    //Store pressure_
+    data[44] = (si_currentInformation.pressure_ >> 24) & 0xFF;
+    data[45] = (si_currentInformation.pressure_ >> 16) & 0xFF;
+    data[46] = (si_currentInformation.pressure_ >> 8) & 0xFF;
+    data[47] = (si_currentInformation.pressure_) & 0xFF;
+
+    //Store temperature_
+    data[48] = (si_currentInformation.temperature_ >> 24) & 0xFF;
+    data[49] = (si_currentInformation.temperature_ >> 16) & 0xFF;
+    data[50] = (si_currentInformation.temperature_ >> 8) & 0xFF;
+    data[51] = (si_currentInformation.temperature_) & 0xFF;
+
+    //Store offset
+    data[52] = (si_currentInformation.offset >> 24) & 0xFF;
+    data[53] = (si_currentInformation.offset >> 16) & 0xFF;
+    data[54] = (si_currentInformation.offset >> 8) & 0xFF;
+    data[55] = (si_currentInformation.offset) & 0xFF;
+
+    //Calculate and store CRC
+    uint32_t checksum = Utils::getCRC32(data, 56);
+
+    data[56] = (checksum >> 24) & 0xFF;
+    data[57] = (checksum >> 16) & 0xFF;
+    data[58] = (checksum >> 8) & 0xFF;
+    data[59] = (checksum) & 0xFF;
+    //SOAR_PRINT("checksum: %d\n", checksum);
+
+    //Store beginning of packet
+    data[60] = 0b10100101
+    data[61] = 0b10100101;
+    data[62] = 0b00000000;
+    data[63] = 0b11111111;   
+
+    //Write to relevant sector
+    //byte address is not the same as bit address
+    addressToWrite = si_currentInformation.offset + 8192;
+    for(int i = 0; i < 64; i++) {
+        W25qxx_WriteByte(data[i], addressToWrite + i);
+    }
+
+    //for debugging
+    //uint8_t* sector1Data = new uint8_t[16];
+    //uint8_t* sector2Data = new uint8_t[16];
+    //W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
+    //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
+
+    return res;
+}
+
+/**
  * @brief Default constructor for SystemStorage, initializes flash struct
  */
 SystemStorage::SystemStorage()
