@@ -11,6 +11,8 @@
 #include "RocketSM.hpp"
 #include "w25qxx.hpp"
 
+#define INITIAL_SENSOR_FLASH_OFFSET 12288
+
 /**
  * @brief State information to be written to flash
  */

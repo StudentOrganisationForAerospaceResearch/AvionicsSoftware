@@ -267,7 +267,7 @@ bool SystemStorage::WriteSensorInfoToFlash()
 
     //Write to relevant sector
     //byte address is not the same as bit address
-    uint32_t addressToWrite = si_currentInformation.offset + 8192;
+    uint32_t addressToWrite = si_currentInformation.offset + INITIAL_SENSOR_FLASH_OFFSET;
     for(uint32_t i = 0; i < 64; i++) {
         W25qxx_WriteByte(data[i], addressToWrite + i);
     }
@@ -289,11 +289,10 @@ bool SystemStorage::ReadSensorInfoFromFlash()
     //unused
     bool res = true;
 
-    uint32_t startingOffset = 8192;
     uint8_t data[64];
 
     for(uint32_t i = 0; i * 64 < si_currentInformation.offset; i++) {
-        W25qxx_ReadBytes(data, startingOffset + (i * 64), 64);
+        W25qxx_ReadBytes(data, INITIAL_SENSOR_FLASH_OFFSET + (i * 64), 64);
 
         uint32_t startingPacket = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
         uint32_t time = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[7]);
@@ -313,7 +312,7 @@ bool SystemStorage::ReadSensorInfoFromFlash()
         uint32_t endingPacket = (data[60] << 24) | (data[61] << 16) | (data[62] << 8) | (data[63]);
 
         SOAR_PRINT("Data at byte address %d: %#010X   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d.%d   %d.%d   %d   %d   %#010X\n", 
-                    startingOffset + (i * 64), startingPacket, time, accelX_, accelY_, accelZ_, gyroX_, gyroY_, gyroZ_, magnetoX_,
+                    INITIAL_SENSOR_FLASH_OFFSET + (i * 64), startingPacket, time, accelX_, accelY_, accelZ_, gyroX_, gyroY_, gyroZ_, magnetoX_,
                     magnetoY_, magnetoZ_, pressure_ / 1000, pressure_ % 1000, temperature_ / 100, temperature_ % 100, offset, checksum, endingPacket);
 
     }
