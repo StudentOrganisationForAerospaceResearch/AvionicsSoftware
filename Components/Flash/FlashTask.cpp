@@ -65,6 +65,9 @@ void FlashTask::Run(void * pvParams)
         Command baroRequest(REQUEST_COMMAND, BARO_REQUEST_TRANSMIT);
         BarometerTask::Inst().GetEventQueue()->Send(baroRequest);
 
+        Command baroDebug(REQUEST_COMMAND, BARO_REQUEST_DEBUG);
+        BarometerTask::Inst().GetEventQueue()->Send(baroDebug);
+
         //Wait until Baro has sent a valid data command
         Command cm;
         while(true) {
@@ -86,6 +89,9 @@ void FlashTask::Run(void * pvParams)
 
         Command IMURequest(REQUEST_COMMAND, IMU_REQUEST_TRANSMIT);
         IMUTask::Inst().GetEventQueue()->Send(IMURequest);
+
+        Command IMUDebug(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
+        IMUTask::Inst().GetEventQueue()->Send(IMUDebug);
 
         //Wait until IMU has sent a valid data command
         while(true) {
