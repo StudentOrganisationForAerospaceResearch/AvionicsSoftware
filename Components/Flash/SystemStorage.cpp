@@ -312,7 +312,7 @@ bool SystemStorage::ReadSensorInfoFromFlash()
         uint32_t checksum = (data[56] << 24) | (data[57] << 16) | (data[58] << 8) | (data[59]);
         uint32_t endingPacket = (data[60] << 24) | (data[61] << 16) | (data[62] << 8) | (data[63]);
 
-        SOAR_PRINT("Data at byte address %d: %#010X   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d.%d   %d.%d   %d   %d   %d   %#010X\n", 
+        SOAR_PRINT("Data at byte address %d: %#010X   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d.%d   %d.%d   %d   %d   %#010X\n", 
                     startingOffset + (i * 64), startingPacket, time, accelX_, accelY_, accelZ_, gyroX_, gyroY_, gyroZ_, magnetoX_,
                     magnetoY_, magnetoZ_, pressure_ / 1000, pressure_ % 1000, temperature_ / 100, temperature_ % 100, offset, checksum, endingPacket);
 
