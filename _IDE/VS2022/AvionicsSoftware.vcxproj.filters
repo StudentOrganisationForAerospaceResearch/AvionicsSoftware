@@ -73,6 +73,9 @@
     <Filter Include="Source Files\Components\SoarProtocol\SoarProto\_C++">
       <UniqueIdentifier>{7233d0ec-a313-4fee-9342-88ce0ae3c2b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib">
+      <UniqueIdentifier>{4f647295-319e-4df6-95db-673ff5a337e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvionicsSoftware.cpp">
@@ -245,6 +248,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\SoarProtocol\DMBProtocolTask.cpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\Fields.cpp">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\MessageInterface.cpp">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\ReadBufferSection.cpp">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1571,9 +1583,6 @@
     <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CoreProto.hpp">
-      <Filter>Source Files\Components\SoarProtocol\SoarProto\_C++</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\TelemetryMessage.hpp">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_C++</Filter>
     </ClInclude>
@@ -1582,6 +1591,51 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\ControlMessage.hpp">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_C++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CoreProto.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_C++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\Defines.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\Errors.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\Fields.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\FieldStringBytes.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\MessageInterface.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\MessageSizeCalculator.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\ReadBufferFixedSize.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\ReadBufferInterface.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\ReadBufferSection.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\RepeatedField.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\RepeatedFieldFixedSize.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\WireFormatter.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\WriteBufferFixedSize.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\WriteBufferInterface.h">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
