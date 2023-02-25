@@ -73,6 +73,9 @@ void FlightTask::Run(void * pvParams)
         GPIO::LED3::Off();
         osDelay(500);
 
+        // For testing, generate a PROTOBUF message and send it to the Protocol Task
+
+
         //Every cycle, print something out (for testing)
         SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
