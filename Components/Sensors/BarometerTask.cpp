@@ -138,7 +138,7 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case BARO_REQUEST_TRANSMIT:
     {
-        SOAR_PRINT("implemented for testing flash\n");
+        //SOAR_PRINT("implemented for testing flash\n");
         Command cmd(DATA_COMMAND);
         uint8_t info[8] = {0, 0, 0, 0, 0, 0, 0, 0};
         //Store pressure_

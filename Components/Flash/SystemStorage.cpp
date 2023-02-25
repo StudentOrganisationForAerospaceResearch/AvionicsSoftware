@@ -40,7 +40,7 @@ bool SystemStorage::WriteStateToFlash()
     data[13] = (checksum >> 16) & 0xFF;
     data[14] = (checksum >> 8) & 0xFF;
     data[15] = (checksum) & 0xFF;
-    SOAR_PRINT("checksum: %d\n", checksum);
+    //SOAR_PRINT("checksum: %d\n", checksum);
 
     //Write to relevant sector
     //sector address is not the same as address address but why

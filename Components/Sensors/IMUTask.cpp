@@ -163,7 +163,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case IMU_REQUEST_TRANSMIT:
     {
-        SOAR_PRINT("Implemented for testing flash\n");
+        //SOAR_PRINT("Implemented for testing flash\n");
         Command cmd(DATA_COMMAND);
         uint8_t info[36] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         //Store accelX_
