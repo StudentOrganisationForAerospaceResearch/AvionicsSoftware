@@ -12,7 +12,7 @@ bool SystemStorage::WriteStateToFlash()
 
     rs_currentInformation.SequenceNumber++;
 
-    uint8_t* data = new uint8_t[16];
+    uint8_t data[16];
 
     //Store state
     data[0] = (rs_currentInformation.State >> 24) & 0xFF;
@@ -48,8 +48,8 @@ bool SystemStorage::WriteStateToFlash()
     W25qxx_WriteSector(data, addressToWrite, 0, 16);
 
     //for debugging
-    //uint8_t* sector1Data = new uint8_t[16];
-    //uint8_t* sector2Data = new uint8_t[16];
+    //uint8_t sector1Data[16];
+    //uint8_t sector2Data[16];
     //W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
     //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
 
@@ -70,8 +70,8 @@ bool SystemStorage::ReadStateFromFlash()
 {
     bool res = true;
 
-    uint8_t* sector1Data = new uint8_t[16];
-    uint8_t* sector2Data = new uint8_t[16];
+    uint8_t sector1Data[16];
+    uint8_t sector2Data[16];
 
     //read state sectors
     W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
@@ -162,7 +162,7 @@ bool SystemStorage::WriteSensorInfoToFlash()
 
     si_currentInformation.offset = si_currentInformation.offset + 64; //address is in bytes
 
-    uint8_t* data = new uint8_t[64];
+    uint8_t data[64];
 
     uint32_t time = TICKS_TO_MS(xTaskGetTickCount()) / 1000;
 
@@ -273,8 +273,8 @@ bool SystemStorage::WriteSensorInfoToFlash()
     }
 
     //for debugging
-    //uint8_t* sector1Data = new uint8_t[16];
-    //uint8_t* sector2Data = new uint8_t[16];
+    //uint8_t sector1Data[16];
+    //uint8_t sector2Data[16];
     //W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
     //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
 
