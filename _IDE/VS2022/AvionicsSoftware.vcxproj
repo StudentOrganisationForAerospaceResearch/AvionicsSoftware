@@ -98,8 +98,8 @@
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\ProtocolTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CommandMessage.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\ControlMessage.hpp" />
-    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\Core.hpp" />
-    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\Telemetry.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CoreProto.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\TelemetryMessage.hpp" />
     <ClInclude Include="..\..\Components\SystemDefines.hpp" />
     <ClInclude Include="..\..\Components\Utils.hpp" />
     <ClInclude Include="..\..\Components\_Libraries\embedded-template-library\include\etl\absolute.h" />

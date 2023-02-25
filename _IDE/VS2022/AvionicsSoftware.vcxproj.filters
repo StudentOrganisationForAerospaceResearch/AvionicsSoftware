@@ -1568,10 +1568,13 @@
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\cobs.h">
       <Filter>Source Files\Components\SoarProtocol\SoarProto</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\Core.hpp">
+    <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp">
+      <Filter>Source Files\Components\SoarProtocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CoreProto.hpp">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_C++</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\Telemetry.hpp">
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\TelemetryMessage.hpp">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_C++</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CommandMessage.hpp">
@@ -1579,9 +1582,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\ControlMessage.hpp">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_C++</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp">
-      <Filter>Source Files\Components\SoarProtocol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
