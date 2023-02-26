@@ -1,29 +1,29 @@
 /**
  ******************************************************************************
  * File Name          : WatchdogTask.cpp
- * Description        : Primary flight task, default task for the system.
+ * Description        : Primary Watchdog task, default task for the system.
  ******************************************************************************
 */
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
 #include "Timer.hpp"
 #include "WatchdogTask.hpp"
-#include "FlightTask.hpp"
 
+
+/**
+ * @brief Constructor for WatchdogTask
+ */
+WatchdogTask::WatchdogTask() : Task(WATCHDOG_TASK_QUEUE_DEPTH_OBJS)
+{
+}
 
 /**
  * @brief Initialize the WatchdogTask
- * @params Must pass in the timer period, If no heartbeat in received within this period then the timerr will be reset
- */
-WatchdogTask::WatchdogTask(){}
-
-/**
- * @brief Initialize the FlightTask
  */
 void WatchdogTask::InitTask()
 {
     // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize flight task twice");
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize watchdog task twice");
 
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)WatchdogTask::RunTask,
@@ -37,7 +37,7 @@ void WatchdogTask::InitTask()
 }
 
 /**
- * @brief This function is called if the heartbeat timer expires and it sends a command to reset the system
+ * @brief This function is called if the heartbeat timer expires and it sends a command to ABORT the system
  * @param Automatically passes is timer handle for callback, should not be used
  */
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
@@ -56,14 +56,14 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 void WatchdogTask::HandleCommand(Command& cm)
 {
     switch (cm.GetCommand()) {
-    case REQUEST_COMMAND: {
+    case HEARTBEAT_COMMAND: {
         HandleHeartbeat(cm.GetTaskCommand());
     }
     case TASK_SPECIFIC_COMMAND: {
         break;
     }
     case RADIOHB_CHANGE_PERIOD:
-        SOAR_PRINT("HB Period Changed \n");
+        SOAR_PRINT("HB Period Changed to %d \n", (cm.GetTaskCommand()*1000));
         heartbeatTimer.ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
         break;
     default:
@@ -98,12 +98,9 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
  */
 void WatchdogTask::Run(void * pvParams)
 {
-    GPIO::LED1::Off();
-
     heartbeatTimer = Timer(HeartbeatFailureCallback);
     heartbeatTimer.ChangePeriodMs(5000);
     heartbeatTimer.Start();
-
 
     while (1) {
         //Every cycle, print something out (for testing)
