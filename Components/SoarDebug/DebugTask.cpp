@@ -18,6 +18,7 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "WatchdogTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -111,6 +112,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         if (state != ERRVAL && state > 0 && state < UINT16_MAX)
             FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, state));
     }
+    else if (strncmp(msg, "setradiohb ", 11) == 0) {
+        // Send the heartbeat set to the watchdog task, where val is seconds
+        int32_t val = ExtractIntParameter(msg, 11);
+        if (val != ERRVAL)
+            WatchdogTask::Inst().SendCommand(Command(RADIOHB_CHANGE_PERIOD, val));
+    }
 
     //-- SYSTEM / CHAR COMMANDS -- (Must be last)
     else if (strcmp(msg, "sysreset") == 0) {
@@ -157,6 +164,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         IMUTask::Inst().GetEventQueue()->Send(cmd);
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
+    }
+    else if (strcmp(msg, "radiohb") == 0) {
+        WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
+    }
+    else if (strcmp(msg, "disablehb") == 0) {
+        WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
     else {
         // Single character command, or unknown command
