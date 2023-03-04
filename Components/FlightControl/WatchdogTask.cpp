@@ -43,8 +43,7 @@ void WatchdogTask::InitTask()
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
 
-    SOAR_PRINT("The system lost its heartbeat and had to reset!!!\n");
-//    SOAR_ASSERT(false ,"The system lost its heartbeat and had to reset!!! \n");
+    SOAR_PRINT("System lost radio heartbeat: attempting to ABORT\n");
     Timer::DefaultCallback(rtTimerHandle);
     WatchdogTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
@@ -63,7 +62,7 @@ void WatchdogTask::HandleCommand(Command& cm)
         break;
     }
     case RADIOHB_CHANGE_PERIOD:
-        SOAR_PRINT("HB Period Changed to %d \n", (cm.GetTaskCommand()*1000));
+        SOAR_PRINT("HB Period Changed to %d s\n", (cm.GetTaskCommand()));
         heartbeatTimer.ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
         break;
     default:
@@ -103,9 +102,6 @@ void WatchdogTask::Run(void * pvParams)
     heartbeatTimer.Start();
 
     while (1) {
-        //Every cycle, print something out (for testing)
-//        SOAR_PRINT("WatchdogTask::Run() - [%d] Seconds\n", tempSecondCounter++);
-
         Command cm;
 
         //Wait forever for a command
@@ -114,7 +110,5 @@ void WatchdogTask::Run(void * pvParams)
         //Process the command
         HandleCommand(cm);
 
-
-        // TODO: Message beeps
     }
 }

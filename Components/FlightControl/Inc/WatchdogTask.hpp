@@ -10,7 +10,7 @@
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 #include "Timer.hpp"
-    
+
 /* Macros/Enums ------------------------------------------------------------*/
 enum HEARTBEAT_COMMANDS  {
     RADIOHB_NONE = 0,
@@ -38,16 +38,11 @@ protected:
     void HandleHeartbeat(uint16_t taskCommand);                        // If it receives a heartbeat then it resets the timer
     Timer heartbeatTimer;
 
-
 private:
     // Private Functions
     WatchdogTask();        // Private constructor
     WatchdogTask(const WatchdogTask&);                        // Prevent copy-construction
     WatchdogTask& operator=(const WatchdogTask&);            // Prevent assignment
-
-
-
-
 };
 
 #endif    // SOAR_WATCHDOGTASK_HPP_

@@ -166,13 +166,9 @@ void DebugTask::HandleDebugMessage(const char* msg)
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
     else if (strcmp(msg, "radiohb") == 0) {
-//        Command cmd(HEARTBEAT_COMMAND, RADIOHB_REQUEST);
-//        WatchdogTask::Inst().GetEventQueue()->Send(cmd);
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     }
     else if (strcmp(msg, "disablehb") == 0) {
-//        Command cmd(HEARTBEAT_COMMAND, RADIOHB_DISABLED);
-//        WatchdogTask::Inst().GetEventQueue()->Send(cmd);
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
     else {
