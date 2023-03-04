@@ -18,6 +18,7 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "DMBProtocolTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -40,6 +41,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart->Instance == SystemHandles::UART_Debug->Instance)
         DebugTask::Inst().InterruptRxData();
+    else if (huart->Instance == SystemHandles::UART_Protocol->Instance)
+        DMBProtocolTask::Inst().InterruptRxData();
 }
 
 /* Functions -----------------------------------------------------------------*/

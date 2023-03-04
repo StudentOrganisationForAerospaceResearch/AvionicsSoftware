@@ -1,29 +1,26 @@
 /**
  ******************************************************************************
  * File Name          : DMBProtocolTask.hpp
- * Description        :
+ * Description        : Protocol task, specific to DMB
  ******************************************************************************
 */
-#ifndef SOAR_SYSTEM_DMB_PROTO_TASK_HPP_
-#define SOAR_SYSTEM_DMB_PROTO_TASK_HPP_
-/* Includes ------------------------------------------------------------------*/
+#ifndef SOAR_DMBPROTOCOL_HPP_
+#define SOAR_DMBPROTOCOL_HPP_
+#include "ProtocolTask.hpp"
 #include "Task.hpp"
 #include "SystemDefines.hpp"
-#include "ProtocolTask.hpp"
 #include "UARTTask.hpp"
 
 /* Enums ------------------------------------------------------------------*/
 
 /* Class ------------------------------------------------------------------*/
-class DMBProtocolTask : public Task
+class DMBProtocolTask : public ProtocolTask
 {
 public:
     static DMBProtocolTask& Inst() {
         static DMBProtocolTask inst;
         return inst;
     }
-
-    DMBProtocolTask();
 
     void InitTask();
 
@@ -32,12 +29,12 @@ public:
 
 protected:
     // NOTE: This must be in the derived class
-    //    static void RunTask(void* pvParams) { DMBProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+    static void RunTask(void* pvParams) { DMBProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
     void Run(void* pvParams);    // Main run code
 
     void ConfigureUART();
     // This will receive a (DMB_PROTO_COMMAND, DMB_PROTO_RX_DECODED_DATA) with the data pointer allocated, COBS decoded (but in the SOAR Message Format)
-    virtual void HandleDMBProtocolMessage(Command& cmd) = 0;   // This MUST be implemented in the derived board-specific DMBProtocolTask object
+    void HandleProtocolMessage(Command& cmd) override;
     //void HandleCommand(Command& cm);
 
     bool ReceiveData();
@@ -52,10 +49,9 @@ protected:
     uint8_t protocolRxChar; // Character received from UART Interrupt
 
 private:
-    // NOTE: This must be in the derived class
-    //    DMBProtocolTask(); // Private constructor
-    //    DMBProtocolTask(const DMBProtocolTask&);                    // Prevent copy-construction
-    //    DMBProtocolTask& operator=(const DMBProtocolTask&);            // Prevent assignment
+    DMBProtocolTask();        // Private constructor
+    DMBProtocolTask(const DMBProtocolTask&);                        // Prevent copy-construction
+    DMBProtocolTask& operator=(const DMBProtocolTask&);            // Prevent assignment
 };
 
-#endif    // SOAR_SYSTEM_DMB_PROTO_TASK_HPP_
+#endif    // SOAR_DMBPROTOCOL_HPP_
