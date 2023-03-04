@@ -38,6 +38,7 @@ DMBProtocolTask::DMBProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB)
 
 /**
  * @brief Handle protocol message
+ * @param Protocol message to handle, passed by reference
  */
 void DMBProtocolTask::HandleProtocolMessage(Command& cmd)
 {
