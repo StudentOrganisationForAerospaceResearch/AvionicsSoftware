@@ -44,7 +44,8 @@ void FlightTask::Run(void * pvParams)
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
     GPIO::LED1::Off();
 
-    rsm_ = new RocketSM(RS_ABORT, false);
+    // TODO: Change back to RS_ABORT
+    rsm_ = new RocketSM(RS_ARM, false);
 
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
