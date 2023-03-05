@@ -6,6 +6,7 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "TimerTransitions.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -416,7 +417,6 @@ RocketState Ignition::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
 
-
     // Switch for the given command
     switch (cm.GetCommand()) {
     case CONTROL_ACTION: {
@@ -427,6 +427,13 @@ RocketState Ignition::HandleCommand(Command& cm)
         case RSC_GOTO_ARM:
             // This is a transition directly to ARM (no checks required)
             nextStateID = RS_ARM;
+            break;
+        case RSC_IGINITION_CMD:
+            SOAR_PRINT("Entered IGNITION state\n");
+            TimerTransitions::Inst().EnterIgnition();
+            break;
+        case RSC_CONFIRM_IGNITION:
+            TimerTransitions::Inst().arrLanuchConfirmFlags = true;
             break;
         default:
             break;
