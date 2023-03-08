@@ -128,193 +128,27 @@ bool SystemStorage::ReadStateFromFlash()
 /**
  * @brief Creates CRC, writes sensor info struct and CRC to flash, increases offset
  */
-bool SystemStorage::WriteSensorInfoToFlash()
+void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 {
-    //unused
-    bool res = true;
-
-    rs_currentInformation.data_offset = rs_currentInformation.data_offset + 64; //address is in bytes
-    uint8_t data[64];
-
-    uint32_t time = TICKS_TO_MS(xTaskGetTickCount()) / 1000;
-
-    //Store beginning of packet
-    data[0] = 0b10100101;
-    data[1] = 0b10100101;
-    data[2] = 0b00000000;
-    data[3] = 0b11111111;   
-
-    //Store time
-    data[4] = (time >> 24) & 0xFF;
-    data[5] = (time >> 16) & 0xFF;
-    data[6] = (time >> 8) & 0xFF;
-    data[7] = (time) & 0xFF;
-
-    //Store accelX_
-    data[8] = (si_currentInformation.accelX_ >> 24) & 0xFF;
-    data[9] = (si_currentInformation.accelX_ >> 16) & 0xFF;
-    data[10] = (si_currentInformation.accelX_ >> 8) & 0xFF;
-    data[11] = (si_currentInformation.accelX_) & 0xFF;
-
-    //Store accelY_
-    data[12] = (si_currentInformation.accelY_ >> 24) & 0xFF;
-    data[13] = (si_currentInformation.accelY_ >> 16) & 0xFF;
-    data[14] = (si_currentInformation.accelY_ >> 8) & 0xFF;
-    data[15] = (si_currentInformation.accelY_) & 0xFF;
-
-    //Store accelZ_
-    data[16] = (si_currentInformation.accelZ_ >> 24) & 0xFF;
-    data[17] = (si_currentInformation.accelZ_ >> 16) & 0xFF;
-    data[18] = (si_currentInformation.accelZ_ >> 8) & 0xFF;
-    data[19] = (si_currentInformation.accelZ_) & 0xFF;
-
-    //Store gyroX_
-    data[20] = (si_currentInformation.gyroX_ >> 24) & 0xFF;
-    data[21] = (si_currentInformation.gyroX_ >> 16) & 0xFF;
-    data[22] = (si_currentInformation.gyroX_ >> 8) & 0xFF;
-    data[23] = (si_currentInformation.gyroX_) & 0xFF;
-
-    //Store gyroY_
-    data[24] = (si_currentInformation.gyroY_ >> 24) & 0xFF;
-    data[25] = (si_currentInformation.gyroY_ >> 16) & 0xFF;
-    data[26] = (si_currentInformation.gyroY_ >> 8) & 0xFF;
-    data[27] = (si_currentInformation.gyroY_) & 0xFF;
-
-    //Store gyroZ_
-    data[28] = (si_currentInformation.gyroZ_ >> 24) & 0xFF;
-    data[29] = (si_currentInformation.gyroZ_ >> 16) & 0xFF;
-    data[30] = (si_currentInformation.gyroZ_ >> 8) & 0xFF;
-    data[31] = (si_currentInformation.gyroZ_) & 0xFF;
-
-    //Store magnetoX_
-    data[32] = (si_currentInformation.magnetoX_ >> 24) & 0xFF;
-    data[33] = (si_currentInformation.magnetoX_ >> 16) & 0xFF;
-    data[34] = (si_currentInformation.magnetoX_ >> 8) & 0xFF;
-    data[35] = (si_currentInformation.magnetoX_) & 0xFF;
-
-    //Store magnetoY_
-    data[36] = (si_currentInformation.magnetoY_ >> 24) & 0xFF;
-    data[37] = (si_currentInformation.magnetoY_ >> 16) & 0xFF;
-    data[38] = (si_currentInformation.magnetoY_ >> 8) & 0xFF;
-    data[39] = (si_currentInformation.magnetoY_) & 0xFF;
-
-    //Store magnetoZ_
-    data[40] = (si_currentInformation.magnetoZ_ >> 24) & 0xFF;
-    data[41] = (si_currentInformation.magnetoZ_ >> 16) & 0xFF;
-    data[42] = (si_currentInformation.magnetoZ_ >> 8) & 0xFF;
-    data[43] = (si_currentInformation.magnetoZ_) & 0xFF;
-
-    //Store pressure_
-    data[44] = (si_currentInformation.pressure_ >> 24) & 0xFF;
-    data[45] = (si_currentInformation.pressure_ >> 16) & 0xFF;
-    data[46] = (si_currentInformation.pressure_ >> 8) & 0xFF;
-    data[47] = (si_currentInformation.pressure_) & 0xFF;
-
-    //Store temperature_
-    data[48] = (si_currentInformation.temperature_ >> 24) & 0xFF;
-    data[49] = (si_currentInformation.temperature_ >> 16) & 0xFF;
-    data[50] = (si_currentInformation.temperature_ >> 8) & 0xFF;
-    data[51] = (si_currentInformation.temperature_) & 0xFF;
-
-    //Store offset
-    data[52] = (rs_currentInformation.data_offset >> 24) & 0xFF;
-    data[53] = (rs_currentInformation.data_offset >> 16) & 0xFF;
-    data[54] = (rs_currentInformation.data_offset >> 8) & 0xFF;
-    data[55] = (rs_currentInformation.data_offset) & 0xFF;
-
-    //Calculate and store CRC
-    uint32_t checksum = Utils::getCRC32(data, 56);
-
-    data[56] = (checksum >> 24) & 0xFF;
-    data[57] = (checksum >> 16) & 0xFF;
-    data[58] = (checksum >> 8) & 0xFF;
-    data[59] = (checksum) & 0xFF;
-    //SOAR_PRINT("checksum: %d\n", checksum);
-
-    //Store beginning of packet
-    data[60] = 0b11111111;
-    data[61] = 0b00000000;
-    data[62] = 0b10100101;
-    data[63] = 0b10100101;   
-
     //Write to relevant sector
-    //byte address is not the same as bit address
+
     uint32_t addressToWrite = rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET;
-    for(uint32_t i = 0; i < 64; i++) {
+    for(uint32_t i = 0; i < size; i++) {
         W25qxx_WriteByte(data[i], addressToWrite + i);
     }
 
-    //for debugging
-    //uint8_t sector1Data[16];
-    //uint8_t sector2Data[16];
-    //W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
-    //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
-
-    return res;
+    rs_currentInformation.data_offset = rs_currentInformation.data_offset + size; //address is in bytes
 }
 
 /**
- * @brief reads all sensor data and prints it through UART up until offset read from struct
+ * @brief reads all data and prints it through UART up until offset read from struct
  */
-bool SystemStorage::ReadSensorInfoFromFlash()
+bool SystemStorage::ReadDataFromFlash()
 {
     //unused
     bool res = true;
 
-    uint8_t data[64];
-
-    for(uint32_t i = 0; i * 64 < rs_currentInformation.data_offset; i++) {
-        W25qxx_ReadBytes(data, INITIAL_SENSOR_FLASH_OFFSET + (i * 64), 64);
-
-        uint32_t startingPacket = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
-        uint32_t time = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[7]);
-        uint32_t accelX_ = (data[8] << 24) | (data[9] << 16) | (data[10] << 8) | (data[11]);
-        uint32_t accelY_ = (data[12] << 24) | (data[13] << 16) | (data[14] << 8) | (data[15]);
-        uint32_t accelZ_ = (data[16] << 24) | (data[17] << 16) | (data[18] << 8) | (data[19]);
-        uint32_t gyroX_ = (data[20] << 24) | (data[21] << 16) | (data[22] << 8) | (data[23]);
-        uint32_t gyroY_ = (data[24] << 24) | (data[25] << 16) | (data[26] << 8) | (data[27]);
-        uint32_t gyroZ_ = (data[28] << 24) | (data[29] << 16) | (data[30] << 8) | (data[31]);
-        uint32_t magnetoX_ = (data[32] << 24) | (data[33] << 16) | (data[34] << 8) | (data[35]);
-        uint32_t magnetoY_ = (data[36] << 24) | (data[37] << 16) | (data[38] << 8) | (data[39]);
-        uint32_t magnetoZ_ = (data[40] << 24) | (data[41] << 16) | (data[42] << 8) | (data[43]);
-        uint32_t pressure_ = (data[44] << 24) | (data[45] << 16) | (data[46] << 8) | (data[47]);
-        uint32_t temperature_ = (data[48] << 24) | (data[49] << 16) | (data[50] << 8) | (data[51]);
-        uint32_t offset = (data[52] << 24) | (data[53] << 16) | (data[54] << 8) | (data[55]);
-        uint32_t checksum = (data[56] << 24) | (data[57] << 16) | (data[58] << 8) | (data[59]);
-        uint32_t endingPacket = (data[60] << 24) | (data[61] << 16) | (data[62] << 8) | (data[63]);
-
-        SOAR_PRINT("%#010X   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %d   %#010X", 
-                    startingPacket, time, accelX_, accelY_, accelZ_, gyroX_, gyroY_, gyroZ_, magnetoX_,
-                    magnetoY_, magnetoZ_, pressure_, temperature_, offset, checksum, endingPacket);
-
-    }
-
     return res;
-}
-
-/**
- * @brief updates Barometric data in Sensor Struct
- */
-void SystemStorage::UpdateBaroData(uint8_t* data)
-{
-    si_currentInformation.pressure_ = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
-    si_currentInformation.temperature_ = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[7]);
-}
-
-/**
- * @brief updates IMU data in Sensor Struct
- */
-void SystemStorage::UpdateIMUData(uint8_t* data)
-{
-    si_currentInformation.accelX_ = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);
-    si_currentInformation.accelY_ = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | (data[7]);
-    si_currentInformation.accelZ_ = (data[8] << 24) | (data[9] << 16) | (data[10] << 8) | (data[11]);
-    si_currentInformation.gyroX_ = (data[12] << 24) | (data[13] << 16) | (data[14] << 8) | (data[15]);
-    si_currentInformation.gyroY_ = (data[16] << 24) | (data[17] << 16) | (data[18] << 8) | (data[19]);
-    si_currentInformation.gyroZ_ = (data[20] << 24) | (data[21] << 16) | (data[22] << 8) | (data[23]);
-    si_currentInformation.magnetoX_ = (data[24] << 24) | (data[25] << 16) | (data[26] << 8) | (data[27]);
-    si_currentInformation.magnetoY_ = (data[28] << 24) | (data[29] << 16) | (data[30] << 8) | (data[31]);
-    si_currentInformation.magnetoZ_ = (data[32] << 24) | (data[33] << 16) | (data[34] << 8) | (data[35]);
 }
 
 /**
@@ -328,7 +162,6 @@ SystemStorage::SystemStorage()
     bool res = ReadStateFromFlash();
     if (res == false) {
         rs_currentInformation = {RS_ABORT, 0};
-        si_currentInformation = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         //should probably erase all data sectors
         SOAR_PRINT("readback returned false");
     }
@@ -343,15 +176,23 @@ SystemStorage::SystemStorage()
 void SystemStorage::HandleCommand(Command& cm)
 {
     SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
-    if(cm.GetTaskCommand() == 1) 
-    {
-        rs_currentInformation.State = (RocketState) (cm.GetDataPointer())[0];
-        WriteStateToFlash();
-        SOAR_PRINT("state written to flash");
-    }
-    else if(cm.GetTaskCommand() == 2) 
-    {
-        ReadSensorInfoFromFlash();
+    switch(cm.GetCommand()) {
+        case TASK_SPECIFIC_COMMAND: {
+            if(cm.GetTaskCommand() == 1) 
+            {
+                rs_currentInformation.State = (RocketState) (cm.GetDataPointer())[0];
+                WriteStateToFlash();
+                SOAR_PRINT("state written to flash");
+            }
+            else if(cm.GetTaskCommand() == 2) 
+            {
+                ReadDataFromFlash();
+            }
+        }
+        case DATA_COMMAND: 
+            WriteDataToFlash(cm.GetDataPointer(), cm.GetDataSize());
+        default:
+            break;
     }
     cm.Reset();
 }
