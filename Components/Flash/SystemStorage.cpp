@@ -1,63 +1,34 @@
 #include "SystemStorage.hpp"
 #include "FlightTask.hpp"
+#include <cstring>     // Support for memcpy
 
 /**
  * @brief Creates CRC, writes struct and CRC to flash, increases sequence number,
  *        then it erases previous sector
  */
-bool SystemStorage::WriteStateToFlash()
+void SystemStorage::WriteStateToFlash()
 {
-    //unused
-    bool res = true;
-
     rs_currentInformation.SequenceNumber++;
+    //SOAR_PRINT("sequence number: %d\n", rs_currentInformation.SequenceNumber);
 
-    uint8_t data[16];
+    uint8_t data[sizeof(StateInformation) + sizeof(uint32_t)];
 
-    //Store state
-    data[0] = (rs_currentInformation.State >> 24) & 0xFF;
-    data[1] = (rs_currentInformation.State >> 16) & 0xFF;
-    data[2] = (rs_currentInformation.State >> 8) & 0xFF;
-    data[3] = (rs_currentInformation.State) & 0xFF;
-
-    //Store sequence number
-    data[4] = (rs_currentInformation.SequenceNumber >> 24) & 0xFF;
-    data[5] = (rs_currentInformation.SequenceNumber >> 16) & 0xFF;
-    data[6] = (rs_currentInformation.SequenceNumber >> 8) & 0xFF;
-    data[7] = (rs_currentInformation.SequenceNumber) & 0xFF;
-    SOAR_PRINT("Sequence Number: %d\n", rs_currentInformation.SequenceNumber);
-
-    //Store data offset
-    data[8] = (si_currentInformation.offset >> 24) & 0xFF;
-    data[9] = (si_currentInformation.offset >> 16) & 0xFF;
-    data[10] = (si_currentInformation.offset >> 8) & 0xFF;
-    data[11] = (si_currentInformation.offset) & 0xFF;
+    memcpy(data, &rs_currentInformation, sizeof(StateInformation));
 
     //Calculate and store CRC
-    uint32_t checksum = Utils::getCRC32(data, 12);
+    uint32_t checksum = Utils::getCRC32(data, sizeof(StateInformation));
 
-    data[12] = (checksum >> 24) & 0xFF;
-    data[13] = (checksum >> 16) & 0xFF;
-    data[14] = (checksum >> 8) & 0xFF;
-    data[15] = (checksum) & 0xFF;
-    //SOAR_PRINT("checksum: %d\n", checksum);
+    memcpy(data + sizeof(StateInformation), &checksum, sizeof(uint32_t));
+    //SOAR_PRINT("checksum: %d\n", rs_currentInformation.CRC);
 
     //Write to relevant sector
-    //sector address is not the same as address address but why
+    //sector address is not the same as address address
     uint32_t addressToWrite = (rs_currentInformation.SequenceNumber % 2);
-    W25qxx_WriteSector(data, addressToWrite, 0, 16);
-
-    //for debugging
-    //uint8_t sector1Data[16];
-    //uint8_t sector2Data[16];
-    //W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
-    //W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
+    W25qxx_WriteSector(data, addressToWrite, 0, sizeof(StateInformation) + sizeof(uint32_t));
 
     //erase old sector
     uint32_t addressToErase = ((rs_currentInformation.SequenceNumber + 1) % 2);
     W25qxx_EraseSector(addressToErase);
-
-    return res;
 }
 
 /**
@@ -70,36 +41,44 @@ bool SystemStorage::ReadStateFromFlash()
 {
     bool res = true;
 
-    uint8_t sector1Data[16];
-    uint8_t sector2Data[16];
+    uint8_t sector1Data[sizeof(StateInformation) + sizeof(uint32_t)];
+    uint8_t sector2Data[sizeof(StateInformation) + sizeof(uint32_t)];
+
+    StateInformation sector1;
+    StateInformation sector2;
+
+    uint32_t sector1ReadChecksum;
+    uint32_t sector2ReadChecksum;
+
+    uint32_t sector1CalculatedChecksum;
+    uint32_t sector2CalculatedChecksum;
 
     //read state sectors
-    W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, 16);
-    W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, 16);
+    W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, sizeof(StateInformation) + sizeof(uint32_t));
+    W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, sizeof(StateInformation) + sizeof(uint32_t));
 
-    //reconstruct and recalculate checksums
-    uint32_t sector1ReadChecksum = (sector1Data[12] << 24) | (sector1Data[13] << 16) | (sector1Data[14] << 8) | (sector1Data[15]);
-    uint32_t sector2ReadChecksum = (sector2Data[12] << 24) | (sector2Data[13] << 16) | (sector2Data[14] << 8) | (sector2Data[15]);
+    memcpy(&sector1, sector1Data, sizeof(StateInformation));
+    memcpy(&sector2, sector2Data, sizeof(StateInformation));
+
+    memcpy(&sector1ReadChecksum, sector1Data + sizeof(StateInformation), sizeof(uint32_t));
+    memcpy(&sector2ReadChecksum, sector1Data + sizeof(StateInformation), sizeof(uint32_t));
     //SOAR_PRINT("Read Checksum1: %d\n", sector1ReadChecksum);
     //SOAR_PRINT("Read Checksum2: %d\n", sector2ReadChecksum);
 
-    uint32_t sector1CalculatedChecksum = Utils::getCRC32(sector1Data, 12);
-    uint32_t sector2CalculatedChecksum = Utils::getCRC32(sector2Data, 12);
+    sector1CalculatedChecksum = Utils::getCRC32(sector1Data, sizeof(StateInformation));
+    sector2CalculatedChecksum = Utils::getCRC32(sector2Data, sizeof(StateInformation));
     //SOAR_PRINT("Calculated Checksum1: %d\n", sector1CalculatedChecksum);
     //SOAR_PRINT("Calculated Checksum2: %d\n", sector2CalculatedChecksum);
 
-    //reconstruct sequence number
-    uint32_t sector1Sequence = sector1Data[4] << 24 | sector1Data[5] << 16 | sector1Data[6] << 8 | sector1Data[7];
-    uint32_t sector2Sequence = sector2Data[4] << 24 | sector2Data[5] << 16 | sector2Data[6] << 8 | sector2Data[7];
-    //SOAR_PRINT("Read Sequence1: %d\n", sector1Sequence);
-    //SOAR_PRINT("Read Sequence2: %d\n", sector2Sequence);
+    //SOAR_PRINT("Read Sequence1: %d\n", sector1.SequenceNumber);
+    //SOAR_PRINT("Read Sequence2: %d\n", sector2.SequenceNumber);
 
     uint8_t validSector = 0;
 
     //find the newest valid sector
     if(sector1ReadChecksum == sector1CalculatedChecksum && sector2ReadChecksum == sector2CalculatedChecksum)
     {
-        if(sector1Sequence > sector2Sequence)
+        if(sector1.SequenceNumber > sector2.SequenceNumber)
         {
             validSector = 1;
             SOAR_PRINT("sector 1 was valid");
@@ -131,20 +110,14 @@ bool SystemStorage::ReadStateFromFlash()
     //write to state struct depending on which sector was deemed valid
     if(validSector == 1) 
     {
-        RocketState sector1State = (RocketState) (sector1Data[0] << 24 | sector1Data[1] << 16 | sector1Data[2] << 8 | sector1Data[3]);
-        rs_currentInformation = {sector1State, sector1Sequence};
-        uint32_t offset = (sector1Data[8] << 24 | sector1Data[9] << 16 | sector1Data[10] << 8 | sector1Data[11]);
-        si_currentInformation = {offset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        rs_currentInformation = sector1;
         W25qxx_EraseSector(1);
         res = true;
     }
 
     if(validSector == 2) 
     {
-        RocketState sector2State = (RocketState) (sector2Data[0] << 24 | sector2Data[1] << 16 | sector2Data[2] << 8 | sector2Data[3]);
-        rs_currentInformation = {sector2State, sector2Sequence};
-        uint32_t offset = (sector2Data[8] << 24 | sector2Data[9] << 16 | sector2Data[10] << 8 | sector2Data[11]);
-        si_currentInformation = {offset, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        rs_currentInformation = sector2;
         W25qxx_EraseSector(0);
         res = true;
     }
@@ -160,8 +133,7 @@ bool SystemStorage::WriteSensorInfoToFlash()
     //unused
     bool res = true;
 
-    si_currentInformation.offset = si_currentInformation.offset + 64; //address is in bytes
-
+    rs_currentInformation.data_offset = rs_currentInformation.data_offset + 64; //address is in bytes
     uint8_t data[64];
 
     uint32_t time = TICKS_TO_MS(xTaskGetTickCount()) / 1000;
@@ -245,10 +217,10 @@ bool SystemStorage::WriteSensorInfoToFlash()
     data[51] = (si_currentInformation.temperature_) & 0xFF;
 
     //Store offset
-    data[52] = (si_currentInformation.offset >> 24) & 0xFF;
-    data[53] = (si_currentInformation.offset >> 16) & 0xFF;
-    data[54] = (si_currentInformation.offset >> 8) & 0xFF;
-    data[55] = (si_currentInformation.offset) & 0xFF;
+    data[52] = (rs_currentInformation.data_offset >> 24) & 0xFF;
+    data[53] = (rs_currentInformation.data_offset >> 16) & 0xFF;
+    data[54] = (rs_currentInformation.data_offset >> 8) & 0xFF;
+    data[55] = (rs_currentInformation.data_offset) & 0xFF;
 
     //Calculate and store CRC
     uint32_t checksum = Utils::getCRC32(data, 56);
@@ -267,7 +239,7 @@ bool SystemStorage::WriteSensorInfoToFlash()
 
     //Write to relevant sector
     //byte address is not the same as bit address
-    uint32_t addressToWrite = si_currentInformation.offset + INITIAL_SENSOR_FLASH_OFFSET;
+    uint32_t addressToWrite = rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET;
     for(uint32_t i = 0; i < 64; i++) {
         W25qxx_WriteByte(data[i], addressToWrite + i);
     }
@@ -291,7 +263,7 @@ bool SystemStorage::ReadSensorInfoFromFlash()
 
     uint8_t data[64];
 
-    for(uint32_t i = 0; i * 64 < si_currentInformation.offset; i++) {
+    for(uint32_t i = 0; i * 64 < rs_currentInformation.data_offset; i++) {
         W25qxx_ReadBytes(data, INITIAL_SENSOR_FLASH_OFFSET + (i * 64), 64);
 
         uint32_t startingPacket = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]);

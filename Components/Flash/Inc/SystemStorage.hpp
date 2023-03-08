@@ -19,7 +19,9 @@
 struct StateInformation 
 {   
   RocketState State;
-  uint32_t SequenceNumber;       
+  uint32_t SequenceNumber;      
+  uint32_t data_offset;
+  //uint32_t CRC; 
 };
 
 /**
@@ -27,7 +29,7 @@ struct StateInformation
  */
 struct SensorInformation 
 {   
-    uint32_t     offset;
+    uint32_t     time;
     uint32_t     accelX_;
     uint32_t     accelY_;
     uint32_t     accelZ_;
@@ -51,7 +53,7 @@ public:
 
     void HandleCommand(Command& cm);
 
-    bool WriteStateToFlash();
+    void WriteStateToFlash();
     bool ReadStateFromFlash();
     bool WriteSensorInfoToFlash();
     bool ReadSensorInfoFromFlash();
