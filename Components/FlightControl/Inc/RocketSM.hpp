@@ -102,6 +102,8 @@ enum RocketControlCommands
 
     //-- TIMER STATE TRANSITIONS --
     RSC_IGINITION_CMD,
+	RSC_BURN_SEQUENCE,
+	RSC_CHECK_SEQUENCE,
 
     //-- TECHNICAL --
     RSC_NONE   // Invalid command, must be last

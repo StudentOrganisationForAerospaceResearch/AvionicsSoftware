@@ -395,6 +395,7 @@ RocketState Ignition::OnEnter()
 {
     // We don't do anything upon entering ignition
 
+
     return rsStateID;
 }
 
@@ -469,7 +470,9 @@ RocketState Launch::OnEnter()
     //TODO: Ensure Vent & Drain CLOSED (**Should we not ensure vent & drain are closed in ignition? and or exit of ARM?)
     //TODO: Send command to OPEN the MEV
     //TODO: Immedietly transition to BURN .. ? (**Actually if we're transitioning right away why is this not both? ... Otherwise just queue up a command internally to GOTO BURN)
-
+	osDelay(100);
+	SOAR_PRINT("Main Engine Valve Opened \n");
+	TimerTransitions::Inst().ExitLaunch();
     return rsStateID;
 }
 
@@ -531,7 +534,9 @@ RocketState Burn::OnEnter()
 {
     //TODO: Validate Vent & Drain Closed
     //TODO: Start the coast transition timer (7 seconds - TBD based on sims)
-
+//	osDelay(15);
+	SOAR_PRINT("Burn Sequence Started \n");
+	TimerTransitions::Inst().InitiateBurn();
     return rsStateID;
 }
 
@@ -561,6 +566,10 @@ RocketState Burn::HandleCommand(Command& cm)
         case RSC_BURN_TO_COAST:
             nextStateID = RS_COAST;
             break;
+        case RSC_BURN_SEQUENCE:
+        	TimerTransitions::Inst().BurnSequence();
+        case RSC_CHECK_SEQUENCE:
+
         default:
             break;
         }
@@ -592,7 +601,7 @@ Coast::Coast()
 RocketState Coast::OnEnter()
 {
     //TODO: Start Descent Transition Timer (~25 seconds) : Should be well after apogee
-
+	SOAR_PRINT("Main Engine Valve Closed \n");
     return rsStateID;
 }
 

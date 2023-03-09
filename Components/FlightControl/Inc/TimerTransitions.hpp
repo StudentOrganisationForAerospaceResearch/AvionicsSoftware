@@ -24,13 +24,19 @@ public:
 		return inst;
 	}
 	void EnterIgnition();
+	void ExitLaunch();
+	void BurnSequence();
+	void InitiateBurn();
+	void CheckBurnSequence();
 	bool arrLanuchConfirmFlags = false;
 
 protected:
 	static void IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle);
+	static void BurnToCoastCallback(TimerHandle_t rtTimerHandle);
 
 private:
 	Timer ignitionCountdown;
+	Timer burnCountdown;
 };
 
 #endif    // SOAR_TIMERTRANSITIONS_HPP_
