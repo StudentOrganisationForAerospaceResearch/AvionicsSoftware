@@ -51,9 +51,9 @@ void TimerTransitions::BurnSequence() {
 	return;
 }
 
-void TimerTransitions::CheckBurnSequence () {
-	SOAR_PRINT("The time remaining is %d s", burnCountdown.GetRemainingTimeMs());
-}
+//void TimerTransitions::CheckBurnSequence () {
+//	SOAR_PRINT("The time remaining is %d s", burnCountdown.GetRemainingTimeMs());
+//}
 
 void TimerTransitions::BurnToCoastCallback(TimerHandle_t rtTimerHandle) {
 	SOAR_PRINT("Going to COAST \n");
