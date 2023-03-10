@@ -8,6 +8,7 @@
 #define SOAR_AVIONICS_ROCKET_SM
 
 #include "Command.hpp"
+#include "CoreProto.h"
 
 enum RocketState
 {
@@ -132,6 +133,8 @@ public:
     RocketSM(RocketState startingState, bool enterStartingState);
 
     void HandleCommand(Command& cm);
+
+    Proto::RocketState GetRocketStateAsProto();
 
 protected:
     RocketState TransitionState(RocketState nextState);
