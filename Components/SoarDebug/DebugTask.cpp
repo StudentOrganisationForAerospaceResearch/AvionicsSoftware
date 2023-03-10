@@ -18,7 +18,11 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+<<<<<<< HEAD
 #include "FlashTask.hpp"
+=======
+#include "WatchdogTask.hpp"
+>>>>>>> master
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -112,6 +116,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         if (state != ERRVAL && state > 0 && state < UINT16_MAX)
             FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, state));
     }
+    else if (strncmp(msg, "setradiohb ", 11) == 0) {
+        // Send the heartbeat set to the watchdog task, where val is seconds
+        int32_t val = ExtractIntParameter(msg, 11);
+        if (val != ERRVAL)
+            WatchdogTask::Inst().SendCommand(Command(RADIOHB_CHANGE_PERIOD, val));
+    }
 
     //-- SYSTEM / CHAR COMMANDS -- (Must be last)
     else if (strcmp(msg, "sysreset") == 0) {
@@ -161,9 +171,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
     }
     else if (strcmp(msg, "flashdump") == 0) {
         // Send a request to the IMU task to poll and print the data
-        SOAR_PRINT("Dump of sensor data in flash requested requested\n");
-        Command cmd(DATA_COMMAND, (uint16_t)2);
+        SOAR_PRINT("Dump of sensor data in flash requested\n");
+        Command cmd((uint16_t)2);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
+    else if (strcmp(msg, "radiohb") == 0) {
+        WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
+    }
+    else if (strcmp(msg, "disablehb") == 0) {
+        WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
     else {
         // Single character command, or unknown command

@@ -142,6 +142,7 @@ void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 
 /**
  * @brief reads all data and prints it through UART up until offset read from struct
+ *        currently unimplemented
  */
 bool SystemStorage::ReadDataFromFlash()
 {

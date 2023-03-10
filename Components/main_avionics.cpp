@@ -21,6 +21,7 @@
 #include "DebugTask.hpp"
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "WatchdogTask.hpp"
 
 
 /* Global Variables ------------------------------------------------------------------*/
@@ -32,8 +33,8 @@ Mutex Global::vaListMutex;
 */
 void run_main() {
     // Init Tasks
-    osDelay(500);
     FlashTask::Inst().InitTask();
+    WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
     DebugTask::Inst().InitTask();
