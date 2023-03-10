@@ -92,7 +92,7 @@ void RocketSM::HandleCommand(Command& cm)
     if (nextRocketState != rs_currentState->GetStateID())
     {
         //send new state to FlashTask for storing
-        Command cmd(DATA_COMMAND, (uint16_t)1);
+        Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)WRITE_STATE_TO_FLASH);
         uint8_t state = nextRocketState;
         cmd.CopyDataToCommand(&state, 1);
         FlashTask::Inst().GetEventQueue()->Send(cmd);

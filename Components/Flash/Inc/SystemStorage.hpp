@@ -13,6 +13,13 @@
 
 #define INITIAL_SENSOR_FLASH_OFFSET 12288
 
+/* Macros/Enums ------------------------------------------------------------*/
+enum FLASH_COMMANDS  {
+    WRITE_STATE_TO_FLASH = 0,
+    DUMP_FLASH_DATA
+};
+
+
 /**
  * @brief State information to be written to flash
  */

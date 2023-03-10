@@ -179,13 +179,13 @@ void SystemStorage::HandleCommand(Command& cm)
     SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
     switch(cm.GetCommand()) {
         case TASK_SPECIFIC_COMMAND: {
-            if(cm.GetTaskCommand() == 1) 
+            if(cm.GetTaskCommand() == WRITE_STATE_TO_FLASH) 
             {
                 rs_currentInformation.State = (RocketState) (cm.GetDataPointer())[0];
                 WriteStateToFlash();
                 SOAR_PRINT("state written to flash");
             }
-            else if(cm.GetTaskCommand() == 2) 
+            else if(cm.GetTaskCommand() == DUMP_FLASH_DATA) 
             {
                 ReadDataFromFlash();
             }

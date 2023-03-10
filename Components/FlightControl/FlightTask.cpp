@@ -52,6 +52,8 @@ void FlightTask::Run(void * pvParams)
 
         if(cm.GetCommand() == FLASH_RESPONSE) 
             break;
+        else
+            cm.Reset()
     }
 
     RocketState state = (RocketState) cm.GetTaskCommand();
@@ -77,21 +79,17 @@ void FlightTask::Run(void * pvParams)
 
         // Since FlightTask is so critical to managing the system, it may make sense to make this a Async task that handles commands as they come in, and have these display commands be routed over to the DisplayTask
         // or maybe HID (Human Interface Device) task that handles both updating buzzer frequencies and LED states.
-        HAL_IWDG_Refresh(&hiwdg);
-        
         GPIO::LED1::On();
         GPIO::LED2::On();
-        osDelay(5);
+        GPIO::LED3::On();
+        osDelay(500);
         GPIO::LED1::Off();
         GPIO::LED2::Off();
-        osDelay(5);
+        GPIO::LED3::Off();
+        osDelay(500);
 
         //Every cycle, print something out (for testing)
-        if(tempSecondCounter % 100 == 0) {
-            //SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter / 100);
-            //SOAR_PRINT("Current State: [%d]\n", rsm_->GetCurrentState()->GetStateID());
-        }
-        tempSecondCounter++;
+        SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
         //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
         Command cm;

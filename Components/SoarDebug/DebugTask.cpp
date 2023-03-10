@@ -172,7 +172,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "flashdump") == 0) {
         // Send a request to the IMU task to poll and print the data
         SOAR_PRINT("Dump of sensor data in flash requested\n");
-        Command cmd((uint16_t)2);
+        Command cmd((uint16_t)DUMP_FLASH_DATA);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
     else if (strcmp(msg, "radiohb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
