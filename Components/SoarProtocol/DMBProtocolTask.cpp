@@ -37,10 +37,25 @@ DMBProtocolTask::DMBProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB)
 }
 
 /**
- * @brief Handle protocol message
- * @param Protocol message to handle, passed by reference
+ * @brief Handle a command message
  */
-void DMBProtocolTask::HandleProtocolMessage(Command& cmd)
+void DMBProtocolTask::HandleProtobufCommandMessage(uint8_t* data, uint16_t size)
 {
-    SOAR_PRINT("We're totally handling a protocol message! (TODO - implement this)\n");
+
+}
+
+/**
+ * @brief Handle a control message
+ */
+void DMBProtocolTask::HandleProtobufControlMesssage(uint8_t* data, uint16_t size)
+{
+
+}
+
+/**
+ * @brief Handle a telemetry message
+ */
+void DMBProtocolTask::HandleProtobufTelemetryMessage(uint8_t* data, uint16_t size)
+{
+
 }

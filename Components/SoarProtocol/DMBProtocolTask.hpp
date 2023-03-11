@@ -27,11 +27,11 @@ public:
 protected:
     static void RunTask(void* pvParams) { DMBProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
-    // This will receive a (DMB_PROTO_COMMAND, DMB_PROTO_RX_DECODED_DATA) with the data pointer allocated, COBS decoded (but in the SOAR Message Format)
-    void HandleProtocolMessage(Command& cmd) override;
-
-    // Helper functions
-
+    // These handlers will receive a buffer and size corresponding to a decoded message
+    void HandleProtobufCommandMessage(uint8_t* data, uint16_t size);
+    void HandleProtobufControlMesssage(uint8_t* data, uint16_t size);
+    void HandleProtobufTelemetryMessage(uint8_t* data, uint16_t size);
+    
     // Member variables
 
 private:

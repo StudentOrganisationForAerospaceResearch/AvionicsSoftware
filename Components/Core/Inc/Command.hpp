@@ -59,6 +59,7 @@ public:
 
     // Setters
     void SetTaskCommand(uint16_t taskCommand) { this->taskCommand = taskCommand; }
+    void SetDataSize(uint16_t size) { dataSize = size; }
 
 
 protected:
