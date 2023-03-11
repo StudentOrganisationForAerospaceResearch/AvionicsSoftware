@@ -7,6 +7,7 @@
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
+#include "TimerTransitions.hpp"
 
 /**
  * @brief Constructor for FlightTask
@@ -46,6 +47,9 @@ void FlightTask::Run(void * pvParams)
 
     // TODO: Change back to RS_ABORT
     rsm_ = new RocketSM(RS_ARM, false);
+
+    // Initializing timers used for automatic transitions
+    TimerTransitions::Inst();
 
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'

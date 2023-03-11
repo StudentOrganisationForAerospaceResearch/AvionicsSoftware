@@ -11,11 +11,16 @@
 #include "FlightTask.hpp"
 
 
+TimerTransitions::TimerTransitions() {
+	ignitionCountdown = new Timer(IngnitionToLaunchCallback);
+	ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD);
+	burnCountdown = new Timer(BurnToCoastCallback);
+	burnCountdown->ChangePeriodMs(BURN_TIMER_PERIOD);
+}
 
 void TimerTransitions::EnterIgnition() {
     SOAR_PRINT("Entering IGNITION state...\n");
-    ignitionCountdown = Timer(IngnitionToLaunchCallback);
-    ignitionCountdown.ChangePeriodMsAndStart(10000);
+    ignitionCountdown->Start();
     return;
 }
 
@@ -33,4 +38,32 @@ void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {
     return;
 }
 
+void TimerTransitions::ExitLaunch() {
+	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_LAUNCH_TO_BURN));
+	return;
+}
+
+void TimerTransitions::InitiateBurn () {
+	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_BURN_SEQUENCE));
+	return;
+}
+
+void TimerTransitions::BurnSequence() {
+//	osDelay(100);
+	SOAR_PRINT("Burn Started\n");
+	burnCountdown->Start();
+	return;
+}
+
+//void TimerTransitions::CheckBurnSequence () {
+//	SOAR_PRINT("The time remaining is %d s", burnCountdown.GetRemainingTimeMs());
+//}
+
+void TimerTransitions::BurnToCoastCallback(TimerHandle_t rtTimerHandle) {
+	SOAR_PRINT("Going to COAST \n");
+	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_BURN_TO_COAST));
+
+	Timer::DefaultCallback(rtTimerHandle);
+	return;
+}
 
