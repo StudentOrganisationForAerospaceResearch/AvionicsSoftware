@@ -53,6 +53,8 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
     if (!msg.has_dmb_command())
         return;
 
+    SOAR_PRINT("PROTO-INFO: Received DMB Command Message");
+
     // Process the db command
     switch (msg.get_dmb_command().get_command_enum())
     {
