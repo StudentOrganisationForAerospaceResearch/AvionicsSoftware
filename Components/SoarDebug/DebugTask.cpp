@@ -18,11 +18,8 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
-<<<<<<< HEAD
 #include "FlashTask.hpp"
-=======
 #include "WatchdogTask.hpp"
->>>>>>> master
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -174,6 +171,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
         SOAR_PRINT("Dump of sensor data in flash requested\n");
         Command cmd((uint16_t)DUMP_FLASH_DATA);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
     else if (strcmp(msg, "radiohb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     }

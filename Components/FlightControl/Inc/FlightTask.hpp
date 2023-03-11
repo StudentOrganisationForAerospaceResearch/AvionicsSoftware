@@ -10,8 +10,6 @@
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 
-extern IWDG_HandleTypeDef hiwdg;
-
 class FlightTask : public Task
 {
 public:

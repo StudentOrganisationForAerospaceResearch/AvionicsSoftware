@@ -53,7 +53,7 @@ void FlightTask::Run(void * pvParams)
         if(cm.GetCommand() == FLASH_RESPONSE) 
             break;
         else
-            cm.Reset()
+            cm.Reset();
     }
 
     RocketState state = (RocketState) cm.GetTaskCommand();
