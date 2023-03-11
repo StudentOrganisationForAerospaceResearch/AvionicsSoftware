@@ -20,7 +20,7 @@ constexpr double MATH_PI = 3.14159265358979323846;
 #define RAD_TO_DEG(radians) ((radians) * 57.295779513082320876798154814105f)    // Radians to degrees (180/PI)
 #define MILLIG_TO_MPS2(millig) ((millig) * 9.80665f)    // Milli-g to m/s^2
 #define MILLIDPS_TO_RADPS(millidps) ((millidps) * 0.00017453292519943295769236907684886f)    // Milli-degrees per second to radians per second (PI/180/1000)
-#define GET_COBS_MAX_LEN(len) ((len) + ((len) / 254) + 1)    // Get the max length of a COBS encoded string
+#define GET_COBS_MAX_LEN(len) (((len) + ((len) / 254) + 1) + 1)    // Get the max length of a COBS encoded string, we add 1 for the 0x00 delimiter
 
 // Conversion macros (SYSTEM)
 #define TICKS_TO_MS(time_ticks) ((time_ticks) * 1000 / osKernelSysTickFrequency) // System ticks to milliseconds
