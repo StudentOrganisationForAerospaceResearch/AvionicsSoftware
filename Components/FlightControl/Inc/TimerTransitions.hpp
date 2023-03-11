@@ -27,7 +27,7 @@ public:
 	void ExitLaunch();
 	void BurnSequence();
 	void InitiateBurn();
-//	void CheckBurnSequence();
+	void CheckBurnSequence();
 	bool arrLanuchConfirmFlags = false;
 
 protected:
