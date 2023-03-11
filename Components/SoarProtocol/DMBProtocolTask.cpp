@@ -79,9 +79,29 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
     case Proto::DMBCommand::Command::RSC_GOTO_FILL:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_FILL));
         break;
-        // TODO: CONTINUE FROM RSC_ARM_CONFIRM_1
+    case Proto::DMBCommand::Command::RSC_ARM_CONFIRM_1:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_1));
+        break;
+    case Proto::DMBCommand::Command::RSC_ARM_CONFIRM_2:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_2));
+        break;
+    case Proto::DMBCommand::Command::RSC_GOTO_ARM:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_ARM));
+        break;
     case Proto::DMBCommand::Command::RSC_GOTO_PRELAUNCH:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_PRELAUNCH));
+        break;
+    case Proto::DMBCommand::Command::RSC_POWER_TRANSITION_ONBOARD:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_POWER_TRANSITION_ONBOARD));
+        break;
+    case Proto::DMBCommand::Command::RSC_POWER_TRANSITION_EXTERNAL:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_POWER_TRANSITION_EXTERNAL));
+        break;
+    case Proto::DMBCommand::Command::RSC_GOTO_IGNITION:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_IGNITION));
+        break;
+    case Proto::DMBCommand::Command::RSC_IGNITION_TO_LAUNCH:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_IGNITION_TO_LAUNCH));
         break;
     default:
         break;
