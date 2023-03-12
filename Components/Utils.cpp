@@ -87,7 +87,7 @@ uint32_t Utils::getCRC32(uint8_t* data, uint32_t size)
 
     // TODO: TEST THIS THING, also note there's a more efficient way (0-copy) that just involves loop accumulating 4x uint8_t's into 1x uint32_t's but this is more readable, ish
     // TODO: To be fair, G++ is very good at compiling memcpy though, so honestly other than instantaneous stack usage this may actually be more efficient
-    SOAR_PRINT("Warning, HCRC is not tested!\n");
+//    SOAR_PRINT("Warning, HCRC is not tested!\n");
 
     // Calculate the CRC32
     return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, (size+pad)/4);

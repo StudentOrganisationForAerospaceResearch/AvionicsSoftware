@@ -95,7 +95,7 @@ void FlightTask::Run(void * pvParams)
 
         //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
         Command cm;
-        bool res = qEvtQueue->ReceiveWait(cm);
+        bool res = qEvtQueue->Receive(cm);
         if(res)
             rsm_->HandleCommand(cm);
 
