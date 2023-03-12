@@ -394,7 +394,7 @@ Ignition::Ignition()
 RocketState Ignition::OnEnter()
 {
     // We don't do anything upon entering ignition
-
+	TimerTransitions::Inst().IgnitionSequence();
     return rsStateID;
 }
 
@@ -429,12 +429,14 @@ RocketState Ignition::HandleCommand(Command& cm)
             nextStateID = RS_ARM;
             break;
         case RSC_IGINITION_CMD:
-            SOAR_PRINT("Entered IGNITION state\n");
-            TimerTransitions::Inst().EnterIgnition();
+            SOAR_PRINT("This was for testing purposes...\n");
             break;
-        case RSC_CONFIRM_IGNITION:
-            TimerTransitions::Inst().arrLanuchConfirmFlags = true;
+        case RSC_MANUAL_IGNITION_CONFIRMED:
+            TimerTransitions::Inst().ignitionConformation = true;
             break;
+        case RSC_IR_IGNITION_CONFIRMED:
+        	TimerTransitions::Inst().IRSequence();
+        	break;
         default:
             break;
         }

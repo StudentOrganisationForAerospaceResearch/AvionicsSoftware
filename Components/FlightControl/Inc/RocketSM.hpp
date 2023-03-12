@@ -98,10 +98,11 @@ enum RocketControlCommands
     //RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state
 
     //-- GENERAL --
-    RSC_CONFIRM_IGNITION,
+    RSC_MANUAL_IGNITION_CONFIRMED,
+	RSC_IR_IGNITION_CONFIRMED,
 
     //-- TIMER STATE TRANSITIONS --
-    RSC_IGINITION_CMD,
+    RSC_IGINITION_CMD,  // UNUSED, WAS CREATED FOR TESTING PURPOSES
 
     //-- TECHNICAL --
     RSC_NONE   // Invalid command, must be last

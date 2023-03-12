@@ -12,6 +12,8 @@
 #include "Timer.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
+constexpr uint32_t IGINITION_TIMER_PERIOD = 10000;
+constexpr uint32_t IR_IGINITION_TIMER_PERIOD = 8000;
 enum TIMERTRANSITION_CONTROLS  {
     CONFIRM_LAUNCH_2 = 0,
 };
@@ -23,14 +25,16 @@ public:
 		static TimerTransitions inst;
 		return inst;
 	}
-	void EnterIgnition();
-	bool arrLanuchConfirmFlags = false;
+	TimerTransitions();
+	void IgnitionSequence();
+	void IRSequence();
+	bool ignitionConformation = false;
 
 protected:
 	static void IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle);
 
 private:
-	Timer ignitionCountdown;
+	Timer* ignitionCountdown;
 };
 
 #endif    // SOAR_TIMERTRANSITIONS_HPP_
