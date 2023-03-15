@@ -14,12 +14,13 @@ void SystemStorage::WriteStateToFlash()
     uint8_t data[sizeof(StateInformation) + sizeof(uint32_t)];
 
     memcpy(data, &rs_currentInformation, sizeof(StateInformation));
+    //SOAR_PRINT("State: %d\n", rs_currentInformation.State);
 
     //Calculate and store CRC
     uint32_t checksum = Utils::getCRC32(data, sizeof(StateInformation));
 
     memcpy(data + sizeof(StateInformation), &checksum, sizeof(uint32_t));
-    //SOAR_PRINT("checksum: %d\n", rs_currentInformation.CRC);
+    //SOAR_PRINT("checksum: %d\n", checksum);
 
     //Write to relevant sector
     //sector address is not the same as address address
@@ -59,9 +60,11 @@ bool SystemStorage::ReadStateFromFlash()
 
     memcpy(&sector1, sector1Data, sizeof(StateInformation));
     memcpy(&sector2, sector2Data, sizeof(StateInformation));
+    //SOAR_PRINT("Read State1: %d\n", sector1.State);
+    //SOAR_PRINT("Read State2: %d\n", sector2.State);
 
     memcpy(&sector1ReadChecksum, sector1Data + sizeof(StateInformation), sizeof(uint32_t));
-    memcpy(&sector2ReadChecksum, sector1Data + sizeof(StateInformation), sizeof(uint32_t));
+    memcpy(&sector2ReadChecksum, sector2Data + sizeof(StateInformation), sizeof(uint32_t));
     //SOAR_PRINT("Read Checksum1: %d\n", sector1ReadChecksum);
     //SOAR_PRINT("Read Checksum2: %d\n", sector2ReadChecksum);
 
@@ -81,30 +84,30 @@ bool SystemStorage::ReadStateFromFlash()
         if(sector1.SequenceNumber > sector2.SequenceNumber)
         {
             validSector = 1;
-            SOAR_PRINT("sector 1 was valid");
+            SOAR_PRINT("sector 1 was valid\n");
         }
         else 
         {
             validSector = 2;
-            SOAR_PRINT("sector 2 was valid");
+            SOAR_PRINT("sector 2 was valid\n");
         }
     } 
     else if (sector1ReadChecksum == sector1CalculatedChecksum) 
     {
         validSector = 1;
-        SOAR_PRINT("sector 1 was valid");
+        SOAR_PRINT("sector 1 was valid\n");
     } 
     else if (sector2ReadChecksum == sector2CalculatedChecksum)
     {
         validSector = 2;
-        SOAR_PRINT("sector 2 was valid");
+        SOAR_PRINT("sector 2 was valid\n");
     } 
 
     if(validSector == 0) {
         W25qxx_EraseSector(0);
         W25qxx_EraseSector(1);
         res = false;
-        SOAR_PRINT("neither sector was valid");
+        SOAR_PRINT("neither sector was valid\n");
     }
 
     //write to state struct depending on which sector was deemed valid
@@ -181,13 +184,17 @@ void SystemStorage::HandleCommand(Command& cm)
         case TASK_SPECIFIC_COMMAND: {
             if(cm.GetTaskCommand() == WRITE_STATE_TO_FLASH) 
             {
-                rs_currentInformation.State = (RocketState) (cm.GetDataPointer())[0];
+                rs_currentInformation.State = (RocketState) (cm.GetDataPointer()[0]);
                 WriteStateToFlash();
-                SOAR_PRINT("state written to flash");
+                SOAR_PRINT("state written to flash\n");
             }
             else if(cm.GetTaskCommand() == DUMP_FLASH_DATA) 
             {
                 ReadDataFromFlash();
+            }
+            else if(cm.GetTaskCommand() == ERASE_ALL_FLASH)
+            {
+                W25qxx_EraseChip();
             }
         }
         case DATA_COMMAND: 

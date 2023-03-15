@@ -167,9 +167,15 @@ void DebugTask::HandleDebugMessage(const char* msg)
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
     else if (strcmp(msg, "flashdump") == 0) {
-        // Send a request to the IMU task to poll and print the data
+        // Send a request to the flash task to dump the flash data
         SOAR_PRINT("Dump of sensor data in flash requested\n");
         Command cmd((uint16_t)DUMP_FLASH_DATA);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
+    else if (strcmp(msg, "flasherase") == 0) 
+    {
+        SOAR_PRINT("erase chip in flash requested\n");
+        Command cmd((uint16_t)ERASE_ALL_FLASH);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
     }
     else if (strcmp(msg, "radiohb") == 0) {

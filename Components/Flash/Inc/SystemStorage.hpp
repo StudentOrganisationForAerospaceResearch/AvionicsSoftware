@@ -16,7 +16,8 @@
 /* Macros/Enums ------------------------------------------------------------*/
 enum FLASH_COMMANDS  {
     WRITE_STATE_TO_FLASH = 0,
-    DUMP_FLASH_DATA
+    DUMP_FLASH_DATA,
+    ERASE_ALL_FLASH
 };
 
 
