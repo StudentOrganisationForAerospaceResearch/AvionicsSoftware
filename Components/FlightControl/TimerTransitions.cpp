@@ -23,6 +23,15 @@ void TimerTransitions::IgnitionSequence() {
 
 void TimerTransitions::IRSequence() {
 	ignitionCountdown->ChangePeriodMsAndStart(IR_IGINITION_TIMER_PERIOD);
+	HAL_GPIO_WritePin(ExtLED1_GPIO_Port, ExtLED1_Pin, GPIO_PIN_SET);
+	osDelay(300);
+	HAL_GPIO_WritePin(ExtLED1_GPIO_Port, ExtLED1_Pin, GPIO_PIN_RESET);
+	osDelay(300);
+	HAL_GPIO_WritePin(ExtLED1_GPIO_Port, ExtLED1_Pin, GPIO_PIN_SET);
+	osDelay(300);
+	HAL_GPIO_WritePin(ExtLED1_GPIO_Port, ExtLED1_Pin, GPIO_PIN_RESET);
+	osDelay(300);
+	HAL_GPIO_WritePin(ExtLED1_GPIO_Port, ExtLED1_Pin, GPIO_PIN_SET);
 	ignitionConformation = true;
 	return;
 }

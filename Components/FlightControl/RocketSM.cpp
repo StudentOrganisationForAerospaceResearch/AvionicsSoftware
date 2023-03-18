@@ -7,6 +7,7 @@
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
 #include "TimerTransitions.hpp"
+#include "GPIO.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -321,7 +322,7 @@ RocketState Arm::OnEnter()
 {
     // We don't do anything upon entering arm
     // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
-
+	HAL_GPIO_WritePin(RED_LED_GPIO_Port, RED_LED_Pin, GPIO_PIN_SET);
     return rsStateID;
 }
 
@@ -395,6 +396,8 @@ RocketState Ignition::OnEnter()
 {
     // We don't do anything upon entering ignition
 	TimerTransitions::Inst().IgnitionSequence();
+	HAL_GPIO_WritePin(RED_LED_GPIO_Port, RED_LED_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(YELLOW_LED_GPIO_Port, YELLOW_LED_Pin, GPIO_PIN_SET);
     return rsStateID;
 }
 
@@ -405,7 +408,7 @@ RocketState Ignition::OnEnter()
 RocketState Ignition::OnExit()
 {
 
-
+	HAL_GPIO_WritePin(YELLOW_LED_GPIO_Port, YELLOW_LED_Pin, GPIO_PIN_RESET);
     return rsStateID;
 }
 
@@ -433,6 +436,7 @@ RocketState Ignition::HandleCommand(Command& cm)
             break;
         case RSC_MANUAL_IGNITION_CONFIRMED:
             TimerTransitions::Inst().ignitionConformation = true;
+            HAL_GPIO_WritePin(ExtLED1_GPIO_Port, ExtLED1_Pin, GPIO_PIN_SET);
             break;
         case RSC_IR_IGNITION_CONFIRMED:
         	TimerTransitions::Inst().IRSequence();
@@ -472,6 +476,9 @@ RocketState Launch::OnEnter()
     //TODO: Send command to OPEN the MEV
     //TODO: Immedietly transition to BURN .. ? (**Actually if we're transitioning right away why is this not both? ... Otherwise just queue up a command internally to GOTO BURN)
 
+	HAL_GPIO_WritePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(ExtLED1_GPIO_Port, ExtLED1_Pin, GPIO_PIN_RESET);
     return rsStateID;
 }
 
@@ -776,7 +783,7 @@ Abort::Abort()
 RocketState Abort::OnEnter()
 {
     //TODO: Open Vent & Drain, MEV Closed
-
+	HAL_GPIO_WritePin(RED_LED_GPIO_Port, RED_LED_Pin, GPIO_PIN_SET);
     return rsStateID;
 }
 
