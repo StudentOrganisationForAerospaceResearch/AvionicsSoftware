@@ -158,6 +158,9 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
+    else if (strcmp(msg, "pbb") == 0) {
+    	HAL_UART_Transmit(ASSERT_CONDUIT_UART_HANDLE, (uint8_t*)"1", 1, ASSERT_SEND_MAX_TIME_MS);
+    }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {
