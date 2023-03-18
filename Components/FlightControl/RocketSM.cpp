@@ -77,6 +77,10 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     return rs_currentState->GetStateID();
 }
 
+RocketState RocketSM::GetCurrentState(){
+	return rs_currentState->GetStateID();
+};
+
 /**
  * @brief Handles current command
  * @param cm The command to handle

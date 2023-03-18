@@ -133,7 +133,9 @@ class RocketSM
 public:
     RocketSM(RocketState startingState, bool enterStartingState);
 
+
     void HandleCommand(Command& cm);
+    RocketState GetCurrentState();
 
 protected:
     RocketState TransitionState(RocketState nextState);

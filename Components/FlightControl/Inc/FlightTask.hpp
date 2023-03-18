@@ -10,6 +10,7 @@
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 
+
 class FlightTask : public Task
 {
 public:
@@ -19,6 +20,8 @@ public:
     }
 
     void InitTask();
+
+    RocketState GetCurrentState();
 
 protected:
     static void RunTask(void* pvParams) { FlightTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
