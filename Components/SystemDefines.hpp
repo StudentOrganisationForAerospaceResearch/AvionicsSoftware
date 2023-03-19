@@ -84,6 +84,7 @@ constexpr uint16_t ASSERT_BUFFER_MAX_SIZE = 160;        // Max size in bytes of 
 constexpr uint16_t ASSERT_SEND_MAX_TIME_MS = 250;        // Max time the assert fail is allowed to wait to send header and message to HAL (will take up to 2x this since it sends 2 segments)
 constexpr uint16_t ASSERT_TAKE_MAX_TIME_MS = 500;        // Max time in ms to take the assert semaphore
 constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::UART_Debug;    // UART Handle that ASSERT messages are sent over
+constexpr UART_HandleTypeDef* const ASSERT_CONDUIT_UART_HANDLE = SystemHandles::UART_Conduit; 
 
 /* System Functions ------------------------------------------------------------------*/
 //- Any system functions with an implementation here should be inline, and inline for a good reason (performance)
