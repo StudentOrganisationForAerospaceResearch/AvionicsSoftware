@@ -28,7 +28,7 @@ public:
 	TimerTransitions();
 	void IgnitionSequence();
 	void IRSequence();
-	bool ignitionConformation = false;
+	bool ignitionConfirmation = false;
 
 protected:
 	static void IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle);
