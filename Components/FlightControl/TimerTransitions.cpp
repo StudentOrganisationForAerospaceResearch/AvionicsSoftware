@@ -33,13 +33,13 @@ void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {
 
     if ((Inst().ignitionConfirmation == true)) {
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
+        Timer::DefaultCallback(rtTimerHandle);
     }
     else {
     	Inst().ignitionCountdown->ResetTimer();
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_GOTO_ARM));
     }
 
-    Timer::DefaultCallback(rtTimerHandle);
     return;
 }
 
