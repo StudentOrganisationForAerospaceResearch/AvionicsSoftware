@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
- * File Name          : FlashTask.hpp
- * Description        : Flash interface task. Used for data logging and state recovery
+ * File Name          : SystemStorage.hpp
+ * Description        : storage, handles flash I/O and state recovery
  ******************************************************************************
 */
 #ifndef SOAR_SYSTEMSTORAGE_HPP_
@@ -46,6 +46,7 @@ public:
     bool ReadStateFromFlash();
     void WriteDataToFlash(uint8_t* data, uint16_t size);
     bool ReadDataFromFlash();
+    StateInformation GetStateData() { return rs_currentInformation; }
 
 protected:
 

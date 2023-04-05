@@ -50,9 +50,9 @@ void FlashTask::Run(void * pvParams)
     st_ = new SystemStorage();
 
     while (1) {
-        //Process any commands, in non-blocking mode
+        //Process any commands, in blocking mode
         Command cm;
-        bool res = qEvtQueue->Receive(cm);
+        bool res = qEvtQueue->ReceiveWait(cm);
         if(res)
             st_->HandleCommand(cm);
     }
