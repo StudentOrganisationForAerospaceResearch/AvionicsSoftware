@@ -22,6 +22,8 @@ enum GLOBAL_COMMANDS : uint8_t
     DATA_COMMAND,            // Data command, used to send data to a task. Target is stored in taskCommand
     CONTROL_ACTION,            // Control actions, used in Rocket State Machine, direct translation to RCU<->DMB Protocol
     REQUEST_COMMAND,            // Request command
+    HEARTBEAT_COMMAND,            // Control actions for heartbeat commands
+    RADIOHB_CHANGE_PERIOD        // Change Radio HB Period to Provided TaskCommand Period in Seconds
     PROTOCOL_COMMAND,           // Protocol command, used for commands to the Protocol Task
 };
 
