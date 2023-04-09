@@ -129,7 +129,7 @@ bool SystemStorage::ReadStateFromFlash()
 }
 
 /**
- * @brief Creates CRC, writes sensor info struct and CRC to flash, increases offset
+ * @brief writes data to flash, increases offset
  */
 void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 {
@@ -141,6 +141,7 @@ void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
     }
 
     rs_currentInformation.data_offset = rs_currentInformation.data_offset + size; //address is in bytes
+    WriteStateToFlash();
 }
 
 /**
