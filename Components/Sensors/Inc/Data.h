@@ -22,6 +22,7 @@ typedef struct
     int32_t     magnetoX_;
     int32_t     magnetoY_;
     int32_t     magnetoZ_;
+    int32_t     time;
 } AccelGyroMagnetismData;
 
 typedef struct
@@ -29,6 +30,7 @@ typedef struct
     osMutexId   mutex_;
     int32_t     pressure_;
     int32_t     temperature_;
+    int32_t     time;
 } BarometerData;
 
 typedef struct

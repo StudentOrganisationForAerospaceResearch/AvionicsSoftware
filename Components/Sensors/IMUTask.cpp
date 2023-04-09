@@ -18,6 +18,8 @@
 #include "Data.h"
 #include "DebugTask.hpp"
 #include "Task.hpp"
+#include "FlashTask.hpp"
+#include <string.h>
 
 
 /* Macros --------------------------------------------------------------------*/
@@ -112,13 +114,20 @@ void IMUTask::Run(void* pvParams)
 
     //Task run loop
     while (1) {
-        Command cm;
+        SampleIMU();
+
+        Command flashCommand(DATA_COMMAND);
+        flashCommand.AllocateData(sizeof(AccelGyroMagnetismData));
+        memcpy(flashCommand.GetDataPointer(), data, sizeof(AccelGyroMagnetismData));
+        FlashTask::Inst().GetEventQueue()->Send(flashCommand);
+
+        //Command cm;
 
         //Wait forever for a command
-        qEvtQueue->ReceiveWait(cm);
+        //qEvtQueue->ReceiveWait(cm);
 
         //Process the command
-        HandleCommand(cm);
+        //HandleCommand(cm);
     }
 }
 
@@ -184,6 +193,8 @@ void IMUTask::SampleIMU()
     int16_t accelX, accelY, accelZ;
     int16_t gyroX, gyroY, gyroZ;
     int16_t magnetoX, magnetoY, magnetoZ;
+
+    data->time = TICKS_TO_MS(xTaskGetTickCount()); // ms
 
     //READ------------------------------------------------------
     HAL_GPIO_WritePin(IMU_CS_GPIO_Port, IMU_CS_Pin, GPIO_PIN_RESET);

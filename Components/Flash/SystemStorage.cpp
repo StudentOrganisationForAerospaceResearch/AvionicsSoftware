@@ -129,18 +129,20 @@ bool SystemStorage::ReadStateFromFlash()
 }
 
 /**
- * @brief writes data to flash, increases offset
+ * @brief writes data to flash with the size of the data written as the header, increases offset by size + 1 to account for size, currently only handles size < 255
  */
 void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 {
     //Write to relevant sector
-
     uint32_t addressToWrite = rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET;
+
+    W25qxx_WriteByte((uint8_t)(size & 0xff), addressToWrite);
+
     for(uint32_t i = 0; i < size; i++) {
-        W25qxx_WriteByte(data[i], addressToWrite + i);
+        W25qxx_WriteByte(data[i], addressToWrite + i + 1);
     }
 
-    rs_currentInformation.data_offset = rs_currentInformation.data_offset + size; //address is in bytes
+    rs_currentInformation.data_offset = rs_currentInformation.data_offset + size + 1; //address is in bytes
     WriteStateToFlash();
 }
 
