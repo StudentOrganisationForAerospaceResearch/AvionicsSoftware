@@ -1,5 +1,6 @@
 #include "SystemStorage.hpp"
 #include "FlightTask.hpp"
+#include "Data.h"
 #include <cstring>     // Support for memcpy
 
 /**
@@ -129,18 +130,20 @@ bool SystemStorage::ReadStateFromFlash()
 }
 
 /**
- * @brief Creates CRC, writes sensor info struct and CRC to flash, increases offset
+ * @brief writes data to flash with the size of the data written as the header, increases offset by size + 1 to account for size, currently only handles size < 255
  */
 void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 {
     //Write to relevant sector
-
     uint32_t addressToWrite = rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET;
+
+    W25qxx_WriteByte((uint8_t)(size & 0xff), addressToWrite);
+
     for(uint32_t i = 0; i < size; i++) {
-        W25qxx_WriteByte(data[i], addressToWrite + i);
+        W25qxx_WriteByte(data[i], addressToWrite + i + 1);
     }
 
-    rs_currentInformation.data_offset = rs_currentInformation.data_offset + size; //address is in bytes
+    rs_currentInformation.data_offset = rs_currentInformation.data_offset + size + 1; //address is in bytes
     WriteStateToFlash();
 }
 
@@ -153,6 +156,30 @@ bool SystemStorage::ReadDataFromFlash()
     //unused
     bool res = true;
 
+    uint8_t length
+
+    for(i = 0; i < rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET; i++) {
+        W25qxx_ReadByte(length, INITIAL_SENSOR_FLASH_OFFSET + i);
+
+        if(length == sizeof(AccelGyroMagnetismData)) {
+            uint8_t dataRead[sizeof(AccelGyroMagnetismData)];
+            W25qxx_ReadBytes(dataRead, INITIAL_SENSOR_FLASH_OFFSET + i + 1, sizeof(AccelGyroMagnetismData));
+            AccelGyroMagnetismData* IMURead = dataRead;
+            SOAR_PRINT("%d   %d   %d   %d   %d   %d   %d   %d   %d   %d", 
+                    IMURead->time, IMURead->accelX_, IMURead->accelY_, IMURead->accelZ_,
+                    IMURead->gyroX_, IMURead->gyroY_, IMURead->gyroZ_, IMURead->magnetoX_,
+                    IMURead->magnetoY_, IMURead->magnetoZ_);
+        }
+        else if(length == sizeof(BarometerData)) {
+            uint8_t dataRead[sizeof(BarometerData)];
+            W25qxx_ReadBytes(dataRead, INITIAL_SENSOR_FLASH_OFFSET + i + 1, sizeof(BarometerData));
+            BarometerData* baroRead = dataRead;
+            SOAR_PRINT("%d   %d   %d",
+                    baroRead->time, baroRead->pressure_, baroRead->temperature_);
+        } else {
+            SOAR_PRINT("Unknown length, readback brokedown");
+        }
+    }
     return res;
 }
 
