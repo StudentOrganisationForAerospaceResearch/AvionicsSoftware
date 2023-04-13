@@ -197,9 +197,12 @@ void SystemStorage::HandleCommand(Command& cm)
             {
                 W25qxx_EraseChip();
             }
+            break;
         }
-        case DATA_COMMAND: 
+        case DATA_COMMAND: {
             WriteDataToFlash(cm.GetDataPointer(), cm.GetDataSize());
+            break;
+        }
         default:
             break;
     }
