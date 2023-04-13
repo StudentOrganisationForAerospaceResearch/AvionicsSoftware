@@ -95,6 +95,8 @@ void BarometerTask::Run(void * pvParams)
         memcpy(flashCommand.GetDataPointer(), data, sizeof(BarometerData));
         FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 
+        osDelay(500);
+
         //Command cm;
 
         //Wait forever for a command

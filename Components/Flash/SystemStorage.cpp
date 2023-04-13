@@ -136,7 +136,6 @@ void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 {
     //Write to relevant sector
     uint32_t addressToWrite = rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET;
-
     W25qxx_WriteByte((uint8_t)(size & 0xff), addressToWrite);
 
     for(uint32_t i = 0; i < size; i++) {
@@ -156,29 +155,30 @@ bool SystemStorage::ReadDataFromFlash()
     //unused
     bool res = true;
 
-    uint8_t length
+    uint8_t length;
 
-    for(i = 0; i < rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET; i++) {
-        W25qxx_ReadByte(length, INITIAL_SENSOR_FLASH_OFFSET + i);
+    for(unsigned int i = 0; i < rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET; i++) {
+        W25qxx_ReadByte(&length, INITIAL_SENSOR_FLASH_OFFSET + i);
 
         if(length == sizeof(AccelGyroMagnetismData)) {
             uint8_t dataRead[sizeof(AccelGyroMagnetismData)];
             W25qxx_ReadBytes(dataRead, INITIAL_SENSOR_FLASH_OFFSET + i + 1, sizeof(AccelGyroMagnetismData));
-            AccelGyroMagnetismData* IMURead = dataRead;
-            SOAR_PRINT("%d   %d   %d   %d   %d   %d   %d   %d   %d   %d", 
-                    IMURead->time, IMURead->accelX_, IMURead->accelY_, IMURead->accelZ_,
+            AccelGyroMagnetismData* IMURead = (AccelGyroMagnetismData*)dataRead;
+            SOAR_PRINT("%03d %08d   %04d   %04d   %04d   %04d   %04d   %04d   %04d   %04d   %04d\n", 
+                    length, IMURead->time, IMURead->accelX_, IMURead->accelY_, IMURead->accelZ_,
                     IMURead->gyroX_, IMURead->gyroY_, IMURead->gyroZ_, IMURead->magnetoX_,
                     IMURead->magnetoY_, IMURead->magnetoZ_);
         }
         else if(length == sizeof(BarometerData)) {
             uint8_t dataRead[sizeof(BarometerData)];
             W25qxx_ReadBytes(dataRead, INITIAL_SENSOR_FLASH_OFFSET + i + 1, sizeof(BarometerData));
-            BarometerData* baroRead = dataRead;
-            SOAR_PRINT("%d   %d   %d",
-                    baroRead->time, baroRead->pressure_, baroRead->temperature_);
+            BarometerData* baroRead = (BarometerData*)dataRead;
+            SOAR_PRINT("%3d %08d   %04d   %04d\n",
+                    length, baroRead->time, baroRead->pressure_, baroRead->temperature_);
         } else {
-            SOAR_PRINT("Unknown length, readback brokedown");
+            //SOAR_PRINT("Unknown length, readback brokedown: %d\n", length);
         }
+        i = i + length;
     }
     return res;
 }
@@ -193,7 +193,7 @@ SystemStorage::SystemStorage()
     //read from flash to populate state struct
     bool res = ReadStateFromFlash();
     if (res == false) {
-        rs_currentInformation = {RS_ABORT, 0};
+        rs_currentInformation = {RS_ABORT, 0, 0};
         //should probably erase all data sectors
         SOAR_PRINT("readback returned false");
     }
@@ -223,6 +223,7 @@ void SystemStorage::HandleCommand(Command& cm)
             else if(cm.GetTaskCommand() == ERASE_ALL_FLASH)
             {
                 W25qxx_EraseChip();
+                rs_currentInformation.data_offset = 0;
             }
             break;
         }

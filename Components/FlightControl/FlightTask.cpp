@@ -89,7 +89,7 @@ void FlightTask::Run(void * pvParams)
         osDelay(500);
 
         //Every cycle, print something out (for testing)
-        SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
+        //SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
         //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
         Command cm;

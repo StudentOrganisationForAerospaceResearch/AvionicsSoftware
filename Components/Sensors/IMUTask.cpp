@@ -119,7 +119,9 @@ void IMUTask::Run(void* pvParams)
         Command flashCommand(DATA_COMMAND);
         flashCommand.AllocateData(sizeof(AccelGyroMagnetismData));
         memcpy(flashCommand.GetDataPointer(), data, sizeof(AccelGyroMagnetismData));
-        FlashTask::Inst().GetEventQueue()->Send(flashCommand);
+        FlashTask::Inst().GetEventQueue()->Send(flashCommand);\
+
+        osDelay(500);
 
         //Command cm;
 

@@ -33,6 +33,7 @@ Mutex Global::vaListMutex;
 */
 void run_main() {
     // Init Tasks
+    osDelay(500);
     FlashTask::Inst().InitTask();
     WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
