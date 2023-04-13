@@ -141,10 +141,7 @@ void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
     uint8_t buff[size + 1];
 
     buff[0] = (uint8_t)(size & 0xff);
-
-    for(uint32_t i = 0; i < size; i++) {
-        buff[i + 1] = data[i];
-    }
+    memcpy(buff + 1, data, size);
 
     W25qxx_WriteSector(buff, sectorAddressToWrite, sectorOffsetToWrite, size + 1);
 
