@@ -1,5 +1,6 @@
 #include "SystemStorage.hpp"
 #include "FlightTask.hpp"
+#include "Data.h"
 #include <cstring>     // Support for memcpy
 
 /**
@@ -155,6 +156,30 @@ bool SystemStorage::ReadDataFromFlash()
     //unused
     bool res = true;
 
+    uint8_t length
+
+    for(i = 0; i < rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET; i++) {
+        W25qxx_ReadByte(length, INITIAL_SENSOR_FLASH_OFFSET + i);
+
+        if(length == sizeof(AccelGyroMagnetismData)) {
+            uint8_t dataRead[sizeof(AccelGyroMagnetismData)];
+            W25qxx_ReadBytes(dataRead, INITIAL_SENSOR_FLASH_OFFSET + i + 1, sizeof(AccelGyroMagnetismData));
+            AccelGyroMagnetismData* IMURead = dataRead;
+            SOAR_PRINT("%d   %d   %d   %d   %d   %d   %d   %d   %d   %d", 
+                    IMURead->time, IMURead->accelX_, IMURead->accelY_, IMURead->accelZ_,
+                    IMURead->gyroX_, IMURead->gyroY_, IMURead->gyroZ_, IMURead->magnetoX_,
+                    IMURead->magnetoY_, IMURead->magnetoZ_);
+        }
+        else if(length == sizeof(BarometerData)) {
+            uint8_t dataRead[sizeof(BarometerData)];
+            W25qxx_ReadBytes(dataRead, INITIAL_SENSOR_FLASH_OFFSET + i + 1, sizeof(BarometerData));
+            BarometerData* baroRead = dataRead;
+            SOAR_PRINT("%d   %d   %d",
+                    baroRead->time, baroRead->pressure_, baroRead->temperature_);
+        } else {
+            SOAR_PRINT("Unknown length, readback brokedown");
+        }
+    }
     return res;
 }
 
