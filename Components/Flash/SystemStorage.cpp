@@ -135,12 +135,18 @@ bool SystemStorage::ReadStateFromFlash()
 void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 {
     //Write to relevant sector
-    uint32_t addressToWrite = rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET;
-    W25qxx_WriteByte((uint8_t)(size & 0xff), addressToWrite);
+    uint32_t sectorAddressToWrite = (rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET) / w25qxx.SectorSize;
+    uint32_t sectorOffsetToWrite = (rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET) % w25qxx.SectorSize;
+
+    uint8_t buff[size + 1];
+
+    buff[0] = (uint8_t)(size & 0xff);
 
     for(uint32_t i = 0; i < size; i++) {
-        W25qxx_WriteByte(data[i], addressToWrite + i + 1);
+        buff[i + 1] = data[i];
     }
+
+    W25qxx_WriteSector(buff, sectorAddressToWrite, sectorOffsetToWrite, size + 1);
 
     rs_currentInformation.data_offset = rs_currentInformation.data_offset + size + 1; //address is in bytes
     WriteStateToFlash();
