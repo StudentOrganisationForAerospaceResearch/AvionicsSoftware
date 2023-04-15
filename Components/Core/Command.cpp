@@ -145,6 +145,8 @@ void Command::Reset()
     if(bShouldFreeData && data != nullptr) {
         soar_free(data);
         statAllocationCounter -= 1;
+		data = nullptr;
+        bShouldFreeData = false;
     }
 }
 
