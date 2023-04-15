@@ -119,9 +119,14 @@ void IMUTask::Run(void* pvParams)
         Command flashCommand(DATA_COMMAND);
         flashCommand.AllocateData(sizeof(AccelGyroMagnetismData));
         memcpy(flashCommand.GetDataPointer(), data, sizeof(AccelGyroMagnetismData));
-        FlashTask::Inst().GetEventQueue()->Send(flashCommand);\
+        FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 
-        osDelay(500);
+        SOAR_PRINT("\t-- IMU Data --\n");
+        SOAR_PRINT(" Accel (x,y,z) : (%d, %d, %d) milli-Gs\n", data->accelX_, data->accelY_, data->accelZ_);
+        SOAR_PRINT(" Gyro (x,y,z)  : (%d, %d, %d) milli-deg/s\n", data->gyroX_, data->gyroY_, data->gyroZ_);
+        SOAR_PRINT(" Mag (x,y,z)   : (%d, %d, %d) milli-gauss\n", data->magnetoX_, data->magnetoY_, data->magnetoZ_);
+
+        osDelay(200);
 
         //Command cm;
 

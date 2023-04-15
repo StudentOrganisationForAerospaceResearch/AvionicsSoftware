@@ -95,7 +95,12 @@ void BarometerTask::Run(void * pvParams)
         memcpy(flashCommand.GetDataPointer(), data, sizeof(BarometerData));
         FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 
-        osDelay(500);
+        SOAR_PRINT("\t-- Barometer Data --\n");
+        SOAR_PRINT(" Temp (C)       : %d.%d\n", data->temperature_ / 100, data->temperature_ % 100);
+        SOAR_PRINT(" Pressure (mbar): %d.%d\n", data->pressure_ / 100, data->pressure_ % 100);
+        SOAR_PRINT(" Pressure (kPa) : %d.%d\n\n", data->pressure_ / 1000, data->pressure_ % 1000);
+
+        osDelay(200);
 
         //Command cm;
 
