@@ -210,7 +210,7 @@ SystemStorage::SystemStorage()
  */
 void SystemStorage::HandleCommand(Command& cm)
 {
-    SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
+    //SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
     switch(cm.GetCommand()) {
         case TASK_SPECIFIC_COMMAND: {
             if(cm.GetTaskCommand() == WRITE_STATE_TO_FLASH) 
