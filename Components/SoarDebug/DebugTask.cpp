@@ -19,6 +19,7 @@
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
 #include "WatchdogTask.hpp"
+#include "GPSTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -41,6 +42,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart->Instance == SystemHandles::UART_Debug->Instance)
         DebugTask::Inst().InterruptRxData();
+    else if (huart->Instance == SystemHandles::UART_GPS->Instance)
+        GPSTask::Inst().HandleGPSRxComplete();
 }
 
 /* Functions -----------------------------------------------------------------*/

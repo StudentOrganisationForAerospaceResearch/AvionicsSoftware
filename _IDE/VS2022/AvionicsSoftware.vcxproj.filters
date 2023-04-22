@@ -228,6 +228,9 @@
     <ClCompile Include="..\..\Components\Sensors\IMUTask.cpp">
       <Filter>Source Files\Components\Sensors</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\Sensors\GPSTask.cpp">
+      <Filter>Source Files\Components\Sensors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -1542,6 +1545,9 @@
       <Filter>Source Files\Components\Sensors\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Sensors\Inc\IMUTask.hpp">
+      <Filter>Source Files\Components\Sensors\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Sensors\Inc\GPSTask.hpp">
       <Filter>Source Files\Components\Sensors\Inc</Filter>
     </ClInclude>
   </ItemGroup>

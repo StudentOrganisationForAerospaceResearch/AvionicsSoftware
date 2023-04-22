@@ -60,6 +60,11 @@ constexpr uint8_t TASK_IMU_PRIORITY = 2;            // Priority of the barometer
 constexpr uint8_t TASK_IMU_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
 constexpr uint16_t TASK_IMU_STACK_DEPTH_WORDS = 256;        // Size of the barometer task stack
 
+// GPS TASK
+constexpr uint8_t TASK_GPS_PRIORITY = 2;            // Priority of the barometer task
+constexpr uint8_t TASK_GPS_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
+constexpr uint16_t TASK_GPS_STACK_DEPTH_WORDS = 256;        // Size of the barometer task stack
+
 // WATCHDOG Task
 constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 2;            // Priority of the watchdog task
 constexpr uint8_t WATCHDOG_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the watchdog task queue
@@ -129,5 +134,8 @@ inline void soar_free(void* ptr) {
 
 
 /* Other ------------------------------------------------------------------*/
+// Override the new and delete operator to ensure heap4 is used for dynamic memory allocation
+inline void* operator new(size_t size) { return soar_malloc(size); }
+inline void operator delete(void* ptr) { soar_free(ptr); }
 
 #endif // SOAR_MAIN_SYSTEM_DEFINES_H
