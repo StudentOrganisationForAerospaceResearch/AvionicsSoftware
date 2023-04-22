@@ -126,7 +126,7 @@ void IMUTask::Run(void* pvParams)
         //SOAR_PRINT(" Gyro (x,y,z)  : (%d, %d, %d) milli-deg/s\n", data->gyroX_, data->gyroY_, data->gyroZ_);
         //SOAR_PRINT(" Mag (x,y,z)   : (%d, %d, %d) milli-gauss\n", data->magnetoX_, data->magnetoY_, data->magnetoZ_);
 
-        osDelay(200);
+        osDelay(220);
 
         //Command cm;
 

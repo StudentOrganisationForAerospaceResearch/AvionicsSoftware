@@ -100,7 +100,7 @@ void BarometerTask::Run(void * pvParams)
         //SOAR_PRINT(" Pressure (mbar): %d.%d\n", data->pressure_ / 100, data->pressure_ % 100);
         //SOAR_PRINT(" Pressure (kPa) : %d.%d\n\n", data->pressure_ / 1000, data->pressure_ % 1000);
 
-        osDelay(200);
+        osDelay(220);
 
         //Command cm;
 
