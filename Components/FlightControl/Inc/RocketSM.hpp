@@ -133,6 +133,8 @@ public:
 
     void HandleCommand(Command& cm);
 
+    BaseRocketState* GetCurrentState();
+
 protected:
     RocketState TransitionState(RocketState nextState);
 
