@@ -21,12 +21,53 @@ FetchContent_MakeAvailable(googletest)
 # Compilation
 #
 
+set(
+  RocketCode
+  ./Communication/Inc/UARTTask.hpp
+  ./Communication/UARTTask.cpp
+  ./Core/Command.cpp
+  ./Core/DMAController.cpp
+  ./Core/Inc/Command.hpp
+  ./Core/Inc/DMAController.hpp
+  ./Core/Inc/Mutex.hpp
+  ./Core/Inc/Queue.hpp
+  ./Core/Inc/Task.hpp
+  ./Core/Inc/Timer.hpp
+  ./Core/Mutex.cpp
+  ./Core/Queue.cpp
+  ./Core/Task.cpp
+  ./Core/Timer.cpp
+  ./FlightControl/FlightTask.cpp
+  ./FlightControl/Inc/FlightTask.hpp
+  ./FlightControl/Inc/RocketSM.hpp
+  ./FlightControl/Inc/WatchdogTask.hpp
+  ./FlightControl/RocketSM.cpp
+  ./FlightControl/WatchdogTask.cpp
+  ./GPIO.hpp
+  ./main_avionics.cpp
+  ./main_avionics.hpp
+  ./Sensors/BarometerTask.cpp
+  ./Sensors/IMUTask.cpp
+  ./Sensors/Inc/BarometerTask.hpp
+  ./Sensors/Inc/IMUTask.hpp
+  ./SoarDebug/DebugTask.cpp
+  ./SoarDebug/Inc/DebugTask.hpp
+  ./SystemDefines.hpp
+  ./Utils.cpp
+  ./Utils.hpp
+)
+
+set(
+  TestCode
+  Tests/test1.cpp
+  Tests/test2.cpp
+)
+
 enable_testing()
 
 add_executable(
   tests
-  Tests/test1.cpp
-  Tests/test2.cpp
+  ${TestCode}
 )
 
 target_link_libraries(
