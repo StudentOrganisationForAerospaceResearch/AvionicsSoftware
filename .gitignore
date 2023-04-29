@@ -38,6 +38,9 @@ STM32L152-Discovery.elf.launch
 .mxproject
 .dep/
 
+# Logs
+logs/
+
 # Other
 *.d
 *.su
@@ -52,6 +55,5 @@ STM32L152-Discovery.elf.launch
 [Rr]elease
 [Dd]ebug
 *.launch
-
-# VS2022
 .vs/
+.vscode/
