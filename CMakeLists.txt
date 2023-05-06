@@ -23,32 +23,32 @@ FetchContent_MakeAvailable(googletest)
 
 set(
   RocketSources
-  ./Components/Communication/UARTTask.cpp
-  ./Components/Core/Command.cpp
-  ./Components/Core/DMAController.cpp
-  ./Components/Core/Mutex.cpp
-  ./Components/Core/Queue.cpp
-  ./Components/Core/Task.cpp
-  ./Components/Core/Timer.cpp
-  ./Components/FlightControl/FlightTask.cpp
-  ./Components/FlightControl/RocketSM.cpp
-  ./Components/FlightControl/WatchdogTask.cpp
-  ./Components/main_avionics.cpp
-  ./Components/Sensors/BarometerTask.cpp
-  ./Components/Sensors/IMUTask.cpp
-  ./Components/SoarDebug/DebugTask.cpp
-  ./Components/Utils.cpp
+  # ./Components/Communication/UARTTask.cpp
+  # ./Components/Core/Command.cpp
+  # ./Components/Core/DMAController.cpp
+  # ./Components/Core/Mutex.cpp
+  # ./Components/Core/Queue.cpp
+  # ./Components/Core/Task.cpp
+  # ./Components/Core/Timer.cpp
+  # ./Components/FlightControl/FlightTask.cpp
+  # ./Components/FlightControl/RocketSM.cpp
+  # ./Components/FlightControl/WatchdogTask.cpp
+  # ./Components/main_avionics.cpp
+  # ./Components/Sensors/BarometerTask.cpp
+  # ./Components/Sensors/IMUTask.cpp
+  # ./Components/SoarDebug/DebugTask.cpp
+  # ./Components/Utils.cpp
 )
 
 set(
   RocketHeaderDirs
-  ./Components
-  ./Components/Communication/Inc
-  ./Components/Core/Inc
-  ./Components/FlightControl/Inc
-  ./Components/Sensors/Inc
-  ./Components/SoarDebug/Inc
-  ./Core/Inc
+  # ./Components
+  # ./Components/Communication/Inc
+  # ./Components/Core/Inc
+  # ./Components/FlightControl/Inc
+  # ./Components/Sensors/Inc
+  # ./Components/SoarDebug/Inc
+  # ./Core/Inc
 )
 
 set(
@@ -73,14 +73,14 @@ set(
   # ./Components/_Libraries/embedded-template-library/include/etl/mutex
   # ./Components/_Libraries/embedded-template-library/include/etl/private
   # ./Components/_Libraries/embedded-template-library/include/etl/profiles
-  ./Core/Inc
-  ./Drivers/CMSIS/Device/ST/STM32F4xx/Include
-  ./Drivers/CMSIS/Include
-  ./Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
-  ./Drivers/STM32F4xx_HAL_Driver/Inc
-  ./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
-  ./Middlewares/Third_Party/FreeRTOS/Source/include
-  ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+  # ./Core/Inc
+  # ./Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  # ./Drivers/CMSIS/Include
+  # ./Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+  # ./Drivers/STM32F4xx_HAL_Driver/Inc
+  # ./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
+  # ./Middlewares/Third_Party/FreeRTOS/Source/include
+  # ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 )
 
 enable_testing()
@@ -94,6 +94,7 @@ add_executable(
 )
 
 target_include_directories(tests PUBLIC ${NonRocketHeaderDirs} ${FakesHeaderDirs} ${RocketHeaderDirs})
+# target_include_directories(tests PUBLIC ${FakesHeaderDirs} ${RocketHeaderDirs})
 
 target_link_libraries(
   tests
