@@ -39,7 +39,10 @@ namespace Utils
     void readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* value);
 
     // CRC
-    uint32_t getCRC32(uint8_t* data, uint32_t size);
+    uint32_t getCRC32Aligned(uint8_t* data, uint32_t size);
+    uint16_t getCRC16(uint8_t* data, uint16_t size);
+
+    bool IsCrc16Correct(uint8_t* data, uint16_t size, uint16_t crc);
 
     // String Manipulation
     inline bool IsAsciiNum(uint8_t c) { return (c >= '0' && c <= '9'); }
