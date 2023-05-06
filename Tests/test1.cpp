@@ -15,5 +15,13 @@ TEST_F(TestFw, Test1) {
 }
 
 TEST_F(TestFw, Test2) {
-  EXPECT_NE(1,1);
+  EXPECT_NE(2,1);
+}
+
+TEST_F(TestFw, Thingy) {
+  int a = 0;
+  for (int i = 0; i < 0xFFFFFF; i++) {
+    EXPECT_GE(i, a);
+  }
+  EXPECT_EQ(a, 1);
 }

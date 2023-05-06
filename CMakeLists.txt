@@ -22,53 +22,78 @@ FetchContent_MakeAvailable(googletest)
 #
 
 set(
-  RocketCode
-  ./Communication/Inc/UARTTask.hpp
-  ./Communication/UARTTask.cpp
-  ./Core/Command.cpp
-  ./Core/DMAController.cpp
-  ./Core/Inc/Command.hpp
-  ./Core/Inc/DMAController.hpp
-  ./Core/Inc/Mutex.hpp
-  ./Core/Inc/Queue.hpp
-  ./Core/Inc/Task.hpp
-  ./Core/Inc/Timer.hpp
-  ./Core/Mutex.cpp
-  ./Core/Queue.cpp
-  ./Core/Task.cpp
-  ./Core/Timer.cpp
-  ./FlightControl/FlightTask.cpp
-  ./FlightControl/Inc/FlightTask.hpp
-  ./FlightControl/Inc/RocketSM.hpp
-  ./FlightControl/Inc/WatchdogTask.hpp
-  ./FlightControl/RocketSM.cpp
-  ./FlightControl/WatchdogTask.cpp
-  ./GPIO.hpp
-  ./main_avionics.cpp
-  ./main_avionics.hpp
-  ./Sensors/BarometerTask.cpp
-  ./Sensors/IMUTask.cpp
-  ./Sensors/Inc/BarometerTask.hpp
-  ./Sensors/Inc/IMUTask.hpp
-  ./SoarDebug/DebugTask.cpp
-  ./SoarDebug/Inc/DebugTask.hpp
-  ./SystemDefines.hpp
-  ./Utils.cpp
-  ./Utils.hpp
+  RocketSources
+  ./Components/Communication/UARTTask.cpp
+  ./Components/Core/Command.cpp
+  ./Components/Core/DMAController.cpp
+  ./Components/Core/Mutex.cpp
+  ./Components/Core/Queue.cpp
+  ./Components/Core/Task.cpp
+  ./Components/Core/Timer.cpp
+  ./Components/FlightControl/FlightTask.cpp
+  ./Components/FlightControl/RocketSM.cpp
+  ./Components/FlightControl/WatchdogTask.cpp
+  ./Components/main_avionics.cpp
+  ./Components/Sensors/BarometerTask.cpp
+  ./Components/Sensors/IMUTask.cpp
+  ./Components/SoarDebug/DebugTask.cpp
+  ./Components/Utils.cpp
 )
 
 set(
-  TestCode
+  RocketHeaderDirs
+  ./Components
+  ./Components/Communication/Inc
+  ./Components/Core/Inc
+  ./Components/FlightControl/Inc
+  ./Components/Sensors/Inc
+  ./Components/SoarDebug/Inc
+  ./Core/Inc
+)
+
+set(
+  FakesHeaderDirs
+  ./Tests/Fakes
+)
+
+set(
+  TestSources
   Tests/test1.cpp
   Tests/test2.cpp
 )
 
+# find -name '*.h' -not -path './build/*'
+set(
+  NonRocketHeaderDirs
+  # ./Components/_Libraries/embedded-template-library/include/etl
+  # ./Components/_Libraries/embedded-template-library/include/etl/atomic
+  # ./Components/_Libraries/embedded-template-library/include/etl/deprecated
+  # ./Components/_Libraries/embedded-template-library/include/etl/experimental
+  # ./Components/_Libraries/embedded-template-library/include/etl/generators
+  # ./Components/_Libraries/embedded-template-library/include/etl/mutex
+  # ./Components/_Libraries/embedded-template-library/include/etl/private
+  # ./Components/_Libraries/embedded-template-library/include/etl/profiles
+  ./Core/Inc
+  ./Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  ./Drivers/CMSIS/Include
+  ./Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+  ./Drivers/STM32F4xx_HAL_Driver/Inc
+  ./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
+  ./Middlewares/Third_Party/FreeRTOS/Source/include
+  ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+)
+
 enable_testing()
+
+add_compile_definitions(STM32F405xx)
 
 add_executable(
   tests
-  ${TestCode}
+  ${RocketSources}
+  ${TestSources}
 )
+
+target_include_directories(tests PUBLIC ${NonRocketHeaderDirs} ${FakesHeaderDirs} ${RocketHeaderDirs})
 
 target_link_libraries(
   tests
