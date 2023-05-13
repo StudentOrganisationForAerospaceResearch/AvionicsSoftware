@@ -26,6 +26,9 @@
     <ClCompile Include="..\..\Components\Core\Queue.cpp" />
     <ClCompile Include="..\..\Components\Core\Task.cpp" />
     <ClCompile Include="..\..\Components\Core\Timer.cpp" />
+    <ClCompile Include="..\..\Components\Flash\Driver\w25qxx.cpp" />
+    <ClCompile Include="..\..\Components\Flash\FlashTask.cpp" />
+    <ClCompile Include="..\..\Components\Flash\SystemStorage.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
@@ -82,6 +85,10 @@
     <ClInclude Include="..\..\Components\Core\Inc\Queue.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Timer.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Driver\w25qxxConf.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SystemStorage.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\RocketSM.hpp" />
     <ClInclude Include="..\..\Components\GPIO.hpp" />
@@ -612,7 +619,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\Components\Sensors\Inc;$(SolutionDir)\..\..\Components\SoarDebug\Inc;$(SolutionDir)\..\..\Components;$(SolutionDir)\..\..\Components\_Libraries\embedded-template-library\include;$(SolutionDir)\..\..\Core\Inc;$(SolutionDir)\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;$(SolutionDir)\..\..\Drivers\CMSIS\Include;$(SolutionDir)\..\..\Components\Core\Inc;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\include;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;$(SolutionDir)\..\..\Components\FlightControl\Inc;$(SolutionDir)\..\..\Components\Communication\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cjcha\OneDrive\Desktop\Git\AvionicsSoftware\Components\Flash\Driver;C:\Users\cjcha\OneDrive\Desktop\Git\AvionicsSoftware\Components\Flash\Inc;$(SolutionDir)\..\..\Components\Sensors\Inc;$(SolutionDir)\..\..\Components\SoarDebug\Inc;$(SolutionDir)\..\..\Components;$(SolutionDir)\..\..\Components\_Libraries\embedded-template-library\include;$(SolutionDir)\..\..\Core\Inc;$(SolutionDir)\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;$(SolutionDir)\..\..\Drivers\CMSIS\Include;$(SolutionDir)\..\..\Components\Core\Inc;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\include;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;$(SolutionDir)\..\..\Components\FlightControl\Inc;$(SolutionDir)\..\..\Components\Communication\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

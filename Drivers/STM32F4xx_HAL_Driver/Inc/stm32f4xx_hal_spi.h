@@ -340,12 +340,12 @@ typedef  void (*pSPI_CallbackTypeDef)(SPI_HandleTypeDef *hspi); /*!< pointer to 
   */
 #if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
 #define __HAL_SPI_RESET_HANDLE_STATE(__HANDLE__)                do{                                                  \
-                                                                    (__HANDLE__)->State = HAL_SPI_STATE_RESET;       \
+                                                                    (__HANDLE__)->rocketState = HAL_SPI_STATE_RESET;       \
                                                                     (__HANDLE__)->MspInitCallback = NULL;            \
                                                                     (__HANDLE__)->MspDeInitCallback = NULL;          \
                                                                   } while(0)
 #else
-#define __HAL_SPI_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SPI_STATE_RESET)
+#define __HAL_SPI_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->rocketState = HAL_SPI_STATE_RESET)
 #endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
 
 /** @brief  Enable the specified SPI interrupts.
@@ -702,7 +702,7 @@ void HAL_SPI_AbortCpltCallback(SPI_HandleTypeDef *hspi);
 /** @addtogroup SPI_Exported_Functions_Group3
   * @{
   */
-/* Peripheral State and Error functions ***************************************/
+/* Peripheral rocketState and Error functions ***************************************/
 HAL_SPI_StateTypeDef HAL_SPI_GetState(SPI_HandleTypeDef *hspi);
 uint32_t             HAL_SPI_GetError(SPI_HandleTypeDef *hspi);
 /**

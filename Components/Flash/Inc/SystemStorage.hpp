@@ -26,8 +26,8 @@ enum FLASH_COMMANDS  {
  */
 struct StateInformation 
 {   
-  RocketState State;
-  uint32_t SequenceNumber;      
+  RocketState rocketState;
+  uint32_t sequenceNum;      
   uint32_t data_offset;
   //uint32_t CRC; 
 };
@@ -46,12 +46,12 @@ public:
     bool ReadStateFromFlash();
     void WriteDataToFlash(uint8_t* data, uint16_t size);
     bool ReadDataFromFlash();
-    StateInformation GetStateData() { return rs_currentInformation; }
+    StateInformation GetStateData() { return sys_currentState; }
 
 protected:
 
     // Variables
-    StateInformation rs_currentInformation;
+    StateInformation sys_currentState;
 };
 
 #endif    // SOAR_SYSTEMSTORAGE_HPP_

@@ -315,7 +315,7 @@ void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim);
   * @brief    Extended Peripheral State functions
   * @{
   */
-/* Extended Peripheral State functions  ***************************************/
+/* Extended Peripheral rocketState functions  ***************************************/
 HAL_TIM_StateTypeDef HAL_TIMEx_HallSensor_GetState(TIM_HandleTypeDef *htim);
 HAL_TIM_ChannelStateTypeDef HAL_TIMEx_GetChannelNState(TIM_HandleTypeDef *htim,  uint32_t ChannelN);
 /**

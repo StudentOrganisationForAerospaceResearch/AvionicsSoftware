@@ -274,7 +274,7 @@ typedef struct
 
   uint32_t DeadTime;             /*!< TIM dead Time, This parameter can be a number between Min_Data = 0x00 and Max_Data = 0xFF */
 
-  uint32_t BreakState;           /*!< TIM Break State, This parameter can be a value of @ref TIM_Break_Input_enable_disable */
+  uint32_t BreakState;           /*!< TIM Break rocketState, This parameter can be a value of @ref TIM_Break_Input_enable_disable */
 
   uint32_t BreakPolarity;        /*!< TIM Break input polarity, This parameter can be a value of @ref TIM_Break_Polarity */
 
@@ -1025,7 +1025,7 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
   */
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
 #define __HAL_TIM_RESET_HANDLE_STATE(__HANDLE__) do {                                                               \
-                                                      (__HANDLE__)->State            = HAL_TIM_STATE_RESET;         \
+                                                      (__HANDLE__)->rocketState            = HAL_TIM_STATE_RESET;         \
                                                       (__HANDLE__)->ChannelState[0]  = HAL_TIM_CHANNEL_STATE_RESET; \
                                                       (__HANDLE__)->ChannelState[1]  = HAL_TIM_CHANNEL_STATE_RESET; \
                                                       (__HANDLE__)->ChannelState[2]  = HAL_TIM_CHANNEL_STATE_RESET; \
@@ -1052,7 +1052,7 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
                                                      } while(0)
 #else
 #define __HAL_TIM_RESET_HANDLE_STATE(__HANDLE__) do {                                                               \
-                                                      (__HANDLE__)->State            = HAL_TIM_STATE_RESET;         \
+                                                      (__HANDLE__)->rocketState            = HAL_TIM_STATE_RESET;         \
                                                       (__HANDLE__)->ChannelState[0]  = HAL_TIM_CHANNEL_STATE_RESET; \
                                                       (__HANDLE__)->ChannelState[1]  = HAL_TIM_CHANNEL_STATE_RESET; \
                                                       (__HANDLE__)->ChannelState[2]  = HAL_TIM_CHANNEL_STATE_RESET; \
@@ -2085,7 +2085,7 @@ HAL_StatusTypeDef HAL_TIM_UnRegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Ca
   *  @brief  Peripheral State functions
   * @{
   */
-/* Peripheral State functions  ************************************************/
+/* Peripheral rocketState functions  ************************************************/
 HAL_TIM_StateTypeDef HAL_TIM_Base_GetState(TIM_HandleTypeDef *htim);
 HAL_TIM_StateTypeDef HAL_TIM_OC_GetState(TIM_HandleTypeDef *htim);
 HAL_TIM_StateTypeDef HAL_TIM_PWM_GetState(TIM_HandleTypeDef *htim);

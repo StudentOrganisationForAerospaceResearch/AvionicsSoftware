@@ -484,13 +484,13 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
 #define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__)                               \
   do{                                                                          \
-     (__HANDLE__)->State = HAL_ADC_STATE_RESET;                               \
+     (__HANDLE__)->rocketState = HAL_ADC_STATE_RESET;                               \
      (__HANDLE__)->MspInitCallback = NULL;                                     \
      (__HANDLE__)->MspDeInitCallback = NULL;                                   \
     } while(0)
 #else
 #define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__)                               \
-  ((__HANDLE__)->State = HAL_ADC_STATE_RESET)
+  ((__HANDLE__)->rocketState = HAL_ADC_STATE_RESET)
 #endif
 
 /**
@@ -617,7 +617,7 @@ HAL_StatusTypeDef HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef* hadc, ADC_AnalogWDG
 /** @addtogroup ADC_Exported_Functions_Group4
   * @{
   */
-/* Peripheral State functions ***************************************************/
+/* Peripheral rocketState functions ***************************************************/
 uint32_t HAL_ADC_GetState(ADC_HandleTypeDef* hadc);
 uint32_t HAL_ADC_GetError(ADC_HandleTypeDef *hadc);
 /**

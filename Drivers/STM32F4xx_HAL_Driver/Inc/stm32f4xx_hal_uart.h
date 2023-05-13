@@ -774,7 +774,7 @@ HAL_StatusTypeDef HAL_HalfDuplex_EnableReceiver(UART_HandleTypeDef *huart);
 /** @addtogroup UART_Exported_Functions_Group4
   * @{
   */
-/* Peripheral State functions  **************************************************/
+/* Peripheral rocketState functions  **************************************************/
 HAL_UART_StateTypeDef HAL_UART_GetState(UART_HandleTypeDef *huart);
 uint32_t              HAL_UART_GetError(UART_HandleTypeDef *huart);
 /**

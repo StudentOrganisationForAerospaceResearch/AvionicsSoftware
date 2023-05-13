@@ -87,7 +87,7 @@ typedef struct
   * @param  __HANDLE__ CRC handle.
   * @retval None
   */
-#define __HAL_CRC_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_CRC_STATE_RESET)
+#define __HAL_CRC_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->rocketState = HAL_CRC_STATE_RESET)
 
 /**
   * @brief  Reset CRC Data Register.
@@ -153,7 +153,7 @@ uint32_t HAL_CRC_Calculate(CRC_HandleTypeDef *hcrc, uint32_t pBuffer[], uint32_t
   * @}
   */
 
-/* Peripheral State and Error functions ***************************************/
+/* Peripheral rocketState and Error functions ***************************************/
 /** @defgroup CRC_Exported_Functions_Group3 Peripheral State functions
   * @{
   */

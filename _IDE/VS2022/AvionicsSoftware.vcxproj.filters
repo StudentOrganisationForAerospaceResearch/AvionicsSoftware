@@ -64,6 +64,15 @@
     <Filter Include="Source Files\Components\Sensors\Inc">
       <UniqueIdentifier>{c144919d-e821-4914-a74b-aa665f312a1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\Flash">
+      <UniqueIdentifier>{b52285c8-0070-4487-8b93-84f1692d8cde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\Flash\Inc">
+      <UniqueIdentifier>{e28ae589-e585-4a68-85c7-0113b3d1f96d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\Flash\Driver">
+      <UniqueIdentifier>{abd69ecb-47b4-4f06-8cbd-a5ea3622eb17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvionicsSoftware.cpp">
@@ -227,6 +236,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\Sensors\IMUTask.cpp">
       <Filter>Source Files\Components\Sensors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Flash\SystemStorage.cpp">
+      <Filter>Source Files\Components\Flash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Flash\FlashTask.cpp">
+      <Filter>Source Files\Components\Flash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\Flash\Driver\w25qxx.cpp">
+      <Filter>Source Files\Components\Flash\Driver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1543,6 +1561,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\Sensors\Inc\IMUTask.hpp">
       <Filter>Source Files\Components\Sensors\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp">
+      <Filter>Source Files\Components\Flash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\SystemStorage.hpp">
+      <Filter>Source Files\Components\Flash\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp">
+      <Filter>Source Files\Components\Flash\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Driver\w25qxxConf.hpp">
+      <Filter>Source Files\Components\Flash\Driver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

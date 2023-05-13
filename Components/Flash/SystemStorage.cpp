@@ -4,18 +4,74 @@
 #include <cstring>     // Support for memcpy
 
 /**
+ * @brief Default constructor for SystemStorage, initializes flash struct
+ */
+SystemStorage::SystemStorage()
+{
+    W25qxx_Init();
+
+    // Read from flash to populate state struct
+    bool res = ReadStateFromFlash();
+    if (res == false) {
+        sys_currentState = { RS_ABORT, 0, 0 };
+        //should probably erase all data sectors
+        SOAR_PRINT("readback returned false");
+    }
+    Command cmd(FLASH_RESPONSE, (uint16_t)sys_currentState.rocketState);
+    FlightTask::Inst().GetEventQueue()->Send(cmd);
+}
+
+/**
+ * @brief Handles current command
+ * @param cm The command to handle
+ */
+void SystemStorage::HandleCommand(Command& cm)
+{
+    SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
+
+    switch (cm.GetCommand()) {
+    case TASK_SPECIFIC_COMMAND: {
+        if (cm.GetTaskCommand() == WRITE_STATE_TO_FLASH)
+        {
+            sys_currentState.rocketState = (RocketState)(cm.GetDataPointer()[0]);
+            WriteStateToFlash();
+            SOAR_PRINT("state written to flash\n");
+        }
+        else if (cm.GetTaskCommand() == DUMP_FLASH_DATA)
+        {
+            ReadDataFromFlash();
+        }
+        else if (cm.GetTaskCommand() == ERASE_ALL_FLASH)
+        {
+            W25qxx_EraseChip();
+            sys_currentState.data_offset = 0;
+        }
+        break;
+    }
+    case DATA_COMMAND: {
+        WriteDataToFlash(cm.GetDataPointer(), cm.GetDataSize());
+        break;
+    }
+    default:
+        break;
+    }
+    cm.Reset();
+}
+
+
+/**
  * @brief Creates CRC, writes struct and CRC to flash, increases sequence number,
  *        then it erases previous sector
  */
 void SystemStorage::WriteStateToFlash()
 {
-    rs_currentInformation.SequenceNumber++;
-    //SOAR_PRINT("sequence number: %d\n", rs_currentInformation.SequenceNumber);
+    sys_currentState.sequenceNum++;
+    //SOAR_PRINT("sequence number: %d\n", sys_currentState.sequenceNum);
 
     uint8_t data[sizeof(StateInformation) + sizeof(uint32_t)];
 
-    memcpy(data, &rs_currentInformation, sizeof(StateInformation));
-    //SOAR_PRINT("State: %d\n", rs_currentInformation.State);
+    memcpy(data, &sys_currentState, sizeof(StateInformation));
+    //SOAR_PRINT("rocketState: %d\n", sys_currentState.rocketState);
 
     //Calculate and store CRC
     uint32_t checksum = Utils::getCRC32(data, sizeof(StateInformation));
@@ -25,11 +81,11 @@ void SystemStorage::WriteStateToFlash()
 
     //Write to relevant sector
     //sector address is not the same as address address
-    uint32_t addressToWrite = (rs_currentInformation.SequenceNumber % 2);
+    uint32_t addressToWrite = (sys_currentState.sequenceNum % 2);
     W25qxx_WriteSector(data, addressToWrite, 0, sizeof(StateInformation) + sizeof(uint32_t));
 
     //erase old sector
-    uint32_t addressToErase = ((rs_currentInformation.SequenceNumber + 1) % 2);
+    uint32_t addressToErase = ((sys_currentState.sequenceNum + 1) % 2);
     W25qxx_EraseSector(addressToErase);
 }
 
@@ -46,11 +102,8 @@ bool SystemStorage::ReadStateFromFlash()
     uint8_t sector1Data[sizeof(StateInformation) + sizeof(uint32_t)];
     uint8_t sector2Data[sizeof(StateInformation) + sizeof(uint32_t)];
 
-    StateInformation sector1;
-    StateInformation sector2;
-
-    uint32_t sector1ReadChecksum;
-    uint32_t sector2ReadChecksum;
+    StateInformation* sector1;
+    StateInformation* sector2;
 
     uint32_t sector1CalculatedChecksum;
     uint32_t sector2CalculatedChecksum;
@@ -58,31 +111,22 @@ bool SystemStorage::ReadStateFromFlash()
     //read state sectors
     W25qxx_ReadBytes(sector1Data, w25qxx.SectorSize * 0, sizeof(StateInformation) + sizeof(uint32_t));
     W25qxx_ReadBytes(sector2Data, w25qxx.SectorSize * 1, sizeof(StateInformation) + sizeof(uint32_t));
+	sector1 = (StateInformation*)sector1Data;
+    sector2 = (StateInformation*)sector2Data;
 
-    memcpy(&sector1, sector1Data, sizeof(StateInformation));
-    memcpy(&sector2, sector2Data, sizeof(StateInformation));
-    //SOAR_PRINT("Read State1: %d\n", sector1.State);
-    //SOAR_PRINT("Read State2: %d\n", sector2.State);
-
-    memcpy(&sector1ReadChecksum, sector1Data + sizeof(StateInformation), sizeof(uint32_t));
-    memcpy(&sector2ReadChecksum, sector2Data + sizeof(StateInformation), sizeof(uint32_t));
-    //SOAR_PRINT("Read Checksum1: %d\n", sector1ReadChecksum);
-    //SOAR_PRINT("Read Checksum2: %d\n", sector2ReadChecksum);
+    //get the checksums
+	uint32_t sector1ReadChecksum = *(uint32_t*)(sector1Data + sizeof(StateInformation));
+	uint32_t sector2ReadChecksum = *(uint32_t*)(sector2Data + sizeof(StateInformation));
 
     sector1CalculatedChecksum = Utils::getCRC32(sector1Data, sizeof(StateInformation));
     sector2CalculatedChecksum = Utils::getCRC32(sector2Data, sizeof(StateInformation));
-    //SOAR_PRINT("Calculated Checksum1: %d\n", sector1CalculatedChecksum);
-    //SOAR_PRINT("Calculated Checksum2: %d\n", sector2CalculatedChecksum);
-
-    //SOAR_PRINT("Read Sequence1: %d\n", sector1.SequenceNumber);
-    //SOAR_PRINT("Read Sequence2: %d\n", sector2.SequenceNumber);
 
     uint8_t validSector = 0;
 
     //find the newest valid sector
     if(sector1ReadChecksum == sector1CalculatedChecksum && sector2ReadChecksum == sector2CalculatedChecksum)
     {
-        if(sector1.SequenceNumber > sector2.SequenceNumber)
+        if(sector1->sequenceNum > sector2->sequenceNum)
         {
             validSector = 1;
             SOAR_PRINT("sector 1 was valid\n");
@@ -114,14 +158,13 @@ bool SystemStorage::ReadStateFromFlash()
     //write to state struct depending on which sector was deemed valid
     if(validSector == 1) 
     {
-        rs_currentInformation = sector1;
+        sys_currentState = *sector1;
         W25qxx_EraseSector(1);
         res = true;
     }
-
-    if(validSector == 2) 
+	if(validSector == 2) 
     {
-        rs_currentInformation = sector2;
+        sys_currentState = *sector2;
         W25qxx_EraseSector(0);
         res = true;
     }
@@ -135,8 +178,8 @@ bool SystemStorage::ReadStateFromFlash()
 void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 {
     //Write to relevant sector
-    uint32_t sectorAddressToWrite = (rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET) / w25qxx.SectorSize;
-    uint32_t sectorOffsetToWrite = (rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET) % w25qxx.SectorSize;
+    uint32_t sectorAddressToWrite = (sys_currentState.data_offset + INITIAL_SENSOR_FLASH_OFFSET) / w25qxx.SectorSize;
+    uint32_t sectorOffsetToWrite = (sys_currentState.data_offset + INITIAL_SENSOR_FLASH_OFFSET) % w25qxx.SectorSize;
 
     uint8_t buff[size + 1];
 
@@ -145,7 +188,7 @@ void SystemStorage::WriteDataToFlash(uint8_t* data, uint16_t size)
 
     W25qxx_WriteSector(buff, sectorAddressToWrite, sectorOffsetToWrite, size + 1);
 
-    rs_currentInformation.data_offset = rs_currentInformation.data_offset + size + 1; //address is in bytes
+    sys_currentState.data_offset = sys_currentState.data_offset + size + 1; //address is in bytes
     WriteStateToFlash();
 }
 
@@ -160,7 +203,7 @@ bool SystemStorage::ReadDataFromFlash()
 
     uint8_t length;
 
-    for(unsigned int i = 0; i < rs_currentInformation.data_offset + INITIAL_SENSOR_FLASH_OFFSET; i++) {
+    for(unsigned int i = 0; i < sys_currentState.data_offset + INITIAL_SENSOR_FLASH_OFFSET; i++) {
         W25qxx_ReadByte(&length, INITIAL_SENSOR_FLASH_OFFSET + i);
 
         if(length == sizeof(AccelGyroMagnetismData)) {
@@ -179,63 +222,9 @@ bool SystemStorage::ReadDataFromFlash()
             SOAR_PRINT("%3d %08d   %04d   %04d\n",
                     length, baroRead->time, baroRead->pressure_, baroRead->temperature_);
         } else {
-            //SOAR_PRINT("Unknown length, readback brokedown: %d\n", length);
+            SOAR_PRINT("Unknown length, readback brokedown: %d\n", length);
         }
         i = i + length;
     }
     return res;
-}
-
-/**
- * @brief Default constructor for SystemStorage, initializes flash struct
- */
-SystemStorage::SystemStorage()
-{
-    W25qxx_Init();
-    
-    //read from flash to populate state struct
-    bool res = ReadStateFromFlash();
-    if (res == false) {
-        rs_currentInformation = {RS_ABORT, 0, 0};
-        //should probably erase all data sectors
-        SOAR_PRINT("readback returned false");
-    }
-    Command cmd(FLASH_RESPONSE, (uint16_t) rs_currentInformation.State);
-    FlightTask::Inst().GetEventQueue()->Send(cmd);
-}
-
-/**
- * @brief Handles current command
- * @param cm The command to handle
- */
-void SystemStorage::HandleCommand(Command& cm)
-{
-    //SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
-    switch(cm.GetCommand()) {
-        case TASK_SPECIFIC_COMMAND: {
-            if(cm.GetTaskCommand() == WRITE_STATE_TO_FLASH) 
-            {
-                rs_currentInformation.State = (RocketState) (cm.GetDataPointer()[0]);
-                WriteStateToFlash();
-                SOAR_PRINT("state written to flash\n");
-            }
-            else if(cm.GetTaskCommand() == DUMP_FLASH_DATA) 
-            {
-                ReadDataFromFlash();
-            }
-            else if(cm.GetTaskCommand() == ERASE_ALL_FLASH)
-            {
-                W25qxx_EraseChip();
-                rs_currentInformation.data_offset = 0;
-            }
-            break;
-        }
-        case DATA_COMMAND: {
-            WriteDataToFlash(cm.GetDataPointer(), cm.GetDataSize());
-            break;
-        }
-        default:
-            break;
-    }
-    cm.Reset();
 }
