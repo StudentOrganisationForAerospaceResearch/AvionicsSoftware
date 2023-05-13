@@ -258,6 +258,9 @@
     <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\ReadBufferSection.cpp">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\TelemetryTask.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -1636,6 +1639,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\WriteBufferInterface.h">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\FlightControl\Inc\TelemetryTask.hpp">
+      <Filter>Source Files\Components\FlightControl\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
