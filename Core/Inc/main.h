@@ -103,6 +103,8 @@ void Error_Handler(void);
 #define SPI_MISO_GPIO_Port GPIOB
 #define SPI_MOSI_Pin GPIO_PIN_15
 #define SPI_MOSI_GPIO_Port GPIOB
+#define HDI_BUZZER_Pin GPIO_PIN_6
+#define HDI_BUZZER_GPIO_Port GPIOC
 #define LED_3_Pin GPIO_PIN_7
 #define LED_3_GPIO_Port GPIOC
 #define LED_2_Pin GPIO_PIN_8

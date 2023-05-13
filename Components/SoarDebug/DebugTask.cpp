@@ -158,6 +158,10 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
+    else if (strcmp(msg, "prelaunch") == 0) {
+    	SOAR_PRINT("Changing state to prelaunch");
+    	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_GOTO_PRELAUNCH));
+        }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {

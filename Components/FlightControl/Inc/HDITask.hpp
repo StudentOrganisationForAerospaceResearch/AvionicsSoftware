@@ -8,7 +8,7 @@
 #define SOAR_HDI_HPP_
 #include "Task.hpp"
 #include "SystemDefines.hpp"
-//#include "RocketSM.hpp"
+#include "RocketSM.hpp"
 //#include "FlightTask.hpp"
 
 
@@ -21,6 +21,7 @@ public:
     }
 
     void InitTask();
+
     RocketState currentHDIState();
 
 protected:

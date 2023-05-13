@@ -737,13 +737,14 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, IMU_XL_GY_CS_Pin|BAT_EN_Pin|SOL_CTRL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, IMU_MAG_CS_Pin|LED_3_Pin|LED_2_Pin|LED_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, IMU_MAG_CS_Pin|HDI_BUZZER_Pin|LED_3_Pin|LED_2_Pin
+                          |LED_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RCU_DRIV_EN_Pin|BARO_CS_Pin|SPI_MEM_WP_Pin|SPI_CS__Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PC13 PC1 PC5 PC6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_1|GPIO_PIN_5|GPIO_PIN_6;
+  /*Configure GPIO pins : PC13 PC1 PC5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_1|GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -767,8 +768,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : IMU_MAG_CS_Pin LED_3_Pin LED_2_Pin LED_1_Pin */
-  GPIO_InitStruct.Pin = IMU_MAG_CS_Pin|LED_3_Pin|LED_2_Pin|LED_1_Pin;
+  /*Configure GPIO pins : IMU_MAG_CS_Pin HDI_BUZZER_Pin LED_3_Pin LED_2_Pin
+                           LED_1_Pin */
+  GPIO_InitStruct.Pin = IMU_MAG_CS_Pin|HDI_BUZZER_Pin|LED_3_Pin|LED_2_Pin
+                          |LED_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

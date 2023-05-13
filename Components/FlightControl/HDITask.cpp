@@ -7,6 +7,8 @@
 #include "HDITask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
+#include "RocketSM.hpp"
+#include "FlightTask.hpp"
 
 
 /**
@@ -50,11 +52,13 @@ void HDITask::Run(void * pvParams)
 
 
 
-        /*RocketState currentHDIState = FlightTask::Inst().GetCurrentState();
+    	RocketState currentHDIState = FlightTask::Inst().GetCurrentState();
 
         switch(currentHDIState){
         case RS_PRELAUNCH:
         	GPIO::LED1::On();
+			HAL_GPIO_WritePin(GPIOC, HDI_BUZZER_Pin, GPIO_PIN_SET);
+
 
 			osDelay(500);
 			GPIO::LED1::Off();
@@ -62,19 +66,64 @@ void HDITask::Run(void * pvParams)
 			osDelay(500);
 			break;
 
-            case RS_ABORT:
-            	GPIO::LED1::On();
+		case RS_ABORT:
+			GPIO::LED2::On();
+			//HAL_GPIO_WritePin(GPIOC, HDI_BUZZER_Pin, GPIO_PIN_RESET);
 
-				osDelay(500);
-				GPIO::LED1::Off();
+			osDelay(500);
+			GPIO::LED2::Off();
 
-				osDelay(500);
-        	break;
-
-            default:
+			osDelay(500);
 			break;
-        }
-*/
+
+//		case RS_OPEN_VENT:
+//			GPIO::LED3::On();
+//
+//			osDelay(500);
+//			GPIO::LED3::Off();
+//
+//			osDelay(500);
+//			break;
+//
+//		case RS_CLOSE_VENT:
+//			GPIO::LED2::On();
+//
+//			osDelay(500);
+//			GPIO::LED2::Off();
+//
+//			osDelay(500);
+//			break;
+//
+//		case RS_OPEN_DRAIN:
+//			GPIO::LED2::On();
+//
+//			osDelay(500);
+//			GPIO::LED2::Off();
+//
+//			osDelay(500);
+//			break;
+//
+//		case RS_CLOSE_DRAIN:
+//			GPIO::LED2::On();
+//
+//			osDelay(500);
+//			GPIO::LED2::Off();
+//
+//			osDelay(500);
+//			break;
+
+		default:
+
+			GPIO::LED1::Off();
+			GPIO::LED2::Off();
+			GPIO::LED3::Off();
+
+			HAL_GPIO_WritePin(GPIOC, HDI_BUZZER_Pin, GPIO_PIN_RESET);
+
+
+		break;
+	}
+
 
     }
 }
