@@ -21,10 +21,12 @@ FetchContent_MakeAvailable(googletest)
 # Compilation
 #
 
+SET(GCC_COMPILE_FLAGS "-fpermissive")
+
 set(
   RocketSources
   # ./Components/Communication/UARTTask.cpp
-  # ./Components/Core/Command.cpp
+  ./Components/Core/Command.cpp
   # ./Components/Core/DMAController.cpp
   # ./Components/Core/Mutex.cpp
   # ./Components/Core/Queue.cpp
@@ -38,17 +40,23 @@ set(
   # ./Components/Sensors/IMUTask.cpp
   # ./Components/SoarDebug/DebugTask.cpp
   # ./Components/Utils.cpp
+  ./Core/Src/main.cpp
 )
 
 set(
   RocketHeaderDirs
-  # ./Components
+  ./Components
   # ./Components/Communication/Inc
-  # ./Components/Core/Inc
+  ./Components/Core/Inc
   # ./Components/FlightControl/Inc
   # ./Components/Sensors/Inc
   # ./Components/SoarDebug/Inc
   # ./Core/Inc
+)
+
+set(
+  FakesSources
+  ./Tests/Fakes/HALFakes.cpp
 )
 
 set(
@@ -73,27 +81,33 @@ set(
   # ./Components/_Libraries/embedded-template-library/include/etl/mutex
   # ./Components/_Libraries/embedded-template-library/include/etl/private
   # ./Components/_Libraries/embedded-template-library/include/etl/profiles
-  # ./Core/Inc
-  # ./Drivers/CMSIS/Device/ST/STM32F4xx/Include
-  # ./Drivers/CMSIS/Include
+  ./Core/Inc
+  ./Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  ./Drivers/CMSIS/Include
   # ./Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
-  # ./Drivers/STM32F4xx_HAL_Driver/Inc
-  # ./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
-  # ./Middlewares/Third_Party/FreeRTOS/Source/include
-  # ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+  ./Drivers/STM32F4xx_HAL_Driver/Inc
+  ./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
+  ./Middlewares/Third_Party/FreeRTOS/Source/include
+  ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 )
 
 enable_testing()
 
 add_compile_definitions(STM32F405xx)
+add_compile_definitions(COMPUTER_ENVIRONMENT)
+
+add_definitions(${GCC_COMPILE_FLAGS})
 
 add_executable(
   tests
+  # ${FakesSources}
   ${RocketSources}
   ${TestSources}
 )
 
-target_include_directories(tests PUBLIC ${NonRocketHeaderDirs} ${FakesHeaderDirs} ${RocketHeaderDirs})
+target_include_directories(tests SYSTEM PUBLIC ${NonRocketHeaderDirs})
+target_include_directories(tests PUBLIC ${FakesHeaderDirs}) 
+target_include_directories(tests PUBLIC ${RocketHeaderDirs})
 # target_include_directories(tests PUBLIC ${FakesHeaderDirs} ${RocketHeaderDirs})
 
 target_link_libraries(

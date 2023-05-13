@@ -15,7 +15,7 @@
 //#define COMPUTER_ENVIRONMENT        // Define this if we're in Windows, Linux or Mac (not when flashing on DMB)
 
 #ifdef COMPUTER_ENVIRONMENT
-#define __CC_ARM
+//#define __CC_ARM
 #endif
 
 /* System Wide Includes ------------------------------------------------------------------*/
