@@ -432,7 +432,7 @@ RocketState Ignition::HandleCommand(Command& cm)
             SOAR_PRINT("This was for testing purposes...\n");
             break;
         case RSC_MANUAL_IGNITION_CONFIRMED:
-            TimerTransitions::Inst().ignitionConfirmation = true;
+            TimerTransitions::Inst().ignitionConformation = true;
             break;
         case RSC_IR_IGNITION_CONFIRMED:
             TimerTransitions::Inst().IRSequence();

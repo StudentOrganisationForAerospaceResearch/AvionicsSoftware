@@ -30,7 +30,7 @@ void TimerTransitions::IRSequence() {
 void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {
 //    SOAR_PRINT("Changing State to LAUNCH....\n");
 
-    if ((Inst().ignitionConfirmation == true)) {
+    if ((Inst().ignitionConformation == true)) {
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
         Timer::DefaultCallback(rtTimerHandle);
     }
