@@ -67,6 +67,7 @@ void TelemetryTask::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case TELEMETRY_CHANGE_PERIOD: {
         loggingDelayMs = (uint16_t)cm.GetTaskCommand();
+	break;
     }
     default:
         SOAR_PRINT("TelemetryTask - Received Unsupported Command {%d}\n", cm.GetCommand());
