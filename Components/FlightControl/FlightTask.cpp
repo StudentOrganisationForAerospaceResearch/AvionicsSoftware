@@ -7,6 +7,7 @@
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
+#include "TimerTransitions.hpp"
 
 /**
  * @brief Constructor for FlightTask
@@ -64,7 +65,7 @@ void FlightTask::Run(void * pvParams)
         // or maybe HID (Human Interface Device) task that handles both updating buzzer frequencies and LED states.
 
 
-        //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
+        //Process commands in blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
         Command cm;
         bool res = qEvtQueue->ReceiveWait(cm);
         if(res)
