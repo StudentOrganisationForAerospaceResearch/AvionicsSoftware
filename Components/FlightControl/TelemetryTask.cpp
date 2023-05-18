@@ -84,6 +84,8 @@ void TelemetryTask::HandleCommand(Command& cm)
 void TelemetryTask::RunLogSequence()
 {
 	// Barometer
+    Command cmd(REQUEST_COMMAND, BARO_REQUEST_NEW_SAMPLE);
+    BarometerTask::Inst().GetEventQueue()->Send(cmd);
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
 
     // IMU
