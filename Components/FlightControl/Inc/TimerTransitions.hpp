@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
- * File Name          : TimerTransitions.cpp
- * Description        : Primary Watchdog task, default task for the system.
+ * File Name          : TimerTransitions.hpp
+ * Description        : Handles Automatic Ignition Sequence and following timed transitions
  ******************************************************************************
 */
 #ifndef SOAR_TIMERTRANSITIONS_HPP_
@@ -21,20 +21,20 @@ enum TIMERTRANSITION_CONTROLS  {
 class TimerTransitions
 {
 public:
-	static TimerTransitions& Inst() {
-		static TimerTransitions inst;
-		return inst;
-	}
-	TimerTransitions();
-	void IgnitionSequence();
-	void IRSequence();
-	bool ignitionConformation = false;
+    static TimerTransitions& Inst() {
+        static TimerTransitions inst;
+        return inst;
+    }
+    TimerTransitions();
+    void IgnitionSequence();
+    void IRSequence();
+    bool ignitionConformation = false;
 
 protected:
-	static void IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle);
+    static void IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle);
 
 private:
-	Timer* ignitionCountdown;
+    Timer* ignitionCountdown;
 };
 
 #endif    // SOAR_TIMERTRANSITIONS_HPP_

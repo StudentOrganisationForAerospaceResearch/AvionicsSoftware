@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * File Name          : TimerTransitions.cpp
- * Description        : Primary Watchdog task, default task for the system.
+ * Description        : Handles Automatic Ignition Sequence and following timed transitions
  ******************************************************************************
 */
 #include "GPIO.hpp"
@@ -11,8 +11,8 @@
 #include "FlightTask.hpp"
 
 TimerTransitions::TimerTransitions() {
-	ignitionCountdown = new Timer(IngnitionToLaunchCallback);
-	ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD);
+    ignitionCountdown = new Timer(IngnitionToLaunchCallback);
+    ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD);
 }
 
 void TimerTransitions::IgnitionSequence() {
@@ -22,9 +22,9 @@ void TimerTransitions::IgnitionSequence() {
 }
 
 void TimerTransitions::IRSequence() {
-	ignitionCountdown->ChangePeriodMsAndStart(IR_IGINITION_TIMER_PERIOD);
-	ignitionConformation = true;
-	return;
+    ignitionCountdown->ChangePeriodMsAndStart(IR_IGINITION_TIMER_PERIOD);
+    ignitionConformation = true;
+    return;
 }
 
 void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {

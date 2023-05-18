@@ -42,9 +42,7 @@ void FlightTask::InitTask()
 void FlightTask::Run(void * pvParams)
 {
 
-
-    // TODO: Change back to RS_ABORT
-    rsm_ = new RocketSM(RS_ARM, false);
+    rsm_ = new RocketSM(RS_ABORT, false);
 
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'

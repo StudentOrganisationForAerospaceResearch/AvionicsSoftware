@@ -394,7 +394,7 @@ Ignition::Ignition()
 RocketState Ignition::OnEnter()
 {
     // We don't do anything upon entering ignition
-	TimerTransitions::Inst().IgnitionSequence();
+    TimerTransitions::Inst().IgnitionSequence();
     return rsStateID;
 }
 
@@ -435,8 +435,8 @@ RocketState Ignition::HandleCommand(Command& cm)
             TimerTransitions::Inst().ignitionConformation = true;
             break;
         case RSC_IR_IGNITION_CONFIRMED:
-        	TimerTransitions::Inst().IRSequence();
-        	break;
+            TimerTransitions::Inst().IRSequence();
+            break;
         default:
             break;
         }
