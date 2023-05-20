@@ -86,16 +86,16 @@ void FlightTask::Run(void * pvParams)
         //    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
         //}
 
-        //// Beep n times for flight phase n, and blink LED 1
-        //for (int i = -1; i < getCurrentFlightPhase(); i++) {
-        //    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-        //    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 1);
-        //    osDelay(FLIGHT_PHASE_BLINK_FREQ);
-
-        //    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
-        //    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 0);
-        //    osDelay(FLIGHT_PHASE_BLINK_FREQ);
-        //}
+        // Beep n times for flight phase n, and blink LED 1 - buzzer in flight task
+//        for (int i = -1; i < getCurrentFlightPhase(); i++) {
+//            HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+//            HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 1);
+//            osDelay(FLIGHT_PHASE_BLINK_FREQ);
+//
+//            HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+//            HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 0);
+//            osDelay(FLIGHT_PHASE_BLINK_FREQ);
+//        }
 
         //// Return the buzzer to its optimal frequency for message beeps
         //htim2.Init.Prescaler = ((htim2.Init.Prescaler + 1) / 2) - 1;

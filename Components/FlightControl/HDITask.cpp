@@ -14,6 +14,9 @@
 /**
  * @brief Constructor for FlightTask
  */
+
+TIM_HandleTypeDef htim2;
+
 HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS)
 {
 }
@@ -44,6 +47,17 @@ void HDITask::InitTask()
 void HDITask::Run(void * pvParams)
 {
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
+
+    htim2.Instance = TIM2;
+	htim2.Init.Prescaler = 952-1;
+	htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim2.Init.Period = 210-1;
+	htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+
+    uint8_t value = 0;
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+
     GPIO::LED1::Off();
 
     while (1) {
@@ -56,8 +70,15 @@ void HDITask::Run(void * pvParams)
 
         switch(currentHDIState){
         case RS_PRELAUNCH:
-        	GPIO::LED1::On();
-			HAL_GPIO_WritePin(GPIOC, HDI_BUZZER_Pin, GPIO_PIN_SET);
+        	//GPIO::LED1::On();
+
+        	while(value < 210){
+        			  htim2.Instance -> CCR1 = value;
+        			  value += 20;
+        			  HAL_Delay (500);
+        		  }
+        	value = 0;
+			HAL_GPIO_WritePin(GPIOC, HDI_PWM_BUZZER_Pin, GPIO_PIN_SET);
 
 
 			osDelay(500);
@@ -68,7 +89,7 @@ void HDITask::Run(void * pvParams)
 
 		case RS_ABORT:
 			GPIO::LED2::On();
-			//HAL_GPIO_WritePin(GPIOC, HDI_BUZZER_Pin, GPIO_PIN_RESET);
+			//HAL_GPIO_WritePin(GPIOC, HDI_PWM_BUZZER, GPIO_PIN_RESET);
 
 			osDelay(500);
 			GPIO::LED2::Off();
@@ -118,7 +139,7 @@ void HDITask::Run(void * pvParams)
 			GPIO::LED2::Off();
 			GPIO::LED3::Off();
 
-			HAL_GPIO_WritePin(GPIOC, HDI_BUZZER_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOC, HDI_PWM_BUZZER_Pin, GPIO_PIN_RESET);
 
 
 		break;
