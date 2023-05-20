@@ -35,39 +35,41 @@ set(
   # ./Components/FlightControl/FlightTask.cpp
   # ./Components/FlightControl/RocketSM.cpp
   # ./Components/FlightControl/WatchdogTask.cpp
-  # ./Components/main_avionics.cpp
+  ./Components/main_avionics.cpp
   # ./Components/Sensors/BarometerTask.cpp
   # ./Components/Sensors/IMUTask.cpp
   # ./Components/SoarDebug/DebugTask.cpp
   # ./Components/Utils.cpp
-  ./Core/Src/main.cpp
+  # ./Core/Src/main.cpp
 )
 
 set(
   RocketHeaderDirs
   ./Components
-  # ./Components/Communication/Inc
+  ./Components/Communication/Inc
   ./Components/Core/Inc
-  # ./Components/FlightControl/Inc
-  # ./Components/Sensors/Inc
-  # ./Components/SoarDebug/Inc
+  ./Components/FlightControl/Inc
+  ./Components/Sensors/Inc
+  ./Components/SoarDebug/Inc
   # ./Core/Inc
 )
 
 set(
   FakesSources
-  ./Tests/Fakes/HALFakes.cpp
+  ./Tests/Fakes/os/FakeOs.cpp
+  ./Tests/Fakes/stm/FakeHal.cpp
 )
 
 set(
   FakesHeaderDirs
-  ./Tests/Fakes
+  ./Tests/Fakes/os
+  ./Tests/Fakes/stm
 )
 
 set(
   TestSources
-  Tests/test1.cpp
-  Tests/test2.cpp
+  Tests/UnitTests/test1.cpp
+  Tests/UnitTests/test2.cpp
 )
 
 # find -name '*.h' -not -path './build/*'
@@ -100,12 +102,12 @@ add_definitions(${GCC_COMPILE_FLAGS})
 
 add_executable(
   tests
-  # ${FakesSources}
+  ${FakesSources}
   ${RocketSources}
   ${TestSources}
 )
 
-target_include_directories(tests SYSTEM PUBLIC ${NonRocketHeaderDirs})
+# target_include_directories(tests SYSTEM PUBLIC ${NonRocketHeaderDirs})
 target_include_directories(tests PUBLIC ${FakesHeaderDirs}) 
 target_include_directories(tests PUBLIC ${RocketHeaderDirs})
 # target_include_directories(tests PUBLIC ${FakesHeaderDirs} ${RocketHeaderDirs})
