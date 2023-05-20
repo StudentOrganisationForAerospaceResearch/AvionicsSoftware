@@ -85,10 +85,10 @@ void TelemetryTask::HandleCommand(Command& cm)
 void TelemetryTask::RunLogSequence()
 {
 	// Barometer
-    BarometerTask::SendCommand(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT);
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
 
     // IMU
-    IMUTask::SendCommand(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT);
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Flight State
     //TODO: Commented out for now, until merged with the flight task changes
