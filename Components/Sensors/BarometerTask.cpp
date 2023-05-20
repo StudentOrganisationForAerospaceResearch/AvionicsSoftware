@@ -214,7 +214,7 @@ void BarometerTask::SampleBarometer()
     // Reset the barometer
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &RESET_CMD, CMD_SIZE, CMD_TIMEOUT);
-    osDelay(3); // 2.8ms reload after Reset command
+    osDelay(4); // 2.8ms reload after Reset command
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
     // Read PROM for calibration coefficients
