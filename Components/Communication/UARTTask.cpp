@@ -77,6 +77,9 @@ void UARTTask::HandleCommand(Command& cm)
         case UART_TASK_COMMAND_SEND_RADIO:
         	HAL_UART_Transmit(SystemHandles::UART_Protocol, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
         	break;
+        case UART_TASK_COMMAND_SEND_PBB:
+            HAL_UART_Transmit(SystemHandles::UART_PBB, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
+            break;
         default:
             SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\n", cm.GetTaskCommand());
             break;
