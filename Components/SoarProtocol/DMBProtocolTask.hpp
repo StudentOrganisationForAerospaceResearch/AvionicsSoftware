@@ -24,6 +24,11 @@ public:
 
     void InitTask();
 
+    static void SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>& writeBuffer, Proto::MessageID msgId)
+    {
+        Inst().SendProtobufMessage(writeBuffer, msgId);
+    }
+
 protected:
     static void RunTask(void* pvParams) { DMBProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
