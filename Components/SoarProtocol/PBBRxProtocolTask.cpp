@@ -5,8 +5,10 @@
  ******************************************************************************
 */
 #include "PBBRxProtocolTask.hpp"
+#include "DMBProtocolTask.hpp"
 #include "ReadBufferFixedSize.h"
 #include "TelemetryMessage.hpp"
+#include "UARTTask.hpp"
 
 /**
  * @brief Initialize the PBBRxProtocolTask
@@ -29,10 +31,16 @@ void PBBRxProtocolTask::InitTask()
     SOAR_ASSERT(rtValue == pdPASS, "ProtocolTask::InitTask - xTaskCreate() failed");
 }
 
+void PBBRxProtocolTask::SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>& writeBuffer, Proto::MessageID msgId)
+{
+}
+
 /**
  * @brief Default constructor
  */
-PBBRxProtocolTask::PBBRxProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB, SystemHandles::UART_PBB)
+PBBRxProtocolTask::PBBRxProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB, 
+    SystemHandles::UART_PBB,
+    UART_TASK_COMMAND_SEND_PBB)
 {
 }
 
@@ -81,5 +89,5 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
-    PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
