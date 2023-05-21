@@ -59,9 +59,9 @@ namespace SystemHandles {
     // Aliases
     constexpr UART_HandleTypeDef* UART_LaunchSystems = &huart1;
     constexpr UART_HandleTypeDef* UART_Protocol = &huart2; // Protocol Rx Radio Line
-    constexpr UART_HandleTypeDef* UART_GPS = &huart2;
+    constexpr UART_HandleTypeDef* UART_GPS = &huart4;
     constexpr UART_HandleTypeDef* UART_PBB = &huart3;
-    constexpr UART_HandleTypeDef* UART_Debug = &huart6;
+    constexpr UART_HandleTypeDef* UART_Debug = &huart5;
 
     constexpr ADC_HandleTypeDef* ADC_CombustionChamber = &hadc1;
     constexpr ADC_HandleTypeDef* ADC_Battery = &hadc2;
