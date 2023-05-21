@@ -261,6 +261,9 @@
     <ClCompile Include="..\..\Components\FlightControl\TelemetryTask.cpp">
       <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.cpp">
+      <Filter>Source Files\Components\SoarProtocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -1642,6 +1645,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\FlightControl\Inc\TelemetryTask.hpp">
       <Filter>Source Files\Components\FlightControl\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.hpp">
+      <Filter>Source Files\Components\SoarProtocol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
