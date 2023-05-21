@@ -31,10 +31,6 @@ void PBBRxProtocolTask::InitTask()
     SOAR_ASSERT(rtValue == pdPASS, "ProtocolTask::InitTask - xTaskCreate() failed");
 }
 
-void PBBRxProtocolTask::SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>& writeBuffer, Proto::MessageID msgId)
-{
-}
-
 /**
  * @brief Default constructor
  */
