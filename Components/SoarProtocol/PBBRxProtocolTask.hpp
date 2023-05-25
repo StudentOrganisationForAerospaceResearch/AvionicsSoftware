@@ -1,11 +1,11 @@
 /**
  ******************************************************************************
- * File Name          : DMBProtocolTask.hpp
+ * File Name          : PBBRxProtocolTask.hpp
  * Description        : Protocol task, specific to DMB
  ******************************************************************************
 */
-#ifndef SOAR_DMBPROTOCOL_HPP_
-#define SOAR_DMBPROTOCOL_HPP_
+#ifndef SOAR_PBBRXPROTOCOL_HPP_
+#define SOAR_PBBRXPROTOCOL_HPP_
 #include "ProtocolTask.hpp"
 #include "Task.hpp"
 #include "SystemDefines.hpp"
@@ -14,11 +14,11 @@
 /* Enums ------------------------------------------------------------------*/
 
 /* Class ------------------------------------------------------------------*/
-class DMBProtocolTask : public ProtocolTask
+class PBBRxProtocolTask : public ProtocolTask
 {
 public:
-    static DMBProtocolTask& Inst() {
-        static DMBProtocolTask inst;
+    static PBBRxProtocolTask& Inst() {
+        static PBBRxProtocolTask inst;
         return inst;
     }
 
@@ -26,11 +26,11 @@ public:
 
     static void SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>& writeBuffer, Proto::MessageID msgId)
     {
-        Inst().ProtocolTask::SendProtobufMessage(writeBuffer, msgId);
+		Inst().ProtocolTask::SendProtobufMessage(writeBuffer, msgId);
     }
 
 protected:
-    static void RunTask(void* pvParams) { DMBProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+    static void RunTask(void* pvParams) { PBBRxProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
     // These handlers will receive a buffer and size corresponding to a decoded message
     void HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES> readBuffer);
@@ -40,9 +40,9 @@ protected:
     // Member variables
 
 private:
-    DMBProtocolTask();        // Private constructor
-    DMBProtocolTask(const DMBProtocolTask&);                        // Prevent copy-construction
-    DMBProtocolTask& operator=(const DMBProtocolTask&);            // Prevent assignment
+    PBBRxProtocolTask();        // Private constructor
+    PBBRxProtocolTask(const PBBRxProtocolTask&);                        // Prevent copy-construction
+    PBBRxProtocolTask& operator=(const PBBRxProtocolTask&);            // Prevent assignment
 };
 
-#endif    // SOAR_DMBPROTOCOL_HPP_
+#endif    // SOAR_PBBRXPROTOCOL_HPP_
