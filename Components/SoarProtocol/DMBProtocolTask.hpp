@@ -26,7 +26,7 @@ public:
 
     static void SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>& writeBuffer, Proto::MessageID msgId)
     {
-        Inst().SendProtobufMessage(writeBuffer, msgId);
+        Inst().ProtocolTask::SendProtobufMessage(writeBuffer, msgId);
     }
 
 protected:
