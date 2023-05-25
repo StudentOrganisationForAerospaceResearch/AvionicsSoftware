@@ -40,7 +40,7 @@
     <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\ReadBufferSection.cpp" />
     <ClCompile Include="..\..\Components\Utils.cpp" />
     <ClCompile Include="..\..\Core\Src\freertos.c" />
-    <ClCompile Include="..\..\Core\Src\main.cpp" />
+    <ClCompile Include="..\..\Core\Src\main.c" />
     <ClCompile Include="..\..\Core\Src\stm32f4xx_hal_msp.c" />
     <ClCompile Include="..\..\Core\Src\stm32f4xx_hal_timebase_tim.c" />
     <ClCompile Include="..\..\Core\Src\stm32f4xx_it.c" />

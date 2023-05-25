@@ -207,9 +207,6 @@
     <ClCompile Include="..\..\Components\main_avionics.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Core\Src\main.cpp">
-      <Filter>Source Files\Core_CubeIDE\Src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp">
       <Filter>Source Files\Components\SoarDebug</Filter>
     </ClCompile>
@@ -257,6 +254,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\ReadBufferSection.cpp">
       <Filter>Source Files\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Core\Src\main.c">
+      <Filter>Source Files\Core_CubeIDE\Src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
