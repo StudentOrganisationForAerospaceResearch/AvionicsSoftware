@@ -18,19 +18,21 @@
  * @brief Constructor for FlightTask
  */
 
+Command variable;
+
 struct blink{
 	uint8_t numBlinks;
 	uint16_t delayMs;
 };
 
-const std::map <stat, blink> stateBlinks[4] = {
+std::map <RocketState, blink> stateBlinks = {
   {RS_PRELAUNCH, {1, 100}},
   {RS_ARM, {2, 100}},
   {RS_LAUNCH, {3, 50}},
   {RS_DESCENT, {10, 1000}}
 };
 
-TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim2;
 
 HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS)
 {
@@ -76,8 +78,16 @@ void HDITask::Run(void * pvParams)
     	//Every cycle, print something out (for testing)
     	SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
     	blink blinksToDo;
-    	if(Queue.size() > 0){
-    		blinksToDo = Queue.pop();
+    	if(qEvtQueue->GetQueueMessageCount() > 0){
+//    		Command cm;
+//    		bool rxed = qEvtQueue->Receive(cm);
+//
+//    		if(rxed)
+//    		{
+//
+//    		}
+//
+//    		cm.Reset();
     	}
     	else{
     		RocketState currentHDIState = FlightTask::Inst().GetCurrentState();
