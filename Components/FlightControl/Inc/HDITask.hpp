@@ -11,7 +11,10 @@
 #include "RocketSM.hpp"
 
 //#include "FlightTask.hpp"
-
+struct HDI_Status {
+	uint8_t count;
+	uint16_t delay;
+};
 
 class HDITask : public Task
 {
@@ -26,6 +29,9 @@ public:
     RocketState currentHDIState();
 
 protected:
+//    static HDI_Status state_array[] = {
+//
+//    };
     static void RunTask(void* pvParams) { HDITask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
     void Run(void * pvParams); // Main run code
