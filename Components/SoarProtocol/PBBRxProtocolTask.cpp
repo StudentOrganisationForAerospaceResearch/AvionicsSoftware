@@ -43,7 +43,7 @@ PBBRxProtocolTask::PBBRxProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB,
 /**
  * @brief Handle a command message
  */
-void PBBRxProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES> readBuffer)
+void PBBRxProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer)
 {
 
 }
@@ -51,7 +51,7 @@ void PBBRxProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFi
 /**
  * @brief Handle a control message
  */
-void PBBRxProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES> readBuffer)
+void PBBRxProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer)
 {
 
 }
@@ -59,7 +59,7 @@ void PBBRxProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferF
 /**
  * @brief Handle a telemetry message
  */
-void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES> readBuffer)
+void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer)
 {
     Proto::TelemetryMessage msg;
     msg.deserialize(readBuffer);

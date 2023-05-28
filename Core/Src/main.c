@@ -57,6 +57,7 @@ UART_HandleTypeDef huart3;
 DMA_HandleTypeDef hdma_uart4_rx;
 DMA_HandleTypeDef hdma_uart5_rx;
 DMA_HandleTypeDef hdma_uart5_tx;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
@@ -65,14 +66,14 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_ADC2_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
 static void MX_CRC_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_UART5_Init(void);
-static void MX_DMA_Init(void);
+static void MX_ADC2_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
@@ -116,14 +117,14 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ADC2_Init();
+  MX_DMA_Init();
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_UART4_Init();
   MX_CRC_Init();
   MX_SPI3_Init();
   MX_UART5_Init();
-  MX_DMA_Init();
+  MX_ADC2_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
   MX_USART1_UART_Init();
@@ -655,6 +656,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
   /* DMA1_Stream7_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
