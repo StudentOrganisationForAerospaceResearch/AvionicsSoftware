@@ -101,6 +101,7 @@
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\ProtocolRepeater.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\cobs.h" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\ProtocolTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CommandMessage.hpp" />

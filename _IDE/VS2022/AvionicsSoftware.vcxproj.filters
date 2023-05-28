@@ -1649,5 +1649,8 @@
     <ClInclude Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.hpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Components\SoarProtocol\ProtocolRepeater.hpp">
+      <Filter>Source Files\Components\SoarProtocol</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
