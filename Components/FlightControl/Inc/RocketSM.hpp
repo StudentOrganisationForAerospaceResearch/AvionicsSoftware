@@ -33,7 +33,7 @@ enum RocketState
                     
 
     //-- COAST --
-    // Manual venting NOT ALLOWED
+    // Manual venting NOT ALLOWED -- Note: MEV never closes!
     RS_COAST,       // Coasting (MEV closed, vents closed) - 30 seconds (TBD) ^ Vents closed applies here too, in part. Includes APOGEE
 
     //-- DESCENT / POSTAPOGEE --
