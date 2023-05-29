@@ -11,7 +11,17 @@
 #include "RocketSM.hpp"
 #include "w25qxx.hpp"
 
+// Telemetry Data Storage Starts at 12288 and goes to the end of flash
 #define INITIAL_SENSOR_FLASH_OFFSET 12288
+
+// System State Storage Spans sectors 0, 1
+#define SYSTEM_STATE_STORAGE 0x0000
+#define SYSTEM_STATE_STORAGE_SIZE_SECTORS 2
+
+// System Data Offset Storage Spans sectors 2, 3
+#define SYSTEM_DATA_OFFSET_STORAGE 0x2000
+
+#define SPI_FLASH_SECTOR_SIZE 4096
 
 /* Macros/Enums ------------------------------------------------------------*/
 enum FLASH_COMMANDS  {
@@ -26,10 +36,10 @@ enum FLASH_COMMANDS  {
  */
 struct StateInformation 
 {   
-  RocketState rocketState;
-  uint32_t sequenceNum;      
-  uint32_t data_offset;
-  //uint32_t CRC; 
+    RocketState rocketState;
+    uint32_t sequenceNum;      
+    uint32_t data_offset;
+    //uint32_t CRC; 
 };
 
 /**

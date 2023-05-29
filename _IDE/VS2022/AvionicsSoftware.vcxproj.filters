@@ -1574,5 +1574,8 @@
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxxConf.hpp">
       <Filter>Source Files\Components\Flash\Driver</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\DualSectorStorage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
