@@ -35,6 +35,7 @@
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp" />
     <ClCompile Include="..\..\Components\SoarProtocol\DMBProtocolTask.cpp" />
     <ClCompile Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.cpp" />
+    <ClCompile Include="..\..\Components\SoarProtocol\RepeaterTask.cpp" />
     <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\cobs.c" />
     <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\ProtocolTask.cpp" />
     <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib\Fields.cpp" />
@@ -100,8 +101,9 @@
     <ClInclude Include="..\..\Components\Sensors\Inc\IMUTask.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\ExampleRepeaterTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.hpp" />
-    <ClInclude Include="..\..\Components\SoarProtocol\ProtocolRepeater.hpp" />
+    <ClInclude Include="..\..\Components\SoarProtocol\RepeaterTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\cobs.h" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\ProtocolTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\_C++\CommandMessage.hpp" />
