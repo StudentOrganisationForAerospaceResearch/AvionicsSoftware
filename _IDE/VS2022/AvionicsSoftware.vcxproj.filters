@@ -264,6 +264,9 @@
     <ClCompile Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.cpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\SoarProtocol\SoarProto\RepeaterTask.cpp">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -1649,8 +1652,8 @@
     <ClInclude Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.hpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\SoarProtocol\ProtocolRepeater.hpp">
-      <Filter>Source Files\Components\SoarProtocol</Filter>
+    <ClInclude Include="..\..\Components\SoarProtocol\SoarProto\RepeaterTask.hpp">
+      <Filter>Source Files\Components\SoarProtocol\SoarProto</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
