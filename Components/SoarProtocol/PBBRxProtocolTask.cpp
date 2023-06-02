@@ -83,7 +83,7 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     dmbMsg.set_mevstate(mevState);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
-    msg.serialize(writeBuffer);
+    dmbMsg.serialize(writeBuffer);
 
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
