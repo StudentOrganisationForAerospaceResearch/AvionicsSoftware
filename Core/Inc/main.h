@@ -103,8 +103,6 @@ void Error_Handler(void);
 #define SPI_MISO_GPIO_Port GPIOB
 #define SPI_MOSI_Pin GPIO_PIN_15
 #define SPI_MOSI_GPIO_Port GPIOB
-#define HDI_PWM_BUZZER_Pin GPIO_PIN_6
-#define HDI_PWM_BUZZER_GPIO_Port GPIOC
 #define LED_3_Pin GPIO_PIN_7
 #define LED_3_GPIO_Port GPIOC
 #define LED_2_Pin GPIO_PIN_8
@@ -119,8 +117,8 @@ void Error_Handler(void);
 #define RCU_RX_GPIO_Port GPIOA
 #define SOL_CTRL_Pin GPIO_PIN_11
 #define SOL_CTRL_GPIO_Port GPIOA
-#define BUZZER_PWM_Pin GPIO_PIN_15
-#define BUZZER_PWM_GPIO_Port GPIOA
+#define HDI_PWM_BUZZER_Pin GPIO_PIN_15
+#define HDI_PWM_BUZZER_GPIO_Port GPIOA
 #define BARO_SPI_SCK_Pin GPIO_PIN_10
 #define BARO_SPI_SCK_GPIO_Port GPIOC
 #define BARO_SPI_MISO_Pin GPIO_PIN_11

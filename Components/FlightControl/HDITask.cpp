@@ -20,16 +20,16 @@
 
 Command variable;
 
-struct blink{
+struct BLINK{
 	uint8_t numBlinks;
 	uint16_t delayMs;
 };
 
-std::map <RocketState, blink> stateBlinks = {
-  {RS_PRELAUNCH, {1, 100}},
-  {RS_ARM, {2, 100}},
-  {RS_LAUNCH, {3, 50}},
-  {RS_DESCENT, {10, 1000}}
+std::map <RocketState, BLINK> stateBlinks = {
+  {RS_PRELAUNCH, {1, 1000}},
+  {RS_ARM, {2, 1000}},
+  {RS_LAUNCH, {3, 500}},
+  {RS_DESCENT, {10, 5000}}
 };
 
 extern TIM_HandleTypeDef htim2;
@@ -68,43 +68,51 @@ void HDITask::Run(void * pvParams)
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
 
     //uint8_t value = 0;
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-
+//    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
 
     GPIO::LED1::Off();
 
     while (1) {
     	//Every cycle, print something out (for testing)
-    	SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
-    	blink blinksToDo;
-    	if(qEvtQueue->GetQueueMessageCount() > 0){
-//    		Command cm;
-//    		bool rxed = qEvtQueue->Receive(cm);
-//
-//    		if(rxed)
-//    		{
-//
-//    		}
-//
-//    		cm.Reset();
-    	}
-    	else{
-    		RocketState currentHDIState = FlightTask::Inst().GetCurrentState();
-    		blinksToDo = stateBlinks[currentHDIState];
-    	}
+
+    	BLINK blinksToDo = {.numBlinks = 3, .delayMs = 5000};
+//    	if(qEvtQueue->GetQueueMessageCount() > 0){
+////    		Command cm;
+////    		bool rxed = qEvtQueue->Receive(cm);
+////
+////    		if(rxed)
+////    		{
+////
+////    		}
+////
+////    		cm.Reset();
+//    	}
+//    	else{
+//    		RocketState currentHDIState = FlightTask::Inst().GetCurrentState();
+//    		blinksToDo = stateBlinks[currentHDIState];
+//    	}
 
     	for (uint8_t i = 0; i < blinksToDo.numBlinks; i++) {
     		GPIO::LED1::On();
-    	      //BUZZER_ON();
+//    		uint8_t value = 0; // the value for the duty cycle
+//    		while (value<210)
+//    		{
+//    		  htim2.Instance->CCR1 = value; // vary the duty cycle
+//    		  value += 20; // increase the duty cycle by 20
+//    		  osDelay (500); // wait for 500 ms
+//    		}
+//    		value = 0;
+    		SOAR_PRINT("LED PLS");
     	      osDelay(blinksToDo.delayMs);
 
     	      GPIO::LED1::Off();
+    	      SOAR_PRINT("LED OFF");
     	      //BUZZER_OFF();
     	      osDelay(blinksToDo.delayMs);
     	    }
 
-    		osDelay(1000);
+    		osDelay(20000);
 
     	  }
 

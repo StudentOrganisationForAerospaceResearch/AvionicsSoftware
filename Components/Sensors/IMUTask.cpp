@@ -109,7 +109,7 @@ void IMUTask::Run(void* pvParams)
 {
     //Setup the IMU
     SetupIMU();
-
+    uint32_t tempSecondCounter = 0; // TODO
     //Task run loop
     while (1) {
         Command cm;
@@ -119,6 +119,8 @@ void IMUTask::Run(void* pvParams)
 
         //Process the command
         HandleCommand(cm);
+
+
     }
 }
 
