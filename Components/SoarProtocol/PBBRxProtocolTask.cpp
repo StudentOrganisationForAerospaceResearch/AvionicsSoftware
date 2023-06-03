@@ -64,26 +64,19 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     Proto::TelemetryMessage msg;
     msg.deserialize(readBuffer);
 
-    // Verify the source and target nodes, if they aren't as expected, do nothing
-    if (msg.get_source() != Proto::Node::NODE_PBB || msg.get_target() != Proto::Node::NODE_DMB)
+    // Verify the source node is the PBB
+    if (msg.get_source() != Proto::Node::NODE_PBB)
         return;
 
-    // If the message does not have a PBB MEV telemetry message, do nothing
-    if (!msg.has_mevstate())
-        return;
+    // If the target is the DMB, forward it to the RCU
+    if(msg.get_target() == Proto::Node::NODE_DMB)
+    	msg.set_target(Proto::Node::NODE_RCU);
 
-    SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
-
-	// We repackage the message as a DMB MEV telemetry message
-	Proto::TelemetryMessage dmbMsg;
-	dmbMsg.set_source(Proto::Node::NODE_DMB);
-	dmbMsg.set_target(Proto::Node::NODE_RCU);
-    Proto::MEVState mevState;
-	mevState.set_mev_open(msg.get_mevstate().get_mev_open());
-    dmbMsg.set_mevstate(mevState);
+    // Copy the message to the read buffer
+	SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
-    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+	DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
