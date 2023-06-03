@@ -10,10 +10,22 @@
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 
-//#include "FlightTask.hpp"
-struct HDI_Status {
-	uint8_t count;
-	uint16_t delay;
+struct BLINK{
+	uint8_t numBlinks;
+	uint16_t delayMs;
+};
+
+enum STATE_CHANGE {
+	PRELAUNCH = 0,
+	FILL,
+	ARM,
+	IGNITION,
+	LAUNCH,
+	BURN,
+	COAST,
+	DESCENT,
+	RECOVERY,
+	ABORT
 };
 
 class HDITask : public Task
@@ -28,13 +40,14 @@ public:
 
     RocketState currentHDIState();
 
+
 protected:
-//    static HDI_Status state_array[] = {
-//
-//    };
     static void RunTask(void* pvParams) { HDITask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
     void Run(void * pvParams); // Main run code
+    void BuzzBlinkSequence(BLINK blinkSequence);
+    void HandleRequestCommand(uint16_t taskCommand);
+    void HandleCommand(Command& cm);
 
 
 private:
@@ -42,7 +55,6 @@ private:
     HDITask();        // Private constructor
     HDITask(const HDITask&);                        // Prevent copy-construction
     HDITask& operator=(const HDITask&);            // Prevent assignment
-
 };
 
 #endif    // SOAR_FLIGHTTASK_HPP_

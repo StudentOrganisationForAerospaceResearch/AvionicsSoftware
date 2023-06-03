@@ -12,34 +12,30 @@
 #include <map>
 #include "Command.hpp"
 
-
-
-/**
- * @brief Constructor for FlightTask
- */
-
-Command variable;
-
-struct BLINK{
-	uint8_t numBlinks;
-	uint16_t delayMs;
-};
-
-std::map <RocketState, BLINK> stateBlinks = {
-  {RS_PRELAUNCH, {1, 1000}},
-  {RS_ARM, {2, 1000}},
-  {RS_LAUNCH, {3, 500}},
-  {RS_DESCENT, {10, 5000}}
-};
-
 extern TIM_HandleTypeDef htim2;
 
+std::map <RocketState, BLINK> stateBlinks = {
+	{RS_PRELAUNCH, {2, 1000}},
+	{RS_FILL,{3, 1000}},
+	{RS_ARM, {4, 1000}},
+	{RS_IGNITION, {5, 1000}},
+	{RS_LAUNCH, {6, 1000}},
+	{RS_BURN, {7, 1000}},
+	{RS_COAST, {8, 1000}},
+	{RS_DESCENT,{9, 1000}},
+	{RS_RECOVERY, {10, 1000}},
+	{RS_ABORT,{1, 100}}
+};
+
+/**
+ * @brief Constructor for HDITask
+ */
 HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS)
 {
 }
 
 /**
- * @brief Initialize the FlightTask
+ * @brief Initialize the HDITask
  */
 void HDITask::InitTask()
 {
@@ -63,138 +59,107 @@ void HDITask::InitTask()
  */
 void HDITask::Run(void * pvParams)
 {
-	// NOTE: refactor out init
-
-    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
-
-    //uint8_t value = 0;
-//    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-
-
-    GPIO::LED1::Off();
-
     while (1) {
-    	//Every cycle, print something out (for testing)
+    	Command cm;
 
-    	BLINK blinksToDo = {.numBlinks = 3, .delayMs = 5000};
-//    	if(qEvtQueue->GetQueueMessageCount() > 0){
-////    		Command cm;
-////    		bool rxed = qEvtQueue->Receive(cm);
-////
-////    		if(rxed)
-////    		{
-////
-////    		}
-////
-////    		cm.Reset();
-//    	}
-//    	else{
-//    		RocketState currentHDIState = FlightTask::Inst().GetCurrentState();
-//    		blinksToDo = stateBlinks[currentHDIState];
-//    	}
+		//Wait forever for a command
+		qEvtQueue->ReceiveWait(cm);
 
-    	for (uint8_t i = 0; i < blinksToDo.numBlinks; i++) {
-    		GPIO::LED1::On();
-//    		uint8_t value = 0; // the value for the duty cycle
-//    		while (value<210)
-//    		{
-//    		  htim2.Instance->CCR1 = value; // vary the duty cycle
-//    		  value += 20; // increase the duty cycle by 20
-//    		  osDelay (500); // wait for 500 ms
-//    		}
-//    		value = 0;
-    		SOAR_PRINT("LED PLS");
-    	      osDelay(blinksToDo.delayMs);
+		//Process the command
+		HandleCommand(cm);
+	}
+}
 
-    	      GPIO::LED1::Off();
-    	      SOAR_PRINT("LED OFF");
-    	      //BUZZER_OFF();
-    	      osDelay(blinksToDo.delayMs);
-    	    }
+/**
+ * @brief Handles a command
+ * @param cm Command reference to handle
+ */
+void HDITask::HandleCommand(Command& cm)
+{
+    //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
+    //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
 
-    		osDelay(20000);
+    //Switch for the GLOBAL_COMMAND
+    switch (cm.GetCommand()) {
+    case REQUEST_COMMAND: {
+        HandleRequestCommand(cm.GetTaskCommand());
+        break;
+    }
+    case TASK_SPECIFIC_COMMAND: {
+        break;
+    }
+    default:
+        SOAR_PRINT("HDITask - Received Unsupported Command {%d}\n", cm.GetCommand());
+        break;
+    }
 
-    	  }
+    //No matter what we happens, we must reset allocated data
+    cm.Reset();
+}
 
-//    	RocketState currentHDIState = FlightTask::Inst().GetCurrentState();
-//
-//        switch(currentHDIState){
-//        case RS_PRELAUNCH:
-//        	while(value < 210){
-//			  htim2.Instance -> CCR1 = value; // duty cycle
-//			  value += 20;
-//			  HAL_Delay (500);
-//        	}
-//
-//        	//pattern build for buzzer
-//        	value = 0;
-//			HAL_GPIO_WritePin(GPIOC, HDI_PWM_BUZZER_Pin, GPIO_PIN_SET);
-//
-//			// 2 Hz - blink twice
-//			GPIO::LED1::On();
-//			osDelay(500);
-//			GPIO::LED1::Off();
-//			osDelay(500);
-//			break;
-//
-//		case RS_ABORT:
-//			GPIO::LED2::On();
-//			//HAL_GPIO_WritePin(GPIOC, HDI_PWM_BUZZER, GPIO_PIN_RESET);
-//
-//			osDelay(500);
-//			GPIO::LED2::Off();
-//
-//			osDelay(500);
-//			break;
-//
-////		case RS_OPEN_VENT:
-////			GPIO::LED3::On();
-////
-////			osDelay(500);
-////			GPIO::LED3::Off();
-////
-////			osDelay(500);
-////			break;
-////
-////		case RS_CLOSE_VENT:
-////			GPIO::LED2::On();
-////
-////			osDelay(500);
-////			GPIO::LED2::Off();
-////
-////			osDelay(500);
-////			break;
-////
-////		case RS_OPEN_DRAIN:
-////			GPIO::LED2::On();
-////
-////			osDelay(500);
-////			GPIO::LED2::Off();
-////
-////			osDelay(500);
-////			break;
-////
-////		case RS_CLOSE_DRAIN:
-////			GPIO::LED2::On();
-////
-////			osDelay(500);
-////			GPIO::LED2::Off();
-////
-////			osDelay(500);
-////			break;
-//
-//		default:
-//
-//			GPIO::LED1::Off();
-//			GPIO::LED2::Off();
-//			GPIO::LED3::Off();
-//
-//			HAL_GPIO_WritePin(GPIOC, HDI_PWM_BUZZER_Pin, GPIO_PIN_RESET);
-//
-//
-//		break;
-//	}
+/**
+ * @brief Handles a Request Command
+ * @param taskCommand The command to handle
+ */
+void HDITask::HandleRequestCommand(uint16_t taskCommand)
+{
+    //Switch for task specific command within DATA_COMMAND
+    switch (taskCommand) {
+    case PRELAUNCH:
+    	BuzzBlinkSequence(stateBlinks[RS_PRELAUNCH]);
+        break;
+    case FILL:
+    	BuzzBlinkSequence(stateBlinks[RS_FILL]);
+		break;
+    case ARM:
+    	BuzzBlinkSequence(stateBlinks[RS_ARM]);
+    	break;
+    case IGNITION:
+    	BuzzBlinkSequence(stateBlinks[RS_IGNITION]);
+    	break;
+    case LAUNCH:
+    	BuzzBlinkSequence(stateBlinks[RS_LAUNCH]);
+    	break;
+    case BURN:
+    	BuzzBlinkSequence(stateBlinks[RS_BURN]);
+    	break;
+    case COAST:
+    	BuzzBlinkSequence(stateBlinks[RS_COAST]);
+    	break;
+    case DESCENT:
+    	BuzzBlinkSequence(stateBlinks[RS_DESCENT]);
+    	break;
+    case RECOVERY:
+    	BuzzBlinkSequence(stateBlinks[RS_RECOVERY]);
+    	break;
+    case ABORT:
+    	BuzzBlinkSequence(stateBlinks[RS_ABORT]);
+    	break;
+    default:
+        SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+        break;
+    }
+}
 
 
-//    }
+void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+	for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
+		GPIO::LED1::On();
+    	uint8_t value = 0; // the value for the duty cycle
+    	while (value<210){
+			htim2.Instance->CCR1 = value; // vary the duty cycle
+			value += 20; // increase the duty cycle by 20
+			osDelay (500); // wait for 500 ms
+    	}
+		value = 0;
+
+		SOAR_PRINT("LED PLS");
+		osDelay(blinkSequence.delayMs);
+
+		GPIO::LED1::Off();
+		SOAR_PRINT("LED OFF");
+		//BUZZER_OFF();
+		osDelay(blinkSequence.delayMs);
+	}
 }
