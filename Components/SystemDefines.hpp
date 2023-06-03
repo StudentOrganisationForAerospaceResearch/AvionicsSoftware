@@ -135,5 +135,8 @@ inline void soar_free(void* ptr) {
 
 
 /* Other ------------------------------------------------------------------*/
+// Override the new and delete operator to ensure heap4 is used for dynamic memory allocation
+inline void* operator new(size_t size) { return soar_malloc(size); }
+inline void operator delete(void* ptr) { soar_free(ptr); }
 
 #endif // SOAR_MAIN_SYSTEM_DEFINES_H
