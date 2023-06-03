@@ -44,6 +44,12 @@ void FlightTask::Run(void * pvParams)
 {
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
     GPIO::LED1::Off();
+//    while (1) {
+//    	HAL_GPIO_WritePin(GPIOA, BUZZER_Pin, GPIO_PIN_SET);
+//    	osDelay(2);
+//    	HAL_GPIO_WritePin(GPIOA, BUZZER_Pin, GPIO_PIN_RESET);
+//    	osDelay(2);
+//    }
 
     rsm_ = new RocketSM(RS_ABORT, false);
 

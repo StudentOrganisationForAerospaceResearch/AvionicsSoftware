@@ -49,8 +49,6 @@ extern "C" {
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -99,8 +97,8 @@ void Error_Handler(void);
 #define LED_2_GPIO_Port GPIOC
 #define LAUNCH_Pin GPIO_PIN_8
 #define LAUNCH_GPIO_Port GPIOA
-#define BUZZER_PWM_Pin GPIO_PIN_15
-#define BUZZER_PWM_GPIO_Port GPIOA
+#define BUZZER_Pin GPIO_PIN_15
+#define BUZZER_GPIO_Port GPIOA
 #define BARO_SPI_SCK_Pin GPIO_PIN_10
 #define BARO_SPI_SCK_GPIO_Port GPIOC
 #define BARO_SPI_MISO_Pin GPIO_PIN_11
