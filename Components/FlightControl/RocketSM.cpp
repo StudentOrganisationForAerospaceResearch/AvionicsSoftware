@@ -6,6 +6,7 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "HDITask.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -67,6 +68,7 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     // Assert the next state is initalized
     SOAR_ASSERT(rs_currentState != nullptr, "rs_currentState is nullptr in TransitionState");
 
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
     // Enter the current state
     rs_currentState->OnEnter();
 
