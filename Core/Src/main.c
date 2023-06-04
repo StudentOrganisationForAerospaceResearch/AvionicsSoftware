@@ -63,14 +63,14 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_ADC2_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
 static void MX_CRC_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_UART5_Init(void);
-static void MX_DMA_Init(void);
+static void MX_ADC2_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_TIM2_Init(void);
 void StartDefaultTask(void const * argument);
@@ -112,14 +112,14 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ADC2_Init();
+  MX_DMA_Init();
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_UART4_Init();
   MX_CRC_Init();
   MX_SPI3_Init();
   MX_UART5_Init();
-  MX_DMA_Init();
+  MX_ADC2_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
@@ -209,7 +209,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV8;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
@@ -429,9 +429,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 105-1;
+  htim2.Init.Prescaler = 952-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 100;
+  htim2.Init.Period = 210-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)

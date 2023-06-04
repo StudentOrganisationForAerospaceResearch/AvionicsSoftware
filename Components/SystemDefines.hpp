@@ -65,6 +65,11 @@ constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 2;            // Priority of the
 constexpr uint8_t WATCHDOG_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the watchdog task queue
 constexpr uint16_t WATCHDOG_TASK_STACK_DEPTH_WORDS = 256;        // Size of the watchdog task stack
 
+// HDI Task
+constexpr uint8_t HDI_TASK_RTOS_PRIORITY = 2;            // Priority of the HDI task
+constexpr uint8_t HDI_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the HDI task queue
+constexpr uint16_t HDI_TASK_STACK_DEPTH_WORDS = 256;        // Size of the HDI task stack
+
 
 
 /* System Defines ------------------------------------------------------------------*/
