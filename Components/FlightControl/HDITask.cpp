@@ -157,23 +157,26 @@ void HDITask::HandleRequestCommand(uint16_t taskCommand)
 
 
 void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
-//    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
     for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
         GPIO::LED1::On();
-        uint8_t value = 0; // the value for the duty cycle
+        uint8_t value = 210; // the value for the duty cycle
+        htim2.Instance->CCR1 = value;
 //        while (value<210){
-//            htim2.Instance->CCR1 = value; // vary the duty cycle
+//             // vary the duty cycle
 //            value += 20; // increase the duty cycle by 20
 //            osDelay (500); // wait for 500 ms
 //        }
-        value = 0;
 
-        SOAR_PRINT("LED PLS");
+//        value = 0;
+
         osDelay(blinkSequence.delayMs);
 
         GPIO::LED1::Off();
-        SOAR_PRINT("LED OFF");
+        htim2.Instance->CCR1 = 0;
+
         //BUZZER_OFF();
         osDelay(blinkSequence.delayMs);
     }
+
 }
