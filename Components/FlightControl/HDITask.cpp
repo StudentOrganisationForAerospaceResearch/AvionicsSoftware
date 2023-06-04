@@ -157,7 +157,7 @@ void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
     for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
         GPIO::LED1::On();
-        uint8_t value = 210; // the value for the duty cycle
+        uint8_t value = 200; // the value for the duty cycle
         htim2.Instance->CCR1 = value;
 //
 
