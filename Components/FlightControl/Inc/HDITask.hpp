@@ -49,8 +49,8 @@ protected:
 
     void Run(void * pvParams); // Main run code
     void BuzzBlinkSequence(BLINK blinkSequence);
-//    void HandleRequestCommand(uint16_t taskCommand);
-//    void HandleCommand(Command& cm);
+    void HandleRequestCommand(uint16_t taskCommand);
+    void HandleCommand(Command& cm);
 
 private:
     // Private Functions

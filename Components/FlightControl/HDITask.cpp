@@ -72,6 +72,81 @@ void HDITask::Run(void * pvParams)
     }
 }
 
+/**
+* @brief Handles a command
+* @param cm Command reference to handle
+*/
+void HDITask::HandleCommand(Command& cm)
+{
+    //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
+    //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
+
+
+
+    //Switch for the GLOBAL_COMMAND
+    switch (cm.GetCommand()) {
+    case REQUEST_COMMAND: {
+        HandleRequestCommand(cm.GetTaskCommand());
+        break;
+    }
+    case TASK_SPECIFIC_COMMAND: {
+        break;
+    }
+    default:
+        SOAR_PRINT("HDITask - Received Unsupported Command {%d}\n", cm.GetCommand());
+        break;
+    }
+
+
+
+    //No matter what we happens, we must reset allocated data
+    cm.Reset();
+}
+
+/**
+* @brief Handles a Request Command
+* @param taskCommand The command to handle
+*/
+void HDITask::HandleRequestCommand(uint16_t taskCommand)
+{
+    //Switch for task specific command within DATA_COMMAND
+    switch (taskCommand) {
+    case PRELAUNCH:
+        BuzzBlinkSequence(stateBlinks[RS_PRELAUNCH]);
+        break;
+    case FILL:
+        BuzzBlinkSequence(stateBlinks[RS_FILL]);
+        break;
+    case ARM:
+        BuzzBlinkSequence(stateBlinks[RS_ARM]);
+        break;
+    case IGNITION:
+        BuzzBlinkSequence(stateBlinks[RS_IGNITION]);
+        break;
+    case LAUNCH:
+        BuzzBlinkSequence(stateBlinks[RS_LAUNCH]);
+        break;
+    case BURN:
+        BuzzBlinkSequence(stateBlinks[RS_BURN]);
+        break;
+    case COAST:
+        BuzzBlinkSequence(stateBlinks[RS_COAST]);
+        break;
+    case DESCENT:
+        BuzzBlinkSequence(stateBlinks[RS_DESCENT]);
+        break;
+    case RECOVERY:
+        BuzzBlinkSequence(stateBlinks[RS_RECOVERY]);
+        break;
+    case ABORT:
+        BuzzBlinkSequence(stateBlinks[RS_ABORT]);
+        break;
+    default:
+        SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+        break;
+    }
+}
+
 
 void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
