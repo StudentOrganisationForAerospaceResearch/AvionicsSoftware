@@ -104,9 +104,6 @@ void HDITask::HandleCommand(Command& cm)
         break;
     }
 
-
-
-    //No matter what we happens, we must reset allocated data
     cm.Reset();
 }
 
@@ -162,20 +159,13 @@ void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
         GPIO::LED1::On();
         uint8_t value = 210; // the value for the duty cycle
         htim2.Instance->CCR1 = value;
-//        while (value<210){
-//             // vary the duty cycle
-//            value += 20; // increase the duty cycle by 20
-//            osDelay (500); // wait for 500 ms
-//        }
-
-//        value = 0;
+//
 
         osDelay(blinkSequence.delayMs);
 
         GPIO::LED1::Off();
         htim2.Instance->CCR1 = 0;
 
-        //BUZZER_OFF();
         osDelay(blinkSequence.delayMs);
     }
 
