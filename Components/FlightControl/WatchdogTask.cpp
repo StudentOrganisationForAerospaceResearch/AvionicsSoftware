@@ -129,7 +129,5 @@ void WatchdogTask::Run(void * pvParams)
             HandleCommand(cm);
         }
 
-
-
     }
 }

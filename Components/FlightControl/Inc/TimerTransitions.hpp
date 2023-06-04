@@ -12,7 +12,7 @@
 #include "Timer.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
-constexpr uint32_t IGINITION_TIMER_PERIOD = 10000;
+constexpr uint32_t IGINITION_TIMER_PERIOD = 20000;
 constexpr uint32_t IR_IGINITION_TIMER_PERIOD = 8000;
 enum TIMERTRANSITION_CONTROLS  {
     CONFIRM_LAUNCH_2 = 0,
@@ -29,6 +29,7 @@ public:
     void IgnitionSequence();
     void IRSequence();
     bool ignitionConformation = false;
+    void ManualLaunch();
 
 protected:
     static void IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle);

@@ -21,17 +21,22 @@ void TimerTransitions::IgnitionSequence() {
     return;
 }
 
-void TimerTransitions::IRSequence() {
-    ignitionCountdown->ChangePeriodMsAndStart(IR_IGINITION_TIMER_PERIOD);
-    ignitionConformation = true;
-    return;
+//void TimerTransitions::IRSequence() {
+//    ignitionCountdown->ChangePeriodMsAndStart(IR_IGINITION_TIMER_PERIOD);
+//    ignitionConformation = true;
+//    return;
+//}
+
+void TimerTransitions::ManualLaunch() {
+	ignitionConformation = true;
+	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
 }
 
 void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {
 //    SOAR_PRINT("Changing State to LAUNCH....\n");
 
     if ((Inst().ignitionConformation == true)) {
-        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
+//        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
         Timer::DefaultCallback(rtTimerHandle);
     }
     else {

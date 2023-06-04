@@ -435,7 +435,8 @@ RocketState Ignition::HandleCommand(Command& cm)
             TimerTransitions::Inst().ignitionConformation = true;
             break;
         case RSC_IR_IGNITION_CONFIRMED:
-            TimerTransitions::Inst().IRSequence();
+//            TimerTransitions::Inst().IRSequence();
+        	SOAR_PRINT("IR has currently been removed, May be replaced with thermocouples");
             break;
         default:
             break;
