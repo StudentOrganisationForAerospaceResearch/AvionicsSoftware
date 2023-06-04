@@ -72,6 +72,11 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     if(msg.get_target() == Proto::Node::NODE_DMB)
     	msg.set_target(Proto::Node::NODE_RCU);
 
+    // Prints for specific message contents
+    if(msg.has_mevstate()) {
+    	SOAR_PRINT("PROTO-MEV-STATE: %d\n", msg.get_mevstate().get_mev_open());
+    }
+
     // Copy the message to the read buffer
 	SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
 
