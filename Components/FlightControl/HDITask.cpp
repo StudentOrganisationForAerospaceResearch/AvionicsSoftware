@@ -24,7 +24,7 @@ std::map <RocketState, BLINK> stateBlinks = {
     {RS_COAST, {8, 1000}},
     {RS_DESCENT,{9, 1000}},
     {RS_RECOVERY, {10, 1000}},
-    {RS_ABORT,{1, 100}}
+    {RS_ABORT,{1, 1000}}
 };
 
 /**
@@ -67,9 +67,15 @@ void HDITask::InitTask()
 */
 void HDITask::Run(void * pvParams)
 {
-    while (1) {
-        SOAR_PRINT("Run task HDI");
-    }
+	while (1) {
+	        Command cm;
+
+	        //Wait forever for a command
+	        qEvtQueue->ReceiveWait(cm);
+
+	        //Process the command
+	        HandleCommand(cm);
+	    }
 }
 
 /**
@@ -86,6 +92,7 @@ void HDITask::HandleCommand(Command& cm)
     //Switch for the GLOBAL_COMMAND
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
+    	SOAR_PRINT("HDI Recieve Request\n");
         HandleRequestCommand(cm.GetTaskCommand());
         break;
     }
@@ -112,6 +119,7 @@ void HDITask::HandleRequestCommand(uint16_t taskCommand)
     //Switch for task specific command within DATA_COMMAND
     switch (taskCommand) {
     case PRELAUNCH:
+    	SOAR_PRINT("HDI Recieve PreLaunch\n");
         BuzzBlinkSequence(stateBlinks[RS_PRELAUNCH]);
         break;
     case FILL:
@@ -149,23 +157,19 @@ void HDITask::HandleRequestCommand(uint16_t taskCommand)
 
 
 void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+//    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
     for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
         GPIO::LED1::On();
         uint8_t value = 0; // the value for the duty cycle
-        while (value<210){
-            htim2.Instance->CCR1 = value; // vary the duty cycle
-            value += 20; // increase the duty cycle by 20
-            osDelay (500); // wait for 500 ms
-        }
+//        while (value<210){
+//            htim2.Instance->CCR1 = value; // vary the duty cycle
+//            value += 20; // increase the duty cycle by 20
+//            osDelay (500); // wait for 500 ms
+//        }
         value = 0;
-
-
 
         SOAR_PRINT("LED PLS");
         osDelay(blinkSequence.delayMs);
-
-
 
         GPIO::LED1::Off();
         SOAR_PRINT("LED OFF");

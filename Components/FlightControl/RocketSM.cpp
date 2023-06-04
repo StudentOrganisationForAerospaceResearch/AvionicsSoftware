@@ -69,6 +69,7 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     SOAR_ASSERT(rs_currentState != nullptr, "rs_currentState is nullptr in TransitionState");
 
     HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
+    SOAR_PRINT("State sent to HDITask\n");
     // Enter the current state
     rs_currentState->OnEnter();
 
