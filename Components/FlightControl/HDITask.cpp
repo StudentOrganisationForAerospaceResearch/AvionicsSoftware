@@ -14,6 +14,19 @@
 
 extern TIM_HandleTypeDef htim2;
 
+std::map <RocketState, BLINK> stateBlinks = {
+    {RS_PRELAUNCH, {2, 1000}},
+    {RS_FILL,{3, 1000}},
+    {RS_ARM, {4, 1000}},
+    {RS_IGNITION, {5, 1000}},
+    {RS_LAUNCH, {6, 1000}},
+    {RS_BURN, {7, 1000}},
+    {RS_COAST, {8, 1000}},
+    {RS_DESCENT,{9, 1000}},
+    {RS_RECOVERY, {10, 1000}},
+    {RS_ABORT,{1, 100}}
+};
+
 /**
 * @brief Constructor for HDITask
 */

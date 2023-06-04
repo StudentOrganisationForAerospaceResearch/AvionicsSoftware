@@ -19,18 +19,18 @@ struct BLINK{
 
 
 
-//enum STATE_CHANGE {
-//    PRELAUNCH = 0,
-//    FILL,
-//    ARM,
-//    IGNITION,
-//    LAUNCH,
-//    BURN,
-//    COAST,
-//    DESCENT,
-//    RECOVERY,
-//    ABORT
-//};
+enum STATE_CHANGE {
+    PRELAUNCH = 0,
+    FILL,
+    ARM,
+    IGNITION,
+    LAUNCH,
+    BURN,
+    COAST,
+    DESCENT,
+    RECOVERY,
+    ABORT
+};
 
  
 
