@@ -85,10 +85,14 @@
     <ClInclude Include="..\..\Components\Core\Inc\Queue.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Timer.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Driver\SPIFlash.hpp" />
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp" />
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxxConf.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\DualSectorStorage.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\Flash.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SimpleDualSectorStorage.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SimpleSectorStorage.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\SystemStorage.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\RocketSM.hpp" />
