@@ -49,6 +49,9 @@ void FlashTask::Run(void * pvParams)
 {
     st_ = new SystemStorage();
 
+    // Initialize the SPI Flash
+    spiFlash_.Init();
+
     while (1) {
         //Process any commands, in blocking mode
         Command cm;

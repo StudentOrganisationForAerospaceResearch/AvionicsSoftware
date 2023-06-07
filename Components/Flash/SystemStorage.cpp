@@ -14,8 +14,6 @@
  */
 SystemStorage::SystemStorage()
 {
-    W25qxx_Init();
-
     // Read from flash to populate state struct
     bool res = ReadStateFromFlash();
     if (res == false) {

@@ -9,6 +9,7 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 #include "SystemStorage.hpp"
+#include "SPIFlash.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
 enum FLASH_TASK_COMMANDS {
@@ -41,6 +42,8 @@ private:
     FlashTask& operator=(const FlashTask&);            // Prevent assignment
 
     // Private Variables
+    SPIFlash spiFlash_;
+
     SystemStorage* st_;
     
 };
