@@ -132,7 +132,7 @@ bool W25qxx_Init(void)
 	while (HAL_GetTick() < 100)
 		W25qxx_Delay(1);
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
-	W25qxx_Delay(100);
+	W25qxx_Delay(100); //TODO: I would prefer NOT to delay 100ms here...
 	uint32_t id;
 #if (_W25QXX_DEBUG == 1)
 	SOAR_PRINT("w25qxx Init Begin...\r\n");

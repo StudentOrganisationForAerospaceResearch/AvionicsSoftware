@@ -13,6 +13,7 @@
 #include "stm32f4xx_hal_uart.h"
 #include "Mutex.hpp"
 #include "Command.hpp"
+#include "SPIFlash.hpp"
 
 // Tasks
 #include "UARTTask.hpp"
@@ -26,14 +27,14 @@
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
- 
+
 /* Interface Functions ------------------------------------------------------------*/
 /**
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
 */
 void run_main() {
     // Init Tasks
-    osDelay(500);
+    osDelay(500);  // TODO: Get rid of this if possible??
     FlashTask::Inst().InitTask();
     WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
