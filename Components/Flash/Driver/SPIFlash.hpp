@@ -25,7 +25,10 @@ public:
      */
     void Init() override
     {
-        W25qxx_Init();
+        if (!isInitialized_) {
+            W25qxx_Init();
+            isInitialized_ = true;
+        }
     }
 
     /**
@@ -115,6 +118,9 @@ public:
     {
         return w25qxx.SectorSize;
     }
+
+private:
+    bool isInitialized_ = false;
 };
 
 #endif // SPIFLASH_WRAPPER_HPP_
