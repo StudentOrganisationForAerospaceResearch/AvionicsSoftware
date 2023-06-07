@@ -72,17 +72,17 @@ typedef enum
   * @note  This macro can be used for the following purpose: 
   *          - When the Handle is declared as local variable; before passing it as parameter
   *            to HAL_PPP_Init() for the first time, it is mandatory to use this macro 
-  *            to set to 0 the Handle's "rocketState" field.
-  *            Otherwise, "rocketState" field may have any random value and the first time the function 
+  *            to set to 0 the Handle's "State" field.
+  *            Otherwise, "State" field may have any random value and the first time the function 
   *            HAL_PPP_Init() is called, the low level hardware initialization will be missed
   *            (i.e. HAL_PPP_MspInit() will not be executed).
   *          - When there is a need to reconfigure the low level hardware: instead of calling
   *            HAL_PPP_DeInit() then HAL_PPP_Init(), user can make a call to this macro then HAL_PPP_Init().
-  *            In this later function, when the Handle's "rocketState" field is set to 0, it will execute the function
+  *            In this later function, when the Handle's "State" field is set to 0, it will execute the function
   *            HAL_PPP_MspInit() which will reconfigure the low level hardware.
   * @retval None
   */
-#define __HAL_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->rocketState = 0U)
+#define __HAL_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = 0U)
 
 #if (USE_RTOS == 1U)
   /* Reserved for future use */

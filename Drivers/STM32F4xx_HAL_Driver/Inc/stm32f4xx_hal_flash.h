@@ -331,7 +331,7 @@ HAL_StatusTypeDef HAL_FLASH_OB_Launch(void);
 /** @addtogroup FLASH_Exported_Functions_Group3
   * @{
   */
-/* Peripheral rocketState functions  ************************************************/
+/* Peripheral State functions  ************************************************/
 uint32_t HAL_FLASH_GetError(void);
 HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout);
 /**

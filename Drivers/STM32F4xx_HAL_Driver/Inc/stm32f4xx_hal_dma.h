@@ -393,7 +393,7 @@ typedef struct __DMA_HandleTypeDef
   * @param  __HANDLE__ specifies the DMA handle.
   * @retval None
   */
-#define __HAL_DMA_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->rocketState = HAL_DMA_STATE_RESET)
+#define __HAL_DMA_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_DMA_STATE_RESET)
 
 /**
   * @brief  Return the current DMA Stream FIFO filled level.

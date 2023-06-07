@@ -26,7 +26,7 @@
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
-
+ 
 /* Interface Functions ------------------------------------------------------------*/
 /**
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
