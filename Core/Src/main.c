@@ -22,8 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "main_avionics.hpp"
-
+#include "RunInterface.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,14 +63,14 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
+static void MX_ADC2_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_UART4_Init(void);
 static void MX_CRC_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_UART5_Init(void);
-static void MX_ADC2_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_TIM2_Init(void);
 void StartDefaultTask(void const * argument);
@@ -113,19 +112,19 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
+  MX_ADC2_Init();
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_UART4_Init();
   MX_CRC_Init();
   MX_SPI3_Init();
   MX_UART5_Init();
-  MX_ADC2_Init();
+  MX_DMA_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-  run_main();
+  run_interface();
 #if 0
 
 
@@ -689,7 +688,6 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-    run_StartDefaultTask();
   /* USER CODE END 5 */
 }
 
