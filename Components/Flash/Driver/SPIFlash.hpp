@@ -134,7 +134,7 @@ public:
 
 private:
     // Private Functions
-    SPIFlash();                                     // Private constructor
+    SPIFlash() { isInitialized_ = false; }          // Private constructor
     SPIFlash(const SPIFlash&);                      // Prevent copy-construction
     SPIFlash& operator=(const SPIFlash&);           // Prevent assignment
 

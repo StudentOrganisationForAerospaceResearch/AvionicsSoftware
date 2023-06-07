@@ -13,6 +13,7 @@
 #include "RocketSM.hpp"
 #include "SPIFlash.hpp"
 #include "Data.h"
+#include <cstring>
 
 /**
  * @brief Constructor for FlashTask

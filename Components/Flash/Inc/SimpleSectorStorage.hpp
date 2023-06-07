@@ -66,7 +66,7 @@ protected:
 
     // Constants
     const uint32_t kStartAddr_;
-    const Flash* kFlash_;
+    Flash* kFlash_;
 };
 
 // Function Implementations ----------------------------------------------------------------------------------
@@ -129,16 +129,16 @@ bool SimpleSectorStorage<T>::Write(T& data, bool checkErased)
         }
     }
 
-    // Package it in a Data struct, we reuse the readData buffer
-    Data* dataToWrite = reinterpret_cast<Data*>(readData);
+    // Make a new data object
+    Data dataToWrite;
 
     // Setup the data to write
-    dataToWrite->header = SSS_HEADER_BYTE;
-    dataToWrite->data = data;
-    AddCRC(*dataToWrite);
+    dataToWrite.header = SSS_HEADER_BYTE;
+    dataToWrite.data = data;
+    AddCRC(dataToWrite);
 
     // Write the data to flash memory
-    bool successWrite = kFlash_->Write(kStartAddr_, reinterpret_cast<uint8_t*>(&data), sizeof(Data));
+    bool successWrite = kFlash_->Write(kStartAddr_, reinterpret_cast<uint8_t*>(&dataToWrite), sizeof(Data));
     if (!successWrite)
         return false;
 
@@ -220,7 +220,7 @@ bool SimpleSectorStorage<T>::Invalidate()
 {
     // Write a 0x00 to the header byte
     uint8_t writeBuffer = 0x00;
-    bool successWrite = kFlash_->Write(kStartAddr_, writeBuffer ,sizeof(writeBuffer));
+    bool successWrite = kFlash_->Write(kStartAddr_, &writeBuffer ,sizeof(writeBuffer));
 
     // If we failed to write, return false
     if (!successWrite)
@@ -249,7 +249,7 @@ void SimpleSectorStorage<T>::AddCRC(Data& data)
     uint8_t* byteData = reinterpret_cast<uint8_t*>(&data);
 
     // Calculate CRC of the data, excluding the crc field
-    uint16_t crc = SSS_CalculateChecksum(byteData + 1, sizeof(Data) - sizeof(Data.crc));
+    uint16_t crc = SSS_CalculateChecksum(byteData + 1, sizeof(Data) - sizeof(uint16_t));
 
     data.crc = crc;
 }
@@ -266,7 +266,7 @@ bool SimpleSectorStorage<T>::IsCRCValid(Data& data)
 {
     uint8_t* byteData = reinterpret_cast<uint8_t*>(&data);
 
-    uint16_t crc = SSS_CalculateChecksum(byteData, sizeof(Data) - sizeof(Data.crc));
+    uint16_t crc = SSS_CalculateChecksum(byteData, sizeof(Data) - sizeof(uint16_t));
 
     return (crc == data.crc);
 }

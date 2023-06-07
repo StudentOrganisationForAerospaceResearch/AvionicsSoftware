@@ -43,7 +43,7 @@ private:
     SystemStorage& operator=(const SystemStorage&);           // Prevent assignment
 };
 
-SystemStorage::SystemStorage() :
+inline SystemStorage::SystemStorage() :
     SafeSimpleDualSectorStorage<SystemState>(&SPIFlash::Inst(),
         SYSTEM_STORAGE_START_SECTOR_ADDR)
 {

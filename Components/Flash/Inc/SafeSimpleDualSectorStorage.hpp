@@ -86,6 +86,7 @@ bool SafeSimpleDualSectorStorage<T>::Write(T& data)
         success = SimpleDualSectorStorage<T>::Write(data);
         mutex_.Unlock();
     }
+    return success;
 }
 
 /**

@@ -140,10 +140,14 @@ bool SimpleDualSectorStorage<T>::Read(T& data) {
         }
     }
     else if (validSector_ == SECTOR_1) {
-        readSuccess = sector1_.Read(data);
+        Data readData;
+        readSuccess = sector1_.Read(readData);
+        data = readData.data;
     }
     else if (validSector_ == SECTOR_2) {
-        readSuccess = sector2_.Read(data);
+        Data readData;
+        readSuccess = sector2_.Read(readData);
+        data = readData.data;
     }
     else {
         readSuccess = false;
