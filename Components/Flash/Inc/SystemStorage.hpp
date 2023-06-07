@@ -1,67 +1,52 @@
 /**
  ******************************************************************************
  * File Name          : SystemStorage.hpp
- * Description        : storage, handles flash I/O and state recovery
+ *                      A system wide singleton containing the system state
+ *                      stored with a SafeDualSectorStorage.
+ *
+ *                      The FlightTask should have priority in doing
+ *                      the first ever read. After which all other operations
+ *                      (erase, write) are handled by FlashTask except for
+ *                      time sensitive write operations.
  ******************************************************************************
 */
-#ifndef SOAR_SYSTEMSTORAGE_HPP_
-#define SOAR_SYSTEMSTORAGE_HPP_
-#include "Task.hpp"
+#ifndef SOAR_SYSTEM_STATE_STORAGE_HPP_
+#define SOAR_SYSTEM_STATE_STORAGE_HPP
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
-#include "w25qxx.hpp"
+#include "SafeSimpleDualSectorStorage.hpp"
+#include "SPIFlash.hpp"
 
-// Telemetry Data Storage Starts at 12288 and goes to the end of flash
-#define INITIAL_SENSOR_FLASH_OFFSET 12288
-
-// System State Storage Spans sectors 0, 1
-#define SYSTEM_STATE_STORAGE 0x0000
-#define SYSTEM_STATE_STORAGE_SIZE_SECTORS 2
-
-// System Data Offset Storage Spans sectors 2, 3
-#define SYSTEM_DATA_OFFSET_STORAGE 0x2000
-
-#define SPI_FLASH_SECTOR_SIZE 4096
-
-/* Macros/Enums ------------------------------------------------------------*/
-enum FLASH_COMMANDS  {
-    WRITE_STATE_TO_FLASH = 0,
-    DUMP_FLASH_DATA,
-    ERASE_ALL_FLASH
-};
+// Macros/Constexprs ---------------------------------------------------------------------
+constexpr uint32_t SYSTEM_STORAGE_START_SECTOR_ADDR = SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR;
 
 
-/**
- * @brief State information to be written to flash
- */
-struct StateInformation 
-{   
+// System Info Struct ---------------------------------------------------------------------
+struct SystemState
+{
     RocketState rocketState;
-    uint32_t sequenceNum;      
-    uint32_t data_offset;
-    //uint32_t CRC; 
 };
 
-/**
- * @brief System information object
- */
-class SystemStorage 
+// System Info Struct ---------------------------------------------------------------------
+class SystemStorage : public SafeSimpleDualSectorStorage<SystemState>
 {
 public:
+    // Singleton instance for SystemStorage
+    static SystemStorage& Inst() {
+        static SystemStorage inst;
+        return inst;
+    }
+
+private:
     SystemStorage();
-
-    void HandleCommand(Command& cm);
-
-    void WriteStateToFlash();
-    bool ReadStateFromFlash();
-    void WriteDataToFlash(uint8_t* data, uint16_t size);
-    bool ReadDataFromFlash();
-    StateInformation GetStateData() { return sys_currentState; }
-
-protected:
-
-    // Variables
-    StateInformation sys_currentState;
+    SystemStorage(const SystemStorage&);                      // Prevent copy-construction
+    SystemStorage& operator=(const SystemStorage&);           // Prevent assignment
 };
 
-#endif    // SOAR_SYSTEMSTORAGE_HPP_
+SystemStorage::SystemStorage() :
+    SafeSimpleDualSectorStorage<SystemState>(&SPIFlash::Inst(),
+        SYSTEM_STORAGE_START_SECTOR_ADDR)
+{
+}
+
+#endif // SOAR_SYSTEM_STATE_HPP

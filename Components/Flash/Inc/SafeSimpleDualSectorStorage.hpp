@@ -40,6 +40,8 @@ public:
 
     void Maintain();
 
+    void Erase();
+
 private:
     Mutex mutex_;
 };
@@ -98,6 +100,20 @@ void SafeSimpleDualSectorStorage<T>::Maintain()
         mutex_.Unlock();
     }
 }
+
+/**
+ * @brief Erases both sectors of the Safe Simple Dual Sector Storage.
+ *        Waits forever for the mutex to be acquired.
+ */
+template<typename T>
+void SafeSimpleDualSectorStorage<T>::Erase()
+{
+    if (mutex_.Lock()) {
+        SimpleDualSectorStorage<T>::Erase();
+        mutex_.Unlock();
+    }
+}
+
 
 
 #endif // SOAR_SAFE_SIMPLE_DUAL_SECTOR_STORAGE_HPP

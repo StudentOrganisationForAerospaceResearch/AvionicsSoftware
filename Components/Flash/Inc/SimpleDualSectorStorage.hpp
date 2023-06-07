@@ -35,6 +35,8 @@ public:
 
     void Maintain();
 
+    void Erase();
+
 protected:
     struct Data {
         uint16_t seqN;
@@ -233,6 +235,19 @@ bool SimpleDualSectorStorage<T>::Write(T& data) {
     }
 
     return writeSuccess;
+}
+
+/**
+ * @brief Erases both sectors, should only be used on system startup or when
+ *        completely resetting the storage. Blocks until both sectors are erased.
+ */
+template<typename T>
+void SimpleDualSectorStorage<T>::Erase()
+{
+    sector1_.Erase();
+    sector2_.Erase();
+    validSector_ = INVALID;
+    pendingOp_ = NONE;
 }
 
 #endif // SOAR_SIMPLE_DUAL_SECTOR_STORAGE_HPP

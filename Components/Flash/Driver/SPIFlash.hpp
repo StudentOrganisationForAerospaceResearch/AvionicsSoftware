@@ -20,6 +20,14 @@
 class SPIFlash : public Flash
 {
 public:
+    /*
+     * @brief Singleton instance
+     */
+    static SPIFlash& Inst() {
+        static SPIFlash inst;
+        return inst;
+    }
+
     /**
      * @brief Initialize the W25qxx SPI Flash Memory device
      */
@@ -119,7 +127,17 @@ public:
         return w25qxx.SectorSize;
     }
 
+    /**
+     * @brief Gets if the flash is initialized or not
+     */
+    bool GetInitialized() { return isInitialized_; }
+
 private:
+    // Private Functions
+    SPIFlash();                                     // Private constructor
+    SPIFlash(const SPIFlash&);                      // Prevent copy-construction
+    SPIFlash& operator=(const SPIFlash&);           // Prevent assignment
+
     bool isInitialized_ = false;
 };
 

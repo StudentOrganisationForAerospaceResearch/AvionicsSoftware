@@ -13,7 +13,6 @@
 #include "stm32f4xx_hal_uart.h"
 #include "Mutex.hpp"
 #include "Command.hpp"
-#include "SPIFlash.hpp"
 
 // Tasks
 #include "UARTTask.hpp"
@@ -35,13 +34,13 @@ Mutex Global::vaListMutex;
 void run_main() {
     // Init Tasks
     osDelay(500);  // TODO: Get rid of this if possible??
-    FlashTask::Inst().InitTask();
-    WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
+    WatchdogTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
     DebugTask::Inst().InitTask();
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
+    FlashTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
     SOAR_PRINT("\n-- SOAR AVIONICS --\n");

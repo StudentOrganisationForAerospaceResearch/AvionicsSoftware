@@ -7,6 +7,9 @@
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
+#include "SPIFlash.hpp"
+#include "SystemStorage.hpp"
+#include "RocketSM.hpp"
 
 /**
  * @brief Constructor for FlightTask
@@ -44,22 +47,25 @@ void FlightTask::Run(void * pvParams)
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
     GPIO::LED1::Off();
 
-    //Wait until flash has sent a valid state command
-    Command cm;
-    while(true) {
-        //Wait forever for a command
-        qEvtQueue->ReceiveWait(cm);
+    //Initialize SPI Flash
+    SPIFlash::Inst().Init();
 
-        if(cm.GetCommand() == FLASH_RESPONSE) 
-            break;
-        else
-            cm.Reset();
+    //Get the latest state from the system storage
+    SystemState sysState;
+    bool stateReadSuccess = SystemStorage::Inst().Read(sysState);
+
+    if (stateReadSuccess == false) {
+        // Succeded to read state, initialize the rocket state machine
+        rsm_ = new RocketSM(sysState.rocketState, true);
+    }
+    else {
+        // Failed to read state, start in default state
+        //TODO: Should implement a backup SimpleSectorStorage that is written to/read only once
+        //TODO: where after the LAUNCH state, the default state becomes RS_COAST (or whatever is safest)
+        //TODO: based on a unique key being written to the SSStorage
+        rsm_ = new RocketSM(RS_ABORT, true);
     }
 
-    RocketState state = (RocketState) cm.GetTaskCommand();
-    cm.Reset();
-
-    rsm_ = new RocketSM(state, false);
 
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'

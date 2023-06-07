@@ -12,12 +12,16 @@
 #include "SPIFlash.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
-enum FLASH_TASK_COMMANDS {
-    FLASH_NONE = 0,
-    FLASH_WRITE_STATE,// write state to flash
-    FLASH_WRITE_SENSOR,    // write new sensor data to flash
-    FLASH_DUMP_SENSOR        // dump all sensor data in flash throguh UART
+constexpr uint16_t MAX_FLASH_TASK_WAIT_TIME_MS = 5000; // The max time to wait for a command before maintenance is checked
+constexpr uint8_t FLASH_OFFSET_WRITES_UPDATE_THRESHOLD = 5; // The number of writes to flash before offsets are updated in flash
+
+
+enum FLASH_COMMANDS {
+    WRITE_STATE_TO_FLASH = 0,
+    DUMP_FLASH_DATA,
+    ERASE_ALL_FLASH
 };
+
 
 class FlashTask : public Task
 {
@@ -34,18 +38,30 @@ protected:
 
     void Run(void * pvParams); // Main run code
 
+    void HandleCommand(Command& cm);
+
+    // Log Data Functions
+    void WriteLogDataToFlash(uint8_t* data, uint16_t size);
+    bool ReadLogDataFromFlash();
 
 private:
+
+
     // Private Functions
     FlashTask();        // Private constructor
     FlashTask(const FlashTask&);                        // Prevent copy-construction
     FlashTask& operator=(const FlashTask&);            // Prevent assignment
 
-    // Private Variables
-    SPIFlash spiFlash_;
+    // Offsets
+    struct Offsets
+    {
+        uint32_t writeDataOffset;
+    };
 
-    SystemStorage* st_;
-    
+    Offsets currentOffsets_;
+    SimpleDualSectorStorage<Offsets> offsetsStorage_;
+
+    uint8_t writesSinceLastOffsetUpdate_;
 };
 
 #endif    // SOAR_FLASHTASK_HPP_

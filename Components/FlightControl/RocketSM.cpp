@@ -91,12 +91,12 @@ void RocketSM::HandleCommand(Command& cm)
     // Run transition state - if the next state is the current state this does nothing
     if (nextRocketState != rs_currentState->GetStateID())
     {
-        //send new state to FlashTask for storing
+        //Send new state to FlashTask for storing to SystemStorage
         Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)WRITE_STATE_TO_FLASH);
         uint8_t state = nextRocketState;
         cmd.CopyDataToCommand(&state, 1);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
-
+        
         TransitionState(nextRocketState);
     }
 }

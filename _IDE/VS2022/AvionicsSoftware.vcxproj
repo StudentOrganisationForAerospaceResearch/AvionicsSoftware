@@ -28,7 +28,6 @@
     <ClCompile Include="..\..\Components\Core\Timer.cpp" />
     <ClCompile Include="..\..\Components\Flash\Driver\w25qxx.cpp" />
     <ClCompile Include="..\..\Components\Flash\FlashTask.cpp" />
-    <ClCompile Include="..\..\Components\Flash\SystemStorage.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
@@ -91,6 +90,7 @@
     <ClInclude Include="..\..\Components\Flash\Inc\DualSectorStorage.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\Flash.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SafeSimpleDualSectorStorage.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\SimpleDualSectorStorage.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\SimpleSectorStorage.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\SystemStorage.hpp" />
