@@ -11,20 +11,22 @@
 #include "FlightTask.hpp"
 #include <map>
 #include "Command.hpp"
+#include "etl/map.h"
+
 
 extern TIM_HandleTypeDef htim2;
 
-std::map <RocketState, BLINK> stateBlinks = {
+etl::map<RocketState, BLINK, 10> stateBlinks = etl::map<RocketState, BLINK, 10>{
     {RS_PRELAUNCH, {2, 1000}},
-    {RS_FILL,{3, 1000}},
+    {RS_FILL, {3, 1000}},
     {RS_ARM, {4, 1000}},
     {RS_IGNITION, {5, 1000}},
     {RS_LAUNCH, {6, 1000}},
     {RS_BURN, {7, 1000}},
     {RS_COAST, {8, 1000}},
-    {RS_DESCENT,{9, 1000}},
+    {RS_DESCENT, {9, 1000}},
     {RS_RECOVERY, {10, 1000}},
-    {RS_ABORT,{1, 1000}}
+    {RS_ABORT, {1, 1000}}
 };
 
 /**
@@ -44,8 +46,6 @@ void HDITask::InitTask()
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize flight task twice");
 
-
-
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)HDITask::RunTask,
             (const char*)"HDITask",
@@ -53,8 +53,6 @@ void HDITask::InitTask()
             (void*)this,
             (UBaseType_t)HDI_TASK_RTOS_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
-
-
 
     SOAR_ASSERT(rtValue == pdPASS, "HDITask::InitTask() - xTaskCreate() failed");
 }
@@ -92,7 +90,6 @@ void HDITask::HandleCommand(Command& cm)
     //Switch for the GLOBAL_COMMAND
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
-    	SOAR_PRINT("HDI Recieve Request\n");
         HandleRequestCommand(cm.GetTaskCommand());
         break;
     }
@@ -160,7 +157,6 @@ void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
         uint8_t value = 200; // the value for the duty cycle
         htim2.Instance->CCR1 = value;
 //
-
         osDelay(blinkSequence.delayMs);
 
         GPIO::LED1::Off();
