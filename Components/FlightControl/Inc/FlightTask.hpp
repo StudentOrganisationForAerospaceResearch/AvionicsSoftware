@@ -10,6 +10,13 @@
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 
+/* Macros/Enums ------------------------------------------------------------*/
+enum FlightTaskRequests
+{
+	FT_REQUEST_NONE = 0, 
+	FT_REQUEST_TRANSMIT_STATE,	// Send the current state over the Radio
+};
+
 class FlightTask : public Task
 {
 public:
@@ -25,6 +32,9 @@ protected:
 
     void Run(void * pvParams); // Main run code
 
+    void HandleCommand(Command& cm);
+
+    void SendRocketState();
 
 private:
     // Private Functions

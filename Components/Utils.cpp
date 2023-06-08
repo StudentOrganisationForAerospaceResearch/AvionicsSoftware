@@ -14,6 +14,8 @@
 #include "main_avionics.hpp"
 #include "SystemDefines.hpp"
 
+#include "etl/crc16_xmodem.h"
+
 /**
  * @brief Calculates the average from a list of unsigned shorts
  * @param array: The array of unsigned shorts to average
@@ -68,7 +70,7 @@ void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* va
  * @param data The data to generate the checksum for
  * @param size The size of the data array in uint8_t
  */
-uint32_t Utils::getCRC32(uint8_t* data, uint32_t size)
+uint32_t Utils::getCRC32Aligned(uint8_t* data, uint32_t size)
 {
     // Figure out the number of bytes to pad by
     uint8_t pad = 0;
@@ -87,10 +89,46 @@ uint32_t Utils::getCRC32(uint8_t* data, uint32_t size)
 
     // TODO: TEST THIS THING, also note there's a more efficient way (0-copy) that just involves loop accumulating 4x uint8_t's into 1x uint32_t's but this is more readable, ish
     // TODO: To be fair, G++ is very good at compiling memcpy though, so honestly other than instantaneous stack usage this may actually be more efficient
-    SOAR_PRINT("Warning, HCRC is not tested!\n");
+//    SOAR_PRINT("Warning, HCRC is not tested!\n");
 
     // Calculate the CRC32
     return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, (size+pad)/4);
+}
+
+/**
+ * @brief Generates CRC16 checksum for a given array of data using etl::crc16
+ * @param data The data to generate the checksum for
+ * @param size  The size of the data array in uint8_t
+ * @return The CRC16 checksum
+ */
+uint16_t Utils::getCRC16(uint8_t* data, uint16_t size)
+{
+    // ETL CRC16 object
+    etl::crc16_xmodem crc;
+    crc.reset();
+
+	// Use etl library to generate CRC16
+	for (uint16_t i = 0; i < size; i++)
+	{
+        crc.add(data[i]);
+	}
+
+    return crc.value();
+}
+
+/**
+ * @brief Checks if a given CRC is correct for the array
+ * @param data The data (not including the checksum)
+ * @param size The size of the data
+ * @param crc The internal checksum
+ * @return 
+ */
+bool Utils::IsCrc16Correct(uint8_t* data, uint16_t size, uint16_t crc)
+{
+    // First we calculate the crc16 for the buffer
+    uint16_t calculatedCrc = getCRC16(data, size);
+
+    return (calculatedCrc == crc);
 }
 
 /**
