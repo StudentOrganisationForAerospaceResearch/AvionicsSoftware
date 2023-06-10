@@ -30,6 +30,7 @@ public:
     void IRSequence();
     bool ignitionConformation = false;
     void ManualLaunch();
+    void Setup();
 
 protected:
     static void IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle);

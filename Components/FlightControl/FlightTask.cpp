@@ -44,7 +44,7 @@ void FlightTask::Run(void * pvParams)
 {
 
     rsm_ = new RocketSM(RS_ABORT, false);
-
+    TimerTransitions::Inst().Setup();
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task

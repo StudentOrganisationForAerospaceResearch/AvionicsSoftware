@@ -11,8 +11,12 @@
 #include "FlightTask.hpp"
 
 TimerTransitions::TimerTransitions() {
-    ignitionCountdown = new Timer(IngnitionToLaunchCallback);
-    ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD);
+//    ignitionConformation = nullptr;
+}
+
+void TimerTransitions::Setup() {
+	ignitionCountdown = new Timer(IngnitionToLaunchCallback);
+	ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD);
 }
 
 void TimerTransitions::IgnitionSequence() {
