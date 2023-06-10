@@ -6,6 +6,9 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "PBBRxProtocolTask.hpp"
+#include "CommandMessage.hpp"
+#include "WriteBufferFixedSize.h"
 #include "TimerTransitions.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
@@ -93,6 +96,38 @@ void RocketSM::HandleCommand(Command& cm)
         TransitionState(nextRocketState);
 }
 
+/**
+ * @brief Gets the current rocket state as a proto enum
+ * @return Current rocket state
+ */
+Proto::RocketState RocketSM::GetRocketStateAsProto()
+{
+    switch (rs_currentState->GetStateID()) {
+    case RS_PRELAUNCH:
+        return Proto::RocketState::RS_PRELAUNCH;
+    case RS_FILL:
+        return Proto::RocketState::RS_FILL;
+    case RS_ARM:
+        return Proto::RocketState::RS_ARM;
+    case RS_IGNITION:
+        return Proto::RocketState::RS_IGNITION;
+    case RS_LAUNCH:
+        return Proto::RocketState::RS_LAUNCH;
+    case RS_BURN:
+        return Proto::RocketState::RS_BURN;
+    case RS_COAST:
+        return Proto::RocketState::RS_PRELAUNCH;
+    case RS_DESCENT:
+        return Proto::RocketState::RS_DESCENT;
+    case RS_RECOVERY:
+        return Proto::RocketState::RS_RECOVERY;
+    case RS_ABORT:
+        return Proto::RocketState::RS_ABORT;
+    default:
+        return Proto::RocketState::RS_NONE;
+    }
+}
+
 /* Base State ------------------------------------------------------------------*/
 ///**
 // * @brief General handler for actions that should be supported by all rocket state machines
@@ -161,12 +196,16 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     case RSC_CLOSE_VENT:
         //TODO: Close the vent valve
         break;
-    case RSC_OPEN_DRAIN:
-        //TODO: Close the drain
+    case RSC_OPEN_DRAIN: {
+            //TODO: Temporary test code!
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
         break;
-    case RSC_CLOSE_DRAIN:
-        //TODO: Open the drain
+    }
+    case RSC_CLOSE_DRAIN: {
+            //TODO: Temporary test code!
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
+    }
     case RSC_MEV_CLOSE:
         //TODO: Close the MEV
         break;

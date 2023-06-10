@@ -43,8 +43,6 @@ void WatchdogTask::InitTask()
  */
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
-
-    SOAR_PRINT("System lost radio heartbeat: attempting to ABORT\n");
     Timer::DefaultCallback(rtTimerHandle);
     FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }

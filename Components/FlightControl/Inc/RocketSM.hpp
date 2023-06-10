@@ -8,6 +8,7 @@
 #define SOAR_AVIONICS_ROCKET_SM
 
 #include "Command.hpp"
+#include "CoreProto.h"
 
 enum RocketState
 {
@@ -32,7 +33,7 @@ enum RocketState
                     
 
     //-- COAST --
-    // Manual venting NOT ALLOWED
+    // Manual venting NOT ALLOWED -- Note: MEV never closes!
     RS_COAST,       // Coasting (MEV closed, vents closed) - 30 seconds (TBD) ^ Vents closed applies here too, in part. Includes APOGEE
 
     //-- DESCENT / POSTAPOGEE --
@@ -137,6 +138,8 @@ public:
     RocketSM(RocketState startingState, bool enterStartingState);
 
     void HandleCommand(Command& cm);
+
+    Proto::RocketState GetRocketStateAsProto();
 
 protected:
     RocketState TransitionState(RocketState nextState);

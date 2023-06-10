@@ -20,6 +20,9 @@
 #include "DebugTask.hpp"
 #include "Task.hpp"
 
+#include "DMBProtocolTask.hpp"
+#include "TelemetryMessage.hpp"
+
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -135,7 +138,7 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         SampleBarometer();
         break;
     case BARO_REQUEST_TRANSMIT:
-        SOAR_PRINT("Stubbed: Barometer task transmit not implemented\n");
+        TransmitProtocolBaroData();
         break;
     case BARO_REQUEST_DEBUG:
         SOAR_PRINT("\t-- Barometer Data --\n");
@@ -147,6 +150,29 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
         break;
     }
+}
+
+/**
+ * @brief Transmits a protocol barometer data sample
+ */
+void BarometerTask::TransmitProtocolBaroData()
+{
+    SOAR_PRINT("Barometer Task Transmit...\n");
+
+    Proto::TelemetryMessage msg;
+    msg.set_source(Proto::Node::NODE_DMB);
+    msg.set_target(Proto::Node::NODE_RCU);
+    msg.set_message_id((uint32_t)Proto::MessageID::MSG_TELEMETRY);
+    Proto::Baro baroData;
+	baroData.set_baro_pressure(data->pressure_);
+    baroData.set_baro_temp(data->temperature_);
+	msg.set_baro(baroData);
+
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    msg.serialize(writeBuffer);
+
+    // Send the barometer data
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
 
 /**
@@ -188,7 +214,7 @@ void BarometerTask::SampleBarometer()
     // Reset the barometer
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &RESET_CMD, CMD_SIZE, CMD_TIMEOUT);
-    osDelay(3); // 2.8ms reload after Reset command
+    osDelay(4); // 2.8ms reload after Reset command
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
     // Read PROM for calibration coefficients

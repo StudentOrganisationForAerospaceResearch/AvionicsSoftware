@@ -39,6 +39,9 @@ protected:
     void HandleCommand(Command& cm);
     void HandleRequestCommand(uint16_t taskCommand);
 
+    // Telemetry
+    void TransmitProtocolBaroData();
+
     // Sampling
     void SampleBarometer();
     uint16_t ReadCalibrationCoefficients(uint8_t PROM_READ_CMD);
