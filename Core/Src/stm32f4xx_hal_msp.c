@@ -784,7 +784,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     PA2     ------> USART2_TX
     PA3     ------> USART2_RX
     */
-    HAL_GPIO_DeInit(GPIOA, RADIO_UART_TX_Pin|RADIO_UART_RX_Pin);
+    HAL_GPIO_DeInit(GPIOA, RADIO_TX_Pin|RADIO_RX_Pin);
 
     /* USART2 DMA DeInit */
     HAL_DMA_DeInit(huart->hdmarx);

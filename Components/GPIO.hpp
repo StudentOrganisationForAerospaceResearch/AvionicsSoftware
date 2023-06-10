@@ -46,18 +46,18 @@ namespace GPIO
 	
 	namespace Vent
 	{
-		inline void Open() { HAL_GPIO_WritePin(VENT_CTRL_GPIO_Port, VENT_CTRL_Pin, GPIO_PIN_RESET); }
-		inline void Close() { HAL_GPIO_WritePin(VENT_CTRL_GPIO_Port, VENT_CTRL_Pin, GPIO_PIN_SET); }
+		inline void Open() { HAL_GPIO_WritePin(VENT_CONTROL_GPIO_Port, VENT_CONTROL_Pin, GPIO_PIN_RESET); }
+		inline void Close() { HAL_GPIO_WritePin(VENT_CONTROL_GPIO_Port, VENT_CONTROL_Pin, GPIO_PIN_SET); }
 
-		inline bool IsOpen() { return HAL_GPIO_ReadPin(VENT_CTRL_GPIO_Port, VENT_CTRL_Pin) == GPIO_PIN_RESET; }
+		inline bool IsOpen() { return HAL_GPIO_ReadPin(VENT_CONTROL_GPIO_Port, VENT_CONTROL_Pin) == GPIO_PIN_RESET; }
 	}	
 
 	namespace Drain
 	{
-		inline void Open() { HAL_GPIO_WritePin(DRAIN_CTRL_GPIO_Port, DRAIN_CTRL_Pin, GPIO_PIN_RESET); }
-		inline void Close() { HAL_GPIO_WritePin(DRAIN_CTRL_GPIO_Port, DRAIN_CTRL_Pin, GPIO_PIN_SET); }
+		inline void Open() { HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_RESET); }
+		inline void Close() { HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_SET); }
 
-		inline bool IsOpen() { return HAL_GPIO_ReadPin(DRAIN_CTRL_GPIO_Port, DRAIN_CTRL_Pin) == GPIO_PIN_RESET; }
+		inline bool IsOpen() { return HAL_GPIO_ReadPin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin) == GPIO_PIN_RESET; }
 	}	
 
 	namespace PowerSelect
