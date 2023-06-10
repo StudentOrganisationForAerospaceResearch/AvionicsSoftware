@@ -9,7 +9,6 @@
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 #include "FlightTask.hpp"
-#include <map>
 #include "Command.hpp"
 #include "etl/map.h"
 
@@ -36,8 +35,6 @@ HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS)
 {
 }
 
-
-
 /**
 * @brief Initialize the HDITask
 */
@@ -58,6 +55,8 @@ void HDITask::InitTask()
 }
 
 
+BLINK num = stateBlinks[RS_ABORT];
+
 
 /**
 * @brief Instance Run loop for the Flight Task, runs on scheduler start as long as the task is initialized.
@@ -65,14 +64,22 @@ void HDITask::InitTask()
 */
 void HDITask::Run(void * pvParams)
 {
+
 	while (1) {
+
 	        Command cm;
 
-	        //Wait forever for a command
-	        qEvtQueue->ReceiveWait(cm);
-
+	        //Wait forever for a command,
+	        //look forward for anything in queue, if there is , if there is anything update index, if there isn't anything do what was done before
+	        //state field, last known state
+	        if(qEvtQueue->Receive(cm)){
+	        	HandleCommand(cm);
+	        }
+	        else{
+	        	BuzzBlinkSequence(num);
+	        }
 	        //Process the command
-	        HandleCommand(cm);
+
 	    }
 }
 
@@ -84,8 +91,6 @@ void HDITask::HandleCommand(Command& cm)
 {
     //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
     //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
-
-
 
     //Switch for the GLOBAL_COMMAND
     switch (cm.GetCommand()) {
@@ -115,33 +120,43 @@ void HDITask::HandleRequestCommand(uint16_t taskCommand)
     case PRELAUNCH:
     	SOAR_PRINT("HDI Recieve PreLaunch\n");
         BuzzBlinkSequence(stateBlinks[RS_PRELAUNCH]);
+        num = stateBlinks[RS_PRELAUNCH];
         break;
     case FILL:
         BuzzBlinkSequence(stateBlinks[RS_FILL]);
+        num = stateBlinks[RS_FILL];
         break;
     case ARM:
         BuzzBlinkSequence(stateBlinks[RS_ARM]);
+        num = stateBlinks[RS_ARM];
         break;
     case IGNITION:
         BuzzBlinkSequence(stateBlinks[RS_IGNITION]);
+        num = stateBlinks[RS_IGNITION];
         break;
     case LAUNCH:
         BuzzBlinkSequence(stateBlinks[RS_LAUNCH]);
+        num = stateBlinks[RS_LAUNCH];
         break;
     case BURN:
         BuzzBlinkSequence(stateBlinks[RS_BURN]);
+        num = stateBlinks[RS_BURN];
         break;
     case COAST:
         BuzzBlinkSequence(stateBlinks[RS_COAST]);
+        num = stateBlinks[RS_COAST];
         break;
     case DESCENT:
         BuzzBlinkSequence(stateBlinks[RS_DESCENT]);
+        num = stateBlinks[RS_DESCENT];
         break;
     case RECOVERY:
         BuzzBlinkSequence(stateBlinks[RS_RECOVERY]);
+        num = stateBlinks[RS_RECOVERY];
         break;
     case ABORT:
         BuzzBlinkSequence(stateBlinks[RS_ABORT]);
+        num = stateBlinks[RS_ABORT];
         break;
     default:
         SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
