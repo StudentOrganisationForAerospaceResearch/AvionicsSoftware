@@ -84,6 +84,7 @@ void TelemetryTask::HandleCommand(Command& cm)
  */
 void TelemetryTask::RunLogSequence()
 {
+	SendVentDrainStatus();
 	// Barometer
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
@@ -95,4 +96,24 @@ void TelemetryTask::RunLogSequence()
     // Flight State
     //TODO: Commented out for now, until merged with the flight task changes
     //FlightTask::SendCommand(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE)
+}
+
+void TelemetryTask::SendVentDrainStatus()
+{
+    Proto::TelemetryMessage teleMsg;
+    teleMsg.set_source(Proto::Node::NODE_DMB);
+    teleMsg.set_target(Proto::Node::NODE_RCU);
+    Proto::CombustionControlStatus gpioMsg;
+    gpioMsg.set_drain_open(GPIO::Drain::IsOpen());
+    gpioMsg.set_vent_open(GPIO::Vent::IsOpen());
+    gpioMsg.set_main_engine_valve_open(false); // This needs to be changed to either a) record the MEV status from the PBB, or b) not have thsi field for the DMBGpioStatus
+    teleMsg.set_gpio(gpioMsg);
+
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    teleMsg.serialize(writeBuffer);
+
+
+
+    // Send the control message
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }
