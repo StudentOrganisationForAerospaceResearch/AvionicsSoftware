@@ -6,6 +6,9 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "PBBRxProtocolTask.hpp"
+#include "CommandMessage.hpp"
+#include "WriteBufferFixedSize.h"
 #include "GPIO.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
@@ -196,11 +199,14 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     case RSC_OPEN_DRAIN:
         GPIO::Drain::Open();
         SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
         break;
     case RSC_CLOSE_DRAIN:
         GPIO::Drain::Close();
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
+    }
     case RSC_MEV_CLOSE:
         //TODO: Close the MEV
         break;

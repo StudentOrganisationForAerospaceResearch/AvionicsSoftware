@@ -29,6 +29,19 @@ public:
 		Inst().ProtocolTask::SendProtobufMessage(writeBuffer, msgId);
     }
 
+    static void SendPBBCommand(Proto::PBBCommand::Command cmd)
+    {
+        Proto::CommandMessage cmdMsg;
+        Proto::PBBCommand pbbCmd;
+        cmdMsg.set_source(Proto::Node::NODE_DMB);
+        cmdMsg.set_target(Proto::Node::NODE_PBB);
+        pbbCmd.set_command_enum(cmd);
+        cmdMsg.set_pbb_command(pbbCmd);
+        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+        cmdMsg.serialize(writeBuffer);
+        PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_COMMAND);
+    }
+
 protected:
     static void RunTask(void* pvParams) { PBBRxProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
