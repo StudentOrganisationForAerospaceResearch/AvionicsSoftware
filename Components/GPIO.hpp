@@ -46,27 +46,27 @@ namespace GPIO
 	
 	namespace Vent
 	{
-		inline void Open() { HAL_GPIO_WritePin(SOL_CTRL_GPIO_Port, SOL_CTRL_Pin, GPIO_PIN_RESET); }
-		inline void Close() { HAL_GPIO_WritePin(SOL_CTRL_GPIO_Port, SOL_CTRL_Pin, GPIO_PIN_SET); }
+		inline void Open() { HAL_GPIO_WritePin(VENT_CTRL_GPIO_Port, VENT_CTRL_Pin, GPIO_PIN_RESET); }
+		inline void Close() { HAL_GPIO_WritePin(VENT_CTRL_GPIO_Port, VENT_CTRL_Pin, GPIO_PIN_SET); }
 
-		inline bool IsOpen() { return HAL_GPIO_ReadPin(SOL_CTRL_GPIO_Port, SOL_CTRL_Pin) == GPIO_PIN_RESET; }
+		inline bool IsOpen() { return HAL_GPIO_ReadPin(VENT_CTRL_GPIO_Port, VENT_CTRL_Pin) == GPIO_PIN_RESET; }
 	}	
 
 	namespace Drain
 	{
-		inline void Open() { HAL_GPIO_WritePin(SOL_CTRL_GPIO_Port, SOL_CTRL_Pin, GPIO_PIN_RESET); }
-		inline void Close() { HAL_GPIO_WritePin(SOL_CTRL_GPIO_Port, SOL_CTRL_Pin, GPIO_PIN_SET); }
+		inline void Open() { HAL_GPIO_WritePin(DRAIN_CTRL_GPIO_Port, DRAIN_CTRL_Pin, GPIO_PIN_RESET); }
+		inline void Close() { HAL_GPIO_WritePin(DRAIN_CTRL_GPIO_Port, DRAIN_CTRL_Pin, GPIO_PIN_SET); }
 
-		inline bool IsOpen() { return HAL_GPIO_ReadPin(SOL_CTRL_GPIO_Port, SOL_CTRL_Pin) == GPIO_PIN_RESET; }
+		inline bool IsOpen() { return HAL_GPIO_ReadPin(DRAIN_CTRL_GPIO_Port, DRAIN_CTRL_Pin) == GPIO_PIN_RESET; }
 	}	
 
 	namespace PowerSelect
 	{
-		inline void InternalPower() { HAL_GPIO_WritePin(BAT_EN_GPIO_Port, BAT_EN_Pin, GPIO_PIN_SET); }
-		inline void UmbilicalPower() { HAL_GPIO_WritePin(BAT_EN_GPIO_Port, BAT_EN_Pin, GPIO_PIN_RESET); }
-		inline void Toggle() { HAL_GPIO_TogglePin(BAT_EN_GPIO_Port, BAT_EN_Pin); }
+		inline void InternalPower() { HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_SET); }
+		inline void UmbilicalPower() { HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_RESET); }
+		inline void Toggle() { HAL_GPIO_TogglePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin); }
 		
-		inline bool IsInternal() { return HAL_GPIO_ReadPin(BAT_EN_GPIO_Port, BAT_EN_Pin) == GPIO_PIN_SET; }
+		inline bool IsInternal() { return HAL_GPIO_ReadPin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin) == GPIO_PIN_SET; }
 	}
 }
 
