@@ -206,7 +206,6 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
-    }
     case RSC_MEV_CLOSE:
         //TODO: Close the MEV
         break;
