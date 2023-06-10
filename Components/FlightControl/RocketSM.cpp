@@ -93,6 +93,38 @@ void RocketSM::HandleCommand(Command& cm)
         TransitionState(nextRocketState);
 }
 
+/**
+ * @brief Gets the current rocket state as a proto enum
+ * @return Current rocket state
+ */
+Proto::RocketState RocketSM::GetRocketStateAsProto()
+{
+    switch (rs_currentState->GetStateID()) {
+    case RS_PRELAUNCH:
+        return Proto::RocketState::RS_PRELAUNCH;
+    case RS_FILL:
+        return Proto::RocketState::RS_FILL;
+    case RS_ARM:
+        return Proto::RocketState::RS_ARM;
+    case RS_IGNITION:
+        return Proto::RocketState::RS_IGNITION;
+    case RS_LAUNCH:
+        return Proto::RocketState::RS_LAUNCH;
+    case RS_BURN:
+        return Proto::RocketState::RS_BURN;
+    case RS_COAST:
+        return Proto::RocketState::RS_PRELAUNCH;
+    case RS_DESCENT:
+        return Proto::RocketState::RS_DESCENT;
+    case RS_RECOVERY:
+        return Proto::RocketState::RS_RECOVERY;
+    case RS_ABORT:
+        return Proto::RocketState::RS_ABORT;
+    default:
+        return Proto::RocketState::RS_NONE;
+    }
+}
+
 /* Base State ------------------------------------------------------------------*/
 ///**
 // * @brief General handler for actions that should be supported by all rocket state machines

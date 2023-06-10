@@ -7,6 +7,7 @@
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
+#include "DMBProtocolTask.hpp"
 
 /**
  * @brief Constructor for FlightTask
@@ -73,14 +74,17 @@ void FlightTask::Run(void * pvParams)
         GPIO::LED3::Off();
         osDelay(500);
 
+        //TODO: Remove once we have telemetry task actually handling this
+        SendRocketState();
+
         //Every cycle, print something out (for testing)
         SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
         //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
         Command cm;
         bool res = qEvtQueue->Receive(cm);
-        if(res)
-            rsm_->HandleCommand(cm);
+        if (res)
+            HandleCommand(cm);
 
         //osDelay(FLIGHT_PHASE_DISPLAY_FREQ);
 
@@ -114,4 +118,42 @@ void FlightTask::Run(void * pvParams)
 
         // TODO: Message beeps
     }
+}
+
+/**
+ * @brief Handle a command from the Command Queue
+ * @param cm Command to handle
+ */
+void FlightTask::HandleCommand(Command& cm)
+{
+    // If this is a request command, we handle it in the task (rocket state command must always be control actions)
+    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == RocketState::RS_ABORT)
+        SendRocketState();
+    else
+        rsm_->HandleCommand(cm);
+
+	// Make sure the command is reset
+    cm.Reset();
+}
+
+/**
+ * @brief Sends rocket state commands to the RCU
+ */
+void FlightTask::SendRocketState()
+{
+    // For testing, generate a PROTOBUF message and send it to the Protocol Task
+    Proto::ControlMessage msg;
+    msg.set_source(Proto::Node::NODE_DMB);
+    msg.set_target(Proto::Node::NODE_RCU);
+    msg.set_message_id(Proto::MessageID::MSG_CONTROL);
+    Proto::SystemState stateMsg;
+    stateMsg.set_sys_state(Proto::SystemState::State::SYS_NORMAL_OPERATION);
+    stateMsg.set_rocket_state(rsm_->GetRocketStateAsProto());
+    msg.set_sys_state(stateMsg);
+
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    msg.serialize(writeBuffer);
+
+    // Send the control message
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }

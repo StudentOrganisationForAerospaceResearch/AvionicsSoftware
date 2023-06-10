@@ -18,6 +18,7 @@
 #include "Data.h"
 #include "DebugTask.hpp"
 #include "Task.hpp"
+#include "DMBProtocolTask.hpp"
 
 
 /* Macros --------------------------------------------------------------------*/
@@ -160,7 +161,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         SampleIMU();
         break;
     case IMU_REQUEST_TRANSMIT:
-        SOAR_PRINT("Stubbed: IMU task transmit not implemented\n");
+        TransmitProtocolData();
         break;
     case IMU_REQUEST_DEBUG:
         SOAR_PRINT("\t-- IMU Data --\n");
@@ -172,6 +173,37 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
         break;
     }
+}
+
+/**
+ * @brief Transmits protocol data
+ */
+void IMUTask::TransmitProtocolData()
+{
+    // Transmits protocol data
+    SOAR_PRINT("IMU Task Transmit...\n");
+
+    Proto::TelemetryMessage msg;
+    msg.set_source(Proto::Node::NODE_DMB);
+    msg.set_target(Proto::Node::NODE_RCU);
+    msg.set_message_id((uint32_t)Proto::MessageID::MSG_TELEMETRY);
+    Proto::IMU imuData;
+    imuData.set_accelx(data->accelX_);
+	imuData.set_accely(data->accelY_);
+	imuData.set_accelz(data->accelZ_);
+	imuData.set_gyrox(data->gyroX_);
+    imuData.set_gyroy(data->gyroY_);
+    imuData.set_gyroz(data->gyroZ_);
+    imuData.set_magx(data->magnetoX_);
+    imuData.set_magy(data->magnetoY_);
+	imuData.set_magz(data->magnetoZ_);
+    msg.set_imu(imuData);
+
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    msg.serialize(writeBuffer);
+
+    // Send the barometer data
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
 
 /**
