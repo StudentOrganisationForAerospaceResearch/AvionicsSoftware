@@ -197,28 +197,12 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         break;
     case RSC_OPEN_DRAIN: {
             //TODO: Temporary test code!
-        Proto::CommandMessage cmdMsg;
-        Proto::PBBCommand pbbCmd;
-        cmdMsg.set_source(Proto::Node::NODE_DMB);
-        cmdMsg.set_target(Proto::Node::NODE_PBB);
-        pbbCmd.set_command_enum(Proto::PBBCommand::Command::PBB_OPEN_MEV);
-        cmdMsg.set_pbb_command(pbbCmd);
-        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
-        cmdMsg.serialize(writeBuffer);
-        PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_COMMAND);
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
         break;
     }
     case RSC_CLOSE_DRAIN: {
             //TODO: Temporary test code!
-        Proto::CommandMessage cmdMsg;
-        Proto::PBBCommand pbbCmd;
-        cmdMsg.set_source(Proto::Node::NODE_DMB);
-        cmdMsg.set_target(Proto::Node::NODE_PBB);
-        pbbCmd.set_command_enum(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
-        cmdMsg.set_pbb_command(pbbCmd);
-        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
-        cmdMsg.serialize(writeBuffer);
-        PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_COMMAND);
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
     }
     case RSC_MEV_CLOSE:
