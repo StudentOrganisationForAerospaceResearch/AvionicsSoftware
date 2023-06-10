@@ -84,6 +84,7 @@ void TelemetryTask::HandleCommand(Command& cm)
  */
 void TelemetryTask::RunLogSequence()
 {
+	SendVentDrainStatus();
 	// Barometer
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));

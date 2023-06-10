@@ -752,10 +752,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : DMB_ABORT_Pin LAUNCH_Pin VENT_CONTROL_Pin IMU_MAG_CS_Pin
-                           LED_3_Pin LED_2_Pin LED_1_Pin */
-  GPIO_InitStruct.Pin = DMB_ABORT_Pin|LAUNCH_Pin|VENT_CONTROL_Pin|IMU_MAG_CS_Pin
-                          |LED_3_Pin|LED_2_Pin|LED_1_Pin;
+  /*Configure GPIO pins : DMB_ABORT_Pin LAUNCH_Pin */
+  GPIO_InitStruct.Pin = DMB_ABORT_Pin|LAUNCH_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : VENT_CONTROL_Pin IMU_MAG_CS_Pin LED_3_Pin LED_2_Pin
+                           LED_1_Pin */
+  GPIO_InitStruct.Pin = VENT_CONTROL_Pin|IMU_MAG_CS_Pin|LED_3_Pin|LED_2_Pin
+                          |LED_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

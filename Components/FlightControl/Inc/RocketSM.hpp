@@ -54,8 +54,6 @@ enum RocketState
  */
 enum RocketControlCommands
 {
-    //open vent and drain at the same time
-    
     RSC_FIRST_INVALID = 0,
 
     //-- PRE-IGNITION and RECOVERY --
