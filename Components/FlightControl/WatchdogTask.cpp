@@ -8,6 +8,7 @@
 #include "SystemDefines.hpp"
 #include "Timer.hpp"
 #include "WatchdogTask.hpp"
+#include "FlightTask.hpp"
 
 
 /**
@@ -43,7 +44,7 @@ void WatchdogTask::InitTask()
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
     Timer::DefaultCallback(rtTimerHandle);
-    WatchdogTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
+    FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
 
 /**
@@ -95,18 +96,36 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
  */
 void WatchdogTask::Run(void * pvParams)
 {
+    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
+    GPIO::LED1::Off();
+
     heartbeatTimer = Timer(HeartbeatFailureCallback);
     heartbeatTimer.ChangePeriodMs(5000);
     heartbeatTimer.Start();
 
     while (1) {
+        //TODO: Move into HID Task
+        GPIO::LED1::On();
+        GPIO::LED2::On();
+        GPIO::LED3::On();
+        osDelay(500);
+        GPIO::LED1::Off();
+        GPIO::LED2::Off();
+        GPIO::LED3::Off();
+        osDelay(500);
+
+        //Every cycle, print something out (for testing)
+        SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
+
         Command cm;
 
         //Wait forever for a command
-        qEvtQueue->ReceiveWait(cm);
+        bool res = qEvtQueue->Receive(cm);
 
-        //Process the command
-        HandleCommand(cm);
+        if (res) {
+            //Process the command
+            HandleCommand(cm);
+        }
 
     }
 }

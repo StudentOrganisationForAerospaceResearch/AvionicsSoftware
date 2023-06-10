@@ -9,6 +9,7 @@
 #include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
 #include "WriteBufferFixedSize.h"
+#include "TimerTransitions.hpp"
 #include "GPIO.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
@@ -435,8 +436,7 @@ Ignition::Ignition()
  */
 RocketState Ignition::OnEnter()
 {
-    // We don't do anything upon entering ignition
-
+    TimerTransitions::Inst().IgnitionSequence();
     return rsStateID;
 }
 
@@ -459,7 +459,6 @@ RocketState Ignition::HandleCommand(Command& cm)
 {
     RocketState nextStateID = GetStateID();
 
-
     // Switch for the given command
     switch (cm.GetCommand()) {
     case CONTROL_ACTION: {
@@ -468,8 +467,10 @@ RocketState Ignition::HandleCommand(Command& cm)
             nextStateID = RS_LAUNCH;
             break;
         case RSC_GOTO_ARM:
-            // This is a transition directly to ARM (no checks required)
             nextStateID = RS_ARM;
+            break;
+        case RSC_MANUAL_IGNITION_CONFIRMED:
+            TimerTransitions::Inst().ignitionConformation = true;
             break;
         default:
             break;
