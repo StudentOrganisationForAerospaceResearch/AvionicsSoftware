@@ -6,6 +6,9 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "PBBRxProtocolTask.hpp"
+#include "CommandMessage.hpp"
+#include "WriteBufferFixedSize.h"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -192,12 +195,32 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     case RSC_CLOSE_VENT:
         //TODO: Close the vent valve
         break;
-    case RSC_OPEN_DRAIN:
-        //TODO: Close the drain
+    case RSC_OPEN_DRAIN: {
+            //TODO: Temporary test code!
+        Proto::CommandMessage cmdMsg;
+        Proto::PBBCommand pbbCmd;
+        cmdMsg.set_source(Proto::Node::NODE_DMB);
+        cmdMsg.set_target(Proto::Node::NODE_PBB);
+        pbbCmd.set_command_enum(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+        cmdMsg.set_pbb_command(pbbCmd);
+        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+        cmdMsg.serialize(writeBuffer);
+        PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_COMMAND);
         break;
-    case RSC_CLOSE_DRAIN:
-        //TODO: Open the drain
+    }
+    case RSC_CLOSE_DRAIN: {
+            //TODO: Temporary test code!
+        Proto::CommandMessage cmdMsg;
+        Proto::PBBCommand pbbCmd;
+        cmdMsg.set_source(Proto::Node::NODE_DMB);
+        cmdMsg.set_target(Proto::Node::NODE_PBB);
+        pbbCmd.set_command_enum(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+        cmdMsg.set_pbb_command(pbbCmd);
+        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+        cmdMsg.serialize(writeBuffer);
+        PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_COMMAND);
         break;
+    }
     case RSC_MEV_CLOSE:
         //TODO: Close the MEV
         break;
