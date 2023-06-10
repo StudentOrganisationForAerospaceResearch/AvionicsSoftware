@@ -6,17 +6,13 @@
 */
 #ifndef SOAR_TIMERTRANSITIONS_HPP_
 #define SOAR_TIMERTRANSITIONS_HPP_
-#include "Task.hpp"
 #include "SystemDefines.hpp"
 #include "RocketSM.hpp"
 #include "Timer.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
 constexpr uint32_t IGINITION_TIMER_PERIOD = 20000;
-constexpr uint32_t IR_IGINITION_TIMER_PERIOD = 8000;
-enum TIMERTRANSITION_CONTROLS  {
-    CONFIRM_LAUNCH_2 = 0,
-};
+//constexpr uint32_t IR_IGINITION_TIMER_PERIOD = 8000;
 
 class TimerTransitions
 {

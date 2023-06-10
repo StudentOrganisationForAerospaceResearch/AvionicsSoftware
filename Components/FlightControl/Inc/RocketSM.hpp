@@ -100,10 +100,7 @@ enum RocketControlCommands
 
     //-- GENERAL --
     RSC_MANUAL_IGNITION_CONFIRMED,
-    RSC_IR_IGNITION_CONFIRMED,
-
-    //-- TIMER STATE TRANSITIONS --
-    RSC_IGINITION_CMD,  // UNUSED, WAS CREATED FOR TESTING PURPOSES
+//    RSC_IR_IGNITION_CONFIRMED,
 
     //-- TECHNICAL --
     RSC_NONE   // Invalid command, must be last
