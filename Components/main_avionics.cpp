@@ -35,7 +35,7 @@ Mutex Global::vaListMutex;
 */
 void run_main() {
     // Init Tasks
-    //WatchdogTask::Inst().InitTask();
+    WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
     DebugTask::Inst().InitTask();
