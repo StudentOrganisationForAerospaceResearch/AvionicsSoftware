@@ -62,7 +62,7 @@ void WatchdogTask::HandleCommand(Command& cm)
     }
     case RADIOHB_CHANGE_PERIOD:
         SOAR_PRINT("HB Period Changed to %d s\n", (cm.GetTaskCommand()));
-        heartbeatTimer.ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
+        heartbeatTimer->ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
         break;
     default:
         SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n", cm.GetCommand());
@@ -78,11 +78,11 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
     switch (taskCommand) {
     case RADIOHB_REQUEST:
         SOAR_PRINT("HEARTBEAT RECEIVED \n");
-        heartbeatTimer.ResetTimerAndStart();
+        heartbeatTimer->ResetTimerAndStart();
         break;
     case RADIOHB_DISABLED:
         SOAR_PRINT("HEARTBEAT DISABLED \n");
-        heartbeatTimer.Stop();
+        heartbeatTimer->Stop();
         break;
     default:
         SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
@@ -99,9 +99,9 @@ void WatchdogTask::Run(void * pvParams)
     uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
     GPIO::LED1::Off();
 
-    heartbeatTimer = Timer(HeartbeatFailureCallback);
-    heartbeatTimer.ChangePeriodMs(5000);
-    heartbeatTimer.Start();
+    heartbeatTimer = new Timer(HeartbeatFailureCallback);
+    heartbeatTimer->ChangePeriodMs(5000);
+    heartbeatTimer->Start();
 
     while (1) {
         //TODO: Move into HID Task
