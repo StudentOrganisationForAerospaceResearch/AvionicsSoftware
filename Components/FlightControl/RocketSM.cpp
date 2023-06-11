@@ -9,6 +9,7 @@
 #include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
 #include "WriteBufferFixedSize.h"
+#include "GPIO.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -359,7 +360,7 @@ RocketState Arm::OnEnter()
 {
     // We don't do anything upon entering arm
     // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
-
+	GPIO::MEV_EN::On();
     return rsStateID;
 }
 

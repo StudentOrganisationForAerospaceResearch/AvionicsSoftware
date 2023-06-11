@@ -44,6 +44,15 @@ namespace GPIO
         inline bool IsOn() { return HAL_GPIO_ReadPin(LED_3_GPIO_Port, LED_3_Pin) == GPIO_PIN_SET; }
     }
 
+    namespace MEV_EN
+    {
+        inline void On() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_SET); }
+        inline void Off() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_RESET); }
+        inline void Toggle() { HAL_GPIO_TogglePin(LAUNCH_GPIO_Port, LAUNCH_Pin); }
+
+        inline bool IsOn() { return HAL_GPIO_ReadPin(LAUNCH_GPIO_Port, LAUNCH_Pin) == GPIO_PIN_SET; }
+    }
+
 }
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_GPIO_H */
