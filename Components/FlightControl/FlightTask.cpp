@@ -43,7 +43,7 @@ void FlightTask::InitTask()
  */
 void FlightTask::Run(void * pvParams)
 {
-	//TODO: This should probablyl be true for enters tate? unless we for sure want to keep the gpio states as-is
+	//TODO: This should probably be true for enter state, although this behavior is dictated by flash state recovery
     rsm_ = new RocketSM(RS_ABORT, false);
     TimerTransitions::Inst().Setup();
     while (1) {
