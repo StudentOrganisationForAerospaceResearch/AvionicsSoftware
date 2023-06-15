@@ -169,6 +169,8 @@ PreLaunch::PreLaunch()
 RocketState PreLaunch::OnEnter()
 {
     // We don't do anything upon entering prelaunch
+    GPIO::Drain::Close();
+    GPIO::Vent::Close();
     return rsStateID;
 }
 
@@ -209,8 +211,6 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_MEV_CLOSE:
-        GPIO::Drain::Close();
-        SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
     default:
@@ -279,6 +279,9 @@ Fill::Fill()
  */
 RocketState Fill::OnEnter()
 {
+    // Make sure the MEV enable pin is off
+    GPIO::MEV_EN::Off();
+
     // Clear the arm flags
     for (uint8_t i = 0; i < 2; i++)
         arrArmConfirmFlags[i] = false;
@@ -476,7 +479,7 @@ RocketState Ignition::HandleCommand(Command& cm)
             nextStateID = RS_ARM;
             break;
         case RSC_MANUAL_IGNITION_CONFIRMED:
-            TimerTransitions::Inst().ignitionConformation = true;
+            TimerTransitions::Inst().ManualLaunch();
             break;
         default:
             break;
@@ -512,7 +515,9 @@ RocketState Launch::OnEnter()
     //TODO: Ensure Vent & Drain CLOSED (**Should we not ensure vent & drain are closed in ignition? and or exit of ARM?)
     //TODO: Send command to OPEN the MEV
     //TODO: Immedietly transition to BURN .. ? (**Actually if we're transitioning right away why is this not both? ... Otherwise just queue up a command internally to GOTO BURN)
-
+	GPIO::Vent::Close();
+	GPIO::Drain::Close();
+	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
     return rsStateID;
 }
 
@@ -767,6 +772,9 @@ Recovery::Recovery()
  */
 RocketState Recovery::OnEnter()
 {
+    // We turn the MEV enable to off to save power
+    GPIO::MEV_EN::Off();
+
     //TODO: Open Vent & Drain (Maybe even periodic AUTO-VENT timers every 100 seconds to make sure they're open)
     //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
     //TODO: Decrease log rate to 1 Hz - StorageManager should automatically stop logging after it gets near full
@@ -827,7 +835,10 @@ Abort::Abort()
  */
 RocketState Abort::OnEnter()
 {
-    //TODO: Open Vent & Drain, MEV Closed
+    // Make sure the MEV enable pin is off
+	GPIO::Vent::Open();
+	GPIO::Drain::Open();
+    GPIO::MEV_EN::Off();
 
     return rsStateID;
 }

@@ -43,7 +43,7 @@ void FlightTask::InitTask()
  */
 void FlightTask::Run(void * pvParams)
 {
-
+	//TODO: This should probably be true for enter state, although this behavior is dictated by flash state recovery
     rsm_ = new RocketSM(RS_ABORT, false);
     TimerTransitions::Inst().Setup();
     while (1) {
