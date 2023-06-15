@@ -13,6 +13,7 @@
 /* Macros/Enums ------------------------------------------------------------*/
 constexpr uint32_t IGINITION_TIMER_PERIOD = 20000;
 //constexpr uint32_t IR_IGINITION_TIMER_PERIOD = 8000;
+constexpr uint32_t RECOVERY_TIMER_PERIOD = 30000;
 
 class TimerTransitions
 {
@@ -33,6 +34,7 @@ protected:
 
 private:
     Timer* ignitionCountdown;
+    Timer* recoveryTimers;
 };
 
 #endif    // SOAR_TIMERTRANSITIONS_HPP_
