@@ -44,6 +44,8 @@ enum RocketState
 
     //-- RECOVERY / TECHNICAL --
     RS_ABORT,       // Abort sequence, vents open, MEV closed, ignitors off
+    RS_TEST,        // Test, between ABORT and PRE-LAUNCH, has full control of all GPIOs
+	
     RS_NONE         // Invalid state, must be last
 };
 
@@ -101,6 +103,14 @@ enum RocketControlCommands
     //-- GENERAL --
     RSC_MANUAL_IGNITION_CONFIRMED,
 //    RSC_IR_IGNITION_CONFIRMED,
+
+    //-- TEST --
+    RSC_GOTO_TEST,
+    //RSC_MEV_CLOSE,
+    RSC_TEST_MEV_OPEN,
+    RSC_TEST_MEV_ENABLE,
+    RSC_TEST_MEV_DISABLE,
+    //RSC_GOTO_PRELAUNCH
 
     //-- TECHNICAL --
     RSC_NONE   // Invalid command, must be last
@@ -279,6 +289,20 @@ class Abort : public BaseRocketState
 {
 public:
     Abort();
+
+    RocketState HandleCommand(Command& cm) override;
+    RocketState OnEnter() override;
+    RocketState OnExit() override;
+};
+
+/**
+ * @brief Test state, between ABORT and PRE-LAUNCH, has control over critical components
+ *        such as MEV_ENABLE pins
+ */
+class Test : public BaseRocketState
+{
+public:
+    Test();
 
     RocketState HandleCommand(Command& cm) override;
     RocketState OnEnter() override;

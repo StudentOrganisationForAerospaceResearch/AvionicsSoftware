@@ -28,6 +28,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
     stateArray[RS_DESCENT] = new Descent();
     stateArray[RS_RECOVERY] = new Recovery();
     stateArray[RS_ABORT] = new Abort();
+    stateArray[RS_TEST] = new Test();
 
     // Verify all states are initialized AND state IDs are consistent
     for (uint8_t i = 0; i < RS_NONE; i++) {
@@ -124,6 +125,8 @@ Proto::RocketState RocketSM::GetRocketStateAsProto()
         return Proto::RocketState::RS_RECOVERY;
     case RS_ABORT:
         return Proto::RocketState::RS_ABORT;
+    case RS_TEST:
+        return Proto::RocketState::RS_TEST;
     default:
         return Proto::RocketState::RS_NONE;
     }
@@ -200,15 +203,15 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     case RSC_OPEN_DRAIN:
         GPIO::Drain::Open();
         SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
-        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
         break;
     case RSC_CLOSE_DRAIN:
         GPIO::Drain::Close();
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
-        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
     case RSC_MEV_CLOSE:
-        //TODO: Close the MEV
+        GPIO::Drain::Close();
+        SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
     default:
         break;
@@ -234,6 +237,9 @@ RocketState PreLaunch::HandleCommand(Command& cm)
         case RSC_GOTO_FILL:
             // Transition to fill state
             nextStateID = RS_FILL;
+            break;
+        case RSC_GOTO_TEST:
+            nextStateID = RS_TEST;
             break;
         default:
             // Handle as a general control action
@@ -851,12 +857,82 @@ RocketState Abort::HandleCommand(Command& cm)
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
             break;
+        case RSC_GOTO_TEST:
+            nextStateID = RS_TEST;
+            break;
         default:
             break;
         }
         break;
     }
     default:
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+/* Test State ------------------------------------------------------------------*/
+/**
+ * @brief Test state constructor
+ */
+Test::Test()
+{
+    rsStateID = RS_TEST;
+}
+
+/**
+ * @brief Entry to Test state
+ * @return The state we're entering
+ */
+RocketState Test::OnEnter()
+{
+	// Test does not have any entry actions
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Test state
+ * @return The state we're exiting
+ */
+RocketState Test::OnExit()
+{
+	// Test does not have any exit actions
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Test state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Test::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
+            break;
+        case RSC_POWER_TRANSITION_EXTERNAL:
+            GPIO::PowerSelect::UmbilicalPower();
+            SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(GetStateID()));
+            break;
+        case RSC_POWER_TRANSITION_ONBOARD:
+            GPIO::PowerSelect::InternalPower();
+            SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(GetStateID()));
+            break;
+        default:
+            break;
+        }
+        break;
+    }
+    default:
+        nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
         break;
     }
 
@@ -891,6 +967,8 @@ const char* BaseRocketState::StateToString(RocketState stateId)
         return "Recovery";
     case RS_ABORT:
         return "Abort";
+    case RS_TEST:
+        return "Test";
     case RS_NONE:
         return "None";
     default:
