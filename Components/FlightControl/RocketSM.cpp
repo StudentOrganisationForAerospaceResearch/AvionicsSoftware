@@ -168,7 +168,6 @@ PreLaunch::PreLaunch()
  */
 RocketState PreLaunch::OnEnter()
 {
-    // We don't do anything upon entering prelaunch
     GPIO::Drain::Close();
     GPIO::Vent::Close();
     return rsStateID;
@@ -512,9 +511,7 @@ Launch::Launch()
 RocketState Launch::OnEnter()
 {
     //TODO: Disable Heartbeat Check
-    //TODO: Ensure Vent & Drain CLOSED (**Should we not ensure vent & drain are closed in ignition? and or exit of ARM?)
-    //TODO: Send command to OPEN the MEV
-    //TODO: Immedietly transition to BURN .. ? (**Actually if we're transitioning right away why is this not both? ... Otherwise just queue up a command internally to GOTO BURN)
+    //TODO: **Should we not ensure vent & drain are closed in ignition? and or exit of ARM?
 	GPIO::Vent::Close();
 	GPIO::Drain::Close();
 	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
