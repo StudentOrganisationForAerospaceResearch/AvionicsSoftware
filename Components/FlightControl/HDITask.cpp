@@ -118,7 +118,7 @@ void HDITask::HandleRequestCommand(uint16_t taskCommand)
     //Switch for task specific command within DATA_COMMAND
     switch (taskCommand) {
     case PRELAUNCH:
-    	SOAR_PRINT("HDI Recieve PreLaunch\n");
+    	SOAR_PRINT("HDI Receive PreLaunch\n");
         BuzzBlinkSequence(stateBlinks[RS_PRELAUNCH]);
         num = stateBlinks[RS_PRELAUNCH];
         break;
@@ -172,7 +172,10 @@ void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
         uint8_t value = 200; // the value for the duty cycle
         htim2.Instance->CCR1 = value;
 //
-        osDelay(blinkSequence.delayMs);
+        osDelay(2500);
+        osDelay((blinkSequence.delayMs)/blinkSequence.numBlinks);
+        osDelay(2500);
+
 
         GPIO::LED1::Off();
         htim2.Instance->CCR1 = 0;
