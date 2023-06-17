@@ -22,6 +22,7 @@
 #include "PBBRxProtocolTask.hpp"
 #include "WatchdogTask.hpp"
 #include "TimerTransitions.hpp"
+#include "BatteryTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -172,6 +173,11 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
+    else if (strcmp(msg, "ptc") == 0) {
+ 		SOAR_PRINT("Debug 'Battery Voltage' Sample and Output Received\n");
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
+ 	}
     else if (strcmp(msg, "radiohb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     }

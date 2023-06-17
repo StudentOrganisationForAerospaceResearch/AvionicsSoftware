@@ -70,6 +70,11 @@ constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of th
 constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
 constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
 
+// BATTERY VOLTAGE Task
+constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 2;            // Priority of the battery voltage task
+constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the battery voltage task queue
+constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the battery voltage task stack
+
 constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 1000; // Default logging delay for telemetry task
 
 

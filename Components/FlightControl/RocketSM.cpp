@@ -276,7 +276,7 @@ RocketState Fill::OnEnter()
     // Clear the arm flags
     for (uint8_t i = 0; i < 2; i++)
         arrArmConfirmFlags[i] = false;
-
+    GPIO::PowerSelect::UmbilicalPower();
     // TODO: Consider automatically beginning fill sequence (since we've already explicitly entered the fill state)
 
     return rsStateID;
@@ -361,6 +361,7 @@ RocketState Arm::OnEnter()
     // We don't do anything upon entering arm
     // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
 	GPIO::MEV_EN::On();
+	GPIO::PowerSelect::InternalPower();
     return rsStateID;
 }
 
@@ -822,7 +823,7 @@ Abort::Abort()
 RocketState Abort::OnEnter()
 {
     //TODO: Open Vent & Drain, MEV Closed
-
+	GPIO::PowerSelect::UmbilicalPower();
     return rsStateID;
 }
 

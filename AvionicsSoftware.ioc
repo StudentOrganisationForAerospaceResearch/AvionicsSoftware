@@ -1,9 +1,12 @@
 #MicroXplorer Configuration settings - do not modify
 ADC1.Channel-0\#ChannelRegularConversion=ADC_CHANNEL_9
-ADC1.IPParameters=Rank-0\#ChannelRegularConversion,Channel-0\#ChannelRegularConversion,SamplingTime-0\#ChannelRegularConversion,NbrOfConversionFlag,master
+ADC1.ContinuousConvMode=DISABLE
+ADC1.IPParameters=Rank-0\#ChannelRegularConversion,Channel-0\#ChannelRegularConversion,SamplingTime-0\#ChannelRegularConversion,NbrOfConversionFlag,master,NbrOfConversion,ScanConvMode,ContinuousConvMode
+ADC1.NbrOfConversion=1
 ADC1.NbrOfConversionFlag=1
 ADC1.Rank-0\#ChannelRegularConversion=1
-ADC1.SamplingTime-0\#ChannelRegularConversion=ADC_SAMPLETIME_3CYCLES
+ADC1.SamplingTime-0\#ChannelRegularConversion=ADC_SAMPLETIME_28CYCLES
+ADC1.ScanConvMode=DISABLE
 ADC1.master=1
 ADC2.Channel-68\#ChannelRegularConversion=ADC_CHANNEL_10
 ADC2.ClockPrescaler=ADC_CLOCK_SYNC_PCLK_DIV2
@@ -238,8 +241,9 @@ PA7.GPIO_Label=IMU_SPI_MOSI
 PA7.Locked=true
 PA7.Mode=Full_Duplex_Master
 PA7.Signal=SPI1_MOSI
-PA8.GPIOParameters=GPIO_Label
+PA8.GPIOParameters=GPIO_PuPd,GPIO_Label
 PA8.GPIO_Label=BATTERY_EN
+PA8.GPIO_PuPd=GPIO_PULLDOWN
 PA8.Locked=true
 PA8.Signal=GPIO_Output
 PA9.Mode=Asynchronous

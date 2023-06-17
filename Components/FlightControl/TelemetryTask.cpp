@@ -4,6 +4,7 @@
  * Description        : Primary telemetry task, default task for the system.
  ******************************************************************************
 */
+#include <BatteryTask.hpp>
 #include "TelemetryTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
@@ -93,6 +94,8 @@ void TelemetryTask::RunLogSequence()
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
+	BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+	BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
     // Flight State
     //TODO: Commented out for now, until merged with the flight task changes
     //FlightTask::SendCommand(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE)

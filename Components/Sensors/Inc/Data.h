@@ -37,6 +37,11 @@ typedef struct
     int32_t     pressure_;
 } CombustionChamberPressureData;
 
+typedef struct
+{
+    int32_t     voltage_;
+} BatteryData;
+
 /* GPS Data */
 
 #define NMEA_MAX_LENGTH 82
@@ -85,6 +90,7 @@ typedef struct
     CombustionChamberPressureData*  combustionChamberPressureData_;
     GpsData*                        gpsData_;
     OxidizerTankPressureData*       oxidizerTankPressureData_;
+    BatteryData*       				batteryData_;
 } AllData;
 
 typedef struct
