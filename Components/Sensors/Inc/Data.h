@@ -33,9 +33,8 @@ typedef struct
 
 typedef struct
 {
-    osMutexId   mutex_;
-    int32_t     pressure_;
-} CombustionChamberPressureData;
+    int32_t     pressure_1;
+} PressureTransducerData;
 
 typedef struct
 {
@@ -71,11 +70,6 @@ typedef struct
     uint8_t         parseFlag_;
 } GpsData;
 
-typedef struct
-{
-    osMutexId   mutex_;
-    int32_t     pressure_;
-} OxidizerTankPressureData;
 
 /* Data Containers */
 
@@ -87,9 +81,8 @@ typedef struct
 {
     AccelGyroMagnetismData*         accelGyroMagnetismData_;
     BarometerData*                  barometerData_;
-    CombustionChamberPressureData*  combustionChamberPressureData_;
     GpsData*                        gpsData_;
-    OxidizerTankPressureData*       oxidizerTankPressureData_;
+    PressureTransducerData* pressureTransducerData_;
     BatteryData*       				batteryData_;
 } AllData;
 

@@ -24,6 +24,7 @@
 #include "WatchdogTask.hpp"
 #include "TelemetryTask.hpp"
 #include "PBBRxProtocolTask.hpp"
+#include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 
 
@@ -45,6 +46,7 @@ void run_main() {
     DMBProtocolTask::Inst().InitTask();
     PBBRxProtocolTask::Inst().InitTask();
     TelemetryTask::Inst().InitTask();
+    PressureTransducerTask::Inst().InitTask();
     BatteryTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
