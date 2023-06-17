@@ -657,7 +657,8 @@ RocketState Coast::OnEnter()
  */
 RocketState Coast::OnExit()
 {
-
+    // TODO: Make sure this is where we want MEV enable to be off
+    GPIO::MEV_EN::Off();
     return rsStateID;
 }
 
