@@ -24,6 +24,7 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.721314693" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.hard" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.2099965485" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="genericBoard" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.492809785" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32F405RGTx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../Middlewares/Third_Party/FreeRTOS/Source/include | ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F | ../Drivers/CMSIS/Include | ../Core/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc | ../Drivers/CMSIS/Device/ST/STM32F4xx/Include | ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS | ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy ||  ||  || STM32F405xx | USE_HAL_DRIVER ||  || Drivers | Core/Startup | Middlewares | Core ||  ||  || ${workspace_loc:/${ProjName}/STM32F405RGTX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || None || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.debug.option.cpuclock.757742969" superClass="com.st.stm32cube.ide.mcu.debug.option.cpuclock" useByScannerDiscovery="false" value="168" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.257923365" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<builder buildPath="${workspace_loc:/AvionicsSoftware}/Debug" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder.1322409107" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.1505136880" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler">
@@ -41,6 +42,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Communication/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/_Libraries/embedded-template-library/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Sensors/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_C++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_EmbeddedProtoLib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.1912739688" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -70,6 +75,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Communication/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/_Libraries/embedded-template-library/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Sensors/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_C++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_EmbeddedProtoLib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.otherflags.117133681" name="Other flags" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.otherflags" useByScannerDiscovery="true" valueType="stringList"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.214809200" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
@@ -95,6 +104,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Communication/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/_Libraries/embedded-template-library/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Sensors/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_C++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_EmbeddedProtoLib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols.340278784" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -102,7 +115,7 @@
 									<listOptionValue builtIn="false" value="STM32F405xx"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.53194756" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.value.gnupp20" valueType="enumerated"/>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags.1098094453" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags" useByScannerDiscovery="true" valueType="stringList">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags.1098094453" name="Other flags" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.otherflags" useByScannerDiscovery="true" valueType="stringList">
 									<listOptionValue builtIn="false" value="-Wno-volatile"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.1401909830" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
@@ -133,8 +146,8 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
+						<entry excluding="SoarProtocol/SoarProto/EmbeddedProto|heap_useNewlib_ST.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry excluding="heap_useNewlib_ST.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
@@ -165,6 +178,7 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.1810406909" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.hard" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.177557287" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="genericBoard" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1999792415" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Release || false || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32F405RGTx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../Middlewares/Third_Party/FreeRTOS/Source/include | ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F | ../Drivers/CMSIS/Include | ../Core/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc | ../Drivers/CMSIS/Device/ST/STM32F4xx/Include | ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS | ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy ||  ||  || STM32F405xx | USE_HAL_DRIVER ||  || Drivers | Core/Startup | Middlewares | Core ||  ||  || ${workspace_loc:/${ProjName}/STM32F405RGTX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || None || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.debug.option.cpuclock.1036561951" superClass="com.st.stm32cube.ide.mcu.debug.option.cpuclock" value="168" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.359768904" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<builder buildPath="${workspace_loc:/AvionicsSoftware}/Release" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder.1667670529" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.876626756" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler">
@@ -179,6 +193,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Communication/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/_Libraries/embedded-template-library/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Sensors/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_C++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_EmbeddedProtoLib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.2008575080" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -208,6 +226,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Communication/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/_Libraries/embedded-template-library/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Sensors/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_C++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_EmbeddedProtoLib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1685132985" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -232,6 +254,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Communication/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/_Libraries/embedded-template-library/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/Sensors/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_C++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol/SoarProto/_EmbeddedProtoLib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Components/SoarProtocol}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols.225505177" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>

@@ -83,9 +83,9 @@ Command::Command(GLOBAL_COMMANDS command, uint16_t taskCommand)
 /**
  * @brief Dynamically allocates memory for the command with the given data size
  * @param dataSize Size of array to allocate
- * @return TRUE on success, FALSE on failure (mem already allocated)
+ * @return Pointer to data on success, nullptr on failure (mem already allocated)
 */
-bool Command::AllocateData(uint16_t dataSize)
+uint8_t* Command::AllocateData(uint16_t dataSize)
 {
     // If we don't have anything allocated, allocate and return success
     if (this->data == nullptr && !bShouldFreeData) {
@@ -96,9 +96,9 @@ bool Command::AllocateData(uint16_t dataSize)
 
         //TODO: May want to print out whenever we have an imbalance in statAllocationCounter by more than ~5 or so.
         SOAR_ASSERT(statAllocationCounter < MAX_NUMBER_OF_COMMAND_ALLOCATIONS);
-        return true;
+        return this->data;
     }
-    return false;
+    return nullptr;
 }
 
 /**
@@ -145,6 +145,8 @@ void Command::Reset()
     if(bShouldFreeData && data != nullptr) {
         soar_free(data);
         statAllocationCounter -= 1;
+		data = nullptr;
+        bShouldFreeData = false;
     }
 }
 

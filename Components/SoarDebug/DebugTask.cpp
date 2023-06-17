@@ -18,7 +18,10 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "DMBProtocolTask.hpp"
+#include "PBBRxProtocolTask.hpp"
 #include "WatchdogTask.hpp"
+#include "TimerTransitions.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -41,6 +44,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart->Instance == SystemHandles::UART_Debug->Instance)
         DebugTask::Inst().InterruptRxData();
+    else if (huart->Instance == SystemHandles::UART_Protocol->Instance)
+        DMBProtocolTask::Inst().InterruptRxData();
+    else if (huart->Instance == SystemHandles::UART_PBB->Instance)
+        PBBRxProtocolTask::Inst().InterruptRxData();
 }
 
 /* Functions -----------------------------------------------------------------*/
@@ -171,7 +178,10 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "disablehb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
-    else {
+    else if (strcmp(msg, "manualLaunch") == 0) {
+    	TimerTransitions::Inst().ManualLaunch();
+    }
+	else {
         // Single character command, or unknown command
         switch (msg[0]) {
         default:

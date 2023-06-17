@@ -39,6 +39,8 @@ protected:
     void HandleCommand(Command& cm);
     void HandleRequestCommand(uint16_t taskCommand);
 
+    void TransmitProtocolData();
+
     // Sampling
     void SampleIMU();
 
