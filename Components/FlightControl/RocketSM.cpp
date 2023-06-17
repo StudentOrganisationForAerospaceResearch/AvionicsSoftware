@@ -518,6 +518,7 @@ RocketState Launch::OnEnter()
 	GPIO::Vent::Close();
 	GPIO::Drain::Close();
 	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+	TimerTransitions::Inst().BurnSequence();
     return rsStateID;
 }
 
@@ -587,6 +588,7 @@ RocketState Burn::OnEnter()
         GPIO::Drain::Close();
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(rsStateID));
     }
+    TimerTransitions::Inst().CoastSequence();
     //TODO: Start the coast transition timer (7 seconds - TBD based on sims)
 
     return rsStateID;
@@ -647,7 +649,7 @@ Coast::Coast()
 RocketState Coast::OnEnter()
 {
     //TODO: Start Descent Transition Timer (~25 seconds) : Should be well after apogee
-
+	TimerTransitions::Inst().DescentSequence();
     return rsStateID;
 }
 
@@ -713,7 +715,7 @@ RocketState Descent::OnEnter()
     GPIO::Drain::Open();
     SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(rsStateID));
     //TODO: Ensure MEV Closed
-
+    TimerTransitions::Inst().RecoverySequence();
     return rsStateID;
 }
 

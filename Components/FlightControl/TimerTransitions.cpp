@@ -17,11 +17,39 @@ TimerTransitions::TimerTransitions() {
 void TimerTransitions::Setup() {
 	ignitionCountdown = new Timer(IngnitionToLaunchCallback);
 	ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD);
+	burnCountdown = new Timer(LaunchToBurnCallback);
+	burnCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
+	coastCountdown = new Timer(BurnToCoastCallback);
+	coastCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
+	descentCountdown = new Timer(CoastToDescentCallback);
+	descentCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
+	recoveryCountdown = new Timer(DescentToRecoveryCallback);
+	recoveryCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
 }
 
 void TimerTransitions::IgnitionSequence() {
 //    SOAR_PRINT("Entering IGNITION state...\n");
     ignitionCountdown->Start();
+    return;
+}
+
+void TimerTransitions::BurnSequence() {
+	burnCountdown->Start();
+    return;
+}
+
+void TimerTransitions::CoastSequence() {
+	coastCountdown->Start();
+    return;
+}
+
+void TimerTransitions::DescentSequence() {
+	descentCountdown->Start();
+    return;
+}
+
+void TimerTransitions::RecoverySequence() {
+	recoveryCountdown->Start();
     return;
 }
 
@@ -50,5 +78,4 @@ void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {
 
     return;
 }
-
 
