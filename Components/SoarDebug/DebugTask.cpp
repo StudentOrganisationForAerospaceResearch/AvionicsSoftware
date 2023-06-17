@@ -174,7 +174,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
-    else if (strcmp(msg, "ptc") == 0) {
+    else if (strcmp(msg, "bat") == 0) {
  		SOAR_PRINT("Debug 'Battery Voltage' Sample and Output Received\n");
  		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
  		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
@@ -189,11 +189,9 @@ void DebugTask::HandleDebugMessage(const char* msg)
     	TimerTransitions::Inst().ManualLaunch();
     }
     else if (strcmp(msg, "ptc") == 0) {
-		// Print message
 		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
-		// TODO: Send to HID task to blink LED, this shouldn't delay
 	}
 	else {
         // Single character command, or unknown command
