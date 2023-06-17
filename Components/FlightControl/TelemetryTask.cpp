@@ -12,6 +12,7 @@
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
 #include "FlightTask.hpp"
+#include "PressureTransducerTask.hpp"
 
 /**
  * @brief Constructor for TelemetryTask
@@ -92,6 +93,10 @@ void TelemetryTask::RunLogSequence()
     // IMU
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
+
+    // Pressure Transducer
+    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+	PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
 
     // Flight State
     //TODO: Commented out for now, until merged with the flight task changes

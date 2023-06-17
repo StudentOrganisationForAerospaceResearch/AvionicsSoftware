@@ -25,6 +25,7 @@
 #include "HDITask.hpp"
 #include "TelemetryTask.hpp"
 #include "PBBRxProtocolTask.hpp"
+#include "PressureTransducerTask.hpp"
 
 
 /* Global Variables ------------------------------------------------------------------*/
@@ -46,6 +47,7 @@ void run_main() {
     DMBProtocolTask::Inst().InitTask();
     PBBRxProtocolTask::Inst().InitTask();
     TelemetryTask::Inst().InitTask();
+    PressureTransducerTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
     SOAR_PRINT("\n-- SOAR AVIONICS --\n");
