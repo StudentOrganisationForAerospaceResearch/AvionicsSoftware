@@ -16,15 +16,15 @@ TimerTransitions::TimerTransitions() {
 
 void TimerTransitions::Setup() {
 	ignitionCountdown = new Timer(IngnitionToLaunchCallback);
-	ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD);
+	ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD_MS);
 	burnCountdown = new Timer(LaunchToBurnCallback);
-	burnCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
+	burnCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
 	coastCountdown = new Timer(BurnToCoastCallback);
-	coastCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
+	coastCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
 	descentCountdown = new Timer(CoastToDescentCallback);
-	descentCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
+	descentCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
 	recoveryCountdown = new Timer(DescentToRecoveryCallback);
-	recoveryCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD);
+	recoveryCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
 }
 
 void TimerTransitions::IgnitionSequence() {
