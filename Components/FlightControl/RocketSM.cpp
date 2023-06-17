@@ -28,6 +28,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
     stateArray[RS_DESCENT] = new Descent();
     stateArray[RS_RECOVERY] = new Recovery();
     stateArray[RS_ABORT] = new Abort();
+    stateArray[RS_TEST] = new Test();
 
     // Verify all states are initialized AND state IDs are consistent
     for (uint8_t i = 0; i < RS_NONE; i++) {
@@ -124,6 +125,8 @@ Proto::RocketState RocketSM::GetRocketStateAsProto()
         return Proto::RocketState::RS_RECOVERY;
     case RS_ABORT:
         return Proto::RocketState::RS_ABORT;
+    case RS_TEST:
+        return Proto::RocketState::RS_TEST;
     default:
         return Proto::RocketState::RS_NONE;
     }
@@ -165,7 +168,8 @@ PreLaunch::PreLaunch()
  */
 RocketState PreLaunch::OnEnter()
 {
-    // We don't do anything upon entering prelaunch
+    GPIO::Drain::Close();
+    GPIO::Vent::Close();
     return rsStateID;
 }
 
@@ -200,15 +204,13 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     case RSC_OPEN_DRAIN:
         GPIO::Drain::Open();
         SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
-        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
         break;
     case RSC_CLOSE_DRAIN:
         GPIO::Drain::Close();
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
-        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
     case RSC_MEV_CLOSE:
-        //TODO: Close the MEV
+        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
     default:
         break;
@@ -234,6 +236,9 @@ RocketState PreLaunch::HandleCommand(Command& cm)
         case RSC_GOTO_FILL:
             // Transition to fill state
             nextStateID = RS_FILL;
+            break;
+        case RSC_GOTO_TEST:
+            nextStateID = RS_TEST;
             break;
         default:
             // Handle as a general control action
@@ -273,6 +278,9 @@ Fill::Fill()
  */
 RocketState Fill::OnEnter()
 {
+    // Make sure the MEV enable pin is off
+    GPIO::MEV_EN::Off();
+
     // Clear the arm flags
     for (uint8_t i = 0; i < 2; i++)
         arrArmConfirmFlags[i] = false;
@@ -470,7 +478,7 @@ RocketState Ignition::HandleCommand(Command& cm)
             nextStateID = RS_ARM;
             break;
         case RSC_MANUAL_IGNITION_CONFIRMED:
-            TimerTransitions::Inst().ignitionConformation = true;
+            TimerTransitions::Inst().ManualLaunch();
             break;
         default:
             break;
@@ -503,9 +511,10 @@ Launch::Launch()
 RocketState Launch::OnEnter()
 {
     //TODO: Disable Heartbeat Check
-    //TODO: Ensure Vent & Drain CLOSED (**Should we not ensure vent & drain are closed in ignition? and or exit of ARM?)
-    //TODO: Send command to OPEN the MEV
-    //TODO: Immedietly transition to BURN .. ? (**Actually if we're transitioning right away why is this not both? ... Otherwise just queue up a command internally to GOTO BURN)
+    //TODO: **Should we not ensure vent & drain are closed in ignition? and or exit of ARM?
+	GPIO::Vent::Close();
+	GPIO::Drain::Close();
+	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
 	TimerTransitions::Inst().BurnSequence();
     return rsStateID;
 }
@@ -647,7 +656,8 @@ RocketState Coast::OnEnter()
  */
 RocketState Coast::OnExit()
 {
-
+    // TODO: Make sure this is where we want MEV enable to be off
+    GPIO::MEV_EN::Off();
     return rsStateID;
 }
 
@@ -762,6 +772,9 @@ Recovery::Recovery()
  */
 RocketState Recovery::OnEnter()
 {
+    // We turn the MEV enable to off to save power
+    GPIO::MEV_EN::Off();
+
     //TODO: Open Vent & Drain (Maybe even periodic AUTO-VENT timers every 100 seconds to make sure they're open)
     //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
     //TODO: Decrease log rate to 1 Hz - StorageManager should automatically stop logging after it gets near full
@@ -822,7 +835,10 @@ Abort::Abort()
  */
 RocketState Abort::OnEnter()
 {
-    //TODO: Open Vent & Drain, MEV Closed
+    // Make sure the MEV enable pin is off
+	GPIO::Vent::Open();
+	GPIO::Drain::Open();
+    GPIO::MEV_EN::Off();
 
     return rsStateID;
 }
@@ -852,12 +868,82 @@ RocketState Abort::HandleCommand(Command& cm)
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
             break;
+        case RSC_GOTO_TEST:
+            nextStateID = RS_TEST;
+            break;
         default:
             break;
         }
         break;
     }
     default:
+        break;
+    }
+
+    // Make sure to reset the command, and return the next state
+    cm.Reset();
+    return nextStateID;
+}
+
+/* Test State ------------------------------------------------------------------*/
+/**
+ * @brief Test state constructor
+ */
+Test::Test()
+{
+    rsStateID = RS_TEST;
+}
+
+/**
+ * @brief Entry to Test state
+ * @return The state we're entering
+ */
+RocketState Test::OnEnter()
+{
+	// Test does not have any entry actions
+    return rsStateID;
+}
+
+/**
+ * @brief Exit from Test state
+ * @return The state we're exiting
+ */
+RocketState Test::OnExit()
+{
+	// Test does not have any exit actions
+    return rsStateID;
+}
+
+/**
+ * @brief HandleCommand for Test state
+ * @return The rocket state to transition or stay in
+ */
+RocketState Test::HandleCommand(Command& cm)
+{
+    RocketState nextStateID = GetStateID();
+
+    // Switch for the given command
+    switch (cm.GetCommand()) {
+    case CONTROL_ACTION: {
+        switch (cm.GetTaskCommand()) {
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
+            break;
+        case RSC_POWER_TRANSITION_EXTERNAL:
+            GPIO::PowerSelect::UmbilicalPower();
+            SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(GetStateID()));
+            break;
+        case RSC_POWER_TRANSITION_ONBOARD:
+            GPIO::PowerSelect::InternalPower();
+            SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(GetStateID()));
+            break;
+        default:
+            break;
+        }
+        break;
+    }
+    default:
+        nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
         break;
     }
 
@@ -892,6 +978,8 @@ const char* BaseRocketState::StateToString(RocketState stateId)
         return "Recovery";
     case RS_ABORT:
         return "Abort";
+    case RS_TEST:
+        return "Test";
     case RS_NONE:
         return "None";
     default:
