@@ -28,7 +28,7 @@ Queue::Queue(uint16_t depth)
 {
     //Initialize RTOS Queue handle with given depth
     rtQueueHandle = xQueueCreate(depth, sizeof(Command));
-    queueDepth = 0;
+    queueDepth = depth;
 }
 
 /**

@@ -21,7 +21,10 @@
 #include "DebugTask.hpp"
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "DMBProtocolTask.hpp"
 #include "WatchdogTask.hpp"
+#include "TelemetryTask.hpp"
+#include "PBBRxProtocolTask.hpp"
 
 
 /* Global Variables ------------------------------------------------------------------*/
@@ -34,12 +37,15 @@ Mutex Global::vaListMutex;
 void run_main() {
     // Init Tasks
     osDelay(500);  // TODO: Get rid of this if possible??
+    //WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
-    WatchdogTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
     DebugTask::Inst().InitTask();
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
+    DMBProtocolTask::Inst().InitTask();
+    PBBRxProtocolTask::Inst().InitTask();
+    TelemetryTask::Inst().InitTask();
     FlashTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts

@@ -7,6 +7,8 @@
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
+#include "DMBProtocolTask.hpp"
+#include "TimerTransitions.hpp"
 #include "SPIFlash.hpp"
 #include "SystemStorage.hpp"
 #include "RocketSM.hpp"
@@ -44,8 +46,6 @@ void FlightTask::InitTask()
  */
 void FlightTask::Run(void * pvParams)
 {
-    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
-    GPIO::LED1::Off();
 
     //Initialize SPI Flash
     SPIFlash::Inst().Init();
@@ -56,6 +56,7 @@ void FlightTask::Run(void * pvParams)
 
     if (stateReadSuccess == false) {
         // Succeded to read state, initialize the rocket state machine
+		//TODO: Check if we really want to enter the state or not, or if we need to make it selective based on the state
         rsm_ = new RocketSM(sysState.rocketState, true);
     }
     else {
@@ -66,7 +67,7 @@ void FlightTask::Run(void * pvParams)
         rsm_ = new RocketSM(RS_ABORT, true);
     }
 
-
+    TimerTransitions::Inst().Setup();
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task
@@ -85,23 +86,13 @@ void FlightTask::Run(void * pvParams)
 
         // Since FlightTask is so critical to managing the system, it may make sense to make this a Async task that handles commands as they come in, and have these display commands be routed over to the DisplayTask
         // or maybe HID (Human Interface Device) task that handles both updating buzzer frequencies and LED states.
-        GPIO::LED1::On();
-        GPIO::LED2::On();
-        GPIO::LED3::On();
-        osDelay(500);
-        GPIO::LED1::Off();
-        GPIO::LED2::Off();
-        GPIO::LED3::Off();
-        osDelay(500);
 
-        //Every cycle, print something out (for testing)
-        SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
-        //Process any commands, in non-blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
+        //Process commands in blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
         Command cm;
-        bool res = qEvtQueue->Receive(cm);
+        bool res = qEvtQueue->ReceiveWait(cm);
         if(res)
-            rsm_->HandleCommand(cm);
+            HandleCommand(cm);
 
         //osDelay(FLIGHT_PHASE_DISPLAY_FREQ);
 
@@ -135,4 +126,42 @@ void FlightTask::Run(void * pvParams)
 
         // TODO: Message beeps
     }
+}
+
+/**
+ * @brief Handle a command from the Command Queue
+ * @param cm Command to handle
+ */
+void FlightTask::HandleCommand(Command& cm)
+{
+    // If this is a request command, we handle it in the task (rocket state command must always be control actions)
+    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == RocketState::RS_ABORT)
+        SendRocketState();
+    else
+        rsm_->HandleCommand(cm);
+
+	// Make sure the command is reset
+    cm.Reset();
+}
+
+/**
+ * @brief Sends rocket state commands to the RCU
+ */
+void FlightTask::SendRocketState()
+{
+    // For testing, generate a PROTOBUF message and send it to the Protocol Task
+    Proto::ControlMessage msg;
+    msg.set_source(Proto::Node::NODE_DMB);
+    msg.set_target(Proto::Node::NODE_RCU);
+    msg.set_message_id(Proto::MessageID::MSG_CONTROL);
+    Proto::SystemState stateMsg;
+    stateMsg.set_sys_state(Proto::SystemState::State::SYS_NORMAL_OPERATION);
+    stateMsg.set_rocket_state(rsm_->GetRocketStateAsProto());
+    msg.set_sys_state(stateMsg);
+
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    msg.serialize(writeBuffer);
+
+    // Send the control message
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }

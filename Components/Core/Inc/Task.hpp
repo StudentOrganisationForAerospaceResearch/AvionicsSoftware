@@ -26,6 +26,7 @@ public:
 
     Queue* GetEventQueue() const { return qEvtQueue; }
     void SendCommand(Command cmd) { qEvtQueue->Send(cmd); }
+    void SendCommandReference(Command& cmd) { qEvtQueue->Send(cmd); }
 
 protected:
     //RTOS
