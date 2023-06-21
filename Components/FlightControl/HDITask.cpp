@@ -15,17 +15,18 @@
 
 extern TIM_HandleTypeDef htim2;
 
-etl::map<RocketState, BLINK, 10> stateBlinks = etl::map<RocketState, BLINK, 10>{
-    {RS_PRELAUNCH, {2, 1000}},
-    {RS_FILL, {3, 1000}},
-    {RS_ARM, {4, 1000}},
-    {RS_IGNITION, {5, 1000}},
-    {RS_LAUNCH, {6, 1000}},
-    {RS_BURN, {7, 1000}},
-    {RS_COAST, {8, 1000}},
-    {RS_DESCENT, {9, 1000}},
-    {RS_RECOVERY, {10, 1000}},
-    {RS_ABORT, {1, 1000}}
+etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConfig, 11>{
+	{RS_TEST, {1, 500}},
+	{RS_PRELAUNCH, {2, 700}},
+    {RS_FILL, {3, 800}},
+    {RS_ARM, {4, 900}},
+    {RS_IGNITION, {5, 500}},
+    {RS_LAUNCH, {6, 500}},
+    {RS_BURN, {7, 500}},
+    {RS_COAST, {8, 500}},
+    {RS_DESCENT, {9, 500}},
+    {RS_RECOVERY, {10, 500}},
+    {RS_ABORT, {11, 500}}
 };
 
 /**
@@ -41,7 +42,7 @@ HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS)
 void HDITask::InitTask()
 {
     // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize flight task twice");
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize HDI task twice");
 
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)HDITask::RunTask,
@@ -54,10 +55,6 @@ void HDITask::InitTask()
     SOAR_ASSERT(rtValue == pdPASS, "HDITask::InitTask() - xTaskCreate() failed");
 }
 
-
-BLINK num = stateBlinks[RS_ABORT];
-
-
 /**
 * @brief Instance Run loop for the Flight Task, runs on scheduler start as long as the task is initialized.
 * @param pvParams RTOS Passed void parameters, contains a pointer to the object instance, should not be used
@@ -66,21 +63,22 @@ void HDITask::Run(void * pvParams)
 {
 
 	while (1) {
+		uint8_t value = 200; // the value for the duty cycle
+		htim2.Instance->CCR1 = value;
 
-	        Command cm;
+		Command cm;
 
-	        //Wait forever for a command,
-	        //look forward for anything in queue, if there is , if there is anything update index, if there isn't anything do what was done before
-	        //state field, last known state
-	        if(qEvtQueue->Receive(cm)){
-	        	HandleCommand(cm);
-	        }
-	        else{
-	        	BuzzBlinkSequence(num);
-	        }
-	        //Process the command
-
-	    }
+		//Wait forever for a command,
+		//look forward for anything in queue, if there is , if there is anything update index, if there isn't anything do what was done before
+		//state field, last known state
+		if(qEvtQueue->Receive(cm)){
+			HandleCommand(cm);
+		}
+		else{
+			BuzzBlinkSequence(currentConfig);
+		}
+		//Process the command
+	}
 }
 
 /**
@@ -116,71 +114,26 @@ void HDITask::HandleCommand(Command& cm)
 void HDITask::HandleRequestCommand(uint16_t taskCommand)
 {
     //Switch for task specific command within DATA_COMMAND
-    switch (taskCommand) {
-    case PRELAUNCH:
-    	SOAR_PRINT("HDI Receive PreLaunch\n");
-        BuzzBlinkSequence(stateBlinks[RS_PRELAUNCH]);
-        num = stateBlinks[RS_PRELAUNCH];
-        break;
-    case FILL:
-        BuzzBlinkSequence(stateBlinks[RS_FILL]);
-        num = stateBlinks[RS_FILL];
-        break;
-    case ARM:
-        BuzzBlinkSequence(stateBlinks[RS_ARM]);
-        num = stateBlinks[RS_ARM];
-        break;
-    case IGNITION:
-        BuzzBlinkSequence(stateBlinks[RS_IGNITION]);
-        num = stateBlinks[RS_IGNITION];
-        break;
-    case LAUNCH:
-        BuzzBlinkSequence(stateBlinks[RS_LAUNCH]);
-        num = stateBlinks[RS_LAUNCH];
-        break;
-    case BURN:
-        BuzzBlinkSequence(stateBlinks[RS_BURN]);
-        num = stateBlinks[RS_BURN];
-        break;
-    case COAST:
-        BuzzBlinkSequence(stateBlinks[RS_COAST]);
-        num = stateBlinks[RS_COAST];
-        break;
-    case DESCENT:
-        BuzzBlinkSequence(stateBlinks[RS_DESCENT]);
-        num = stateBlinks[RS_DESCENT];
-        break;
-    case RECOVERY:
-        BuzzBlinkSequence(stateBlinks[RS_RECOVERY]);
-        num = stateBlinks[RS_RECOVERY];
-        break;
-    case ABORT:
-        BuzzBlinkSequence(stateBlinks[RS_ABORT]);
-        num = stateBlinks[RS_ABORT];
-        break;
-    default:
-        SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
-        break;
-    }
+	currentConfig = stateBlinks[RS_ABORT];
+	if((RocketState)taskCommand >= RS_PRELAUNCH && (RocketState)taskCommand< RS_NONE){
+		BuzzBlinkSequence(stateBlinks[(RocketState)taskCommand]);
+		currentConfig = stateBlinks[(RocketState)taskCommand];
+	}
 }
 
 
-void HDITask::BuzzBlinkSequence(BLINK blinkSequence){
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence){
+    //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+
     for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
         GPIO::LED1::On();
-        uint8_t value = 200; // the value for the duty cycle
-        htim2.Instance->CCR1 = value;
-//
-        osDelay(2500);
-        osDelay((blinkSequence.delayMs)/blinkSequence.numBlinks);
-        osDelay(2500);
-
-
-        GPIO::LED1::Off();
-        htim2.Instance->CCR1 = 0;
 
         osDelay(blinkSequence.delayMs);
+		GPIO::LED1::Off();
+		htim2.Instance->CCR1 = 0;
+		osDelay(blinkSequence.delayMs);
+
+        //osDelay(blinkSequence.delayMs);
     }
 
 }

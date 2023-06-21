@@ -32,6 +32,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
     stateArray[RS_TEST] = new Test();
 
     // Verify all states are initialized AND state IDs are consistent
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, RS_ABORT));
     for (uint8_t i = 0; i < RS_NONE; i++) {
         SOAR_ASSERT(stateArray[i] != nullptr);
         SOAR_ASSERT(stateArray[i]->GetStateID() == i);
@@ -75,7 +76,6 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     SOAR_ASSERT(rs_currentState != nullptr, "rs_currentState is nullptr in TransitionState");
 
     HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
-    SOAR_PRINT("State sent to HDITask\n");
     // Enter the current state
     rs_currentState->OnEnter();
 
