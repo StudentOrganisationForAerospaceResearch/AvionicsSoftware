@@ -284,7 +284,7 @@ RocketState Fill::OnEnter()
     // Clear the arm flags
     for (uint8_t i = 0; i < 2; i++)
         arrArmConfirmFlags[i] = false;
-    GPIO::PowerSelect::UmbilicalPower();
+
     // TODO: Consider automatically beginning fill sequence (since we've already explicitly entered the fill state)
 
     return rsStateID;
