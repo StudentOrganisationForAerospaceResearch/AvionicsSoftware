@@ -90,12 +90,12 @@ constexpr uint32_t SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR = 0x0000;
 // Start of the launch key storage area (spans 1 sector)
 // Always empty until launch, then filled with the launch key which
 // changes the 'backup default state' to prevent accidental venting during flight
-constexpr uint32_t SPI_FLASH_SYSTEM_SSS_LAUNCH_KEY_ADDR = 0x4000;
+constexpr uint32_t SPI_FLASH_SYSTEM_SSS_LAUNCH_KEY_ADDR = 0x6000;
 // Start of the offsets storage area (spans 2 sectors)
 // Holds the storage offsets for writing to flash, and other general medium-frequency state information
-constexpr uint32_t SPI_FLASH_OFFSETS_SDSS_START_ADDR = 0x6000;
+constexpr uint32_t SPI_FLASH_OFFSETS_SDSS_START_ADDR = 0x8000;
 // Start of the telemetry logging storage area (spans the rest of the flash)
-constexpr uint32_t SPI_FLASH_LOGGING_STORAGE_START_ADDR = 0x8000;
+constexpr uint32_t SPI_FLASH_LOGGING_STORAGE_START_ADDR = 0xA000;
 
 /* System Defines ------------------------------------------------------------------*/
 /* - Each define / constexpr must have a comment explaining what it is used for     */
