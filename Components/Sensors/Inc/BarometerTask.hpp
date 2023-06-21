@@ -16,7 +16,7 @@
 enum BARO_TASK_COMMANDS {
     BARO_NONE = 0,
     BARO_REQUEST_NEW_SAMPLE,// Get a new barometer sample, task will be blocked for polling time
-    BARO_REQUEST_TRANSMIT,    // Send the current barometer data over the Radio
+    BARO_REQUEST_TRANSMIT,    // Send the current barometer data over the Radio and Log to Flash
     BARO_REQUEST_DEBUG        // Send the current barometer data over the Debug UART
 };
 
@@ -41,6 +41,7 @@ protected:
 
     // Telemetry
     void TransmitProtocolBaroData();
+    void LogDataToFlash();
 
     // Sampling
     void SampleBarometer();

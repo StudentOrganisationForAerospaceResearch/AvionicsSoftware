@@ -214,7 +214,7 @@ void IMUTask::TransmitProtocolData()
  */
 void IMUTask::LogDataToFlash()
 {
-    Command flashCommand(DATA_COMMAND);
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
     flashCommand.CopyDataToCommand((uint8_t*)data, sizeof(AccelGyroMagnetismData));
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }

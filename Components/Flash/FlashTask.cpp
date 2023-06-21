@@ -103,13 +103,24 @@ void FlashTask ::HandleCommand(Command& cm)
             W25qxx_EraseChip();
             currentOffsets_.writeDataOffset = 0;
         }
+        else 
+        {
+            SOAR_PRINT("FlashTask Received Unsupported Task Command: %d\n", cm.GetTaskCommand());
+        }
         break;
     }
     case DATA_COMMAND: {
+        // If the command is not a WRITE_DATA_TO_FLASH command do nothing
+        if (cm.GetTaskCommand() != WRITE_DATA_TO_FLASH) {
+            SOAR_PRINT("FlashTask Received Unsupported Data Command: %d\n", cm.GetTaskCommand());
+            break;
+        }
+
         WriteLogDataToFlash(cm.GetDataPointer(), cm.GetDataSize());
         break;
     }
     default:
+        SOAR_PRINT("FlashTask Received Unsupported Command: %d\n", cm.GetCommand());
         break;
     }
 

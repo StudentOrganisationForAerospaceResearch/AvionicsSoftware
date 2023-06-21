@@ -90,28 +90,13 @@ void BarometerTask::InitTask()
 void BarometerTask::Run(void * pvParams)
 {
     while (1) {
-		//TODO: Remove this and add as function in request command
-        SampleBarometer();
-
-        Command flashCommand(DATA_COMMAND);
-        flashCommand.AllocateData(sizeof(BarometerData));
-        memcpy(flashCommand.GetDataPointer(), data, sizeof(BarometerData));
-        FlashTask::Inst().GetEventQueue()->Send(flashCommand);
-
-        //SOAR_PRINT("\t-- Barometer Data --\n");
-        //SOAR_PRINT(" Temp (C)       : %d.%d\n", data->temperature_ / 100, data->temperature_ % 100);
-        //SOAR_PRINT(" Pressure (mbar): %d.%d\n", data->pressure_ / 100, data->pressure_ % 100);
-        //SOAR_PRINT(" Pressure (kPa) : %d.%d\n\n", data->pressure_ / 1000, data->pressure_ % 1000);
-
-        osDelay(220);
-
-        //Command cm;
+        Command cm;
 
         //Wait forever for a command
-        //qEvtQueue->ReceiveWait(cm);
-
+        qEvtQueue->ReceiveWait(cm);
+        
         //Process the command
-        //HandleCommand(cm);
+        HandleCommand(cm);
     }
 }
 
@@ -154,6 +139,7 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case BARO_REQUEST_TRANSMIT:
         TransmitProtocolBaroData();
+        LogDataToFlash();
         break;
     case BARO_REQUEST_DEBUG:
         SOAR_PRINT("\t-- Barometer Data --\n");
@@ -188,6 +174,16 @@ void BarometerTask::TransmitProtocolBaroData()
 
     // Send the barometer data
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+}
+
+/**
+ * @brief Logs barometer data sample to flash
+ */
+void BarometerTask::LogDataToFlash()
+{
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    flashCommand.CopyDataToCommand((uint8_t*)data, sizeof(BarometerData));
+    FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }
 
 /**
