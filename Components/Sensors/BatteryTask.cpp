@@ -16,7 +16,9 @@
 #include "TelemetryMessage.hpp"
 
 /* Macros --------------------------------------------------------------------*/
-
+constexpr double ADC_CONVERSION_FACTOR = 3.3/4095;
+constexpr int VOLTAGE_DIVIDER_SCALE = 4; // Value to scale voltage back to original value
+constexpr int BATTERY_VOLTAGE_ADC_POLL_TIMEOUT = 50;
 /* Structs -------------------------------------------------------------------*/
 
 /* Constants -----------------------------------------------------------------*/
@@ -126,12 +128,9 @@ void BatteryTask::HandleRequestCommand(uint16_t taskCommand)
  */
 void BatteryTask::SampleBatteryVoltage()
 {
-	static const int BATTERY_VOLTAGE_ADC_POLL_TIMEOUT = 50;
 	double adcVal[1] = {};
 	double batteryVoltageValue = 0;
 	double vi = 0;
-	constexpr double adcConversion = 3.3/4095;
-	constexpr int voltageDividerScale = 4; // Value to scale voltage back to original value
 
 	HAL_ADC_Start(&hadc2);  // Enables ADC and starts conversion of regular channels
 	if(HAL_ADC_PollForConversion(&hadc2, BATTERY_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK) { //Check if conversion is completed
@@ -139,8 +138,8 @@ void BatteryTask::SampleBatteryVoltage()
 		HAL_ADC_Stop(&hadc2);
 		}
 
-	vi = (adcConversion * (adcVal[0])); // Converts 12 bit ADC value into voltage
-	batteryVoltageValue = (vi * voltageDividerScale) * 1000; // Multiply by 1000 to keep decimal places
+	vi = (ADC_CONVERSION_FACTOR * (adcVal[0])); // Converts 12 bit ADC value into voltage
+	batteryVoltageValue = (vi * VOLTAGE_DIVIDER_SCALE) * 1000; // Multiply by 1000 to keep decimal places
 	data->voltage_ = (uint32_t) batteryVoltageValue; // Battery Voltage in volts
 
 	timestampPT = HAL_GetTick();
