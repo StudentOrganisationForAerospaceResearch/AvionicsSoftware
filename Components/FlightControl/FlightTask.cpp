@@ -43,7 +43,7 @@ void FlightTask::InitTask()
  */
 void FlightTask::Run(void * pvParams)
 {
-
+	//TODO: This should probably be true for enter state, although this behavior is dictated by flash state recovery
     rsm_ = new RocketSM(RS_ABORT, false);
     TimerTransitions::Inst().Setup();
     while (1) {
@@ -113,7 +113,7 @@ void FlightTask::Run(void * pvParams)
 void FlightTask::HandleCommand(Command& cm)
 {
     // If this is a request command, we handle it in the task (rocket state command must always be control actions)
-    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == RocketState::RS_ABORT)
+    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == FT_REQUEST_TRANSMIT_STATE)
         SendRocketState();
     else
         rsm_->HandleCommand(cm);
