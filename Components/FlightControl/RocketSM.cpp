@@ -107,14 +107,6 @@ void RocketSM::HandleCommand(Command& cm)
 }
 
 /**
- * @brief Returns current state
- */
-BaseRocketState* RocketSM::GetCurrentState()
-{
-    return rs_currentState;
-}
-
-/**
  * @brief Gets the current rocket state as a proto enum
  * @return Current rocket state
  */

@@ -93,12 +93,12 @@ void Error_Handler(void);
 #define PS1_GPIO_Port GPIOB
 #define DRIVE_EN_Pin GPIO_PIN_12
 #define DRIVE_EN_GPIO_Port GPIOB
-#define SPI_SCK_Pin GPIO_PIN_13
-#define SPI_SCK_GPIO_Port GPIOB
-#define SPI_MISO_Pin GPIO_PIN_14
-#define SPI_MISO_GPIO_Port GPIOB
-#define SPI_MOSI_Pin GPIO_PIN_15
-#define SPI_MOSI_GPIO_Port GPIOB
+#define SPI_FLASH_SCK_Pin GPIO_PIN_13
+#define SPI_FLASH_SCK_GPIO_Port GPIOB
+#define SPI_FLASH_MISO_Pin GPIO_PIN_14
+#define SPI_FLASH_MISO_GPIO_Port GPIOB
+#define SPI_FLASH_MOSI_Pin GPIO_PIN_15
+#define SPI_FLASH_MOSI_GPIO_Port GPIOB
 #define LED_3_Pin GPIO_PIN_7
 #define LED_3_GPIO_Port GPIOC
 #define LED_2_Pin GPIO_PIN_8
@@ -125,8 +125,8 @@ void Error_Handler(void);
 #define BARO_SPI_MOSI_GPIO_Port GPIOB
 #define SPI_MEM_WP_Pin GPIO_PIN_6
 #define SPI_MEM_WP_GPIO_Port GPIOB
-#define SPI_CS__Pin GPIO_PIN_7
-#define SPI_CS__GPIO_Port GPIOB
+#define SPI_FLASH_CS_Pin GPIO_PIN_7
+#define SPI_FLASH_CS_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

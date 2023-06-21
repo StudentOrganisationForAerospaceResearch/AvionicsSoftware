@@ -106,7 +106,6 @@ void TelemetryTask::SendVentDrainStatus()
     Proto::CombustionControlStatus gpioMsg;
     gpioMsg.set_drain_open(GPIO::Drain::IsOpen());
     gpioMsg.set_vent_open(GPIO::Vent::IsOpen());
-    gpioMsg.set_main_engine_valve_open(false); // This needs to be changed to either a) record the MEV status from the PBB, or b) not have thsi field for the DMBGpioStatus
     teleMsg.set_gpio(gpioMsg);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
