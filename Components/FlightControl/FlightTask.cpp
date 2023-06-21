@@ -46,7 +46,6 @@ void FlightTask::InitTask()
  */
 void FlightTask::Run(void * pvParams)
 {
-
     //Initialize SPI Flash
     SPIFlash::Inst().Init();
 
@@ -135,7 +134,7 @@ void FlightTask::Run(void * pvParams)
 void FlightTask::HandleCommand(Command& cm)
 {
     // If this is a request command, we handle it in the task (rocket state command must always be control actions)
-    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == RocketState::RS_ABORT)
+    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == FT_REQUEST_TRANSMIT_STATE)
         SendRocketState();
     else
         rsm_->HandleCommand(cm);

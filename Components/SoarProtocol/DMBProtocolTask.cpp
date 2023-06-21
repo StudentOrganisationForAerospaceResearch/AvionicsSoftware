@@ -8,6 +8,7 @@
 
 #include "FlightTask.hpp"
 #include "ReadBufferFixedSize.h"
+#include "WatchdogTask.hpp"
 
 /**
  * @brief Initialize the DMBProtocolTask
@@ -103,6 +104,18 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
     case Proto::DMBCommand::Command::RSC_IGNITION_TO_LAUNCH:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_IGNITION_TO_LAUNCH));
         break;
+    case Proto::DMBCommand::Command::RSC_TEST_MEV_DISABLE:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_TEST_MEV_DISABLE));
+        break;
+    case Proto::DMBCommand::Command::RSC_TEST_MEV_ENABLE:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_TEST_MEV_ENABLE));
+        break;
+    case Proto::DMBCommand::Command::RSC_TEST_MEV_OPEN:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_TEST_MEV_OPEN));
+        break;
+    case Proto::DMBCommand::Command::RSC_GOTO_TEST:
+        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_TEST));
+        break;
     default:
         break;
     }
@@ -114,7 +127,23 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
  */
 void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer)
 {
+    Proto::ControlMessage msg;
+    msg.deserialize(readBuffer);
 
+    // Verify the source and target nodes, if they aren't as expected, do nothing
+    if (msg.get_source() != Proto::Node::NODE_RCU || msg.get_target() != Proto::Node::NODE_DMB)
+        return;
+
+    // Handle based on the message type
+    if(msg.has_hb()) {
+        // This is a heartbeat message, update the heartbeat
+        SOAR_PRINT("PROTO-INFO: Received Heartbeat Message\n");
+        WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, (uint16_t)RADIOHB_REQUEST));
+    }
+    else if(msg.has_ping()) {
+        // This is a ping request, send a request to FT to send a system state message
+        FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, FT_REQUEST_TRANSMIT_STATE));
+    }
 }
 
 /**

@@ -29,6 +29,7 @@
 #include "cmsis_os.h"    // CMSIS RTOS definitions
 #include "main_avionics.hpp"  // Main avionics definitions
 #include "Utils.hpp"    // Utility functions
+#include "stm32f4xx_hal.h"
 
 /* Task Definitions ------------------------------------------------------------------*/
 /* - Lower priority number means lower priority task ---------------------------------*/
@@ -74,6 +75,11 @@ constexpr uint16_t WATCHDOG_TASK_STACK_DEPTH_WORDS = 512;        // Size of the 
 constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
 constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
 constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
+
+// PRESSURE TRANSDUCER TASK
+constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 2;			// Priority of the pressure transducer task
+constexpr uint8_t TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
+constexpr uint16_t TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
 
 constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 1000; // Default logging delay for telemetry task
 

@@ -22,6 +22,7 @@
 #include "PBBRxProtocolTask.hpp"
 #include "WatchdogTask.hpp"
 #include "TimerTransitions.hpp"
+#include "PressureTransducerTask.hpp"
 #include "FlashTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
@@ -194,6 +195,25 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "manualLaunch") == 0) {
     	TimerTransitions::Inst().ManualLaunch();
     }
+    else if (strcmp(msg, "mev enable") == 0) {
+    	GPIO::MEV_EN::On();
+    }
+    else if (strcmp(msg, "mev disable") == 0) {
+    	GPIO::MEV_EN::Off();
+    }
+    else if (strcmp(msg, "mev close") == 0) {
+    	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+    }
+    else if (strcmp(msg, "mev open") == 0) {
+    	//TODO: Remember to remove / make sure not enabled in final code
+    	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+    }
+    else if (strcmp(msg, "ptc") == 0) {
+		// Print message
+		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
+		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
+	}
 	else {
         // Single character command, or unknown command
         switch (msg[0]) {
