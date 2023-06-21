@@ -52,7 +52,7 @@ enum RocketState
 /**
  * @brief External Rocket Control Commands, all fall under GLOBAL_COMMAND -> CONTROL_ACTION umbrella
  *
- *        rocketState specific commands, must be all in-order to avoid duplicate command IDs
+ *        State specific commands, must be all in-order to avoid duplicate command IDs
  */
 enum RocketControlCommands
 {
