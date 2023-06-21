@@ -17,9 +17,9 @@ extern TIM_HandleTypeDef htim2;
 
 etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConfig, 11>{
 	{RS_TEST, {1, 500}},
-	{RS_PRELAUNCH, {2, 700}},
-    {RS_FILL, {3, 800}},
-    {RS_ARM, {4, 900}},
+	{RS_PRELAUNCH, {2, 500}},
+    {RS_FILL, {3, 500}},
+    {RS_ARM, {4, 500}},
     {RS_IGNITION, {5, 500}},
     {RS_LAUNCH, {6, 500}},
     {RS_BURN, {7, 500}},
@@ -122,18 +122,32 @@ void HDITask::HandleRequestCommand(uint16_t taskCommand)
 }
 
 
-void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence){
-    //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence)
+{
+    const uint8_t NUM_BEEPS = blinkSequence.numBlinks;
 
-    for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
+    for (uint8_t i = 0; i < NUM_BEEPS; i++)
+    {
+        // Start the buzzer
+        //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+
+        // Turn on the LED
         GPIO::LED1::On();
 
-        osDelay(blinkSequence.delayMs);
-		GPIO::LED1::Off();
-		htim2.Instance->CCR1 = 0;
-		osDelay(blinkSequence.delayMs);
+        // Play the beep
+        osDelay(500); //beep last 0.5 seconds
 
-        //osDelay(blinkSequence.delayMs);
+        // Stop the buzzer
+        //HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+
+        // Turn off the LED
+        GPIO::LED1::Off();
+
+        // Wait for the silence duration between beeps
+		osDelay(500); //no beep for 0.5 seconds or in other words, next beep will happen in 0.5 seconds
+
     }
+    osDelay(8000); //wait 8 seconds before the next state feedback is given
+
 
 }
