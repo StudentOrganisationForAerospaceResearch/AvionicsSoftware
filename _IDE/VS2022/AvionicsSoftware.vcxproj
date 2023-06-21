@@ -96,7 +96,6 @@
     <ClInclude Include="..\..\Components\Flash\Driver\SPIFlash.hpp" />
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp" />
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxxConf.hpp" />
-    <ClInclude Include="..\..\Components\Flash\Inc\DualSectorStorage.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\Flash.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp" />
     <ClInclude Include="..\..\Components\Flash\Inc\SafeSimpleDualSectorStorage.hpp" />
