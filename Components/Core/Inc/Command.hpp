@@ -20,7 +20,7 @@ enum GLOBAL_COMMANDS : uint8_t
     COMMAND_NONE = 0,        // No command, packet can probably be ignored
     TASK_SPECIFIC_COMMAND,    // Runs a task specific command when given this object
     DATA_COMMAND,            // Data command, used to send data to a task. Target is stored in taskCommand
-    CONTROL_ACTION,            // Control actions, used in Rocket rocketState Machine, direct translation to RCU<->DMB Protocol
+    CONTROL_ACTION,            // Control actions, used in Rocket State Machine, direct translation to RCU<->DMB Protocol
     REQUEST_COMMAND,            // Request command
     HEARTBEAT_COMMAND,            // Control actions for heartbeat commands
     RADIOHB_CHANGE_PERIOD,        // Change Radio HB Period to Provided TaskCommand Period in Seconds
