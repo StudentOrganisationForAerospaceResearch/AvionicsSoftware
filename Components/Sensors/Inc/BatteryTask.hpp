@@ -21,11 +21,6 @@ enum BATTERY_TASK_COMMANDS {
     BATTERY_REQUEST_DEBUG,        // Send the current battery voltage data over the Debug UART
 };
 
-enum power_source {
-        INVALID = 0,
-        GROUND = 1,
-        ROCKET = 2,
-};
 
 /* Class ------------------------------------------------------------------*/
 class BatteryTask : public Task

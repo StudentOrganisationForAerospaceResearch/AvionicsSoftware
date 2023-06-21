@@ -1,15 +1,6 @@
-/**
+/*
   ******************************************************************************
   * File Name          : BatteryTask.cpp
-  *
-  *    Source Info           : Based on Andromeda V3.31 Implementation
-  *                         Andromeda_V3.31_Legacy/Core/Src/ReadBarometer.c
-  *
-  * Description        : This file contains constants and functions designed to
-  *                      obtain accurate pressure and temperature readings from
-  *                      the MS5607-02BA03 barometer on the flight board. A
-  *                      thread task is included that will constantly loop,
-  *                      reading and updating the passed BarometerData struct.
   ******************************************************************************
 */
 
@@ -54,7 +45,7 @@ void BatteryTask::InitTask()
     // Start the task
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)BatteryTask::RunTask,
-            (const char*)"PTTask",
+            (const char*)"BatTask",
             (uint16_t)BATTERY_TASK_STACK_DEPTH_WORDS,
             (void*)this,
             (UBaseType_t)BATTERY_TASK_RTOS_PRIORITY,
@@ -87,9 +78,6 @@ void BatteryTask::Run(void * pvParams)
  */
 void BatteryTask::HandleCommand(Command& cm)
 {
-    //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
-    //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
-
     //Switch for the GLOBAL_COMMAND
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
@@ -113,11 +101,10 @@ void BatteryTask::HandleCommand(Command& cm)
  */
 void BatteryTask::HandleRequestCommand(uint16_t taskCommand)
 {
-    //Switch for task specific command within DATA_COMMAND
+    //Switch for task specific command within REQUEST_COMMAND
     switch (taskCommand) {
     case BATTERY_REQUEST_NEW_SAMPLE:
         SampleBatteryVoltage();
-        GetPowerState();
         break;
     case BATTERY_REQUEST_TRANSMIT:
     	TransmitProtocolBatteryData();
@@ -128,7 +115,7 @@ void BatteryTask::HandleRequestCommand(uint16_t taskCommand)
         SOAR_PRINT("Battery Power State: %d, \r\n", GetPowerState());
         break;
     default:
-        SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+        SOAR_PRINT("BATTERYTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
         break;
     }
 }
@@ -143,22 +130,23 @@ void BatteryTask::SampleBatteryVoltage()
 	double adcVal[1] = {};
 	double batteryVoltageValue = 0;
 	double vi = 0;
+	constexpr double adcConversion = 3.3/4095;
+	constexpr int voltageDividerScale = 4; // Value to scale voltage back to original value
 
-	/* Functions -----------------------------------------------------------------*/
 	HAL_ADC_Start(&hadc2);  // Enables ADC and starts conversion of regular channels
 	if(HAL_ADC_PollForConversion(&hadc2, BATTERY_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK) { //Check if conversion is completed
 		adcVal[0] = HAL_ADC_GetValue(&hadc2); // Get ADC Value
 		HAL_ADC_Stop(&hadc2);
 		}
 
-	vi = ((3.3/4095) * (adcVal[0])); // Converts 12 bit ADC value into voltage
-	batteryVoltageValue = (vi * 4) * 1000; // Multiply by 1000 to keep decimal places
+	vi = (adcConversion * (adcVal[0])); // Converts 12 bit ADC value into voltage
+	batteryVoltageValue = (vi * voltageDividerScale) * 1000; // Multiply by 1000 to keep decimal places
 	data->voltage_ = (uint32_t) batteryVoltageValue; // Battery Voltage in volts
 
 	timestampPT = HAL_GetTick();
 }
 
-enum Proto::Battery::power_source BatteryTask::GetPowerState() {
+Proto::Battery::power_source BatteryTask::GetPowerState() {
 	if (GPIO::PowerSelect::IsInternal()) {
 		return Proto::Battery::power_source::ROCKET;
 	}

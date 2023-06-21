@@ -38,7 +38,7 @@ typedef struct
 
 typedef struct
 {
-    int32_t     voltage_;
+    int32_t     voltage_; // Volts * 1000, eg. 3300 == 3.3V
 } BatteryData;
 
 /* GPS Data */
@@ -82,7 +82,7 @@ typedef struct
     AccelGyroMagnetismData*         accelGyroMagnetismData_;
     BarometerData*                  barometerData_;
     GpsData*                        gpsData_;
-    PressureTransducerData* pressureTransducerData_;
+    PressureTransducerData* 		pressureTransducerData_;
     BatteryData*       				batteryData_;
 } AllData;
 

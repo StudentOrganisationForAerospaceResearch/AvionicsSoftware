@@ -4,7 +4,6 @@
  * Description        : Primary telemetry task, default task for the system.
  ******************************************************************************
 */
-#include <BatteryTask.hpp>
 #include "TelemetryTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
@@ -14,6 +13,7 @@
 #include "IMUTask.hpp"
 #include "FlightTask.hpp"
 #include "PressureTransducerTask.hpp"
+#include "BatteryTask.hpp"
 
 /**
  * @brief Constructor for TelemetryTask

@@ -823,7 +823,6 @@ Abort::Abort()
 RocketState Abort::OnEnter()
 {
     //TODO: Open Vent & Drain, MEV Closed
-	GPIO::PowerSelect::UmbilicalPower();
     return rsStateID;
 }
 
