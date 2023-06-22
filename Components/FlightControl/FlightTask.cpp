@@ -64,14 +64,6 @@ void FlightTask::Run(void * pvParams)
 
         // Since FlightTask is so critical to managing the system, it may make sense to make this a Async task that handles commands as they come in, and have these display commands be routed over to the DisplayTask
         // or maybe HID (Human Interface Device) task that handles both updating buzzer frequencies and LED states.
-//        GPIO::LED1::On();
-//        GPIO::LED2::On();
-//        GPIO::LED3::On();
-        osDelay(500);
-//        GPIO::LED1::Off();
-//        GPIO::LED2::Off();
-//        GPIO::LED3::Off();
-        osDelay(500);
 
 
         //Process commands in blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)

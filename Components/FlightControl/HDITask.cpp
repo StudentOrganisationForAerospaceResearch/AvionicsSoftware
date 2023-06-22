@@ -1,7 +1,8 @@
 /**
 ******************************************************************************
 * File Name          : HDITask.cpp
-* Description        : Primary flight task, default task for the system.
+* Description        : Human Device Interface Task. Will give a sequence command
+* 						to LED and buzzer to tell what state it is.
 ******************************************************************************
 */
 #include "HDITask.hpp"
@@ -14,19 +15,20 @@
 
 
 extern TIM_HandleTypeDef htim2;
+constexpr uint16_t BUZZER_DEFAULT_DUTY_CYCLE = 200;
 
 etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConfig, 11>{
 	{RS_TEST, {1, 500}},
 	{RS_PRELAUNCH, {2, 500}},
     {RS_FILL, {3, 500}},
     {RS_ARM, {4, 500}},
-    {RS_IGNITION, {5, 500}},
-    {RS_LAUNCH, {6, 500}},
-    {RS_BURN, {7, 500}},
-    {RS_COAST, {8, 500}},
-    {RS_DESCENT, {9, 500}},
-    {RS_RECOVERY, {10, 500}},
-    {RS_ABORT, {11, 500}}
+    {RS_IGNITION, {1, 300}},
+    {RS_LAUNCH, {2, 300}},
+    {RS_BURN, {3, 300}},
+    {RS_COAST, {4, 300}},
+    {RS_DESCENT, {5, 150}},
+    {RS_RECOVERY, {6, 150}},
+    {RS_ABORT, {7, 100}}
 };
 
 /**
@@ -55,6 +57,7 @@ void HDITask::InitTask()
     SOAR_ASSERT(rtValue == pdPASS, "HDITask::InitTask() - xTaskCreate() failed");
 }
 
+
 /**
 * @brief Instance Run loop for the Flight Task, runs on scheduler start as long as the task is initialized.
 * @param pvParams RTOS Passed void parameters, contains a pointer to the object instance, should not be used
@@ -63,15 +66,14 @@ void HDITask::Run(void * pvParams)
 {
 
 	while (1) {
-		uint8_t value = 200; // the value for the duty cycle
-		htim2.Instance->CCR1 = value;
+		htim2.Instance->CCR1 = BUZZER_DEFAULT_DUTY_CYCLE;
 
 		Command cm;
 
 		//Wait forever for a command,
 		//look forward for anything in queue, if there is , if there is anything update index, if there isn't anything do what was done before
 		//state field, last known state
-		if(qEvtQueue->Receive(cm)){
+		if(qEvtQueue->Receive(cm, 1000)){
 			HandleCommand(cm);
 		}
 		else{
@@ -114,28 +116,34 @@ void HDITask::HandleCommand(Command& cm)
 void HDITask::HandleRequestCommand(uint16_t taskCommand)
 {
     //Switch for task specific command within DATA_COMMAND
-	currentConfig = stateBlinks[RS_ABORT];
 	if((RocketState)taskCommand >= RS_PRELAUNCH && (RocketState)taskCommand< RS_NONE){
-		BuzzBlinkSequence(stateBlinks[(RocketState)taskCommand]);
+		BuzzBlinkSequence(currentConfig);
 		currentConfig = stateBlinks[(RocketState)taskCommand];
+		if ((RocketState)taskCommand == RS_ABORT){
+			SOAR_PRINT("THIS IS RS_ABORT!!! TIPEE");
+		}
+		if ((RocketState)taskCommand == RS_PRELAUNCH){
+			SOAR_PRINT("THIS IS RS_PRELAUNCH!!! TIPEE");
+		}
+		if ((RocketState)taskCommand == RS_FILL){
+			SOAR_PRINT("THIS IS RS_FILL!!! TIPEE");
+		}
 	}
 }
 
 
 void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence)
 {
-    const uint8_t NUM_BEEPS = blinkSequence.numBlinks;
-
-    for (uint8_t i = 0; i < NUM_BEEPS; i++)
+    for (uint8_t i = 0; i < blinkSequence.numBlinks; i++)
     {
         // Start the buzzer
-        HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
         // Turn on the LED
         GPIO::LED1::On();
 
         // Play the beep
-        osDelay(500); //beep last 0.5 seconds
+        osDelay(blinkSequence.delayMs); //beep last 0.5 seconds
 
         // Stop the buzzer
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
@@ -144,10 +152,10 @@ void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence)
         GPIO::LED1::Off();
 
         // Wait for the silence duration between beeps
-		osDelay(500); //no beep for 0.5 seconds or in other words, next beep will happen in 0.5 seconds
+		osDelay(blinkSequence.delayMs);
 
     }
-    osDelay(8000); //wait 8 seconds before the next state feedback is given
+    //osDelay(8000); //wait 8 seconds before the next state feedback is given
 
 
 }
