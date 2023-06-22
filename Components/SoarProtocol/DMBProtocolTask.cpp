@@ -141,7 +141,7 @@ void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, (uint16_t)RADIOHB_REQUEST));
     }
     else if(msg.has_ping()) {
-		// This is a ping message, respond with an ack
+        // This is a ping message, respond with an ack
         Proto::ControlMessage ackResponse;
         Proto::AckNack ack;
         ack.set_acking_msg_id(msg.get_message_id());
