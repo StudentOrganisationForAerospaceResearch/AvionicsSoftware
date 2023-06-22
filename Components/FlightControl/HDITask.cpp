@@ -2,7 +2,7 @@
 ******************************************************************************
 * File Name          : HDITask.cpp
 * Description        : Human Device Interface Task. Will give a sequence command
-* 						to LED and buzzer to tell what state it is.
+* 					   to LED and buzzer to tell what state it is.
 ******************************************************************************
 */
 #include "HDITask.hpp"
@@ -17,6 +17,24 @@
 extern TIM_HandleTypeDef htim2;
 constexpr uint16_t BUZZER_DEFAULT_DUTY_CYCLE = 200;
 
+
+/* One cycle is defined as a certain amount of beeps for that state.
+ * At RS_TEST, 1 cycle will have 1 beep that lasts 500 milliseconds, followed by 500 milliseconds of silence.
+ * Before the next cycle begins, there will be 1000 milliseconds of silence to be able to distinguish that
+ * the next cycle will begin.
+ * Again to clarify, for RS_PRELAUNCH, it will beep twice where each beep will last 500 milliseconds, followed
+ * by 500 milliseconds of silence between each of the beep.
+ * This is the same pattern for all different states but with the beeps and silence lasting the specified amount
+ * in the etl map.
+ * At RS_IGNITION will have a beep that last 300 milliseconds, followed by 300 milliseconds of silence. This is the same
+ * for RS_LAUNCH but it will have 2 beeps each lasting 300 milliseconds and 300 milliseconds of silence between them
+ * RS_DESCENT and RS_RECOVERY will have 5 and 6 beeps (respectively) that each last 180 milliseconds
+ * RS_ABORT will be easily distinguishable as it will have 7 beeps that each last 100 milliseconds and 100 milliseconds
+ * of silence between each one.
+ *
+ * */
+
+
 etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConfig, 11>{
 	{RS_TEST, {1, 500}},
 	{RS_PRELAUNCH, {2, 500}},
@@ -26,8 +44,8 @@ etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConf
     {RS_LAUNCH, {2, 300}},
     {RS_BURN, {3, 300}},
     {RS_COAST, {4, 300}},
-    {RS_DESCENT, {5, 150}},
-    {RS_RECOVERY, {6, 150}},
+    {RS_DESCENT, {5, 180}},
+    {RS_RECOVERY, {6, 180}},
     {RS_ABORT, {7, 100}}
 };
 
@@ -116,19 +134,14 @@ void HDITask::HandleCommand(Command& cm)
 void HDITask::HandleRequestCommand(uint16_t taskCommand)
 {
     //Switch for task specific command within DATA_COMMAND
-	if((RocketState)taskCommand >= RS_PRELAUNCH && (RocketState)taskCommand< RS_NONE){
-		BuzzBlinkSequence(currentConfig);
-		currentConfig = stateBlinks[(RocketState)taskCommand];
-		if ((RocketState)taskCommand == RS_ABORT){
-			SOAR_PRINT("THIS IS RS_ABORT!!! TIPEE");
-		}
-		if ((RocketState)taskCommand == RS_PRELAUNCH){
-			SOAR_PRINT("THIS IS RS_PRELAUNCH!!! TIPEE");
-		}
-		if ((RocketState)taskCommand == RS_FILL){
-			SOAR_PRINT("THIS IS RS_FILL!!! TIPEE");
-		}
+	if ((RocketState)taskCommand >= RS_PRELAUNCH && (RocketState)taskCommand < RS_NONE) {
+	    auto it = stateBlinks.find((RocketState)taskCommand);
+	    if (it != stateBlinks.end()) {
+	        currentConfig = it->second;
+	        BuzzBlinkSequence(currentConfig);
+	    }
 	}
+
 }
 
 
@@ -139,23 +152,17 @@ void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence)
         // Start the buzzer
     	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
-        // Turn on the LED
+        // Turn on the LED and play the beep
         GPIO::LED1::On();
+        osDelay(blinkSequence.delayMs); // a beep lasts this long
 
-        // Play the beep
-        osDelay(blinkSequence.delayMs); //beep last 0.5 seconds
-
-        // Stop the buzzer
+        // Stop the buzzer and turn off the LED
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
-
-        // Turn off the LED
         GPIO::LED1::Off();
 
         // Wait for the silence duration between beeps
 		osDelay(blinkSequence.delayMs);
 
     }
-    //osDelay(8000); //wait 8 seconds before the next state feedback is given
-
 
 }
