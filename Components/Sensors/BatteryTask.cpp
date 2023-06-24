@@ -114,7 +114,7 @@ void BatteryTask::HandleRequestCommand(uint16_t taskCommand)
     case BATTERY_REQUEST_DEBUG:
         SOAR_PRINT("|VOLTAGE_TASK| Battery Voltage (V): %d.%d, MCU Timestamp: %u\r\n", data->voltage_ / 1000, data->voltage_ % 1000,
         timestampPT);
-        SOAR_PRINT("Battery Power State: %d, \r\n", GetPowerState());
+        SOAR_PRINT("Power State: %d, \r\n", GetPowerState());
         break;
     default:
         SOAR_PRINT("BATTERYTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
