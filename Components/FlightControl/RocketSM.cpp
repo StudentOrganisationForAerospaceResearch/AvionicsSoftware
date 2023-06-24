@@ -929,14 +929,6 @@ RocketState Test::HandleCommand(Command& cm)
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
             break;
-        case RSC_POWER_TRANSITION_EXTERNAL:
-            GPIO::PowerSelect::UmbilicalPower();
-            SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(GetStateID()));
-            break;
-        case RSC_POWER_TRANSITION_ONBOARD:
-            GPIO::PowerSelect::InternalPower();
-            SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(GetStateID()));
-            break;
         default:
             break;
         }
