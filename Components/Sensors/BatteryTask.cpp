@@ -149,11 +149,8 @@ Proto::Battery::power_source BatteryTask::GetPowerState() {
 	if (GPIO::PowerSelect::IsInternal()) {
 		return Proto::Battery::power_source::ROCKET;
 	}
-	else if (!GPIO::PowerSelect::IsInternal()) {
-		return Proto::Battery::power_source::GROUND;
-	}
 	else {
-		return Proto::Battery::power_source::INVALID;
+		return Proto::Battery::power_source::GROUND;
 	}
 }
 
