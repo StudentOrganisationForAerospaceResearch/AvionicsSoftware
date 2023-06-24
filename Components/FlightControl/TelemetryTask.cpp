@@ -13,6 +13,7 @@
 #include "IMUTask.hpp"
 #include "FlightTask.hpp"
 #include "PressureTransducerTask.hpp"
+#include "BatteryTask.hpp"
 
 /**
  * @brief Constructor for TelemetryTask
@@ -98,6 +99,8 @@ void TelemetryTask::RunLogSequence()
     PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 	PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
 
+	BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+	BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
     // Flight State
     FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
 }

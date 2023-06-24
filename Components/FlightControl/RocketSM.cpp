@@ -212,6 +212,15 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     case RSC_MEV_CLOSE:
         PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
         break;
+    case RSC_POWER_TRANSITION_EXTERNAL:
+        GPIO::PowerSelect::UmbilicalPower();
+        SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(currentState));
+        //TODO: we should check to make sure umbilical power is available before doing so
+        break;
+    case RSC_POWER_TRANSITION_ONBOARD:
+        GPIO::PowerSelect::InternalPower();
+        SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(currentState));
+        break;
     default:
         break;
     }
@@ -369,6 +378,7 @@ RocketState Arm::OnEnter()
     // We don't do anything upon entering arm
     // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
 	GPIO::MEV_EN::On();
+	GPIO::PowerSelect::InternalPower();
     return rsStateID;
 }
 
@@ -395,16 +405,6 @@ RocketState Arm::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case CONTROL_ACTION: {
         switch (cm.GetTaskCommand()) {
-        case RSC_POWER_TRANSITION_EXTERNAL:
-            GPIO::PowerSelect::UmbilicalPower();
-            SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(GetStateID()));
-            //TODO: we should check to make sure umbilical power is available before doing so
-            break;
-        case RSC_POWER_TRANSITION_ONBOARD:
-            GPIO::PowerSelect::InternalPower();
-            SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(GetStateID()));
-            //TODO: we should check to make sure internal power is available before doing so
-            break;
         case RSC_GOTO_IGNITION:
             // Transition to ready for ignition state
             nextStateID = RS_IGNITION;
@@ -928,14 +928,6 @@ RocketState Test::HandleCommand(Command& cm)
         switch (cm.GetTaskCommand()) {
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
-            break;
-        case RSC_POWER_TRANSITION_EXTERNAL:
-            GPIO::PowerSelect::UmbilicalPower();
-            SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(GetStateID()));
-            break;
-        case RSC_POWER_TRANSITION_ONBOARD:
-            GPIO::PowerSelect::InternalPower();
-            SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(GetStateID()));
             break;
         default:
             break;

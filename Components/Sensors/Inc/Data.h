@@ -36,6 +36,11 @@ typedef struct
     int32_t     pressure_1;
 } PressureTransducerData;
 
+typedef struct
+{
+    int32_t     voltage_; // Volts * 1000, eg. 3300 == 3.3V
+} BatteryData;
+
 /* GPS Data */
 
 #define NMEA_MAX_LENGTH 82
@@ -77,7 +82,8 @@ typedef struct
     AccelGyroMagnetismData*         accelGyroMagnetismData_;
     BarometerData*                  barometerData_;
     GpsData*                        gpsData_;
-    PressureTransducerData* pressureTransducerData_;
+    PressureTransducerData* 		pressureTransducerData_;
+    BatteryData*       				batteryData_;
 } AllData;
 
 typedef struct

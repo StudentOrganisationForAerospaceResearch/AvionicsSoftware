@@ -741,10 +741,13 @@ static void MX_GPIO_Init(void)
                           |LED_3_Pin|LED_2_Pin|LED_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, IMU_XL_GY_CS_Pin|BATTERY_EN_Pin|DRAIN_CONTROL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, IMU_XL_GY_CS_Pin|DRAIN_CONTROL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, DRIVE_EN_Pin|BARO_CS_Pin|SPI_MEM_WP_Pin|SPI_CS__Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PC13 PC5 PC6 */
   GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_5|GPIO_PIN_6;
@@ -774,8 +777,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : IMU_XL_GY_CS_Pin BATTERY_EN_Pin DRAIN_CONTROL_Pin */
-  GPIO_InitStruct.Pin = IMU_XL_GY_CS_Pin|BATTERY_EN_Pin|DRAIN_CONTROL_Pin;
+  /*Configure GPIO pins : IMU_XL_GY_CS_Pin DRAIN_CONTROL_Pin */
+  GPIO_InitStruct.Pin = IMU_XL_GY_CS_Pin|DRAIN_CONTROL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -793,6 +796,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BATTERY_EN_Pin */
+  GPIO_InitStruct.Pin = BATTERY_EN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(BATTERY_EN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA12 */
   GPIO_InitStruct.Pin = GPIO_PIN_12;
