@@ -174,6 +174,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "disablehb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
+    else if (strcmp(msg, "gps") == 0) {
+    	SOAR_PRINT("YO");
+    	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
+    }
+    else if (strcmp(msg, "gpstransmit") == 0) {
+		SOAR_PRINT("YO transmit");
+		GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
+	}
     else {
         // Single character command, or unknown command
         switch (msg[0]) {
