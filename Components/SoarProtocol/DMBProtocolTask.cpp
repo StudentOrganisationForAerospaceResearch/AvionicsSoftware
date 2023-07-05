@@ -116,6 +116,9 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
     case Proto::DMBCommand::Command::RSC_GOTO_TEST:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_TEST));
         break;
+    case Proto::DMBCommand::Command::RADIO_HB:
+    	WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
+		break;
     default:
         break;
     }
