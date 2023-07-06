@@ -123,6 +123,7 @@ void GPSTask::HandleGPSRxComplete()
 void GPSTask::Run(void * pvParams)
 {
     //Setup the GPS
+	ReceiveData();
 
     //Task run loop
     while(1) {
