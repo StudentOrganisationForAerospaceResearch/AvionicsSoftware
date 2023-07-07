@@ -179,7 +179,6 @@ void PressureTransducerTask::TransmitProtocolPressureData()
     Proto::TelemetryMessage msg;
 	msg.set_source(Proto::Node::NODE_DMB);
 	msg.set_target(Proto::Node::NODE_RCU);
-//	msg.set_message_id((uint32_t)Proto::MessageID::MSG_TELEMETRY);
 	Proto::DMBPressure pressData;
 	pressData.set_upper_pv_pressure(data->pressure_1);
 	msg.set_pressdmb(pressData);

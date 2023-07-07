@@ -23,6 +23,7 @@
 #include "WatchdogTask.hpp"
 #include "TimerTransitions.hpp"
 #include "PressureTransducerTask.hpp"
+#include "BatteryTask.hpp"
 #include "FlashTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
@@ -174,6 +175,11 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
+    else if (strcmp(msg, "bat") == 0) {
+ 		SOAR_PRINT("Debug 'Battery Voltage' Sample and Output Received\n");
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
+ 	}
     else if (strcmp(msg, "flashdump") == 0) {
         // Send a request to the flash task to dump the flash data
         SOAR_PRINT("Dump of sensor data in flash requested\n");
@@ -209,7 +215,6 @@ void DebugTask::HandleDebugMessage(const char* msg)
     	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
     }
     else if (strcmp(msg, "ptc") == 0) {
-		// Print message
 		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
