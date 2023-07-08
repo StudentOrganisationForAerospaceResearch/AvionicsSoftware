@@ -51,7 +51,7 @@ void GPSTask::HandleGPSRxComplete()
     static char rx_buffer[NMEA_MAX_LENGTH + 1];
     static int rx_index = 0;
     static int gpggaDetected = 0;
-    const char message[7] = "$GPGGA";
+    const char message[7] = "$GNGGA";
 
     for (int i = 0; i < NMEA_MAX_LENGTH + 1; i++)
     {
@@ -63,7 +63,7 @@ void GPSTask::HandleGPSRxComplete()
             {
                 rx_buffer[rx_index++] = 0;
 
-                if (gpsDataMutex.Lock(0))
+                if (gpsDataMutex.LockFromISR())
                 {
                     memcpy(&data->buffer_, &rx_buffer, rx_index); // Copy to gps data buffer from rx_buffer
 
@@ -71,7 +71,7 @@ void GPSTask::HandleGPSRxComplete()
                     Command cm(DATA_COMMAND, EVENT_GPS_RX_PARSE_READY);
                     qEvtQueue->SendFromISR(cm);
 
-                    gpsDataMutex.Unlock();
+                    gpsDataMutex.UnlockFromISR();
                 }
 
                 // Reset back to initial values
@@ -213,6 +213,7 @@ void GPSTask::ParseGpsData()
     if(!gpsDataMutex.Lock(READ_GPS_PERIOD_MS))
     {
         SOAR_PRINT("GPS Warning - Could not acquire mutex for parsing!\n");
+        return;
     }
 
     // Vars
