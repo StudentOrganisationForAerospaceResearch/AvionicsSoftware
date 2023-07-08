@@ -20,7 +20,12 @@
 #include "DebugTask.hpp"
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "DMBProtocolTask.hpp"
 #include "WatchdogTask.hpp"
+#include "TelemetryTask.hpp"
+#include "PBBRxProtocolTask.hpp"
+#include "PressureTransducerTask.hpp"
+#include "BatteryTask.hpp"
 #include "GPSTask.hpp"
 
 /* Global Variables ------------------------------------------------------------------*/
@@ -38,6 +43,11 @@ void run_main() {
     DebugTask::Inst().InitTask();
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
+    DMBProtocolTask::Inst().InitTask();
+    PBBRxProtocolTask::Inst().InitTask();
+    TelemetryTask::Inst().InitTask();
+    PressureTransducerTask::Inst().InitTask();
+    BatteryTask::Inst().InitTask();
     GPSTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts

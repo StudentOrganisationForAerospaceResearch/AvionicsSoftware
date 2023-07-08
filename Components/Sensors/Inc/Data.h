@@ -36,9 +36,13 @@ typedef struct
 
 typedef struct
 {
-    osMutexId   mutex_;
-    int32_t     pressure_;
-} CombustionChamberPressureData;
+    int32_t     pressure_1;
+} PressureTransducerData;
+
+typedef struct
+{
+    int32_t     voltage_; // Volts * 1000, eg. 3300 == 3.3V
+} BatteryData;
 
 /* GPS Data */
 
@@ -67,11 +71,6 @@ typedef struct
     AltitudeType    totalAltitude_;
 } GpsData;
 
-typedef struct
-{
-    osMutexId   mutex_;
-    int32_t     pressure_;
-} OxidizerTankPressureData;
 
 /* Data Containers */
 
@@ -83,9 +82,9 @@ typedef struct
 {
     AccelGyroMagnetismData*         accelGyroMagnetismData_;
     BarometerData*                  barometerData_;
-    CombustionChamberPressureData*  combustionChamberPressureData_;
     GpsData*                        gpsData_;
-    OxidizerTankPressureData*       oxidizerTankPressureData_;
+    PressureTransducerData* 		pressureTransducerData_;
+    BatteryData*       				batteryData_;
 } AllData;
 
 typedef struct

@@ -36,7 +36,7 @@ protected:
     static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);    // Callback for timer which aborts system in case of data ghosting
     void HandleCommand(Command& cm);
     void HandleHeartbeat(uint16_t taskCommand);                        // If it receives a heartbeat then it resets the timer
-    Timer heartbeatTimer;
+    Timer* heartbeatTimer;
 
 private:
     // Private Functions

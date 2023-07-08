@@ -18,7 +18,12 @@
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
 #include "IMUTask.hpp"
+#include "DMBProtocolTask.hpp"
+#include "PBBRxProtocolTask.hpp"
 #include "WatchdogTask.hpp"
+#include "TimerTransitions.hpp"
+#include "PressureTransducerTask.hpp"
+#include "BatteryTask.hpp"
 #include "GPSTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
@@ -42,6 +47,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart->Instance == SystemHandles::UART_Debug->Instance)
         DebugTask::Inst().InterruptRxData();
+    else if (huart->Instance == SystemHandles::UART_Protocol->Instance)
+        DMBProtocolTask::Inst().InterruptRxData();
+    else if (huart->Instance == SystemHandles::UART_PBB->Instance)
+        PBBRxProtocolTask::Inst().InterruptRxData();
     else if (huart->Instance == SystemHandles::UART_GPS->Instance)
         GPSTask::Inst().HandleGPSRxComplete();
 }
@@ -168,18 +177,44 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
+    else if (strcmp(msg, "bat") == 0) {
+ 		SOAR_PRINT("Debug 'Battery Voltage' Sample and Output Received\n");
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
+ 	}
     else if (strcmp(msg, "radiohb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     }
     else if (strcmp(msg, "disablehb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
+    else if (strcmp(msg, "manualLaunch") == 0) {
+    	TimerTransitions::Inst().ManualLaunch();
+    }
+    else if (strcmp(msg, "mev enable") == 0) {
+    	GPIO::MEV_EN::On();
+    }
+    else if (strcmp(msg, "mev disable") == 0) {
+    	GPIO::MEV_EN::Off();
+    }
+    else if (strcmp(msg, "mev close") == 0) {
+    	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+    }
+    else if (strcmp(msg, "mev open") == 0) {
+    	//TODO: Remember to remove / make sure not enabled in final code
+    	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+    }
+    else if (strcmp(msg, "ptc") == 0) {
+		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
+		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
+	}
+	else {
+    }
     else if (strcmp(msg, "gps") == 0) {
-    	SOAR_PRINT("YO");
     	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
     }
     else if (strcmp(msg, "gpstransmit") == 0) {
-		SOAR_PRINT("YO transmit");
 		GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
 	}
     else {
