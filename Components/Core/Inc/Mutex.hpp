@@ -28,6 +28,9 @@ public:
     bool Lock(uint32_t timeout_ms = portMAX_DELAY);
     bool Unlock();
 
+    bool LockFromISR();
+    bool UnlockFromISR();
+
 private:
     SemaphoreHandle_t rtSemaphoreHandle;
 
