@@ -26,7 +26,7 @@
 #include "PBBRxProtocolTask.hpp"
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
-
+#include "GPSTask.hpp"
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
@@ -48,6 +48,7 @@ void run_main() {
     TelemetryTask::Inst().InitTask();
     PressureTransducerTask::Inst().InitTask();
     BatteryTask::Inst().InitTask();
+    GPSTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
     SOAR_PRINT("\n-- SOAR AVIONICS --\n");

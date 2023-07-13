@@ -136,6 +136,7 @@ void IMUTask::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
         HandleRequestCommand(cm.GetTaskCommand());
+        break;
     }
     case TASK_SPECIFIC_COMMAND: {
         break;
@@ -170,7 +171,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         SOAR_PRINT(" Mag (x,y,z)   : (%d, %d, %d) milli-gauss\n", data->magnetoX_, data->magnetoY_, data->magnetoZ_);
         break;
     default:
-        SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+        SOAR_PRINT("IMUTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
         break;
     }
 }
