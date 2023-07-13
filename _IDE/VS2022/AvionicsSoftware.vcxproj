@@ -34,6 +34,7 @@
     <ClCompile Include="..\..\Components\FlightControl\WatchdogTask.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
     <ClCompile Include="..\..\Components\Sensors\BarometerTask.cpp" />
+    <ClCompile Include="..\..\Components\Sensors\GPSTask.cpp" />
     <ClCompile Include="..\..\Components\Sensors\IMUTask.cpp" />
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp" />
     <ClCompile Include="..\..\Components\SoarProtocol\DMBProtocolTask.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="..\..\Components\main_avionics.hpp" />
     <ClInclude Include="..\..\Components\Sensors\Inc\Data.h" />
     <ClInclude Include="..\..\Components\Sensors\Inc\BarometerTask.hpp" />
+    <ClInclude Include="..\..\Components\Sensors\Inc\GPSTask.hpp" />
     <ClInclude Include="..\..\Components\Sensors\Inc\IMUTask.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp" />

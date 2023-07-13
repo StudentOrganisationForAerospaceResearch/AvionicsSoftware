@@ -24,6 +24,7 @@
 #include "TimerTransitions.hpp"
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
+#include "GPSTask.hpp"
 #include "FlashTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
@@ -51,6 +52,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
         DMBProtocolTask::Inst().InterruptRxData();
     else if (huart->Instance == SystemHandles::UART_PBB->Instance)
         PBBRxProtocolTask::Inst().InterruptRxData();
+    else if (huart->Instance == SystemHandles::UART_GPS->Instance)
+        GPSTask::Inst().HandleGPSRxComplete();
 }
 
 /* Functions -----------------------------------------------------------------*/
@@ -220,6 +223,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
 	}
 	else {
+    }
+    else if (strcmp(msg, "gps") == 0) {
+    	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
+    }
+    else if (strcmp(msg, "gpstransmit") == 0) {
+		GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
+	}
+    else {
         // Single character command, or unknown command
         switch (msg[0]) {
         default:

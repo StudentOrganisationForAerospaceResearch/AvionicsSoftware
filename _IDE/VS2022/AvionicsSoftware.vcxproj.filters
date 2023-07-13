@@ -273,6 +273,8 @@
     <ClCompile Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.cpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\Sensors\GPSTask.cpp">
+      <Filter>Source Files\Components\Sensors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Components\Flash\SystemStorage.cpp">
       <Filter>Source Files\Components\Flash</Filter>
@@ -1670,8 +1672,6 @@
     <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp">
       <Filter>Source Files\Components\Flash</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\Flash\Inc\SystemStorage.hpp">
-      <Filter>Source Files\Components\Flash\Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp">
       <Filter>Source Files\Components\Flash\Driver</Filter>

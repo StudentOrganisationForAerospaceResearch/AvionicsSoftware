@@ -1,4 +1,7 @@
-#pragma once
+#ifndef AVIONICS_INCLUDE_SOAR_DATA_H
+#define AVIONICS_INCLUDE_SOAR_DATA_H
+
+#include "SystemDefines.hpp"
 
 /* Structs containing data primitives */
 
@@ -60,7 +63,6 @@ typedef struct
 
 typedef struct
 {
-    osMutexId       mutex_;
     char            buffer_ [NMEA_MAX_LENGTH + 1];
     uint32_t        time_;
     LatLongType     latitude_;
@@ -68,7 +70,6 @@ typedef struct
     AltitudeType    antennaAltitude_;
     AltitudeType    geoidAltitude_;
     AltitudeType    totalAltitude_;
-    uint8_t         parseFlag_;
 } GpsData;
 
 
@@ -92,3 +93,5 @@ typedef struct
     AccelGyroMagnetismData* accelGyroMagnetismData_;
     BarometerData*          barometerData_;
 } ParachutesControlData;
+
+#endif //AVIONICS_INCLUDE_SOAR_DATA_H
