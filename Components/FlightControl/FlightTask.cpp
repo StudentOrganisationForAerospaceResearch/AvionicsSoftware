@@ -53,7 +53,7 @@ void FlightTask::Run(void * pvParams)
     SystemState sysState;
     bool stateReadSuccess = SystemStorage::Inst().Read(sysState);
 
-    if (stateReadSuccess == false) {
+    if (stateReadSuccess == true) {
         // Succeded to read state, initialize the rocket state machine
 		//TODO: Check if we really want to enter the state or not, or if we need to make it selective based on the state
         rsm_ = new RocketSM(sysState.rocketState, true);
