@@ -222,8 +222,6 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
 	}
-	else {
-    }
     else if (strcmp(msg, "gps") == 0) {
     	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
     }
