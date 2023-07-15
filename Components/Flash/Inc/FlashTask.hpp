@@ -60,7 +60,7 @@ private:
     };
 
     Offsets currentOffsets_;
-    SimpleDualSectorStorage<Offsets> offsetsStorage_;
+    SimpleDualSectorStorage<Offsets>* offsetsStorage_;
 
     uint8_t writesSinceLastOffsetUpdate_;
 };

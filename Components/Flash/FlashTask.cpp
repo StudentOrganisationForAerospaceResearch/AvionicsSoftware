@@ -18,8 +18,7 @@
 /**
  * @brief Constructor for FlashTask
  */
-FlashTask::FlashTask() : Task(FLASH_TASK_QUEUE_DEPTH_OBJS),
-    offsetsStorage_(&SPIFlash::Inst(), SPI_FLASH_OFFSETS_SDSS_START_ADDR)
+FlashTask::FlashTask() : Task(FLASH_TASK_QUEUE_DEPTH_OBJS)
 {
 }
 
@@ -55,7 +54,8 @@ void FlashTask::Run(void * pvParams)
         osDelay(1);
 
     // Initialize the offsets storage
-    offsetsStorage_.Read(currentOffsets_);
+    offsetsStorage_ = new SimpleDualSectorStorage<Offsets>(&SPIFlash::Inst(), SPI_FLASH_OFFSETS_SDSS_START_ADDR);
+    offsetsStorage_->Read(currentOffsets_);
 
     while (1) {
         //Process any commands in the queue
@@ -66,7 +66,7 @@ void FlashTask::Run(void * pvParams)
 
         //Run maintenance on dual sector storages
         SystemStorage::Inst().Maintain();
-        offsetsStorage_.Maintain();
+        offsetsStorage_->Maintain();
     }
 }
 
@@ -140,9 +140,11 @@ void FlashTask::WriteLogDataToFlash(uint8_t* data, uint16_t size)
     SPIFlash::Inst().Write(SPI_FLASH_LOGGING_STORAGE_START_ADDR + currentOffsets_.writeDataOffset, buff, size + 1);
     currentOffsets_.writeDataOffset += size + 1;
 
+    //TODO: Consider adding a readback to check if it was successful
+
     //If the number of writes since the last offset update has exceeded the threshold, update the offsets in storage
     if(++writesSinceLastOffsetUpdate_ >= FLASH_OFFSET_WRITES_UPDATE_THRESHOLD)
-        offsetsStorage_.Write(currentOffsets_);
+        offsetsStorage_->Write(currentOffsets_);
 }
 
 /**
