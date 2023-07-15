@@ -159,7 +159,7 @@ Proto::Battery::power_source BatteryTask::GetPowerState() {
  */
 void BatteryTask::TransmitProtocolBatteryData()
 {
-    SOAR_PRINT("Battery Transmit...\n");
+    //SOAR_PRINT("Battery Transmit...\n");
 
     Proto::TelemetryMessage msg;
 	msg.set_source(Proto::Node::NODE_DMB);

@@ -158,7 +158,7 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
  */
 void BarometerTask::TransmitProtocolBaroData()
 {
-    SOAR_PRINT("Barometer Task Transmit...\n");
+    //SOAR_PRINT("Barometer Task Transmit...\n");
 
     Proto::TelemetryMessage msg;
     msg.set_source(Proto::Node::NODE_DMB);

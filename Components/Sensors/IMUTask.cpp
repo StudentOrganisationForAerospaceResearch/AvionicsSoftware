@@ -185,7 +185,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
 void IMUTask::TransmitProtocolData()
 {
     // Transmits protocol data
-    SOAR_PRINT("IMU Task Transmit...\n");
+    //SOAR_PRINT("IMU Task Transmit...\n");
 
     Proto::TelemetryMessage msg;
     msg.set_source(Proto::Node::NODE_DMB);
