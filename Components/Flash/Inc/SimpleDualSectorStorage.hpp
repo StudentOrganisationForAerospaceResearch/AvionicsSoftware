@@ -175,6 +175,9 @@ void SimpleDualSectorStorage<T>::Maintain() {
     else if (pendingOp_ == ERASE_SECTOR_2) {
         sector2_.Erase();
     }
+
+    // Clear the pending operation
+    pendingOp_ = NONE;
 }
 
 /**

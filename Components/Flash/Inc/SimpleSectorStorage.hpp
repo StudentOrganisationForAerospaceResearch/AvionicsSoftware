@@ -142,6 +142,19 @@ bool SimpleSectorStorage<T>::Write(T& data, bool checkErased)
     if (!successWrite)
         return false;
 
+    // Perform a read back to verify the data was written correctly
+    Data readData;
+    bool successRead = kFlash_->Read(kStartAddr_, reinterpret_cast<uint8_t*>(&readData), sizeof(Data));
+    if (!successRead)
+        return false;
+    for(uint16_t i = 0; i < sizeof(Data); i++)
+    {
+        if (reinterpret_cast<uint8_t*>(&dataToWrite)[i] != reinterpret_cast<uint8_t*>(&readData)[i]) {
+            SOAR_PRINT("Warn.SSS: - Write Read Verify Failed\n");
+            return false;
+        }
+    }
+
     // Add the data to the cache
     validData_ = data;
     hasValidData_ = true;
@@ -249,7 +262,7 @@ void SimpleSectorStorage<T>::AddCRC(Data& data)
     uint8_t* byteData = reinterpret_cast<uint8_t*>(&data);
 
     // Calculate CRC of the data, excluding the crc field
-    uint16_t crc = SSS_CalculateChecksum(byteData + 1, sizeof(Data) - sizeof(uint16_t));
+    uint16_t crc = SSS_CalculateChecksum(byteData, sizeof(Data) - sizeof(uint16_t));
 
     data.crc = crc;
 }

@@ -76,7 +76,8 @@ void FlashTask::Run(void * pvParams)
  */
 void FlashTask ::HandleCommand(Command& cm)
 {
-    SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
+    // Can't have this if we try to erase then reset?
+    //SOAR_ASSERT(w25qxx.UniqID[0] != 0, "Flash command received before flash was initialized");
 
     switch (cm.GetCommand()) {
     case TASK_SPECIFIC_COMMAND: {
