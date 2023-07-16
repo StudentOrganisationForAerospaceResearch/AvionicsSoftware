@@ -1669,9 +1669,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.hpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp">
       <Filter>Source Files\Components\Flash</Filter>
-    </ClInclude>
     </ClInclude>
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp">
       <Filter>Source Files\Components\Flash\Driver</Filter>
