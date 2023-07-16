@@ -121,5 +121,5 @@ void TelemetryTask::SendVentDrainStatus()
 
 
     // Send the control message
-    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
