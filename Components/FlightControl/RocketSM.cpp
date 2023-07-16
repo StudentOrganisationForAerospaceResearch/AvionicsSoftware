@@ -462,7 +462,6 @@ Ignition::Ignition()
  */
 RocketState Ignition::OnEnter()
 {
-    TimerTransitions::Inst().IgnitionSequence();
     return rsStateID;
 }
 
@@ -472,8 +471,6 @@ RocketState Ignition::OnEnter()
  */
 RocketState Ignition::OnExit()
 {
-
-
     return rsStateID;
 }
 
