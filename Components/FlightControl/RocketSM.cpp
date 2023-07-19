@@ -944,6 +944,18 @@ RocketState Test::HandleCommand(Command& cm)
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
             break;
+        case RSC_TEST_MEV_OPEN: // Send the open command without enable
+            PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+            break;
+        case RSC_MEV_CLOSE: // Send the close command without enable
+            PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+            break;
+        case RSC_TEST_MEV_ENABLE:
+            GPIO::MEV_EN::On();
+            break;
+        case RSC_TEST_MEV_DISABLE:
+            GPIO::MEV_EN::Off();
+            break;
         default:
             break;
         }
