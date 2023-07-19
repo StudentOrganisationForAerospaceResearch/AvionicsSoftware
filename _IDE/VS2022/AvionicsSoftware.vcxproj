@@ -31,6 +31,7 @@
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\TelemetryTask.cpp" />
+    <ClCompile Include="..\..\Components\FlightControl\TimerTransitions.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\WatchdogTask.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
     <ClCompile Include="..\..\Components\Sensors\BarometerTask.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\RocketSM.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\TelemetryTask.hpp" />
+    <ClInclude Include="..\..\Components\FlightControl\Inc\TimerTransitions.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\WatchdogTask.hpp" />
     <ClInclude Include="..\..\Components\GPIO.hpp" />
     <ClInclude Include="..\..\Components\main_avionics.hpp" />
