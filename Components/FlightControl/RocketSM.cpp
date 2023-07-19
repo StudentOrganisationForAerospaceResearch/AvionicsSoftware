@@ -622,6 +622,7 @@ RocketState Burn::OnEnter()
     GPIO::Drain::Close();
 
     // Turn off the MEV power
+    //TODO: Make sure the MEV is fully open before turning off power!
     GPIO::MEV_EN::Off();
 
     // Start the coast transition timer (7 seconds - TBD based on sims)
