@@ -177,8 +177,13 @@ PreLaunch::PreLaunch()
  */
 RocketState PreLaunch::OnEnter()
 {
+    // Close the vent and drain
     GPIO::Drain::Close();
     GPIO::Vent::Close();
+
+    // Make sure the MEV enable pin is off
+    GPIO::MEV_EN::Off();
+
     return rsStateID;
 }
 
@@ -305,6 +310,10 @@ Fill::Fill()
  */
 RocketState Fill::OnEnter()
 {
+    // Assert the vent and drain are closed
+    GPIO::Vent::Close();
+    GPIO::Drain::Close();
+
     // Make sure the MEV enable pin is off
     GPIO::MEV_EN::Off();
 
@@ -393,10 +402,16 @@ Arm::Arm()
  */
 RocketState Arm::OnEnter()
 {
-    // We don't do anything upon entering arm
-    // TODO: Consider automatically beginning arm sequence (since we've already explicitly entered the arm state)
+    // Assert the vent and drain are closed
+    GPIO::Vent::Close();
+    GPIO::Drain::Close();
+
+    // Turn on the MEV enable pin
 	GPIO::MEV_EN::On();
+
+    // Switch to internal power
 	GPIO::PowerSelect::InternalPower();
+
     return rsStateID;
 }
 
@@ -406,8 +421,6 @@ RocketState Arm::OnEnter()
  */
 RocketState Arm::OnExit()
 {
-
-
     return rsStateID;
 }
 
@@ -462,6 +475,11 @@ Ignition::Ignition()
  */
 RocketState Ignition::OnEnter()
 {
+    // Assert vent and drain closed, and MEV enable pin on
+    GPIO::Vent::Close();
+    GPIO::Drain::Close();
+    GPIO::MEV_EN::On();
+
     return rsStateID;
 }
 
@@ -525,10 +543,13 @@ Launch::Launch()
  */
 RocketState Launch::OnEnter()
 {
-    //TODO: Disable Heartbeat Check
-    //TODO: **Should we not ensure vent & drain are closed in ignition? and or exit of ARM?
-	GPIO::Vent::Close();
-	GPIO::Drain::Close();
+    // Assert vent and drain closed, MEV enable pin on
+    GPIO::Vent::Close();
+    GPIO::Drain::Close();
+    GPIO::MEV_EN::On();
+
+    //TODO: Disable Heartbeat Check ???
+	
 	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
 	TimerTransitions::Inst().BurnSequence();
     return rsStateID;
@@ -540,8 +561,6 @@ RocketState Launch::OnEnter()
  */
 RocketState Launch::OnExit()
 {
-
-
     return rsStateID;
 }
 
@@ -590,18 +609,23 @@ Burn::Burn()
  */
 RocketState Burn::OnEnter()
 {
+    // TODO: Debug print - can remove in final versions
     if (GPIO::Vent::IsOpen()) {
         SOAR_PRINT("Vents were not closed in [ %s ] state\n", StateToString(rsStateID));
-        GPIO::Vent::Close();
-        SOAR_PRINT("Vents were closed in [ %s ] state\n", StateToString(rsStateID));
     }
     if (GPIO::Drain::IsOpen()) {
         SOAR_PRINT("Drain was not closed in [ %s ] state\n", StateToString(rsStateID));
-        GPIO::Drain::Close();
-        SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(rsStateID));
     }
+
+    // Assert vent/drain state
+    GPIO::Vent::Close();
+    GPIO::Drain::Close();
+
+    // Turn off the MEV power
+    GPIO::MEV_EN::Off();
+
+    // Start the coast transition timer (7 seconds - TBD based on sims)
     TimerTransitions::Inst().CoastSequence();
-    //TODO: Start the coast transition timer (7 seconds - TBD based on sims)
 
     return rsStateID;
 }
@@ -660,7 +684,14 @@ Coast::Coast()
  */
 RocketState Coast::OnEnter()
 {
-    //TODO: Start Descent Transition Timer (~25 seconds) : Should be well after apogee
+    // Assert vent/drain state
+    GPIO::Vent::Close();
+    GPIO::Drain::Close();
+
+    // Assert MEV power
+    GPIO::MEV_EN::Off();
+
+    // Start Descent Transition Timer (~25 seconds) : Should be well after apogee
 	TimerTransitions::Inst().DescentSequence();
     return rsStateID;
 }
@@ -671,8 +702,6 @@ RocketState Coast::OnEnter()
  */
 RocketState Coast::OnExit()
 {
-    // TODO: Make sure this is where we want MEV enable to be off
-    GPIO::MEV_EN::Off();
     return rsStateID;
 }
 
@@ -721,12 +750,17 @@ Descent::Descent()
  */
 RocketState Descent::OnEnter()
 {
-    //TODO: Start Recovery Transition Timer (~300 seconds) : Should be well into / after descent
+    // Open the vent and drain
     GPIO::Vent::Open();
-    SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
     GPIO::Drain::Open();
+
+    // Assert MEV power
+    GPIO::MEV_EN::Off();
+
+    SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
     SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(rsStateID));
-    //TODO: Ensure MEV Closed
+
+    // Start Recovery Transition Timer (~300 seconds) : Should be well into / after descent
     TimerTransitions::Inst().RecoverySequence();
     return rsStateID;
 }
@@ -737,7 +771,6 @@ RocketState Descent::OnEnter()
  */
 RocketState Descent::OnExit()
 {
-
     return rsStateID;
 }
 
@@ -787,10 +820,14 @@ Recovery::Recovery()
  */
 RocketState Recovery::OnEnter()
 {
-    // We turn the MEV enable to off to save power
-    GPIO::MEV_EN::Off();
+    // Assert vent and drain are open
+    GPIO::Vent::Open();
+    GPIO::Drain::Open();
 
-    //TODO: Open Vent & Drain (Maybe even periodic AUTO-VENT timers every 100 seconds to make sure they're open)
+    // Make sure MEV power is off
+    GPIO::MEV_EN::Off();
+    
+    //TODO: Consider adding periodic AUTO-VENT timers every 100 seconds to make sure they're open)
     //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
     //TODO: Decrease log rate to 1 Hz - StorageManager should automatically stop logging after it gets near full
 
@@ -803,7 +840,6 @@ RocketState Recovery::OnEnter()
  */
 RocketState Recovery::OnExit()
 {
-
     return rsStateID;
 }
 
@@ -850,7 +886,7 @@ Abort::Abort()
  */
 RocketState Abort::OnEnter()
 {
-    // Make sure the MEV enable pin is off
+    // Make sure the MEV enable pin is off and vents are open
 	GPIO::Vent::Open();
 	GPIO::Drain::Open();
     GPIO::MEV_EN::Off();
