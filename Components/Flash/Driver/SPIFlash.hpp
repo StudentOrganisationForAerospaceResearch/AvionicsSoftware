@@ -130,7 +130,10 @@ public:
     /**
      * @brief Gets if the flash is initialized or not
      */
-    bool GetInitialized() { return isInitialized_; }
+    bool GetInitialized()
+    {
+        return (isInitialized_ && (w25qxx.Lock == 0) && (w25qxx.ID == W25Q512));
+    }
 
 private:
     // Private Functions
