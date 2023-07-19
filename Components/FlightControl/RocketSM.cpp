@@ -492,9 +492,9 @@ RocketState Ignition::HandleCommand(Command& cm)
         case RSC_GOTO_ARM:
             nextStateID = RS_ARM;
             break;
-        case RSC_MANUAL_IGNITION_CONFIRMED:
-            TimerTransitions::Inst().ManualLaunch();
-            break;
+        //case RSC_MANUAL_IGNITION_CONFIRMED:
+        //    TimerTransitions::Inst().ManualLaunch();
+        //    break;
         default:
             break;
         }
