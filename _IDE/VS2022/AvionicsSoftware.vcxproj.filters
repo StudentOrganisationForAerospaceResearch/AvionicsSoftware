@@ -276,14 +276,17 @@
     <ClCompile Include="..\..\Components\Sensors\GPSTask.cpp">
       <Filter>Source Files\Components\Sensors</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Components\Flash\SystemStorage.cpp">
-      <Filter>Source Files\Components\Flash</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Components\Flash\FlashTask.cpp">
       <Filter>Source Files\Components\Flash</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Components\Flash\Driver\w25qxx.cpp">
       <Filter>Source Files\Components\Flash\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\WatchdogTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Components\FlightControl\TimerTransitions.cpp">
+      <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1669,9 +1672,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\SoarProtocol\PBBRxProtocolTask.hpp">
       <Filter>Source Files\Components\SoarProtocol</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp">
       <Filter>Source Files\Components\Flash</Filter>
-    </ClInclude>
     </ClInclude>
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp">
       <Filter>Source Files\Components\Flash\Driver</Filter>
@@ -1679,8 +1682,32 @@
     <ClInclude Include="..\..\Components\Flash\Driver\w25qxxConf.hpp">
       <Filter>Source Files\Components\Flash\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Components\Flash\Inc\DualSectorStorage.hpp">
+    <ClInclude Include="..\..\Components\Flash\Driver\SPIFlash.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\Flash.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\SafeSimpleDualSectorStorage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\SimpleDualSectorStorage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\SimpleSectorStorage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\SystemStorage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\FlightControl\Inc\WatchdogTask.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Sensors\Inc\GPSTask.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\FlightControl\Inc\TimerTransitions.hpp">
+      <Filter>Source Files\Components\Core\Inc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

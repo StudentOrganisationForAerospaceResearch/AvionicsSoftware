@@ -44,15 +44,13 @@ enum RocketState
 
     //-- RECOVERY / TECHNICAL --
     RS_ABORT,       // Abort sequence, vents open, MEV closed, ignitors off
-    RS_TEST,        // Test, between ABORT and PRE-LAUNCH, has full control of all GPIOs
-	
     RS_NONE         // Invalid state, must be last
 };
 
 /**
  * @brief External Rocket Control Commands, all fall under GLOBAL_COMMAND -> CONTROL_ACTION umbrella
  *
- *        State specific commands, must be all in-order to avoid duplicate command IDs
+ *        rocketState specific commands, must be all in-order to avoid duplicate command IDs
  */
 enum RocketControlCommands
 {
@@ -101,16 +99,8 @@ enum RocketControlCommands
     //RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state
 
     //-- GENERAL --
-    RSC_MANUAL_IGNITION_CONFIRMED, // NOTE: THIS IS UNUSED WHEN IGNITION SEQUENCE IS BYPASSED, we use the RSC_IGNITION_TO_LAUNCH command instead
+    RSC_MANUAL_IGNITION_CONFIRMED,
 //    RSC_IR_IGNITION_CONFIRMED,
-
-    //-- TEST --
-    RSC_GOTO_TEST,
-    //RSC_MEV_CLOSE,
-    RSC_TEST_MEV_OPEN,
-    RSC_TEST_MEV_ENABLE,
-    RSC_TEST_MEV_DISABLE,
-    //RSC_GOTO_PRELAUNCH
 
     //-- TECHNICAL --
     RSC_NONE   // Invalid command, must be last
@@ -146,7 +136,11 @@ public:
 
     void HandleCommand(Command& cm);
 
+<<<<<<< HEAD
+    BaseRocketState* GetCurrentState();
+=======
     Proto::RocketState GetRocketStateAsProto();
+>>>>>>> 0b702acc37a0fb02b494bcc9a6473b5d516f9531
 
 protected:
     RocketState TransitionState(RocketState nextState);
@@ -289,20 +283,6 @@ class Abort : public BaseRocketState
 {
 public:
     Abort();
-
-    RocketState HandleCommand(Command& cm) override;
-    RocketState OnEnter() override;
-    RocketState OnExit() override;
-};
-
-/**
- * @brief Test state, between ABORT and PRE-LAUNCH, has control over critical components
- *        such as MEV_ENABLE pins
- */
-class Test : public BaseRocketState
-{
-public:
-    Test();
 
     RocketState HandleCommand(Command& cm) override;
     RocketState OnEnter() override;

@@ -201,9 +201,6 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "disablehb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
-    else if (strcmp(msg, "manualLaunch") == 0) {
-    	TimerTransitions::Inst().ManualLaunch();
-    }
     else if (strcmp(msg, "mev enable") == 0) {
     	GPIO::MEV_EN::On();
     }

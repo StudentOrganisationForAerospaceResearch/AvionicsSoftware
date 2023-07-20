@@ -35,7 +35,7 @@
 /* - Lower priority number means lower priority task ---------------------------------*/
 
 // FLIGHT PHASE
-constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
+constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 3;            // Priority of the flight task
 constexpr uint8_t FLIGHT_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
 constexpr uint16_t FLIGHT_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
 
@@ -72,14 +72,14 @@ constexpr uint8_t FLASH_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flash 
 constexpr uint16_t FLASH_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flash task stack
 
 // WATCHDOG Task
-constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 2;            // Priority of the watchdog task
+constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 3;            // Priority of the watchdog task
 constexpr uint8_t WATCHDOG_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the watchdog task queue
 constexpr uint16_t WATCHDOG_TASK_STACK_DEPTH_WORDS = 512;        // Size of the watchdog task stack
 
 // TELEMETRY Task
-constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
-constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
-constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
+constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of the telemetry task
+constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the telemetry task queue
+constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the telemetry task stack
 
 // PRESSURE TRANSDUCER TASK
 constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 2;			// Priority of the pressure transducer task
