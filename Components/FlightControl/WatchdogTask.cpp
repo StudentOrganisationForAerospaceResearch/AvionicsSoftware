@@ -44,6 +44,9 @@ void WatchdogTask::InitTask()
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
     Timer::DefaultCallback(rtTimerHandle);
+    // TODO : Remove this (open vetn and drain) later
+    GPIO::Drain::Open();
+    GPIO::Vent::Open();
     FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 
 }
