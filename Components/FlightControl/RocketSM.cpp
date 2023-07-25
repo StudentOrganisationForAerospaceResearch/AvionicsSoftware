@@ -12,6 +12,7 @@
 #include "TimerTransitions.hpp"
 #include "GPIO.hpp"
 #include "FlashTask.hpp"
+#include "WatchdogTask.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -901,7 +902,8 @@ RocketState Abort::OnEnter()
  */
 RocketState Abort::OnExit()
 {
-
+	//TODO :  Fix this later. Check or make this more elegant
+	WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     return rsStateID;
 }
 

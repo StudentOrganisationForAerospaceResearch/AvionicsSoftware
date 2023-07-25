@@ -45,6 +45,7 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
     Timer::DefaultCallback(rtTimerHandle);
     FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
+
 }
 
 /**
@@ -56,6 +57,7 @@ void WatchdogTask::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case HEARTBEAT_COMMAND: {
         HandleHeartbeat(cm.GetTaskCommand());
+        break;
     }
     case TASK_SPECIFIC_COMMAND: {
         break;
@@ -100,7 +102,7 @@ void WatchdogTask::Run(void * pvParams)
     GPIO::LED1::Off();
 
     heartbeatTimer = new Timer(HeartbeatFailureCallback);
-    heartbeatTimer->ChangePeriodMs(5000);
+    heartbeatTimer->ChangePeriodMs(1200000);
     heartbeatTimer->Start();
 
     while (1) {

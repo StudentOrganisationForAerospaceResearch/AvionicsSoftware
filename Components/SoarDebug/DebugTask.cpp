@@ -26,6 +26,7 @@
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
 #include "FlashTask.hpp"
+#include "GPIO.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -214,10 +215,34 @@ void DebugTask::HandleDebugMessage(const char* msg)
     	//TODO: Remember to remove / make sure not enabled in final code
     	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
     }
+    else if (strcmp(msg, "vent open") == 0) {
+		//TODO: Remember to remove / make sure not enabled in final code
+    	GPIO::Vent::Open();
+	}
+    else if (strcmp(msg, "vent close") == 0) {
+		//TODO: Remember to remove / make sure not enabled in final code
+    	GPIO::Vent::Close();
+	}
+    else if (strcmp(msg, "drain open") == 0) {
+		//TODO: Remember to remove / make sure not enabled in final code
+    	GPIO::Drain::Open();
+	}
+    else if (strcmp(msg, "drain close") == 0) {
+		//TODO: Remember to remove / make sure not enabled in final code
+		GPIO::Drain::Close();
+	}
     else if (strcmp(msg, "ptc") == 0) {
 		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
+	}
+    else if (strcmp(msg, "vent state") == 0) {
+		//TODO: Remember to remove / make sure not enabled in final code
+		SOAR_PRINT("Vent State : %d", GPIO::Vent::IsOpen());
+	}
+    else if (strcmp(msg, "drain state") == 0) {
+		//TODO: Remember to remove / make sure not enabled in final code
+		SOAR_PRINT("Drain State : %d", GPIO::Drain::IsOpen());
 	}
     else if (strcmp(msg, "gps") == 0) {
     	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
