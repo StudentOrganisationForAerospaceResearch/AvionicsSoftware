@@ -92,6 +92,11 @@ void RocketSM::HandleCommand(Command& cm)
 {
     SOAR_ASSERT(rs_currentState != nullptr, "Command received before state machine initialized");
 
+    if (cm.GetCommand() == REQUEST_STATE && cm.GetTaskCommand() == FT_REQUEST_STATE_DEBUG) {
+    	SOAR_PRINT("ROCKET STATE : %d", rs_currentState->GetStateID());
+    	return;
+    }
+
     // Handle the command based on the current state
     RocketState nextRocketState = rs_currentState->HandleCommand(cm);
 

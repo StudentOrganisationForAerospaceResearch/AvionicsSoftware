@@ -250,6 +250,9 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "gpstransmit") == 0) {
 		GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
 	}
+    else if (strcmp(msg, "rocket state") == 0) {
+    	FlightTask::Inst().SendCommand(Command(REQUEST_STATE, FT_REQUEST_STATE_DEBUG));
+    }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {

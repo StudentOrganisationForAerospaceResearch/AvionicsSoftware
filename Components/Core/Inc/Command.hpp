@@ -26,6 +26,7 @@ enum GLOBAL_COMMANDS : uint8_t
     RADIOHB_CHANGE_PERIOD,        // Change Radio HB Period to Provided TaskCommand Period in Seconds
     PROTOCOL_COMMAND,           // Protocol command, used for commands to the Protocol Task
 	TELEMETRY_CHANGE_PERIOD,	// Change Telemetry Period to Provided TaskCommand Period in Milliseconds
+	REQUEST_STATE,				// Used to check state through debug console
 };
 
 /* Class -----------------------------------------------------------------*/

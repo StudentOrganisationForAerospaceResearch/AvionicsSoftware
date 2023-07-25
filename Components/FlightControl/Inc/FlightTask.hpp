@@ -15,6 +15,7 @@ enum FlightTaskRequests
 {
 	FT_REQUEST_NONE = 0, 
 	FT_REQUEST_TRANSMIT_STATE,	// Send the current state over the Radio
+	FT_REQUEST_STATE_DEBUG
 };
 
 class FlightTask : public Task

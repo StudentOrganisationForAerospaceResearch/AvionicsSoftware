@@ -134,8 +134,9 @@ void FlightTask::Run(void * pvParams)
 void FlightTask::HandleCommand(Command& cm)
 {
     // If this is a request command, we handle it in the task (rocket state command must always be control actions)
-    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == FT_REQUEST_TRANSMIT_STATE)
+    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == FT_REQUEST_TRANSMIT_STATE) {
         SendRocketState();
+    }
     else
         rsm_->HandleCommand(cm);
 
