@@ -89,7 +89,8 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     }
 
     // Copy the message to the read buffer
-	SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
+    // TODO : Uncomment this line later
+//	SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
