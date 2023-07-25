@@ -78,13 +78,14 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     }
 
     if(msg.has_presspbb()) {
-    	SOAR_PRINT("PBB-IB-PRESSURE : %d.%d \n", (msg.get_presspbb().get_ib_pressure())/1000, (msg.get_presspbb().get_ib_pressure())%1000);
+//    	SOAR_PRINT("PBB-IB-PRESSURE : %d.%d \n", (msg.get_presspbb().get_ib_pressure())/1000, (msg.get_presspbb().get_ib_pressure())%1000);
 		SOAR_PRINT("PBB-PV-PRESSURE : %d.%d \n", (msg.get_presspbb().get_lower_pv_pressure())/1000, (msg.get_presspbb().get_lower_pv_pressure())%1000);
     }
 
     if(msg.has_temppbb()) {
-    	SOAR_PRINT("PBB-IB-TEMPERATURE : %d.%d \n", (msg.get_temppbb().get_ib_temperature())/100, (msg.get_temppbb().get_ib_temperature())%100);
-    	SOAR_PRINT("PBB-PV-TEMPERATURE : %d.%d \n", (msg.get_temppbb().get_pv_temperature())/100, (msg.get_temppbb().get_pv_temperature())%100);
+    	SOAR_PRINT("PBB-PV-TEMPERATURE : %d.%d \n", (msg.get_temppbb().get_ib_temperature())/100, (msg.get_temppbb().get_ib_temperature())%100);
+    	// TODO : Change IB and PV name sin protobufs
+    	//    	SOAR_PRINT("PBB-PV-TEMPERATURE : %d.%d \n", (msg.get_temppbb().get_pv_temperature())/100, (msg.get_temppbb().get_pv_temperature())%100);
     }
 
     // Copy the message to the read buffer
