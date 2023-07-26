@@ -244,7 +244,15 @@ void DebugTask::HandleDebugMessage(const char* msg)
  */
 bool DebugTask::ReceiveData()
 {
-    HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1);
+    if(HAL_OK != HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1)) {
+        // Error, attempt to abort the receive to force the UART back into a known state
+        HAL_UART_AbortReceive(SystemHandles::UART_Debug);
+
+        if (HAL_OK != HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1)) {
+            // Error, abort failed, we have no choice but to reset the board
+            HAL_NVIC_SystemReset();
+        }
+    }
     return true;
 }
 
