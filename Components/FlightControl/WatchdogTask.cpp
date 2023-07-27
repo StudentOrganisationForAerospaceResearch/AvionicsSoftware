@@ -9,6 +9,7 @@
 #include "Timer.hpp"
 #include "WatchdogTask.hpp"
 #include "FlightTask.hpp"
+#include "SystemStorage.hpp"
 
 
 /**
@@ -48,6 +49,12 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
     GPIO::Drain::Open();
     GPIO::Vent::Open();
     FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
+
+    SystemState data;
+    data.rocketState = RS_ABORT;
+    SystemStorage::Inst().Write(data);
+    osDelay(1000);
+
     SOAR_ASSERT(false, "Lol we fucked up");
 }
 
