@@ -48,6 +48,7 @@ void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
     GPIO::Drain::Open();
     GPIO::Vent::Open();
     FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
+    SOAR_ASSERT(false, "Lol we fucked up");
 }
 
 /**

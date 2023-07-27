@@ -238,11 +238,21 @@ void DebugTask::HandleDebugMessage(const char* msg)
 	}
     else if (strcmp(msg, "vent state") == 0) {
 		//TODO: Remember to remove / make sure not enabled in final code
-		SOAR_PRINT("Vent State : %d", GPIO::Vent::IsOpen());
+    	if(GPIO::Vent::IsOpen() == 1) {
+    		SOAR_PRINT("Vent State : OPEN \n");
+    	}
+    	else if (GPIO::Vent::IsOpen() == 0) {
+    		SOAR_PRINT("Vent State : CLOSED \n");
+    	}
 	}
     else if (strcmp(msg, "drain state") == 0) {
 		//TODO: Remember to remove / make sure not enabled in final code
-		SOAR_PRINT("Drain State : %d", GPIO::Drain::IsOpen());
+		if(GPIO::Drain::IsOpen() == 1) {
+			SOAR_PRINT("Drain State : OPEN \n");
+		}
+		else if (GPIO::Drain::IsOpen() == 0) {
+			SOAR_PRINT("Drain State : CLOSED \n");
+		}
 	}
     else if (strcmp(msg, "gps") == 0) {
     	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
