@@ -13,6 +13,9 @@
 #include "SystemDefines.hpp"
 #include "Flash.hpp"
 
+/* Constants and Macros -------------------------------------------------------*/
+constexpr uint16_t DEFAULT_FLASH_SECTOR_SIZE = 4096; // 4KB - Default If Flash was not Initialized (to prevent % by 0 errors)
+
 /* SPI Flash ------------------------------------------------------------------*/
 /**
 * @brief Wrapper for SPI flash memory operations
@@ -120,10 +123,13 @@ public:
      *
      * This method returns the sector size of the W25qxx SPI Flash Memory device, which is a property of the underlying flash memory.
      *
-     * @return Returns the sector size of the W25qxx SPI Flash Memory device.
+	 * @return Returns the sector size of the W25qxx SPI Flash Memory device. Returns 4096 if the device is not initialized.
      */
     uint32_t GetSectorSize() override
     {
+        if (w25qxx.SectorSize == 0)
+            return DEFAULT_FLASH_SECTOR_SIZE;
+
         return w25qxx.SectorSize;
     }
 
