@@ -23,6 +23,11 @@ extern "C" {
     {
         Driver::uart2.HandleIRQ_UART();
     }
+
+    void cpp_USART6_IRQHandler()
+    {
+        Driver::uart6.HandleIRQ_UART();
+    }
 }
 
 

@@ -21,6 +21,16 @@ class UARTDriver;
 namespace Driver {
 	extern UARTDriver uart1;
 	extern UARTDriver uart2;
+	extern UARTDriver uart6;
+}
+
+/* UART Driver Aliases ------------------------------------------------------------------*/
+namespace UART {
+	constexpr UARTDriver* Umbilical_RCU = &Driver::uart1;
+	constexpr UARTDriver* Radio = &Driver::uart2;
+	//constexpr UARTDriver* Conduit_PBB = &Driver::uart3;
+	// UART 4 (GPS) uses HAL
+	constexpr UARTDriver* Debug = &Driver::uart6;  //TODO: change to uart5 on DMB
 }
 
 /* UART Receiver Base Class ------------------------------------------------------------------*/

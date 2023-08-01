@@ -9,6 +9,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "Task.hpp"
 #include "SystemDefines.hpp"
+#include "UARTDriver.hpp"
 
 /* Enums ------------------------------------------------------------------*/
 enum DEBUG_TASK_COMMANDS {
@@ -20,7 +21,7 @@ enum DEBUG_TASK_COMMANDS {
 constexpr uint16_t DEBUG_RX_BUFFER_SZ_BYTES = 16;
 
 /* Class ------------------------------------------------------------------*/
-class DebugTask : public Task
+class DebugTask : public Task, public UARTReceiverBase
 {
 public:
     static DebugTask& Inst() {
@@ -30,8 +31,8 @@ public:
 
     void InitTask();
 
-    //Functions exposed to HAL callbacks
-    void InterruptRxData();
+    // Interrupt receive callback
+    void InterruptRxData(uint8_t errors);
 
 protected:
     static void RunTask(void* pvParams) { DebugTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
@@ -53,6 +54,8 @@ protected:
     bool isDebugMsgReady;
 
     uint8_t debugRxChar; // Character received from UART Interrupt
+
+    UARTDriver* const kUart_; // UART Driver
 
 private:
     DebugTask(); // Private constructor
