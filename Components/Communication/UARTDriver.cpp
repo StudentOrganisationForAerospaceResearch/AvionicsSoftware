@@ -2,9 +2,14 @@
  ******************************************************************************
  * File Name          : UARTDriver.cpp
  * Description        : UART Driver
- * References	      : Based in part on MaJerle's stm32-usart-uart-dma-rx-tx
- *						https://github.com/MaJerle/stm32-usart-uart-dma-rx-tx/blob/main/projects/usart_rx_idle_line_irq_rtos_F4/Src/main.c
  * Author             : cjchanx (Chris)
+ ******************************************************************************
+ *
+ * Notes:
+ * If further efficiency is required, DMA can be used to transmit and receive.
+ * A good reference for this is MaJerle's STM32 USART DMA RX/TX example
+ * https://github.com/MaJerle/stm32-usart-uart-dma-rx-tx/blob/main/projects/usart_rx_idle_line_irq_rtos_F4/Src/main.c
+ *
  ******************************************************************************
 */
 #include "UARTDriver.hpp"
@@ -47,16 +52,9 @@ bool UARTDriver::Transmit(uint8_t* data, uint16_t len)
 */
 bool UARTDriver::ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver)
 {
-//	// Check if the interrupt is enabled, if so disable it
-//	if (LL_USART_IsEnabledIT_RXNE(kUart_)) {
-//		LL_USART_DisableIT_RXNE(kUart_);
-//		//SOAR_PRINT("Warning, ReceiveIT called while interrupt was enabled, disabling interrupt\n");
-//	}
-
 	// Check flags
 	HandleAndClearRxError();
 	if (LL_USART_IsActiveFlag_RXNE(kUart_)) {
-		//SOAR_PRINT("Warning, RXNE was not cleared before call to ReceiveIT(), likely loss of data\n");
 		LL_USART_ClearFlag_RXNE(kUart_);
 	}
 
@@ -78,19 +76,15 @@ bool UARTDriver::HandleAndClearRxError()
 {
 	bool shouldClearFlags = false;
 	if (LL_USART_IsActiveFlag_ORE(kUart_)) {
-		//SOAR_PRINT("Warning, overrun error detected\n");
 		shouldClearFlags = true;
 	}
 	if (LL_USART_IsActiveFlag_NE(kUart_)) {
-		//SOAR_PRINT("Warning, noise error detected\n");
 		shouldClearFlags = true;
 	}
 	if(LL_USART_IsActiveFlag_FE(kUart_)) {
-		//SOAR_PRINT("Warning, framing error detected\n");
 		shouldClearFlags = true;
 	}
 	if(LL_USART_IsActiveFlag_PE(kUart_)) {
-		//SOAR_PRINT("Warning, parity error detected\n");
 		shouldClearFlags = true;
 	}
 
