@@ -36,7 +36,7 @@ void DMBProtocolTask::InitTask()
  */
 DMBProtocolTask::DMBProtocolTask() : ProtocolTask(
         Proto::Node::NODE_DMB,
-        &Driver::uart1,
+        UART::Radio,
         UART_TASK_COMMAND_SEND_RADIO)
 {
 }
