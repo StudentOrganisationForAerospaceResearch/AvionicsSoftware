@@ -28,6 +28,14 @@ namespace Global
 }
 
 
+//TODO: Temporary definition for HAL USART because DISCO board doesn't have enough to enable one as a HAL one -- REMEMBER TO REMOVE
+typedef struct { uint32_t Instance; } UART_HandleTypeDef;
+inline void HAL_UART_Receive_DMA(UART_HandleTypeDef* a, uint8_t* b, uint16_t c) {}
+inline void HAL_UART_Receive_IT(UART_HandleTypeDef* a, uint8_t* b, uint16_t c) {}
+inline void HAL_UART_Transmit(UART_HandleTypeDef* a, uint8_t* b, uint16_t c, uint32_t d) {}
+
+
+
 /* System Handles ------------------------------------------------------------------*/
 /* This should be the only place externs are allowed -------------------------------*/
 //UART Handles

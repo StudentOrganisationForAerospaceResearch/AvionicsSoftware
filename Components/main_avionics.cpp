@@ -10,7 +10,7 @@
 
 #include "SystemDefines.hpp"
 #include "main_avionics.hpp"
-#include "stm32f4xx_hal_uart.h"
+//#include "stm32f4xx_hal_uart.h" //TODO: Temporary comment, uncomment in final code
 #include "Mutex.hpp"
 #include "Command.hpp"
 #include "UARTDriver.hpp"
@@ -29,6 +29,11 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+
+//TODO: Temporary UART fakes
+UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart6;
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
