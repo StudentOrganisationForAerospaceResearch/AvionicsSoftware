@@ -8,7 +8,7 @@
 #ifndef AVIONICS_INCLUDE_SOAR_MAIN_H
 #define AVIONICS_INCLUDE_SOAR_MAIN_H
 #include "Mutex.hpp"
-#include "stm32f411xe.h" // Board specific include, note: this may need to be changed for different boards
+#include "stm32f405xx.h" // Board specific include, note: this may need to be changed for different boards
 #include "stm32f4xx_hal.h"
 
 /* Interface Functions ------------------------------------------------------------------*/
