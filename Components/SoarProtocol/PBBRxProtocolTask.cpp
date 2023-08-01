@@ -35,7 +35,7 @@ void PBBRxProtocolTask::InitTask()
  * @brief Default constructor
  */
 PBBRxProtocolTask::PBBRxProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB, 
-    SystemHandles::UART_PBB,
+    &Driver::uart2,
     UART_TASK_COMMAND_SEND_PBB)
 {
 }

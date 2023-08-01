@@ -13,6 +13,7 @@
 #include "stm32f4xx_hal_uart.h"
 #include "Mutex.hpp"
 #include "Command.hpp"
+#include "UARTDriver.hpp"
 
 // Tasks
 #include "UARTTask.hpp"
@@ -31,7 +32,7 @@
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
- 
+
 /* Interface Functions ------------------------------------------------------------*/
 /**
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
@@ -50,7 +51,7 @@ void run_main() {
     TelemetryTask::Inst().InitTask();
     PressureTransducerTask::Inst().InitTask();
     //BatteryTask::Inst().InitTask();
-    GPSTask::Inst().InitTask();
+    //GPSTask::Inst().InitTask();
     FlashTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts

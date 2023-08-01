@@ -8,6 +8,7 @@
 #ifndef AVIONICS_INCLUDE_SOAR_MAIN_H
 #define AVIONICS_INCLUDE_SOAR_MAIN_H
 #include "Mutex.hpp"
+#include "stm32f411xe.h" // Board specific include, note: this may need to be changed for different boards
 #include "stm32f4xx_hal.h"
 
 /* Interface Functions ------------------------------------------------------------------*/
@@ -57,10 +58,10 @@ extern DMA_HandleTypeDef hdma_uart5_tx; // DMA UART 5 TX -
 
 namespace SystemHandles {
     // Aliases
-    constexpr UART_HandleTypeDef* UART_LaunchSystems = &huart1;
-    constexpr UART_HandleTypeDef* UART_Protocol = &huart2; // Protocol Tx/Rx Radio Line
-    constexpr UART_HandleTypeDef* UART_GPS = &huart1;
-    constexpr UART_HandleTypeDef* UART_PBB = &huart1;
+    constexpr UART_HandleTypeDef* UART_LaunchSystems = &huart2;
+    constexpr UART_HandleTypeDef* UART_Protocol = &huart1; // Protocol Tx/Rx Radio Line
+    constexpr UART_HandleTypeDef* UART_GPS = &huart6;
+    constexpr UART_HandleTypeDef* UART_PBB = &huart2;
     constexpr UART_HandleTypeDef* UART_Debug = &huart6;
 
     constexpr ADC_HandleTypeDef* ADC_CombustionChamber = &hadc1;

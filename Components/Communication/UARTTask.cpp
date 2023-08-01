@@ -6,6 +6,7 @@
 */
 
 #include "UARTTask.hpp"
+#include "UARTDriver.hpp"
 
 /**
  * TODO: Currently not used, would be used for DMA buffer configuration or interrupt setup
@@ -75,10 +76,10 @@ void UARTTask::HandleCommand(Command& cm)
             HAL_UART_Transmit(SystemHandles::UART_Debug, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
             break;
         case UART_TASK_COMMAND_SEND_RADIO:
-        	HAL_UART_Transmit(SystemHandles::UART_Protocol, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
+            Driver::uart1.Transmit(cm.GetDataPointer(), cm.GetDataSize());
         	break;
         case UART_TASK_COMMAND_SEND_PBB:
-            HAL_UART_Transmit(SystemHandles::UART_PBB, cm.GetDataPointer(), cm.GetDataSize(), DEBUG_SEND_MAX_TIME_MS);
+            Driver::uart2.Transmit(cm.GetDataPointer(), cm.GetDataSize());
             break;
         default:
             SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\n", cm.GetTaskCommand());

@@ -9,6 +9,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "Task.hpp"
 #include "SystemDefines.hpp"
+#include "UARTDriver.hpp"
 
 
 
