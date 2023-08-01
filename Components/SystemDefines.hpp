@@ -30,6 +30,7 @@
 #include "main_avionics.hpp"  // Main avionics definitions
 #include "Utils.hpp"    // Utility functions
 #include "stm32f4xx_hal.h"
+#include "UARTDriver.hpp"
 
 
 /* Task Definitions ------------------------------------------------------------------*/
@@ -124,7 +125,7 @@ constexpr uint16_t DEBUG_PRINT_MAX_SIZE = 192;            // Max size in bytes o
 constexpr uint16_t ASSERT_BUFFER_MAX_SIZE = 160;        // Max size in bytes of assert buffers (assume x2 as we have two message segments)
 constexpr uint16_t ASSERT_SEND_MAX_TIME_MS = 250;        // Max time the assert fail is allowed to wait to send header and message to HAL (will take up to 2x this since it sends 2 segments)
 constexpr uint16_t ASSERT_TAKE_MAX_TIME_MS = 500;        // Max time in ms to take the assert semaphore
-constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::UART_Debug;    // UART Handle that ASSERT messages are sent over
+constexpr UARTDriver* const DEFAULT_ASSERT_UART_DRIVER = UART::Debug;    // UART Handle that ASSERT messages are sent over
 
 /* System Functions ------------------------------------------------------------------*/
 //- Any system functions with an implementation here should be inline, and inline for a good reason (performance)

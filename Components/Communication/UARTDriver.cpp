@@ -41,8 +41,7 @@ bool UARTDriver::Transmit(uint8_t* data, uint16_t len)
 
 /**
 * @brief Receives 1 byte of data via interrupt
-* @param charBuf The buffer to store the received data
-* @param fxCallback The function to call when the data is received
+* @param receiver
 * @return TRUE if interrupt was successfully enabled, FALSE otherwise
 */
 bool UARTDriver::ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver)

@@ -9,7 +9,6 @@
 */
 
 /* Includes ------------------------------------------------------------------*/
-#include "SystemDefines.hpp"
 #include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_ll_dma.h"

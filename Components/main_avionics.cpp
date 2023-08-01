@@ -162,7 +162,7 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
         }
 
         // Output the header to the debug port
-        HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, header_buf, strlen(reinterpret_cast<char*>(header_buf)), ASSERT_SEND_MAX_TIME_MS);
+        DEFAULT_ASSERT_UART_DRIVER->Transmit(header_buf, strlen(reinterpret_cast<char*>(header_buf)));
 
         // If we have a message, and can use VA list, extract the string into a new buffer, and null terminate it
         if (printMessage && str != nullptr) {
@@ -173,13 +173,13 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
             va_end(argument_list);
             if (buflen > 0) {
                 str_buffer[buflen] = '\0';
-                HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, str_buffer, buflen, ASSERT_SEND_MAX_TIME_MS);
+                DEFAULT_ASSERT_UART_DRIVER->Transmit(str_buffer, buflen);
             }
         }
     }
     else {
         //TODO: Should manually print out the assertion header
-        HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, (uint8_t*)"-- ASSERTION FAILED --\r\nCould not acquire vaListMutex\r\n", 55, ASSERT_SEND_MAX_TIME_MS);
+        DEFAULT_ASSERT_UART_DRIVER->Transmit((uint8_t*)"-- ASSERTION FAILED --\r\nCould not acquire vaListMutex\r\n", 55);
     }
 
     HAL_NVIC_SystemReset();
