@@ -165,7 +165,8 @@ void PressureTransducerTask::SamplePressureTransducer()
 		}
 	vi = ((3.3/4095) * (adcVal[0])); // Converts 12 bit ADC value into voltage
 	pressureTransducerValue1 = (250 * (vi * PRESSURE_SCALE) - 125) * 1000; // Multiply by 1000 to keep decimal places
-	data->pressure_1 = (int32_t) pressureTransducerValue1; // Pressure in PSI
+	double finalPressure = 1.0152*pressureTransducerValue1 + 4.935;
+	data->pressure_1 = (int32_t) finalPressure; // Pressure in PSI
 //	SOAR_PRINT("The pressure is : %d \n\n", (int32_t) pressureTransducerValue1);
 }
 
