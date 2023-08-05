@@ -47,11 +47,11 @@ void run_main() {
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
     DMBProtocolTask::Inst().InitTask();
-    //PBBRxProtocolTask::Inst().InitTask();
+    PBBRxProtocolTask::Inst().InitTask();
     TelemetryTask::Inst().InitTask();
     PressureTransducerTask::Inst().InitTask();
-    //BatteryTask::Inst().InitTask();
-    //GPSTask::Inst().InitTask();
+    BatteryTask::Inst().InitTask();
+    GPSTask::Inst().InitTask();
     FlashTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
