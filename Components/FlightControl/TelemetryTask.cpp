@@ -86,7 +86,16 @@ void TelemetryTask::HandleCommand(Command& cm)
  */
 void TelemetryTask::RunLogSequence()
 {
+    // Flight State
+    FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
+
+    // GPIO
 	SendVentDrainStatus();
+
+    // Battery
+    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
+
 	// Barometer
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
@@ -98,13 +107,11 @@ void TelemetryTask::RunLogSequence()
     // Pressure Transducer
     PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 	PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
-
-	BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
-	BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
-    // Flight State
-    FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
 }
 
+/**
+ * @brief Sends the vent and drain status to the RCU
+ */
 void TelemetryTask::SendVentDrainStatus()
 {
     Proto::TelemetryMessage teleMsg;
@@ -113,12 +120,11 @@ void TelemetryTask::SendVentDrainStatus()
     Proto::CombustionControlStatus gpioMsg;
     gpioMsg.set_drain_open(GPIO::Drain::IsOpen());
     gpioMsg.set_vent_open(GPIO::Vent::IsOpen());
+    gpioMsg.set_mev_power_enable(GPIO::MEV_EN::IsOn());
     teleMsg.set_gpio(gpioMsg);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     teleMsg.serialize(writeBuffer);
-
-
 
     // Send the control message
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);

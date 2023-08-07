@@ -27,6 +27,7 @@ protected:
 
     void HandleCommand(Command& cm);
     void RunLogSequence();
+
     void SendVentDrainStatus();
 
 
