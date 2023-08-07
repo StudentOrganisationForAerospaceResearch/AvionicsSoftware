@@ -57,7 +57,7 @@ public:
         if (offset >= (w25qxx.SectorSize * w25qxx.SectorCount))
             return false;
 
-        uint32_t SectorAddr = (offset / w25qxx.SectorSize);
+        uint32_t SectorAddr = (offset / GetSectorSize());
         W25qxx_EraseSector(SectorAddr);
         return true;
     }
@@ -77,8 +77,8 @@ public:
         if (offset >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
             return false;
 
-        uint32_t SectorAddr = (offset / w25qxx.SectorSize);
-        uint32_t OffsetInSector = offset % w25qxx.SectorSize;
+        uint32_t SectorAddr = (offset / GetSectorSize());
+        uint32_t OffsetInSector = offset % GetSectorSize();
         W25qxx_WriteSector(data, SectorAddr, OffsetInSector, len);
         return true;
     }
@@ -97,8 +97,8 @@ public:
         if (offset >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
             return false;
 
-        uint32_t SectorAddr = (offset / w25qxx.SectorSize);
-        uint32_t OffsetInSector = offset % w25qxx.SectorSize;
+        uint32_t SectorAddr = (offset / GetSectorSize());
+        uint32_t OffsetInSector = offset % GetSectorSize();
         W25qxx_ReadSector(data, SectorAddr, OffsetInSector, len);
         return true;
     }
