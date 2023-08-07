@@ -92,21 +92,60 @@ void TelemetryTask::RunLogSequence()
     // GPIO
 	SendVentDrainStatus();
 
+	// Other Sensors
+	RequestSample();
+	RequestTransmit();
+
+	// Request Log to Flash
+	RequestLogToFlash();
+}
+
+/**
+ * @brief Poll requests to each sensor
+ */
+void TelemetryTask::RequestSample()
+{
     // Battery
     BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
-    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
 
-	// Barometer
+    // Barometer
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
-    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
 
     // IMU
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
-    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Pressure Transducer
     PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
-	PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+}
+
+/**
+ * @brief Requests transmit to each sensor
+ */
+void TelemetryTask::RequestTransmit()
+{
+    // Battery
+    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
+
+    // Barometer
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
+
+    // IMU
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
+
+    // Pressure Transducer
+    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+}
+
+/**
+ * @brief Requests log to flash for each sensor that supports it
+ */
+void TelemetryTask::RequestLogToFlash()
+{
+	// Barometer
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_FLASH_LOG));
+
+    // IMU
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_FLASH_LOG));
 }
 
 /**

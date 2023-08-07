@@ -28,6 +28,10 @@ protected:
     void HandleCommand(Command& cm);
     void RunLogSequence();
 
+    void RequestSample();
+    void RequestTransmit();
+    void RequestLogToFlash();
+
     void SendVentDrainStatus();
 
 

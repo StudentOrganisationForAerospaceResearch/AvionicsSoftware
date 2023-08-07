@@ -110,6 +110,9 @@ void IMUTask::InitTask()
  */
 void IMUTask::Run(void* pvParams)
 {
+    //Delay before IMU init
+    osDelay(100);
+
     //Setup the IMU
     SetupIMU();
 
