@@ -74,7 +74,7 @@ public:
     */
     bool Write(uint32_t offset, uint8_t* data, uint32_t len) override
     {
-        if (offset >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
+        if (offset + len >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
             return false;
 
         uint32_t SectorAddr = (offset / GetSectorSize());
@@ -94,7 +94,7 @@ public:
      */
     bool Read(uint32_t offset, uint8_t* data, uint32_t len) override
     {
-        if (offset >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
+        if (offset + len >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
             return false;
 
         uint32_t SectorAddr = (offset / GetSectorSize());
