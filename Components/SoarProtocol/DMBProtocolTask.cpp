@@ -6,9 +6,11 @@
 */
 #include "DMBProtocolTask.hpp"
 
+#include "FlashTask.hpp"
 #include "FlightTask.hpp"
 #include "ReadBufferFixedSize.h"
 #include "WatchdogTask.hpp"
+#include "TelemetryTask.hpp"
 
 /**
  * @brief Initialize the DMBProtocolTask
@@ -146,6 +148,33 @@ void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
     else if(msg.has_ping()) {
         // This is a ping request, send a request to FT to send a system state message
         FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, FT_REQUEST_TRANSMIT_STATE));
+    }
+    else if(msg.has_sys_ctrl()) {
+		// This is a system command, handle it
+	    if (msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_FLASH_LOG_ENABLE)
+	    {
+            // TODO
+	    }
+        else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_FLASH_LOG_DISABLE)
+        {
+            // TODO
+        }
+        else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_RESET)
+        {
+			// This is a request to reset the system
+            SOAR_ASSERT(false, "System reset requested!");
+        }
+        else if (msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_CRITICAL_FLASH_FULL_ERASE)
+        {
+            // This is a request that will erase all flash memory, and cause the flash task to stall!
+            FlashTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, ERASE_ALL_FLASH));
+        }
+        else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_LOG_PERIOD_CHANGE)
+        {
+            uint32_t paramMs = msg.get_sys_ctrl().get_cmd_param();
+            paramMs = (paramMs > 0xFFFF) ? 0xFFFE : paramMs;
+            TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, paramMs));
+        }
     }
 }
 
