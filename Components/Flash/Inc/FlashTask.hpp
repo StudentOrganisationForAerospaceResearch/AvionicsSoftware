@@ -13,7 +13,7 @@
 
 /* Macros/Enums ------------------------------------------------------------*/
 constexpr uint16_t MAX_FLASH_TASK_WAIT_TIME_MS = 5000; // The max time to wait for a command before maintenance is checked
-constexpr uint8_t FLASH_OFFSET_WRITES_UPDATE_THRESHOLD = 5; // The number of writes to flash before offsets are updated in flash
+constexpr uint8_t FLASH_OFFSET_WRITES_UPDATE_THRESHOLD = 50; // The number of writes to flash before offsets are updated in flash
 
 
 enum FLASH_COMMANDS {

@@ -74,12 +74,15 @@ void UARTTask::HandleCommand(Command& cm)
         switch (cm.GetTaskCommand()) {
         case UART_TASK_COMMAND_SEND_DEBUG:
             UART::Debug->Transmit(cm.GetDataPointer(), cm.GetDataSize());
+            osDelay(1);
             break;
         case UART_TASK_COMMAND_SEND_RADIO:
             UART::Radio->Transmit(cm.GetDataPointer(), cm.GetDataSize());
+            osDelay(1);
         	break;
         case UART_TASK_COMMAND_SEND_PBB:
             UART::Conduit_PBB->Transmit(cm.GetDataPointer(), cm.GetDataSize());
+            osDelay(1);
             break;
         default:
             SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\n", cm.GetTaskCommand());

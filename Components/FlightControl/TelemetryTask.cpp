@@ -14,6 +14,7 @@
 #include "FlightTask.hpp"
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
+#include "GPSTask.hpp"
 
 /**
  * @brief Constructor for TelemetryTask
@@ -134,6 +135,9 @@ void TelemetryTask::RequestTransmit()
 
     // Pressure Transducer
     PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+
+    // GPS
+    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));
 }
 
 /**
@@ -146,6 +150,9 @@ void TelemetryTask::RequestLogToFlash()
 
     // IMU
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_FLASH_LOG));
+
+    // GPS
+    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_FLASH_LOG));
 }
 
 /**

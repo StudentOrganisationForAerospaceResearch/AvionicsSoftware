@@ -219,6 +219,40 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "gpstransmit") == 0) {
 		GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
 	}
+    else if (strcmp(msg, "vent open") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Vent::Open();
+    }
+    else if (strcmp(msg, "vent close") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Vent::Close();
+    }
+    else if (strcmp(msg, "drain open") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Drain::Open();
+    }
+    else if (strcmp(msg, "drain close") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Drain::Close();
+    }
+    else if (strcmp(msg, "vent state") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        if(GPIO::Vent::IsOpen() == 1) {
+            SOAR_PRINT("Vent State : OPEN \n");
+        }
+        else if (GPIO::Vent::IsOpen() == 0) {
+            SOAR_PRINT("Vent State : CLOSED \n");
+        }
+    }
+    else if (strcmp(msg, "drain state") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        if(GPIO::Drain::IsOpen() == 1) {
+            SOAR_PRINT("Drain State : OPEN \n");
+        }
+        else if (GPIO::Drain::IsOpen() == 0) {
+            SOAR_PRINT("Drain State : CLOSED \n");
+        }
+    }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {

@@ -168,6 +168,8 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case IMU_REQUEST_TRANSMIT:
         TransmitProtocolData();
+        break;
+    case IMU_REQUEST_FLASH_LOG:
         LogDataToFlash();
         break;
     case IMU_REQUEST_DEBUG:

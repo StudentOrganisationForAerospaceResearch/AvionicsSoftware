@@ -12,6 +12,17 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
+/* GPS Data Flash Log Format -----------------------------------------------------------------*/
+typedef struct
+{
+    uint32_t        time_;
+    LatLongType     latitude_;
+    LatLongType     longitude_;
+    AltitudeType    antennaAltitude_;
+    AltitudeType    geoidAltitude_;
+    AltitudeType    totalAltitude_;
+} GPSDataFlashLog;
+
 /* Configuration ------------------------------------------------------------*/
 constexpr uint16_t READ_GPS_PERIOD_MS = 250;    // Period to read GPS data
 
@@ -25,6 +36,7 @@ enum GPS_REQUEST_COMMANDS {
     GPS_REQUEST_SAMPLE_INVALID,// Get a new GPS sample (does nothing for GPS)
     GPS_REQUEST_TRANSMIT,    // Send the current GPS data over the Radio
     GPS_REQUEST_DEBUG,        // Send the current GPS data over the Debug UART
+    GPS_REQUEST_FLASH_LOG,
 };
 
 // Internal Events
@@ -57,6 +69,9 @@ protected:
     // Command Handling
     void HandleCommand(Command& cm);
     void HandleRequestCommand(uint16_t taskCommand);
+
+    void TransmitProtocolData();
+    void LogDataToFlash();
 
     // Data Transfer
     bool ReceiveData();

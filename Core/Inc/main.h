@@ -139,6 +139,7 @@ void Error_Handler(void);
 #define SPI_MEM_WP_GPIO_Port GPIOB
 #define SPI_FLASH_CS_Pin GPIO_PIN_7
 #define SPI_FLASH_CS_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

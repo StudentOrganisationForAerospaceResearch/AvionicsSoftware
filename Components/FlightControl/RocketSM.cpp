@@ -128,7 +128,7 @@ Proto::RocketState RocketSM::GetRocketStateAsProto()
     case RS_BURN:
         return Proto::RocketState::RS_BURN;
     case RS_COAST:
-        return Proto::RocketState::RS_PRELAUNCH;
+        return Proto::RocketState::RS_COAST;
     case RS_DESCENT:
         return Proto::RocketState::RS_DESCENT;
     case RS_RECOVERY:
@@ -995,12 +995,12 @@ RocketState Test::HandleCommand(Command& cm)
             GPIO::MEV_EN::Off();
             break;
         default:
+            nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;
         }
         break;
     }
     default:
-        nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
         break;
     }
 
