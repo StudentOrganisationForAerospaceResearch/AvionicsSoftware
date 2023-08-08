@@ -552,7 +552,7 @@ RocketState Launch::OnEnter()
     //TODO: Disable Heartbeat Check ???
 	
 	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
-	TimerTransitions::Inst().BurnSequence();
+	TimerTransitions::Inst().BurnSequence(); //TODO: Make sure timer transitions are setup before calling this!
     return rsStateID;
 }
 
