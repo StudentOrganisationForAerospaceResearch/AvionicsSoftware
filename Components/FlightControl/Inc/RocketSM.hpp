@@ -101,7 +101,7 @@ enum RocketControlCommands
     //RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state
 
     //-- GENERAL --
-    RSC_MANUAL_IGNITION_CONFIRMED,
+    RSC_MANUAL_IGNITION_CONFIRMED, // NOTE: THIS IS UNUSED WHEN IGNITION SEQUENCE IS BYPASSED, we use the RSC_IGNITION_TO_LAUNCH command instead
 //    RSC_IR_IGNITION_CONFIRMED,
 
     //-- TEST --

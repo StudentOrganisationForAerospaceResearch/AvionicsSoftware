@@ -678,7 +678,7 @@ static void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 57600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -744,7 +744,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, IMU_XL_GY_CS_Pin|DRAIN_CONTROL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, DRIVE_EN_Pin|BARO_CS_Pin|SPI_MEM_WP_Pin|SPI_CS__Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, DRIVE_EN_Pin|BARO_CS_Pin|SPI_MEM_WP_Pin|SPI_FLASH_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_SET);
@@ -790,8 +790,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : DRIVE_EN_Pin BARO_CS_Pin SPI_MEM_WP_Pin SPI_CS__Pin */
-  GPIO_InitStruct.Pin = DRIVE_EN_Pin|BARO_CS_Pin|SPI_MEM_WP_Pin|SPI_CS__Pin;
+  /*Configure GPIO pins : DRIVE_EN_Pin BARO_CS_Pin SPI_MEM_WP_Pin SPI_FLASH_CS_Pin */
+  GPIO_InitStruct.Pin = DRIVE_EN_Pin|BARO_CS_Pin|SPI_MEM_WP_Pin|SPI_FLASH_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

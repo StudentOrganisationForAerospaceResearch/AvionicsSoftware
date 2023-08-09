@@ -58,7 +58,7 @@ extern DMA_HandleTypeDef hdma_uart5_tx; // DMA UART 5 TX -
 namespace SystemHandles {
     // Aliases
     constexpr UART_HandleTypeDef* UART_LaunchSystems = &huart1;
-    constexpr UART_HandleTypeDef* UART_Protocol = &huart2; // Protocol Rx Radio Line
+    constexpr UART_HandleTypeDef* UART_Protocol = &huart2; // Protocol Tx/Rx Radio Line
     constexpr UART_HandleTypeDef* UART_GPS = &huart4;
     constexpr UART_HandleTypeDef* UART_PBB = &huart3;
     constexpr UART_HandleTypeDef* UART_Debug = &huart5;
