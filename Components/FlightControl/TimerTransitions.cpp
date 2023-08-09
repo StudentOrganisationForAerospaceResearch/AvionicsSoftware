@@ -36,22 +36,26 @@ void TimerTransitions::Setup() {
 //}
 
 void TimerTransitions::BurnSequence() {
-	burnCountdown->Start();
+	if (!burnCountdown->Start())
+		burnCountdown->ResetTimerAndStart();
     return;
 }
 
 void TimerTransitions::CoastSequence() {
-	coastCountdown->Start();
+	if(!coastCountdown->Start())
+		coastCountdown->ResetTimerAndStart();
     return;
 }
 
 void TimerTransitions::DescentSequence() {
-	descentCountdown->Start();
+	if(!descentCountdown->Start())
+		descentCountdown->ResetTimerAndStart();
     return;
 }
 
 void TimerTransitions::RecoverySequence() {
-	recoveryCountdown->Start();
+	if(!recoveryCountdown->Start())
+		recoveryCountdown->ResetTimerAndStart();
     return;
 }
 
