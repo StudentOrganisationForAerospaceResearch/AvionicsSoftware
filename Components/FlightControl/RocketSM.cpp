@@ -11,6 +11,7 @@
 #include "WriteBufferFixedSize.h"
 #include "TimerTransitions.hpp"
 #include "GPIO.hpp"
+#include "MEVManager.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -210,7 +211,7 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_MEV_CLOSE:
-        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+        MEVManager::CloseMEV();
         break;
     case RSC_POWER_TRANSITION_EXTERNAL:
         GPIO::PowerSelect::UmbilicalPower();
@@ -514,7 +515,7 @@ RocketState Launch::OnEnter()
     //TODO: **Should we not ensure vent & drain are closed in ignition? and or exit of ARM?
 	GPIO::Vent::Close();
 	GPIO::Drain::Close();
-	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+	MEVManager::OpenMEV();
 	TimerTransitions::Inst().BurnSequence();
     return rsStateID;
 }

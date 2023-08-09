@@ -8,7 +8,6 @@
 #ifndef MEV_MANAGER_HPP
 #define MEV_MANAGER_HPP
 
-#include "SystemDefines.hpp"
 #include "DMBProtocolTask.hpp"
 #include "PBBRxProtocolTask.hpp"
 

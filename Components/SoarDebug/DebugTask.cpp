@@ -25,6 +25,7 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+#include "MEVManager.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -198,11 +199,11 @@ void DebugTask::HandleDebugMessage(const char* msg)
     	GPIO::MEV_EN::Off();
     }
     else if (strcmp(msg, "mev close") == 0) {
-    	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+    	MEVManager::CloseMEV();
     }
     else if (strcmp(msg, "mev open") == 0) {
     	//TODO: Remember to remove / make sure not enabled in final code
-    	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+    	MEVManager::OpenMEV();
     }
     else if (strcmp(msg, "ptc") == 0) {
 		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
