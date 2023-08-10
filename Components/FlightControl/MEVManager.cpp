@@ -2,6 +2,7 @@
 #include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
 
+MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
 
 void MEVManager::OpenMEV() {
     shouldMevBeOpen = OPEN;
@@ -19,12 +20,9 @@ void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {
         return;
     }
 
-    Proto::MEVState mevState = msg.mevstate();
-    if (!mevState.mev_open() && shouldMevBeOpen == OPEN) {
+    if (!msg.mevstate().mev_open() && shouldMevBeOpen == OPEN) {
         OpenMEV();
-    } else if (mevState.mev_open() && shouldMevBeOpen == CLOSE) {
+    } else if (msg.mevstate().mev_open() && shouldMevBeOpen == CLOSE) {
         CloseMEV();
     }
 }
-
-MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
