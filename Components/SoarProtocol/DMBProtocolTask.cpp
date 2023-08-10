@@ -146,8 +146,16 @@ void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, (uint16_t)RADIOHB_REQUEST));
     }
     else if(msg.has_ping()) {
-        // This is a ping request, send a request to FT to send a system state message
-        FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, FT_REQUEST_TRANSMIT_STATE));
+        // This is a ping message, respond with an ack
+        Proto::ControlMessage ackResponse;
+        Proto::AckNack ack;
+        ack.set_acking_msg_id(msg.get_message_id());
+        ack.set_acking_msg_source(msg.get_source());
+        ack.set_acking_sequence_num(msg.get_source_sequence_num());
+        ackResponse.set_ack(ack);
+        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuf;
+        ackResponse.serialize(writeBuf);
+        DMBProtocolTask::SendProtobufMessage(writeBuf, Proto::MessageID::MSG_CONTROL);
     }
     else if(msg.has_sys_ctrl()) {
 		// This is a system command, handle it

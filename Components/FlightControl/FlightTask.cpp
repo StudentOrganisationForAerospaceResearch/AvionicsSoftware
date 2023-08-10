@@ -58,7 +58,6 @@ void FlightTask::Run(void * pvParams)
 
     if (stateReadSuccess == true) {
         // Succeded to read state, initialize the rocket state machine
-		//TODO: Check if we really want to enter the state or not, or if we need to make it selective based on the state
 
         // Make sure we start in a valid state, if the state is invalid then ABORT
         if(sysState.rocketState >= RS_NONE || sysState.rocketState < RS_PRELAUNCH)
