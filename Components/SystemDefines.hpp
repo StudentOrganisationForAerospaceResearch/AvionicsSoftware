@@ -35,7 +35,7 @@
 /* - Lower priority number means lower priority task ---------------------------------*/
 
 // FLIGHT PHASE
-constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
+constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 3;            // Priority of the flight task
 constexpr uint8_t FLIGHT_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
 constexpr uint16_t FLIGHT_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
 
@@ -64,17 +64,22 @@ constexpr uint16_t TASK_IMU_STACK_DEPTH_WORDS = 512;        // Size of the barom
 // GPS TASK
 constexpr uint8_t TASK_GPS_PRIORITY = 2;            // Priority of the barometer task
 constexpr uint8_t TASK_GPS_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
-constexpr uint16_t TASK_GPS_STACK_DEPTH_WORDS = 256;        // Size of the barometer task stack
+constexpr uint16_t TASK_GPS_STACK_DEPTH_WORDS = 768;        // Size of the barometer task stack
+
+// FLASH Task
+constexpr uint8_t FLASH_TASK_RTOS_PRIORITY = 2;            // Priority of the flash task
+constexpr uint8_t FLASH_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flash task queue
+constexpr uint16_t FLASH_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flash task stack
 
 // WATCHDOG Task
-constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 2;            // Priority of the watchdog task
+constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 3;            // Priority of the watchdog task
 constexpr uint8_t WATCHDOG_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the watchdog task queue
 constexpr uint16_t WATCHDOG_TASK_STACK_DEPTH_WORDS = 512;        // Size of the watchdog task stack
 
 // TELEMETRY Task
-constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
-constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
-constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
+constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of the telemetry task
+constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the telemetry task queue
+constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the telemetry task stack
 
 // PRESSURE TRANSDUCER TASK
 constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 2;			// Priority of the pressure transducer task
@@ -88,6 +93,19 @@ constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the b
 
 constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 1000; // Default logging delay for telemetry task
 
+/* Flash Addresses ------------------------------------------------------------------*/
+// Start of the system storage area (spans 2 sectors)
+// Holds previous Rocket State, and other low-frequency state information
+constexpr uint32_t SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR = 0x0000;
+// Start of the launch key storage area (spans 1 sector)
+// Always empty until launch, then filled with the launch key which
+// changes the 'backup default state' to prevent accidental venting during flight
+constexpr uint32_t SPI_FLASH_SYSTEM_SSS_LAUNCH_KEY_ADDR = 0x6000;
+// Start of the offsets storage area (spans 2 sectors)
+// Holds the storage offsets for writing to flash, and other general medium-frequency state information
+constexpr uint32_t SPI_FLASH_OFFSETS_SDSS_START_ADDR = 0x8000;
+// Start of the telemetry logging storage area (spans the rest of the flash)
+constexpr uint32_t SPI_FLASH_LOGGING_STORAGE_START_ADDR = 0xA000;
 
 /* System Defines ------------------------------------------------------------------*/
 /* - Each define / constexpr must have a comment explaining what it is used for     */

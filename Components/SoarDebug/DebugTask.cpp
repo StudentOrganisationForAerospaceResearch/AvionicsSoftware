@@ -25,6 +25,7 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+#include "FlashTask.hpp"
 #include "MEVManager.hpp"
 
 /* Macros --------------------------------------------------------------------*/
@@ -183,14 +184,23 @@ void DebugTask::HandleDebugMessage(const char* msg)
  		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
  		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
  	}
+    else if (strcmp(msg, "flashdump") == 0) {
+        // Send a request to the flash task to dump the flash data
+        SOAR_PRINT("Dump of sensor data in flash requested\n");
+        Command cmd((uint16_t)DUMP_FLASH_DATA);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
+    else if (strcmp(msg, "flasherase") == 0) 
+    {
+        SOAR_PRINT("erase chip in flash requested\n");
+        Command cmd((uint16_t)ERASE_ALL_FLASH);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
     else if (strcmp(msg, "radiohb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     }
     else if (strcmp(msg, "disablehb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
-    }
-    else if (strcmp(msg, "manualLaunch") == 0) {
-    	TimerTransitions::Inst().ManualLaunch();
     }
     else if (strcmp(msg, "mev enable") == 0) {
     	GPIO::MEV_EN::On();
@@ -210,7 +220,6 @@ void DebugTask::HandleDebugMessage(const char* msg)
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
 	}
-
     else if (strcmp(msg, "gps") == 0) {
     	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
     }
@@ -236,7 +245,15 @@ void DebugTask::HandleDebugMessage(const char* msg)
  */
 bool DebugTask::ReceiveData()
 {
-    HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1);
+    if(HAL_OK != HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1)) {
+        // Error, attempt to abort the receive to force the UART back into a known state
+        HAL_UART_AbortReceive(SystemHandles::UART_Debug);
+
+        if (HAL_OK != HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1)) {
+            // Error, abort failed, we have no choice but to reset the board
+            HAL_NVIC_SystemReset();
+        }
+    }
     return true;
 }
 

@@ -101,7 +101,7 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
     case Proto::DMBCommand::Command::RSC_GOTO_IGNITION:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_IGNITION));
         break;
-    case Proto::DMBCommand::Command::RSC_IGNITION_TO_LAUNCH:
+    case Proto::DMBCommand::Command::RSC_IGNITION_TO_LAUNCH: // This is the ignition confirmation (we need a button to send this)
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_IGNITION_TO_LAUNCH));
         break;
     case Proto::DMBCommand::Command::RSC_TEST_MEV_DISABLE:
