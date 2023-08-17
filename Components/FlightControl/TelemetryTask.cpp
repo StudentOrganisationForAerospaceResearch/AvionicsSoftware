@@ -22,6 +22,7 @@
 TelemetryTask::TelemetryTask() : Task(TELEMETRY_TASK_QUEUE_DEPTH_OBJS)
 {
     loggingDelayMs = TELEMETRY_DEFAULT_LOGGING_RATE_MS;
+    numNonFlashLogs_ = 0;
 }
 
 /**
@@ -98,7 +99,10 @@ void TelemetryTask::RunLogSequence()
 	RequestTransmit();
 
 	// Request Log to Flash
-	RequestLogToFlash();
+	if(++numNonFlashLogs_ >= NUM_SENT_LOGS_PER_FLASH_LOG) {
+	    RequestLogToFlash();
+	    numNonFlashLogs_ = 0;
+	}
 }
 
 /**
