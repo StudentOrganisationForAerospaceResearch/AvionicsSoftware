@@ -14,6 +14,8 @@
 #include "SystemDefines.hpp"
 #include <stdlib.h>
 #include <cstring>
+#include "DMBProtocolTask.hpp"
+#include "FlashTask.hpp"
 
 /**
  * @brief Default constructor, sets up storage for member variables
@@ -176,7 +178,10 @@ void GPSTask::HandleRequestCommand(uint16_t taskCommand)
         SOAR_PRINT("GPSTask - Received Sample Request (unsupported)\n");
         break;
     case GPS_REQUEST_TRANSMIT:
-        SOAR_PRINT("Stubbed: GPS task transmit not implemented\n");
+        TransmitProtocolData();
+        break;
+    case GPS_REQUEST_FLASH_LOG:
+        LogDataToFlash();
         break;
     case GPS_REQUEST_DEBUG:
         SOAR_PRINT("\t-- GPS Data --\n");
@@ -201,6 +206,72 @@ bool GPSTask::ReceiveData()
 {
     HAL_UART_Receive_DMA(SystemHandles::UART_GPS, (uint8_t*)&gpsTaskRxBuffer, GPS_TASK_RX_BUFFER_SIZE);
     return true;
+}
+
+/**
+ * @brief Transmits protocol data over radio
+ * @note This should not need to acquire mutex as it will only be called in-order of parse
+ */
+void GPSTask::TransmitProtocolData()
+{
+
+    Proto::LatLong lat;
+    lat.set_degrees(data->latitude_.degrees_);
+    lat.set_minutes(data->latitude_.minutes_);
+
+    Proto::LatLong lon;
+    lat.set_degrees(data->longitude_.degrees_);
+    lat.set_minutes(data->longitude_.minutes_);
+
+    Proto::AltitudeType antAltitude;
+    antAltitude.set_altitude(data->antennaAltitude_.altitude_);
+    antAltitude.set_unit(data->antennaAltitude_.unit_);
+
+    Proto::AltitudeType geoIdAltitude;
+    geoIdAltitude.set_altitude(data->geoidAltitude_.altitude_);
+    geoIdAltitude.set_unit(data->geoidAltitude_.unit_);
+
+    Proto::AltitudeType totalAltitude;
+    totalAltitude.set_altitude(data->totalAltitude_.altitude_);
+    totalAltitude.set_unit(data->totalAltitude_.unit_);
+
+    Proto::TelemetryMessage msg;
+    msg.set_source(Proto::Node::NODE_DMB);
+    msg.set_target(Proto::Node::NODE_RCU);
+    msg.set_message_id((uint32_t)Proto::MessageID::MSG_TELEMETRY);
+    Proto::GPS coord;
+    coord.set_latitude(lat);
+    coord.set_longitude(lon);
+    coord.set_antenna_alt(antAltitude);
+    coord.set_geoidAltitude(geoIdAltitude);
+    coord.set_total_alt(totalAltitude);
+    coord.set_time(data->time_);
+    msg.set_coord(coord);
+
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    msg.serialize(writeBuffer);
+
+    // Send the barometer data
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+}
+
+/**
+ * @brief Logs GPS data to flash
+ * @note This should not need to acquire mutex as it will only be called in-order of parse
+ */
+void GPSTask::LogDataToFlash()
+{
+    GPSDataFlashLog flashLogData;
+    flashLogData.time_ = data->time_;
+    flashLogData.latitude_ = data->latitude_;
+    flashLogData.longitude_ = data->longitude_;
+    flashLogData.antennaAltitude_ = data->antennaAltitude_;
+    flashLogData.geoidAltitude_ = data->geoidAltitude_;
+    flashLogData.totalAltitude_ = data->totalAltitude_;
+
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    flashCommand.CopyDataToCommand((uint8_t*)&flashLogData, sizeof(GPSDataFlashLog));
+    FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }
 
 /**

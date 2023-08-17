@@ -30,6 +30,8 @@
 #include "main_avionics.hpp"  // Main avionics definitions
 #include "Utils.hpp"    // Utility functions
 #include "stm32f4xx_hal.h"
+#include "UARTDriver.hpp"
+
 
 /* Task Definitions ------------------------------------------------------------------*/
 /* - Lower priority number means lower priority task ---------------------------------*/
@@ -91,7 +93,8 @@ constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 2;            // Priority of the 
 constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the battery voltage task queue
 constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the battery voltage task stack
 
-constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 1000; // Default logging delay for telemetry task
+constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 500; // Default logging delay for telemetry task
+constexpr uint32_t TELEMETRY_MINIMUM_LOG_PERIOD_MS = 50; // (1000/50 = 20hz) The minimum log period / max log rate
 
 /* Flash Addresses ------------------------------------------------------------------*/
 // Start of the system storage area (spans 2 sectors)
@@ -123,7 +126,7 @@ constexpr uint16_t DEBUG_PRINT_MAX_SIZE = 192;            // Max size in bytes o
 constexpr uint16_t ASSERT_BUFFER_MAX_SIZE = 160;        // Max size in bytes of assert buffers (assume x2 as we have two message segments)
 constexpr uint16_t ASSERT_SEND_MAX_TIME_MS = 250;        // Max time the assert fail is allowed to wait to send header and message to HAL (will take up to 2x this since it sends 2 segments)
 constexpr uint16_t ASSERT_TAKE_MAX_TIME_MS = 500;        // Max time in ms to take the assert semaphore
-constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::UART_Debug;    // UART Handle that ASSERT messages are sent over
+constexpr UARTDriver* const DEFAULT_ASSERT_UART_DRIVER = UART::Debug;    // UART Handle that ASSERT messages are sent over
 
 /* System Functions ------------------------------------------------------------------*/
 //- Any system functions with an implementation here should be inline, and inline for a good reason (performance)

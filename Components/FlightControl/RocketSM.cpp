@@ -12,6 +12,7 @@
 #include "TimerTransitions.hpp"
 #include "GPIO.hpp"
 #include "FlashTask.hpp"
+#include "WatchdogTask.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -127,7 +128,7 @@ Proto::RocketState RocketSM::GetRocketStateAsProto()
     case RS_BURN:
         return Proto::RocketState::RS_BURN;
     case RS_COAST:
-        return Proto::RocketState::RS_PRELAUNCH;
+        return Proto::RocketState::RS_COAST;
     case RS_DESCENT:
         return Proto::RocketState::RS_DESCENT;
     case RS_RECOVERY:
@@ -551,7 +552,7 @@ RocketState Launch::OnEnter()
     //TODO: Disable Heartbeat Check ???
 	
 	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
-	TimerTransitions::Inst().BurnSequence();
+	TimerTransitions::Inst().BurnSequence(); //TODO: Make sure timer transitions are setup before calling this!
     return rsStateID;
 }
 
@@ -901,7 +902,7 @@ RocketState Abort::OnEnter()
  */
 RocketState Abort::OnExit()
 {
-
+    WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     return rsStateID;
 }
 
@@ -994,12 +995,12 @@ RocketState Test::HandleCommand(Command& cm)
             GPIO::MEV_EN::Off();
             break;
         default:
+            nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;
         }
         break;
     }
     default:
-        nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
         break;
     }
 

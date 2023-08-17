@@ -288,6 +288,9 @@
     <ClCompile Include="..\..\Components\FlightControl\TimerTransitions.cpp">
       <Filter>Source Files\Components\FlightControl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Components\Communication\UARTDriver.cpp">
+      <Filter>Source Files\Components\Communication</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp">
@@ -1708,6 +1711,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Components\FlightControl\Inc\TimerTransitions.hpp">
       <Filter>Source Files\Components\Core\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Communication\Inc\UARTDriver.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Components\Flash\Inc\MockFlash.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

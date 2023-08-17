@@ -49,13 +49,22 @@ void FlightTask::Run(void * pvParams)
     //Initialize SPI Flash
     SPIFlash::Inst().Init();
 
+    //Initialize the Timer Transitions
+    TimerTransitions::Inst().Setup();
+
     //Get the latest state from the system storage
     SystemState sysState;
     bool stateReadSuccess = SystemStorage::Inst().Read(sysState);
 
     if (stateReadSuccess == true) {
         // Succeded to read state, initialize the rocket state machine
-		//TODO: Check if we really want to enter the state or not, or if we need to make it selective based on the state
+
+        // Make sure we start in a valid state, if the state is invalid then ABORT
+        if(sysState.rocketState >= RS_NONE || sysState.rocketState < RS_PRELAUNCH)
+        {
+            sysState.rocketState = RS_ABORT;
+        }
+
         rsm_ = new RocketSM(sysState.rocketState, true);
     }
     else {
@@ -66,7 +75,6 @@ void FlightTask::Run(void * pvParams)
         rsm_ = new RocketSM(RS_ABORT, true);
     }
 
-    TimerTransitions::Inst().Setup();
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task

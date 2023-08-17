@@ -10,6 +10,8 @@
 #include "WatchdogTask.hpp"
 #include "FlightTask.hpp"
 
+/* Macros/Enums ------------------------------------------------------------*/
+constexpr uint32_t HEARTBEAT_TIMER_PERIOD_MS = 20 * 60 * 1000;
 
 /**
  * @brief Constructor for WatchdogTask
@@ -100,7 +102,7 @@ void WatchdogTask::Run(void * pvParams)
     GPIO::LED1::Off();
 
     heartbeatTimer = new Timer(HeartbeatFailureCallback);
-    heartbeatTimer->ChangePeriodMs(5000);
+    heartbeatTimer->ChangePeriodMs(HEARTBEAT_TIMER_PERIOD_MS);
     heartbeatTimer->Start();
 
     while (1) {

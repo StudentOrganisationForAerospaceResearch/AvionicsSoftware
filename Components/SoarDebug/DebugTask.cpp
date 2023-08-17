@@ -46,13 +46,7 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
  */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-    if (huart->Instance == SystemHandles::UART_Debug->Instance)
-        DebugTask::Inst().InterruptRxData();
-    else if (huart->Instance == SystemHandles::UART_Protocol->Instance)
-        DMBProtocolTask::Inst().InterruptRxData();
-    else if (huart->Instance == SystemHandles::UART_PBB->Instance)
-        PBBRxProtocolTask::Inst().InterruptRxData();
-    else if (huart->Instance == SystemHandles::UART_GPS->Instance)
+    if (huart->Instance == SystemHandles::UART_GPS->Instance)
         GPSTask::Inst().HandleGPSRxComplete();
 }
 
@@ -60,7 +54,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 /**
  * @brief Constructor, sets all member variables
  */
-DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS)
+DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::Debug)
 {
     memset(debugBuffer, 0, sizeof(debugBuffer));
     debugMsgIdx = 0;
@@ -225,6 +219,40 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "gpstransmit") == 0) {
 		GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
 	}
+    else if (strcmp(msg, "vent open") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Vent::Open();
+    }
+    else if (strcmp(msg, "vent close") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Vent::Close();
+    }
+    else if (strcmp(msg, "drain open") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Drain::Open();
+    }
+    else if (strcmp(msg, "drain close") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Drain::Close();
+    }
+    else if (strcmp(msg, "vent state") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        if(GPIO::Vent::IsOpen() == 1) {
+            SOAR_PRINT("Vent State : OPEN \n");
+        }
+        else if (GPIO::Vent::IsOpen() == 0) {
+            SOAR_PRINT("Vent State : CLOSED \n");
+        }
+    }
+    else if (strcmp(msg, "drain state") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        if(GPIO::Drain::IsOpen() == 1) {
+            SOAR_PRINT("Drain State : OPEN \n");
+        }
+        else if (GPIO::Drain::IsOpen() == 0) {
+            SOAR_PRINT("Drain State : CLOSED \n");
+        }
+    }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {
@@ -244,23 +272,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
  */
 bool DebugTask::ReceiveData()
 {
-    if(HAL_OK != HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1)) {
-        // Error, attempt to abort the receive to force the UART back into a known state
-        HAL_UART_AbortReceive(SystemHandles::UART_Debug);
-
-        if (HAL_OK != HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1)) {
-            // Error, abort failed, we have no choice but to reset the board
-            HAL_NVIC_SystemReset();
-        }
-    }
-    return true;
+    return kUart_->ReceiveIT(&debugRxChar, this);
 }
 
 /**
  * @brief Receive data to the buffer
  * @return Whether the debugBuffer is ready or not
  */
-void DebugTask::InterruptRxData()
+void DebugTask::InterruptRxData(uint8_t errors)
 {
     // If we already have an unprocessed debug message, ignore this byte
     if (!isDebugMsgReady) {
