@@ -8,6 +8,7 @@
 #include "Mutex.hpp"
 #include "SystemDefines.hpp"
 #include "Utils.hpp"
+#include "semphr.h"
 
 /**
  * @brief Constructor for the Mutex class.
@@ -48,3 +49,21 @@ bool Mutex::Unlock()
     return xSemaphoreGive(rtSemaphoreHandle) == pdTRUE;
 }
 
+/**
+ * @brief This function is used to lock the Mutex. If calling from ISR this must be used
+ * @param timeout_ms The time to wait for the Mutex before it fails. If timeout_ms is not provided, the function will wait indefinitely.
+ * @return True on success, false on failure.
+*/
+bool Mutex::LockFromISR()
+{
+    return xSemaphoreTakeFromISR(rtSemaphoreHandle, NULL);
+}
+
+/**
+ * @brief This function will attempt to unlock the mutex. If calling from ISR this must be used.
+ * @return True on success (mutex unlocked) false in failure (mutex was not unlocked)
+*/
+bool Mutex::UnlockFromISR()
+{
+    return xSemaphoreGiveFromISR(rtSemaphoreHandle, NULL) == pdTRUE;
+}

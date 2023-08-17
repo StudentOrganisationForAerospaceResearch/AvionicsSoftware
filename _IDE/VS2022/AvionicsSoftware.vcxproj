@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Components\Communication\UARTDriver.cpp" />
     <ClCompile Include="..\..\Components\Communication\UARTTask.cpp" />
     <ClCompile Include="..\..\Components\Core\Command.cpp" />
     <ClCompile Include="..\..\Components\Core\DMAController.cpp" />
@@ -26,12 +27,16 @@
     <ClCompile Include="..\..\Components\Core\Queue.cpp" />
     <ClCompile Include="..\..\Components\Core\Task.cpp" />
     <ClCompile Include="..\..\Components\Core\Timer.cpp" />
+    <ClCompile Include="..\..\Components\Flash\Driver\w25qxx.cpp" />
+    <ClCompile Include="..\..\Components\Flash\FlashTask.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\FlightTask.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\RocketSM.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\TelemetryTask.cpp" />
+    <ClCompile Include="..\..\Components\FlightControl\TimerTransitions.cpp" />
     <ClCompile Include="..\..\Components\FlightControl\WatchdogTask.cpp" />
     <ClCompile Include="..\..\Components\main_avionics.cpp" />
     <ClCompile Include="..\..\Components\Sensors\BarometerTask.cpp" />
+    <ClCompile Include="..\..\Components\Sensors\GPSTask.cpp" />
     <ClCompile Include="..\..\Components\Sensors\IMUTask.cpp" />
     <ClCompile Include="..\..\Components\SoarDebug\DebugTask.cpp" />
     <ClCompile Include="..\..\Components\SoarProtocol\DMBProtocolTask.cpp" />
@@ -84,6 +89,7 @@
     <ClCompile Include="AvionicsSoftware.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Components\Communication\Inc\UARTDriver.hpp" />
     <ClInclude Include="..\..\Components\Communication\Inc\UARTTask.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Command.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\DMAController.hpp" />
@@ -91,14 +97,26 @@
     <ClInclude Include="..\..\Components\Core\Inc\Queue.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Task.hpp" />
     <ClInclude Include="..\..\Components\Core\Inc\Timer.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Driver\SPIFlash.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Driver\w25qxx.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Driver\w25qxxConf.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\Flash.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\FlashTask.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\MockFlash.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SafeSimpleDualSectorStorage.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SimpleDualSectorStorage.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SimpleSectorStorage.hpp" />
+    <ClInclude Include="..\..\Components\Flash\Inc\SystemStorage.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\FlightTask.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\RocketSM.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\TelemetryTask.hpp" />
+    <ClInclude Include="..\..\Components\FlightControl\Inc\TimerTransitions.hpp" />
     <ClInclude Include="..\..\Components\FlightControl\Inc\WatchdogTask.hpp" />
     <ClInclude Include="..\..\Components\GPIO.hpp" />
     <ClInclude Include="..\..\Components\main_avionics.hpp" />
     <ClInclude Include="..\..\Components\Sensors\Inc\Data.h" />
     <ClInclude Include="..\..\Components\Sensors\Inc\BarometerTask.hpp" />
+    <ClInclude Include="..\..\Components\Sensors\Inc\GPSTask.hpp" />
     <ClInclude Include="..\..\Components\Sensors\Inc\IMUTask.hpp" />
     <ClInclude Include="..\..\Components\SoarDebug\Inc\DebugTask.hpp" />
     <ClInclude Include="..\..\Components\SoarProtocol\DMBProtocolTask.hpp" />
@@ -645,7 +663,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib;$(SolutionDir)\..\..\Components\SoarProtocol\SoarProto\_C++;$(SolutionDir)\..\..\Components\SoarProtocol\SoarProto;$(SolutionDir)\..\..\Components\SoarProtocol;$(SolutionDir)\..\..\Components\Sensors\Inc;$(SolutionDir)\..\..\Components\SoarDebug\Inc;$(SolutionDir)\..\..\Components;$(SolutionDir)\..\..\Components\_Libraries\embedded-template-library\include;$(SolutionDir)\..\..\Core\Inc;$(SolutionDir)\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;$(SolutionDir)\..\..\Drivers\CMSIS\Include;$(SolutionDir)\..\..\Components\Core\Inc;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\include;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;$(SolutionDir)\..\..\Components\FlightControl\Inc;$(SolutionDir)\..\..\Components\Communication\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;$(SolutionDir)\..\..\Components\Flash\Inc;$(SolutionDir)\..\..\Components\Flash\Driver;$(SolutionDir)\..\..\Components\SoarProtocol\SoarProto\_EmbeddedProtoLib;$(SolutionDir)\..\..\Components\SoarProtocol\SoarProto\_C++;$(SolutionDir)\..\..\Components\SoarProtocol\SoarProto;$(SolutionDir)\..\..\Components\SoarProtocol;$(SolutionDir)\..\..\Components\Sensors\Inc;$(SolutionDir)\..\..\Components\SoarDebug\Inc;$(SolutionDir)\..\..\Components;$(SolutionDir)\..\..\Components\_Libraries\embedded-template-library\include;$(SolutionDir)\..\..\Core\Inc;$(SolutionDir)\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;$(SolutionDir)\..\..\Drivers\CMSIS\Include;$(SolutionDir)\..\..\Components\Core\Inc;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\include;$(SolutionDir)\..\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;$(SolutionDir)\..\..\Components\FlightControl\Inc;$(SolutionDir)\..\..\Components\Communication\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

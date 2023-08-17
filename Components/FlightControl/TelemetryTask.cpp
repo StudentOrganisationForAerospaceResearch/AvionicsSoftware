@@ -13,6 +13,8 @@
 #include "IMUTask.hpp"
 #include "FlightTask.hpp"
 #include "PressureTransducerTask.hpp"
+#include "BatteryTask.hpp"
+#include "GPSTask.hpp"
 
 /**
  * @brief Constructor for TelemetryTask
@@ -20,6 +22,7 @@
 TelemetryTask::TelemetryTask() : Task(TELEMETRY_TASK_QUEUE_DEPTH_OBJS)
 {
     loggingDelayMs = TELEMETRY_DEFAULT_LOGGING_RATE_MS;
+    numNonFlashLogs_ = 0;
 }
 
 /**
@@ -85,23 +88,80 @@ void TelemetryTask::HandleCommand(Command& cm)
  */
 void TelemetryTask::RunLogSequence()
 {
+    // Flight State
+    FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
+
+    // GPIO
 	SendVentDrainStatus();
-	// Barometer
+
+	// Other Sensors
+	RequestSample();
+	RequestTransmit();
+
+	// Request Log to Flash
+	if(++numNonFlashLogs_ >= NUM_SENT_LOGS_PER_FLASH_LOG) {
+	    RequestLogToFlash();
+	    numNonFlashLogs_ = 0;
+	}
+}
+
+/**
+ * @brief Poll requests to each sensor
+ */
+void TelemetryTask::RequestSample()
+{
+    // Battery
+    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+
+    // Barometer
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
-    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
 
     // IMU
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
-    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Pressure Transducer
     PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
-	PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
-
-    // Flight State
-    FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
 }
 
+/**
+ * @brief Requests transmit to each sensor
+ */
+void TelemetryTask::RequestTransmit()
+{
+    // Battery
+    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
+
+    // Barometer
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
+
+    // IMU
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
+
+    // Pressure Transducer
+    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+
+    // GPS
+    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));
+}
+
+/**
+ * @brief Requests log to flash for each sensor that supports it
+ */
+void TelemetryTask::RequestLogToFlash()
+{
+	// Barometer
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_FLASH_LOG));
+
+    // IMU
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_FLASH_LOG));
+
+    // GPS
+    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_FLASH_LOG));
+}
+
+/**
+ * @brief Sends the vent and drain status to the RCU
+ */
 void TelemetryTask::SendVentDrainStatus()
 {
     Proto::TelemetryMessage teleMsg;
@@ -110,13 +170,12 @@ void TelemetryTask::SendVentDrainStatus()
     Proto::CombustionControlStatus gpioMsg;
     gpioMsg.set_drain_open(GPIO::Drain::IsOpen());
     gpioMsg.set_vent_open(GPIO::Vent::IsOpen());
+    gpioMsg.set_mev_power_enable(GPIO::MEV_EN::IsOn());
     teleMsg.set_gpio(gpioMsg);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     teleMsg.serialize(writeBuffer);
 
-
-
     // Send the control message
-    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }

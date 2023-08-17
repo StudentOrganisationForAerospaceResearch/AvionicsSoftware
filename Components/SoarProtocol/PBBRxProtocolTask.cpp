@@ -34,8 +34,9 @@ void PBBRxProtocolTask::InitTask()
 /**
  * @brief Default constructor
  */
-PBBRxProtocolTask::PBBRxProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB, 
-    SystemHandles::UART_PBB,
+PBBRxProtocolTask::PBBRxProtocolTask() : ProtocolTask(
+    Proto::Node::NODE_DMB,
+    UART::Conduit_PBB,
     UART_TASK_COMMAND_SEND_PBB)
 {
 }
@@ -78,7 +79,7 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     }
 
     // Copy the message to the read buffer
-	SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
+	//SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);

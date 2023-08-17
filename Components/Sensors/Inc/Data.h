@@ -1,4 +1,7 @@
-#pragma once
+#ifndef AVIONICS_INCLUDE_SOAR_DATA_H
+#define AVIONICS_INCLUDE_SOAR_DATA_H
+
+#include "SystemDefines.hpp"
 
 /* Structs containing data primitives */
 
@@ -22,19 +25,25 @@ typedef struct
     int32_t     magnetoX_;
     int32_t     magnetoY_;
     int32_t     magnetoZ_;
+    int32_t     time;
 } AccelGyroMagnetismData;
 
 typedef struct
 {
-    osMutexId   mutex_;
     int32_t     pressure_;
     int32_t     temperature_;
+    int32_t     time;
 } BarometerData;
 
 typedef struct
 {
     int32_t     pressure_1;
 } PressureTransducerData;
+
+typedef struct
+{
+    int32_t     voltage_; // Volts * 1000, eg. 3300 == 3.3V
+} BatteryData;
 
 /* GPS Data */
 
@@ -54,7 +63,6 @@ typedef struct
 
 typedef struct
 {
-    osMutexId       mutex_;
     char            buffer_ [NMEA_MAX_LENGTH + 1];
     uint32_t        time_;
     LatLongType     latitude_;
@@ -62,7 +70,6 @@ typedef struct
     AltitudeType    antennaAltitude_;
     AltitudeType    geoidAltitude_;
     AltitudeType    totalAltitude_;
-    uint8_t         parseFlag_;
 } GpsData;
 
 
@@ -77,7 +84,8 @@ typedef struct
     AccelGyroMagnetismData*         accelGyroMagnetismData_;
     BarometerData*                  barometerData_;
     GpsData*                        gpsData_;
-    PressureTransducerData* pressureTransducerData_;
+    PressureTransducerData* 		pressureTransducerData_;
+    BatteryData*       				batteryData_;
 } AllData;
 
 typedef struct
@@ -85,3 +93,5 @@ typedef struct
     AccelGyroMagnetismData* accelGyroMagnetismData_;
     BarometerData*          barometerData_;
 } ParachutesControlData;
+
+#endif //AVIONICS_INCLUDE_SOAR_DATA_H

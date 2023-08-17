@@ -30,12 +30,14 @@
 #include "main_avionics.hpp"  // Main avionics definitions
 #include "Utils.hpp"    // Utility functions
 #include "stm32f4xx_hal.h"
+#include "UARTDriver.hpp"
+
 
 /* Task Definitions ------------------------------------------------------------------*/
 /* - Lower priority number means lower priority task ---------------------------------*/
 
 // FLIGHT PHASE
-constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
+constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 3;            // Priority of the flight task
 constexpr uint8_t FLIGHT_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
 constexpr uint16_t FLIGHT_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
 
@@ -61,8 +63,18 @@ constexpr uint8_t TASK_IMU_PRIORITY = 2;            // Priority of the barometer
 constexpr uint8_t TASK_IMU_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
 constexpr uint16_t TASK_IMU_STACK_DEPTH_WORDS = 512;        // Size of the barometer task stack
 
+// GPS TASK
+constexpr uint8_t TASK_GPS_PRIORITY = 2;            // Priority of the barometer task
+constexpr uint8_t TASK_GPS_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
+constexpr uint16_t TASK_GPS_STACK_DEPTH_WORDS = 768;        // Size of the barometer task stack
+
+// FLASH Task
+constexpr uint8_t FLASH_TASK_RTOS_PRIORITY = 2;            // Priority of the flash task
+constexpr uint8_t FLASH_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flash task queue
+constexpr uint16_t FLASH_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flash task stack
+
 // WATCHDOG Task
-constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 2;            // Priority of the watchdog task
+constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 3;            // Priority of the watchdog task
 constexpr uint8_t WATCHDOG_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the watchdog task queue
 constexpr uint16_t WATCHDOG_TASK_STACK_DEPTH_WORDS = 512;        // Size of the watchdog task stack
 
@@ -72,17 +84,36 @@ constexpr uint8_t HDI_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the HDI task
 constexpr uint16_t HDI_TASK_STACK_DEPTH_WORDS = 256;        // Size of the HDI task stack
 
 // TELEMETRY Task
-constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
-constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
-constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
+constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 2;            // Priority of the telemetry task
+constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the telemetry task queue
+constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the telemetry task stack
 
 // PRESSURE TRANSDUCER TASK
 constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 2;			// Priority of the pressure transducer task
 constexpr uint8_t TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
 constexpr uint16_t TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
 
-constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 1000; // Default logging delay for telemetry task
+// BATTERY VOLTAGE Task
+constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 2;            // Priority of the battery voltage task
+constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the battery voltage task queue
+constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the battery voltage task stack
 
+constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 500; // Default logging delay for telemetry task
+constexpr uint32_t TELEMETRY_MINIMUM_LOG_PERIOD_MS = 50; // (1000/50 = 20hz) The minimum log period / max log rate
+
+/* Flash Addresses ------------------------------------------------------------------*/
+// Start of the system storage area (spans 2 sectors)
+// Holds previous Rocket State, and other low-frequency state information
+constexpr uint32_t SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR = 0x0000;
+// Start of the launch key storage area (spans 1 sector)
+// Always empty until launch, then filled with the launch key which
+// changes the 'backup default state' to prevent accidental venting during flight
+constexpr uint32_t SPI_FLASH_SYSTEM_SSS_LAUNCH_KEY_ADDR = 0x6000;
+// Start of the offsets storage area (spans 2 sectors)
+// Holds the storage offsets for writing to flash, and other general medium-frequency state information
+constexpr uint32_t SPI_FLASH_OFFSETS_SDSS_START_ADDR = 0x8000;
+// Start of the telemetry logging storage area (spans the rest of the flash)
+constexpr uint32_t SPI_FLASH_LOGGING_STORAGE_START_ADDR = 0xA000;
 
 /* System Defines ------------------------------------------------------------------*/
 /* - Each define / constexpr must have a comment explaining what it is used for     */
@@ -100,7 +131,7 @@ constexpr uint16_t DEBUG_PRINT_MAX_SIZE = 192;            // Max size in bytes o
 constexpr uint16_t ASSERT_BUFFER_MAX_SIZE = 160;        // Max size in bytes of assert buffers (assume x2 as we have two message segments)
 constexpr uint16_t ASSERT_SEND_MAX_TIME_MS = 250;        // Max time the assert fail is allowed to wait to send header and message to HAL (will take up to 2x this since it sends 2 segments)
 constexpr uint16_t ASSERT_TAKE_MAX_TIME_MS = 500;        // Max time in ms to take the assert semaphore
-constexpr UART_HandleTypeDef* const DEFAULT_ASSERT_UART_HANDLE = SystemHandles::UART_Debug;    // UART Handle that ASSERT messages are sent over
+constexpr UARTDriver* const DEFAULT_ASSERT_UART_DRIVER = UART::Debug;    // UART Handle that ASSERT messages are sent over
 
 /* System Functions ------------------------------------------------------------------*/
 //- Any system functions with an implementation here should be inline, and inline for a good reason (performance)

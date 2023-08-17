@@ -9,6 +9,9 @@
 #include "SystemDefines.hpp"
 #include "DMBProtocolTask.hpp"
 #include "TimerTransitions.hpp"
+#include "SPIFlash.hpp"
+#include "SystemStorage.hpp"
+#include "RocketSM.hpp"
 
 /**
  * @brief Constructor for FlightTask
@@ -43,9 +46,35 @@ void FlightTask::InitTask()
  */
 void FlightTask::Run(void * pvParams)
 {
-	//TODO: This should probably be true for enter state, although this behavior is dictated by flash state recovery
-    rsm_ = new RocketSM(RS_ABORT, false);
+    //Initialize SPI Flash
+    SPIFlash::Inst().Init();
+
+    //Initialize the Timer Transitions
     TimerTransitions::Inst().Setup();
+
+    //Get the latest state from the system storage
+    SystemState sysState;
+    bool stateReadSuccess = SystemStorage::Inst().Read(sysState);
+
+    if (stateReadSuccess == true) {
+        // Succeded to read state, initialize the rocket state machine
+
+        // Make sure we start in a valid state, if the state is invalid then ABORT
+        if(sysState.rocketState >= RS_NONE || sysState.rocketState < RS_PRELAUNCH)
+        {
+            sysState.rocketState = RS_ABORT;
+        }
+
+        rsm_ = new RocketSM(sysState.rocketState, true);
+    }
+    else {
+        // Failed to read state, start in default state
+        //TODO: Should implement a backup SimpleSectorStorage that is written to/read only once
+        //TODO: where after the LAUNCH state, the default state becomes RS_COAST (or whatever is safest)
+        //TODO: based on a unique key being written to the SSStorage
+        rsm_ = new RocketSM(RS_ABORT, true);
+    }
+
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task
