@@ -39,7 +39,6 @@ Mutex Global::vaListMutex;
 */
 void run_main() {
     // Init Tasks
-    osDelay(500);  // TODO: Get rid of this if possible??
     WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
