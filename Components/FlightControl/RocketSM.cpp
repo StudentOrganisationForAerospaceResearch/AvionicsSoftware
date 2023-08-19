@@ -48,7 +48,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
     }
 
     SOAR_PRINT("Rocket State Machine Started in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()));
-        
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
 }
 
 /**

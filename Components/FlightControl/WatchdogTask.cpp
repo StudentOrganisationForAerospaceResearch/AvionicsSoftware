@@ -79,6 +79,7 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
 {
     switch (taskCommand) {
     case RADIOHB_REQUEST:
+        GPIO::LED2::Toggle();
         SOAR_PRINT("HEARTBEAT RECEIVED \n");
         heartbeatTimer->ResetTimerAndStart();
         break;
@@ -106,13 +107,8 @@ void WatchdogTask::Run(void * pvParams)
     heartbeatTimer->Start();
 
     while (1) {
-        //TODO: Move into HID Task
-        GPIO::LED1::On();
-        GPIO::LED2::On();
         GPIO::LED3::On();
         osDelay(500);
-        GPIO::LED1::Off();
-        GPIO::LED2::Off();
         GPIO::LED3::Off();
         osDelay(500);
 
