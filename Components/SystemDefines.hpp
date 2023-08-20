@@ -66,7 +66,7 @@ constexpr uint16_t TASK_IMU_STACK_DEPTH_WORDS = 512;        // Size of the barom
 // GPS TASK
 constexpr uint8_t TASK_GPS_PRIORITY = 2;            // Priority of the barometer task
 constexpr uint8_t TASK_GPS_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
-constexpr uint16_t TASK_GPS_STACK_DEPTH_WORDS = 768;        // Size of the barometer task stack
+constexpr uint16_t TASK_GPS_STACK_DEPTH_WORDS = 896;        // Size of the barometer task stack
 
 // FLASH Task
 constexpr uint8_t FLASH_TASK_RTOS_PRIORITY = 2;            // Priority of the flash task
