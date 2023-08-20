@@ -26,6 +26,7 @@
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
 #include "FlashTask.hpp"
+#include "HDITask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -252,6 +253,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         else if (GPIO::Drain::IsOpen() == 0) {
             SOAR_PRINT("Drain State : CLOSED \n");
         }
+    }
+    else if(strcmp(msg, "mute") == 0) {
+        HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::MUTE));
+    }
+    else if(strcmp(msg, "unmute") == 0) {
+        HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::UNMUTE));
     }
     else {
         // Single character command, or unknown command

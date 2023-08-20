@@ -24,6 +24,7 @@
 #include "IMUTask.hpp"
 #include "DMBProtocolTask.hpp"
 #include "WatchdogTask.hpp"
+#include "HDITask.hpp"
 #include "TelemetryTask.hpp"
 #include "PBBRxProtocolTask.hpp"
 #include "PressureTransducerTask.hpp"
@@ -45,6 +46,7 @@ void run_main() {
     DebugTask::Inst().InitTask();
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
+    HDITask::Inst().InitTask();
     DMBProtocolTask::Inst().InitTask();
     PBBRxProtocolTask::Inst().InitTask();
     TelemetryTask::Inst().InitTask();
