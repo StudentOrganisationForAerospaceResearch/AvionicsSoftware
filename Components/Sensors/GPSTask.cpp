@@ -220,8 +220,8 @@ void GPSTask::TransmitProtocolData()
     lat.set_minutes(data->latitude_.minutes_);
 
     Proto::LatLong lon;
-    lat.set_degrees(data->longitude_.degrees_);
-    lat.set_minutes(data->longitude_.minutes_);
+    lon.set_degrees(data->longitude_.degrees_);
+    lon.set_minutes(data->longitude_.minutes_);
 
     Proto::AltitudeType antAltitude;
     antAltitude.set_altitude(data->antennaAltitude_.altitude_);
