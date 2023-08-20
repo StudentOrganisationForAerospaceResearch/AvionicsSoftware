@@ -9,6 +9,7 @@
 #include "ReadBufferFixedSize.h"
 #include "TelemetryMessage.hpp"
 #include "UARTTask.hpp"
+#include "MEVManager.hpp"
 
 /**
  * @brief Initialize the PBBRxProtocolTask
@@ -76,10 +77,9 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     // Prints for specific message contents
     if(msg.has_mevstate()) {
     	SOAR_PRINT("PROTO-MEV-STATE: %d\n", msg.get_mevstate().get_mev_open());
-    }
+    	MEVManager::HandleMEVTelemetry(msg);
 
-    // Copy the message to the read buffer
-	//SOAR_PRINT("PROTO-INFO: Received PBB Rx Telemetry Message\n");
+    }
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
