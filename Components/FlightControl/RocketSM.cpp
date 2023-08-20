@@ -14,6 +14,7 @@
 #include "GPIO.hpp"
 #include "FlashTask.hpp"
 #include "WatchdogTask.hpp"
+#include "MEVManager.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -237,7 +238,7 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_MEV_CLOSE:
-        PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+        MEVManager::CloseMEV();
         break;
     case RSC_POWER_TRANSITION_EXTERNAL:
         GPIO::PowerSelect::UmbilicalPower();
@@ -557,8 +558,8 @@ RocketState Launch::OnEnter()
 
     //TODO: Disable Heartbeat Check ???
 	
-	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
-	TimerTransitions::Inst().BurnSequence(); //TODO: Make sure timer transitions are setup before calling this!
+	MEVManager::OpenMEV();
+	TimerTransitions::Inst().BurnSequence();
     return rsStateID;
 }
 
@@ -1001,10 +1002,10 @@ RocketState Test::HandleCommand(Command& cm)
             nextStateID = RS_PRELAUNCH;
             break;
         case RSC_TEST_MEV_OPEN: // Send the open command without enable
-            PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+            MEVManager::OpenMEV(); 
             break;
         case RSC_MEV_CLOSE: // Send the close command without enable
-            PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+            MEVManager::CloseMEV();
             break;
         case RSC_TEST_MEV_ENABLE:
             GPIO::MEV_EN::On();
