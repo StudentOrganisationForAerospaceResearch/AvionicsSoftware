@@ -13,6 +13,7 @@
 #include "stm32f4xx_hal_uart.h"
 #include "Mutex.hpp"
 #include "Command.hpp"
+#include "UARTDriver.hpp"
 
 // Tasks
 #include "UARTTask.hpp"
@@ -23,6 +24,7 @@
 #include "IMUTask.hpp"
 #include "DMBProtocolTask.hpp"
 #include "WatchdogTask.hpp"
+#include "HDITask.hpp"
 #include "TelemetryTask.hpp"
 #include "PBBRxProtocolTask.hpp"
 #include "PressureTransducerTask.hpp"
@@ -31,20 +33,20 @@
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
- 
+
 /* Interface Functions ------------------------------------------------------------*/
 /**
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
 */
 void run_main() {
     // Init Tasks
-    osDelay(500);  // TODO: Get rid of this if possible??
     WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
     DebugTask::Inst().InitTask();
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
+    HDITask::Inst().InitTask();
     DMBProtocolTask::Inst().InitTask();
     PBBRxProtocolTask::Inst().InitTask();
     TelemetryTask::Inst().InitTask();
@@ -161,7 +163,7 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
         }
 
         // Output the header to the debug port
-        HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, header_buf, strlen(reinterpret_cast<char*>(header_buf)), ASSERT_SEND_MAX_TIME_MS);
+        DEFAULT_ASSERT_UART_DRIVER->Transmit(header_buf, strlen(reinterpret_cast<char*>(header_buf)));
 
         // If we have a message, and can use VA list, extract the string into a new buffer, and null terminate it
         if (printMessage && str != nullptr) {
@@ -172,13 +174,13 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
             va_end(argument_list);
             if (buflen > 0) {
                 str_buffer[buflen] = '\0';
-                HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, str_buffer, buflen, ASSERT_SEND_MAX_TIME_MS);
+                DEFAULT_ASSERT_UART_DRIVER->Transmit(str_buffer, buflen);
             }
         }
     }
     else {
         //TODO: Should manually print out the assertion header
-        HAL_UART_Transmit(DEFAULT_ASSERT_UART_HANDLE, (uint8_t*)"-- ASSERTION FAILED --\r\nCould not acquire vaListMutex\r\n", 55, ASSERT_SEND_MAX_TIME_MS);
+        DEFAULT_ASSERT_UART_DRIVER->Transmit((uint8_t*)"-- ASSERTION FAILED --\r\nCould not acquire vaListMutex\r\n", 55);
     }
 
     HAL_NVIC_SystemReset();

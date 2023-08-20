@@ -10,6 +10,8 @@
 #include "WatchdogTask.hpp"
 #include "FlightTask.hpp"
 
+/* Macros/Enums ------------------------------------------------------------*/
+constexpr uint32_t HEARTBEAT_TIMER_PERIOD_MS = 20 * 60 * 1000;
 
 /**
  * @brief Constructor for WatchdogTask
@@ -77,6 +79,7 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
 {
     switch (taskCommand) {
     case RADIOHB_REQUEST:
+        GPIO::LED2::Toggle();
         SOAR_PRINT("HEARTBEAT RECEIVED \n");
         heartbeatTimer->ResetTimerAndStart();
         break;
@@ -100,17 +103,12 @@ void WatchdogTask::Run(void * pvParams)
     GPIO::LED1::Off();
 
     heartbeatTimer = new Timer(HeartbeatFailureCallback);
-    heartbeatTimer->ChangePeriodMs(5000);
+    heartbeatTimer->ChangePeriodMs(HEARTBEAT_TIMER_PERIOD_MS);
     heartbeatTimer->Start();
 
     while (1) {
-        //TODO: Move into HID Task
-        GPIO::LED1::On();
-        GPIO::LED2::On();
         GPIO::LED3::On();
         osDelay(500);
-        GPIO::LED1::Off();
-        GPIO::LED2::Off();
         GPIO::LED3::Off();
         osDelay(500);
 

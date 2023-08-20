@@ -6,9 +6,11 @@
 */
 #include "DMBProtocolTask.hpp"
 
+#include "FlashTask.hpp"
 #include "FlightTask.hpp"
 #include "ReadBufferFixedSize.h"
 #include "WatchdogTask.hpp"
+#include "TelemetryTask.hpp"
 
 /**
  * @brief Initialize the DMBProtocolTask
@@ -34,7 +36,10 @@ void DMBProtocolTask::InitTask()
 /**
  * @brief Default constructor
  */
-DMBProtocolTask::DMBProtocolTask() : ProtocolTask(Proto::Node::NODE_DMB)
+DMBProtocolTask::DMBProtocolTask() : ProtocolTask(
+        Proto::Node::NODE_DMB,
+        UART::Radio,
+        UART_TASK_COMMAND_SEND_RADIO)
 {
 }
 
@@ -151,6 +156,33 @@ void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
         EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuf;
         ackResponse.serialize(writeBuf);
         DMBProtocolTask::SendProtobufMessage(writeBuf, Proto::MessageID::MSG_CONTROL);
+    }
+    else if(msg.has_sys_ctrl()) {
+		// This is a system command, handle it
+	    if (msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_FLASH_LOG_ENABLE)
+	    {
+            // TODO
+	    }
+        else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_FLASH_LOG_DISABLE)
+        {
+            // TODO
+        }
+        else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_RESET)
+        {
+			// This is a request to reset the system
+            SOAR_ASSERT(false, "System reset requested!");
+        }
+        else if (msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_CRITICAL_FLASH_FULL_ERASE)
+        {
+            // This is a request that will erase all flash memory, and cause the flash task to stall!
+            FlashTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, ERASE_ALL_FLASH));
+        }
+        else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_LOG_PERIOD_CHANGE)
+        {
+            uint32_t paramMs = msg.get_sys_ctrl().get_cmd_param();
+            paramMs = (paramMs > 0xFFFF) ? 0xFFFE : paramMs;
+            TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, paramMs));
+        }
     }
 }
 

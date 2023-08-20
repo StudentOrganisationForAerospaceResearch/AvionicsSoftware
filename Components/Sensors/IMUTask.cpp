@@ -110,6 +110,9 @@ void IMUTask::InitTask()
  */
 void IMUTask::Run(void* pvParams)
 {
+    //Delay before IMU init
+    osDelay(100);
+
     //Setup the IMU
     SetupIMU();
 
@@ -165,6 +168,9 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case IMU_REQUEST_TRANSMIT:
         TransmitProtocolData();
+        LogDataToFlash();
+        break;
+    case IMU_REQUEST_FLASH_LOG:
         LogDataToFlash();
         break;
     case IMU_REQUEST_DEBUG:

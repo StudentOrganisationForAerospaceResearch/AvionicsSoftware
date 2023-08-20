@@ -6,12 +6,14 @@
 */
 #include "RocketSM.hpp"
 #include "SystemDefines.hpp"
+#include "HDITask.hpp"
 #include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
 #include "WriteBufferFixedSize.h"
 #include "TimerTransitions.hpp"
 #include "GPIO.hpp"
 #include "FlashTask.hpp"
+#include "WatchdogTask.hpp"
 #include "MEVManager.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
@@ -33,6 +35,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
     stateArray[RS_TEST] = new Test();
 
     // Verify all states are initialized AND state IDs are consistent
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, RS_ABORT));
     for (uint8_t i = 0; i < RS_NONE; i++) {
         SOAR_ASSERT(stateArray[i] != nullptr);
         SOAR_ASSERT(stateArray[i]->GetStateID() == i);
@@ -46,7 +49,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
     }
 
     SOAR_PRINT("Rocket State Machine Started in [ %s ] state\n", BaseRocketState::StateToString(rs_currentState->GetStateID()));
-        
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
 }
 
 /**
@@ -75,6 +78,7 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     // Assert the next state is initalized
     SOAR_ASSERT(rs_currentState != nullptr, "rs_currentState is nullptr in TransitionState");
 
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
     // Enter the current state
     rs_currentState->OnEnter();
 
@@ -128,7 +132,7 @@ Proto::RocketState RocketSM::GetRocketStateAsProto()
     case RS_BURN:
         return Proto::RocketState::RS_BURN;
     case RS_COAST:
-        return Proto::RocketState::RS_PRELAUNCH;
+        return Proto::RocketState::RS_COAST;
     case RS_DESCENT:
         return Proto::RocketState::RS_DESCENT;
     case RS_RECOVERY:
@@ -238,7 +242,7 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         break;
     case RSC_POWER_TRANSITION_EXTERNAL:
         GPIO::PowerSelect::UmbilicalPower();
-        SOAR_PRINT("Switched to umbillical power in [ %s ] state\n", StateToString(currentState));
+        SOAR_PRINT("Switched to umbilical power in [ %s ] state\n", StateToString(currentState));
         //TODO: we should check to make sure umbilical power is available before doing so
         break;
     case RSC_POWER_TRANSITION_ONBOARD:
@@ -514,6 +518,9 @@ RocketState Ignition::HandleCommand(Command& cm)
         //case RSC_MANUAL_IGNITION_CONFIRMED:
         //    TimerTransitions::Inst().ManualLaunch();
         //    break;
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
+            break;
         default:
             break;
         }
@@ -579,6 +586,9 @@ RocketState Launch::HandleCommand(Command& cm)
         switch (cm.GetTaskCommand()) {
         case RSC_LAUNCH_TO_BURN:
             nextStateID = RS_BURN;
+            break;
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
             break;
         default:
             break;
@@ -656,6 +666,9 @@ RocketState Burn::HandleCommand(Command& cm)
         case RSC_BURN_TO_COAST:
             nextStateID = RS_COAST;
             break;
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
+            break;
         default:
             break;
         }
@@ -721,6 +734,9 @@ RocketState Coast::HandleCommand(Command& cm)
         switch (cm.GetTaskCommand()) {
         case RSC_COAST_TO_DESCENT:
             nextStateID = RS_DESCENT;
+            break;
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
             break;
         default:
             break;
@@ -790,6 +806,9 @@ RocketState Descent::HandleCommand(Command& cm)
         switch (cm.GetTaskCommand()) {
         case RSC_DESCENT_TO_RECOVERY:
             nextStateID = RS_RECOVERY;
+            break;
+        case RSC_GOTO_PRELAUNCH:
+            nextStateID = RS_PRELAUNCH;
             break;
         default:
             break;
@@ -902,7 +921,7 @@ RocketState Abort::OnEnter()
  */
 RocketState Abort::OnExit()
 {
-
+    WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     return rsStateID;
 }
 
@@ -995,12 +1014,12 @@ RocketState Test::HandleCommand(Command& cm)
             GPIO::MEV_EN::Off();
             break;
         default:
+            nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;
         }
         break;
     }
     default:
-        nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
         break;
     }
 

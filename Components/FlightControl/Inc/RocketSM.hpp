@@ -86,16 +86,21 @@ enum RocketControlCommands
     //-- IGNITION --
     RSC_IGNITION_TO_LAUNCH,   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
     //RSC_GOTO_ARM,      // Non-confirm igniter actuation - Transition back to ARM state   
+    //RSC_GOTO_PRELAUNCH -- ABORT SEQUENCE
 
     //-- LAUNCH --
     // * These flight sequence commands can be replaced with direct calls to transition state IF possible
     RSC_LAUNCH_TO_BURN, // Internal command, should not be triggered externally
+    //RSC_GOTO_PRELAUNCH -- ABORT SEQUENCE
     //-- BURN --
     RSC_BURN_TO_COAST, // Internal command, should not be triggered externally
+    //RSC_GOTO_PRELAUNCH -- ABORT SEQUENCE
     //-- COAST --
     RSC_COAST_TO_DESCENT, // Internal command, should not be triggered externally
+    //RSC_GOTO_PRELAUNCH -- ABORT SEQUENCE
     //-- DESCENT --
     RSC_DESCENT_TO_RECOVERY, // Internal command, should not be triggered externally
+    //RSC_GOTO_PRELAUNCH -- ABORT SEQUENCE
 
     //-- ABORT --
     //RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state

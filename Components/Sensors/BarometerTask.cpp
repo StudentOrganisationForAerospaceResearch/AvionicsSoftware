@@ -141,6 +141,9 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         TransmitProtocolBaroData();
         LogDataToFlash();
         break;
+    case BARO_REQUEST_FLASH_LOG:
+        LogDataToFlash();
+		break;
     case BARO_REQUEST_DEBUG:
         SOAR_PRINT("\t-- Barometer Data --\n");
         SOAR_PRINT(" Temp (C)       : %d.%d\n", data->temperature_ / 100, data->temperature_ % 100);
