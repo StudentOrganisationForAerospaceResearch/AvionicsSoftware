@@ -139,7 +139,6 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case BARO_REQUEST_TRANSMIT:
         TransmitProtocolBaroData();
-        LogDataToFlash();
         break;
     case BARO_REQUEST_FLASH_LOG:
         LogDataToFlash();
