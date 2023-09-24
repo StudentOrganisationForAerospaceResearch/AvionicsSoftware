@@ -67,7 +67,7 @@ namespace GPIO
 		inline void Open() {}
 		inline void Close() {}
 
-		inline bool IsOpen() { return HAL_GPIO_ReadPin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin) == GPIO_PIN_RESET; }
+		inline bool IsOpen() { return false; }
 	}
 
 	namespace PowerSelect

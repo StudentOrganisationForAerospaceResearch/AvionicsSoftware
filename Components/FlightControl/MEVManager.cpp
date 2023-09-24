@@ -16,7 +16,7 @@ void MEVManager::CloseMEV() {
 }
 
 bool MEVManager::IsMevOpen() {
-	return (shouldMevBeOpen == OPEN);
+    return HAL_GPIO_ReadPin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin) == GPIO_PIN_RESET;
 }
 
 void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {
