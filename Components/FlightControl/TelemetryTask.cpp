@@ -15,6 +15,7 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+#include "MEVManager.hpp"
 
 /**
  * @brief Constructor for TelemetryTask
@@ -93,6 +94,9 @@ void TelemetryTask::RunLogSequence()
 
     // GPIO
 	SendVentDrainStatus();
+
+	// MEV
+	SendMevStatus();
 
 	// Other Sensors
 	RequestSample();
@@ -177,5 +181,24 @@ void TelemetryTask::SendVentDrainStatus()
     teleMsg.serialize(writeBuffer);
 
     // Send the control message
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+}
+
+/**
+ * @brief Send the MEV status
+ */
+void TelemetryTask::SendMevStatus()
+{
+    Proto::TelemetryMessage msg;
+    msg.set_source(Proto::Node::NODE_DMB);
+    msg.set_target(Proto::Node::NODE_RCU);
+    Proto::MEVState mevStateInfo;
+    mevStateInfo.set_mev_open(MEVManager::IsMevOpen());
+    msg.set_mevstate(mevStateInfo);
+
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    msg.serialize(writeBuffer);
+
+    // Send the barometer data
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }

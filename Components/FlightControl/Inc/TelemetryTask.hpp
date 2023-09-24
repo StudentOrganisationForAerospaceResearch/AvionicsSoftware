@@ -35,6 +35,7 @@ protected:
     void RequestLogToFlash();
 
     void SendVentDrainStatus();
+    void SendMevStatus();
 
 
 private:

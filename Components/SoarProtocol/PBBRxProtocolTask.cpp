@@ -76,8 +76,8 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
 
     // Prints for specific message contents
     if(msg.has_mevstate()) {
-    	SOAR_PRINT("PROTO-MEV-STATE: %d\n", msg.get_mevstate().get_mev_open());
-    	MEVManager::HandleMEVTelemetry(msg);
+    	SOAR_PRINT("PBB-MEV Dropped - PBB does not control MEV\r\n");
+    	return;
 
     }
 
