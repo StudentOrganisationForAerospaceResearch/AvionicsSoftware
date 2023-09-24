@@ -1,28 +1,25 @@
 #include "MEVManager.hpp"
 #include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
+#include "main.h"
 
 MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
 
 void MEVManager::OpenMEV() {
     shouldMevBeOpen = OPEN;
-    PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+    HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_RESET);
 }
 
 void MEVManager::CloseMEV() {
     shouldMevBeOpen = CLOSE;
-    PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+    HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_SET);
+}
+
+bool MEVManager::IsMevOpen() {
+	return (shouldMevBeOpen == OPEN);
 }
 
 void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {
-    if (shouldMevBeOpen == INDETERMINATE || !msg.has_mevstate()) {
-        // Do nothing
-        return;
-    }
-
-    if (!msg.mevstate().mev_open() && shouldMevBeOpen == OPEN) {
-        OpenMEV();
-    } else if (msg.mevstate().mev_open() && shouldMevBeOpen == CLOSE) {
-        CloseMEV();
-    }
+    // The current version of the MEV manager does not run this
+	return;
 }

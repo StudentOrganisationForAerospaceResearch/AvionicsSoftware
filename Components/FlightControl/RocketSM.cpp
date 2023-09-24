@@ -556,9 +556,9 @@ RocketState Launch::OnEnter()
     GPIO::Drain::Close();
     GPIO::MEV_EN::On();
 
-    //TODO: Disable Heartbeat Check ???
-	
+    // Assert the MEV is open
 	MEVManager::OpenMEV();
+
 	TimerTransitions::Inst().BurnSequence();
     return rsStateID;
 }
@@ -631,6 +631,9 @@ RocketState Burn::OnEnter()
     // Assert vent/drain state
     GPIO::Vent::Close();
     GPIO::Drain::Close();
+
+    // Assert the MEV is open
+    MEVManager::OpenMEV();
 
     // Turn off the MEV power
     //TODO: Make sure the MEV is fully open before turning off power!
@@ -706,6 +709,9 @@ RocketState Coast::OnEnter()
     // Assert MEV power
     GPIO::MEV_EN::Off();
 
+    // Assert the MEV is open
+    MEVManager::OpenMEV();
+
     // Start Descent Transition Timer (~25 seconds) : Should be well after apogee
 	TimerTransitions::Inst().DescentSequence();
     return rsStateID;
@@ -774,6 +780,9 @@ RocketState Descent::OnEnter()
 
     // Assert MEV power
     GPIO::MEV_EN::Off();
+
+    // Assert the MEV is open
+    MEVManager::OpenMEV();
 
     SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
     SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(rsStateID));
@@ -848,6 +857,14 @@ RocketState Recovery::OnEnter()
     // Make sure MEV power is off
     GPIO::MEV_EN::Off();
     
+    // Assert the MEV is open
+    MEVManager::OpenMEV();
+
+    // Avoid an automatic transition out of recovery, disable the heartbeat
+    // Note: the heartbeat MUST be re-enabled on exit
+    WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
+
+
     //TODO: Consider adding periodic AUTO-VENT timers every 100 seconds to make sure they're open)
     //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
     //TODO: Decrease log rate to 1 Hz - StorageManager should automatically stop logging after it gets near full
@@ -861,6 +878,7 @@ RocketState Recovery::OnEnter()
  */
 RocketState Recovery::OnExit()
 {
+    WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     return rsStateID;
 }
 
@@ -911,6 +929,8 @@ RocketState Abort::OnEnter()
 	GPIO::Vent::Open();
 	GPIO::Drain::Open();
     GPIO::MEV_EN::Off();
+
+    // Assert MEV is <??>
 
     return rsStateID;
 }

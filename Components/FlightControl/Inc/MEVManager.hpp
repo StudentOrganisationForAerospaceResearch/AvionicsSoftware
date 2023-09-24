@@ -22,8 +22,14 @@ public:
     static void OpenMEV();
     static void CloseMEV();
     static void HandleMEVTelemetry(Proto::TelemetryMessage& msg);
+    static bool IsMevOpen();
+
+    static inline void EnableMev() { isMevEnabled = true; }
+    static inline void DisableMev() { isMevEnabled = false; }
+    static inline bool IsMevEnabled() { return isMevEnabled; }
 
 private:
+    static bool isMevEnabled;
     static MEVState shouldMevBeOpen;
 };
 

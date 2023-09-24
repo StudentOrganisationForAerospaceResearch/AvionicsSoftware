@@ -30,6 +30,7 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+#include "MEVManager.hpp"
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
@@ -39,6 +40,9 @@ Mutex Global::vaListMutex;
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
 */
 void run_main() {
+	// On boot, assert the MEV is closed
+	MEVManager::CloseMEV();
+
     // Init Tasks
     WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();

@@ -46,9 +46,9 @@ namespace GPIO
 
     namespace MEV_EN
     {
-        inline void On() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_SET); }
-        inline void Off() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_RESET); }
-        inline void Toggle() { HAL_GPIO_TogglePin(LAUNCH_GPIO_Port, LAUNCH_Pin); }
+        inline void On() {}
+        inline void Off() {}
+        inline void Toggle() {}
 
         inline bool IsOn() { return HAL_GPIO_ReadPin(LAUNCH_GPIO_Port, LAUNCH_Pin) == GPIO_PIN_SET; }
     }
@@ -64,11 +64,11 @@ namespace GPIO
 
 	namespace Drain
 	{
-		inline void Open() { HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_RESET); }
-		inline void Close() { HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_SET); }
+		inline void Open() {}
+		inline void Close() {}
 
 		inline bool IsOpen() { return HAL_GPIO_ReadPin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin) == GPIO_PIN_RESET; }
-	}	
+	}
 
 	namespace PowerSelect
 	{
