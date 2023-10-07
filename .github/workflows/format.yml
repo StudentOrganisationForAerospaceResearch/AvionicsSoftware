@@ -1,0 +1,26 @@
+name: Format code
+
+on:
+    push:
+        branches-ignore:
+            - '*'
+
+jobs:
+    format:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v2
+          - name: Install clang-format
+            run: sudo apt-get install -y clang-format
+          - name: Format code
+            run: python3 clang-format-hook.py
+          - name: Commit changes
+            run: |
+                git config --local user.email "action@github.com"
+                git config --local user.name "GitHub Action"
+                git commit -a -m "Format code"
+          - name: Push changes
+            uses: ad-m/github-push-action@master
+            with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
