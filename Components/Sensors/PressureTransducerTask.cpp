@@ -45,16 +45,16 @@ PressureTransducerTask::PressureTransducerTask() : Task(TASK_PRESSURE_TRANSDUCER
 /**
  * @brief Creates a task for the FreeRTOS Scheduler
  */
-void PressureTransducerTask::InitTask()
+                        void PressureTransducerTask::InitTask()
 {
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize PT task twice");
 
     // Start the task
-    BaseType_t rtValue =
-        xTaskCreate((TaskFunction_t)PressureTransducerTask::RunTask,
-            (const char*)"PTTask",
-            (uint16_t)TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS,
+        BaseType_t rtValue =
+          xTaskCreate((TaskFunction_t)PressureTransducerTask::RunTask,
+                (const char*)"PTTask",
+                                (uint16_t)TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS,
             (void*)this,
             (UBaseType_t)TASK_PRESSURE_TRANSDUCER_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
