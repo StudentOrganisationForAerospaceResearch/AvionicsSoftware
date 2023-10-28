@@ -3,7 +3,4 @@ repos:
         rev: 9ad5e433509165c2986659de5a84047dea0d2c70
         hooks:
         -   id: clang-format
-            #name: Clang-format
-            entry: python3 clang-format-hook.py
-            language: system
             files: '/Components/.*\.(c|h|cpp|hpp)$'
