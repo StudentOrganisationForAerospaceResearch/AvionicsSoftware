@@ -6,4 +6,4 @@ repos:
             name: Clang-format
             entry: python3 clang-format-hook.py
             language: system
-            files: /Components/
+            files: '/Components/.*\.(c|h|cpp|hpp)$'
