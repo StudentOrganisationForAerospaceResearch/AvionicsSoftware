@@ -1,0 +1,9 @@
+repos:
+    -   repo: https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware
+        rev: d3b55eb04511bf8b2d5ea3fb2d51fbd1329d9e81
+        hooks:
+        -   id: .clang-format
+            name: Clang-format
+            entry: python3 clang-format-hook.py
+            language: system
+            files: /Components/
