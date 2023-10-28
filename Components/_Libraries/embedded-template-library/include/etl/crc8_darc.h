@@ -37,43 +37,38 @@ SOFTWARE.
 ///\defgroup darc 8 bit CRC calculation
 ///\ingroup crc
 
-namespace etl
-{
+namespace etl {
 #if ETL_USING_CPP11 && !defined(ETL_CRC_FORCE_CPP03_IMPLEMENTATION)
-  template <size_t Table_Size>
-  using crc8_darc_t = etl::crc_type<etl::private_crc::crc8_darc_parameters, Table_Size>;
+template <size_t Table_Size>
+using crc8_darc_t =
+    etl::crc_type<etl::private_crc::crc8_darc_parameters, Table_Size>;
 #else
-  template <size_t Table_Size>
-  class crc8_darc_t : public etl::crc_type<etl::private_crc::crc8_darc_parameters, Table_Size>
-  {
-  public:
+template <size_t Table_Size>
+class crc8_darc_t
+    : public etl::crc_type<etl::private_crc::crc8_darc_parameters, Table_Size> {
+ public:
+  //*************************************************************************
+  /// Default constructor.
+  //*************************************************************************
+  crc8_darc_t() { this->reset(); }
 
-    //*************************************************************************
-    /// Default constructor.
-    //*************************************************************************
-    crc8_darc_t()
-    {
-      this->reset();
-    }
-
-    //*************************************************************************
-    /// Constructor from range.
-    /// \param begin Start of the range.
-    /// \param end   End of the range.
-    //*************************************************************************
-    template<typename TIterator>
-    crc8_darc_t(TIterator begin, const TIterator end)
-    {
-      this->reset();
-      this->add(begin, end);
-    }
-  };
+  //*************************************************************************
+  /// Constructor from range.
+  /// \param begin Start of the range.
+  /// \param end   End of the range.
+  //*************************************************************************
+  template <typename TIterator>
+  crc8_darc_t(TIterator begin, const TIterator end) {
+    this->reset();
+    this->add(begin, end);
+  }
+};
 #endif
-    
-  typedef etl::crc8_darc_t<256U> crc8_darc_t256;
-  typedef etl::crc8_darc_t<16U>  crc8_darc_t16;
-  typedef etl::crc8_darc_t<4U>   crc8_darc_t4;
-  typedef crc8_darc_t256         crc8_darc;
-}
+
+typedef etl::crc8_darc_t<256U> crc8_darc_t256;
+typedef etl::crc8_darc_t<16U> crc8_darc_t16;
+typedef etl::crc8_darc_t<4U> crc8_darc_t4;
+typedef crc8_darc_t256 crc8_darc;
+}  // namespace etl
 
 #endif

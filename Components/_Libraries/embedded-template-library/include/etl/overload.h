@@ -32,58 +32,54 @@ SOFTWARE.
 #define ETL_OVERLOAD_INCLUDED
 
 #include "platform.h"
-#include "utility.h"
 #include "type_traits.h"
+#include "utility.h"
 
-namespace etl
-{
+namespace etl {
 #if ETL_USING_CPP11
 #if ETL_USING_CPP17 && !defined(ETL_OVERLOAD_FORCE_CPP14)
 
-  //*************************************************************************
-  /// Variadic template definition of overload for C++17 and above.
-  //*************************************************************************
-  template<typename... TOverloads>
-  struct overload : TOverloads...
-  {
-    using TOverloads::operator()...;
-  };
+//*************************************************************************
+/// Variadic template definition of overload for C++17 and above.
+//*************************************************************************
+template <typename... TOverloads>
+struct overload : TOverloads... {
+  using TOverloads::operator()...;
+};
 
-  //*************************************************************************
-  /// Template deduction guide.
-  //*************************************************************************
-  template<typename... TOverloads> overload(TOverloads...)->overload<TOverloads...>;
+//*************************************************************************
+/// Template deduction guide.
+//*************************************************************************
+template <typename... TOverloads>
+overload(TOverloads...) -> overload<TOverloads...>;
 
 #else
 
-  //*************************************************************************
-  /// Variadic template definition of overload for C++14.
-  //*************************************************************************
-  template <typename TFirst, typename... TOthers>
-  struct overload : TFirst, overload<TOthers...>
-  {
-    using TFirst::operator();
-    using overload<TOthers...>::operator();
-  };
+//*************************************************************************
+/// Variadic template definition of overload for C++14.
+//*************************************************************************
+template <typename TFirst, typename... TOthers>
+struct overload : TFirst, overload<TOthers...> {
+  using TFirst::operator();
+  using overload<TOthers...>::operator();
+};
 
-  template <typename TFirst> 
-  struct overload<TFirst> : TFirst
-  {
-    using TFirst::operator();
-  };
+template <typename TFirst>
+struct overload<TFirst> : TFirst {
+  using TFirst::operator();
+};
 
 #endif
 
-  //*************************************************************************
-  /// Make an overload.
-  //*************************************************************************
-  template <typename... TOverloads>
-  constexpr overload<TOverloads...> make_overload(TOverloads&&... overloads)
-  {
-    return overload<TOverloads...>{ etl::forward<TOverloads>(overloads)... };
-  }
-
-#endif
+//*************************************************************************
+/// Make an overload.
+//*************************************************************************
+template <typename... TOverloads>
+constexpr overload<TOverloads...> make_overload(TOverloads&&... overloads) {
+  return overload<TOverloads...>{etl::forward<TOverloads>(overloads)...};
 }
+
+#endif
+}  // namespace etl
 
 #endif

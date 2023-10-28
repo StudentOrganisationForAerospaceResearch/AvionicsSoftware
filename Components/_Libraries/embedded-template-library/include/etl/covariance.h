@@ -38,187 +38,157 @@ SOFTWARE.
 #include <math.h>
 #include <stdint.h>
 
-namespace etl
-{
-  namespace private_covariance
-  {
-    //***************************************************************************
-    /// Types for generic covariance.
-    //***************************************************************************
-    template <typename TInput, typename TCalc>
-    struct covariance_traits
-    {
-      typedef TCalc calc_t;
-    };
+namespace etl {
+namespace private_covariance {
+//***************************************************************************
+/// Types for generic covariance.
+//***************************************************************************
+template <typename TInput, typename TCalc>
+struct covariance_traits {
+  typedef TCalc calc_t;
+};
 
-    //***************************************************************************
-    /// Types for float covariance.
-    //***************************************************************************
-    template <typename TCalc>
-    struct covariance_traits<float, TCalc>
-    {
-      typedef float calc_t;
-    };
+//***************************************************************************
+/// Types for float covariance.
+//***************************************************************************
+template <typename TCalc>
+struct covariance_traits<float, TCalc> {
+  typedef float calc_t;
+};
 
-    //***************************************************************************
-    /// Types for double covariance.
-    //***************************************************************************
-    template <typename TCalc>
-    struct covariance_traits<double, TCalc>
-    {
-      typedef double calc_t;
-    };
+//***************************************************************************
+/// Types for double covariance.
+//***************************************************************************
+template <typename TCalc>
+struct covariance_traits<double, TCalc> {
+  typedef double calc_t;
+};
+}  // namespace private_covariance
+
+//***************************************************************************
+/// Covariance Type.
+//***************************************************************************
+struct covariance_type {
+  static ETL_CONSTANT bool Sample = false;
+  static ETL_CONSTANT bool Population = true;
+};
+
+//***************************************************************************
+/// Covariance.
+//***************************************************************************
+template <bool Covariance_Type, typename TInput, typename TCalc = TInput>
+class covariance : public private_covariance::covariance_traits<TInput, TCalc>,
+                   public etl::binary_function<TInput, TInput, void> {
+ private:
+  static ETL_CONSTANT int Adjustment =
+      (Covariance_Type == covariance_type::Population) ? 0 : 1;
+
+  typedef typename private_covariance::covariance_traits<TInput, TCalc>::calc_t
+      calc_t;
+
+ public:
+  //*********************************
+  /// Constructor.
+  //*********************************
+  covariance() { clear(); }
+
+  //*********************************
+  /// Constructor.
+  //*********************************
+  template <typename TIterator>
+  covariance(TIterator first1, TIterator last1, TIterator first2) {
+    clear();
+    add(first1, last1, first2);
   }
 
-  //***************************************************************************
-  /// Covariance Type.
-  //***************************************************************************
-  struct covariance_type
-  {
-    static ETL_CONSTANT bool Sample     = false;
-    static ETL_CONSTANT bool Population = true;
-  };
+  //*********************************
+  /// Add a pair of values.
+  //*********************************
+  void add(TInput value1, TInput value2) {
+    inner_product += TCalc(value1 * value2);
+    sum1 += TCalc(value1);
+    sum2 += TCalc(value2);
+    ++counter;
+    recalculate = true;
+  }
 
-  //***************************************************************************
-  /// Covariance.
-  //***************************************************************************
-  template <bool Covariance_Type, typename TInput, typename TCalc = TInput>
-  class covariance 
-    : public private_covariance::covariance_traits<TInput, TCalc>
-    , public etl::binary_function<TInput, TInput, void>
-  {
-  private:
-
-    static ETL_CONSTANT int Adjustment = (Covariance_Type == covariance_type::Population) ? 0 : 1;
-
-    typedef typename private_covariance::covariance_traits<TInput, TCalc>::calc_t calc_t;
-
-  public:
-
-    //*********************************
-    /// Constructor.
-    //*********************************
-    covariance()
-    {
-      clear();
+  //*********************************
+  /// Add a range.
+  //*********************************
+  template <typename TIterator>
+  void add(TIterator first1, TIterator last1, TIterator first2) {
+    while (first1 != last1) {
+      add(*first1, *first2);
+      ++first1;
+      ++first2;
     }
+  }
 
-    //*********************************
-    /// Constructor.
-    //*********************************
-    template <typename TIterator>
-    covariance(TIterator first1, TIterator last1, TIterator first2)
-    {
-      clear();
-      add(first1, last1, first2);
-    }
+  //*********************************
+  /// operator ()
+  /// Add a pair of values.
+  //*********************************
+  void operator()(TInput value1, TInput value2) { add(value1, value2); }
 
-    //*********************************
-    /// Add a pair of values.
-    //*********************************
-    void add(TInput value1, TInput value2)
-    {
-      inner_product += TCalc(value1 * value2);
-      sum1          += TCalc(value1);
-      sum2          += TCalc(value2);
-      ++counter;
-      recalculate = true;
-    }
+  //*********************************
+  /// operator ()
+  /// Add a range.
+  //*********************************
+  template <typename TIterator>
+  void operator()(TIterator first1, TIterator last1, TIterator first2) {
+    add(first1, last1, first2);
+  }
 
-    //*********************************
-    /// Add a range.
-    //*********************************
-    template <typename TIterator>
-    void add(TIterator first1, TIterator last1, TIterator first2)
-    {
-      while (first1 != last1)
-      {
-        add(*first1, *first2);
-        ++first1;
-        ++first2;
-      }
-    }
-
-    //*********************************
-    /// operator ()
-    /// Add a pair of values.
-    //*********************************
-    void operator ()(TInput value1, TInput value2)
-    {
-      add(value1, value2);
-    }
-
-    //*********************************
-    /// operator ()
-    /// Add a range.
-    //*********************************
-    template <typename TIterator>
-    void operator ()(TIterator first1, TIterator last1, TIterator first2)
-    {
-      add(first1, last1, first2);
-    }
-
-    //*********************************
-    /// Get the covariance.
-    //*********************************
-    double get_covariance() const
-    {
-      if (recalculate)
-      {
-        covariance_value = 0.0;
-
-        if (counter != 0)
-        {
-          double n = double(counter);
-          double adjustment = 1.0 / (n * (n - Adjustment));
-
-          covariance_value = ((n * inner_product) - (sum1 * sum2)) * adjustment;
-
-          recalculate = false;
-        }
-      }
-
-      return covariance_value;
-    }
-
-    //*********************************
-    /// Get the covariance.
-    //*********************************
-    operator double() const
-    {
-      return get_covariance();
-    }
-
-    //*********************************
-    /// Get the total number added entries.
-    //*********************************
-    size_t count() const
-    {
-      return size_t(counter);
-    }
-
-    //*********************************
-    /// Clear the covariance.
-    //*********************************
-    void clear()
-    {
-      inner_product    = calc_t(0);
-      sum1             = calc_t(0);
-      sum2             = calc_t(0);
-      counter          = 0U;
+  //*********************************
+  /// Get the covariance.
+  //*********************************
+  double get_covariance() const {
+    if (recalculate) {
       covariance_value = 0.0;
-      recalculate      = true;
+
+      if (counter != 0) {
+        double n = double(counter);
+        double adjustment = 1.0 / (n * (n - Adjustment));
+
+        covariance_value = ((n * inner_product) - (sum1 * sum2)) * adjustment;
+
+        recalculate = false;
+      }
     }
 
-  private:
-  
-    calc_t   inner_product;
-    calc_t   sum1;
-    calc_t   sum2;
-    uint32_t counter;
-    mutable double covariance_value;
-    mutable bool   recalculate;
-  };
-}
+    return covariance_value;
+  }
+
+  //*********************************
+  /// Get the covariance.
+  //*********************************
+  operator double() const { return get_covariance(); }
+
+  //*********************************
+  /// Get the total number added entries.
+  //*********************************
+  size_t count() const { return size_t(counter); }
+
+  //*********************************
+  /// Clear the covariance.
+  //*********************************
+  void clear() {
+    inner_product = calc_t(0);
+    sum1 = calc_t(0);
+    sum2 = calc_t(0);
+    counter = 0U;
+    covariance_value = 0.0;
+    recalculate = true;
+  }
+
+ private:
+  calc_t inner_product;
+  calc_t sum1;
+  calc_t sum2;
+  uint32_t counter;
+  mutable double covariance_value;
+  mutable bool recalculate;
+};
+}  // namespace etl
 
 #endif

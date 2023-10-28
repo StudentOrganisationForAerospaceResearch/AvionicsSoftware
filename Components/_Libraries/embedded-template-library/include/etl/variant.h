@@ -34,10 +34,10 @@ SOFTWARE.
 #include "platform.h"
 
 #if !ETL_USING_CPP11 || defined(ETL_USE_LEGACY_VARIANT)
-  #include "private/variant_legacy.h"   // etl::variant
+#include "private/variant_legacy.h"  // etl::variant
 #else
-  #include "private/variant_legacy.h"   // etl::legacy::variant
-  #include "private/variant_variadic.h" // etl::variant
+#include "private/variant_legacy.h"    // etl::legacy::variant
+#include "private/variant_variadic.h"  // etl::variant
 #endif
 
 #endif

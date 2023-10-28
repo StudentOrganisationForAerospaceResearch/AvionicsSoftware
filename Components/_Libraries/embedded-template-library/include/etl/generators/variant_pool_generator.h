@@ -63,18 +63,17 @@ cog.outl("//********************************************************************
 #ifndef ETL_VARIANT_POOL_INCLUDED
 #define ETL_VARIANT_POOL_INCLUDED
 
+#include "largest.h"
 #include "platform.h"
 #include "pool.h"
-#include "type_traits.h"
 #include "static_assert.h"
-#include "largest.h"
+#include "type_traits.h"
 
 #include <stdint.h>
 
-namespace etl
-{
-  //***************************************************************************
-  /*[[[cog
+namespace etl {
+//***************************************************************************
+/*[[[cog
   import cog
   cog.outl("template <const size_t MAX_SIZE_,")
   cog.outl("          typename T1,")
@@ -93,11 +92,10 @@ namespace etl
   cog.outl("T%s>::alignment," % int(NTypes))
   cog.outl("                             MAX_SIZE_>")
   ]]]*/
-  /*[[[end]]]*/
-  {
-  public:
-
-    /*[[[cog
+/*[[[end]]]*/
+{
+ public:
+  /*[[[cog
     import cog
     cog.out("typedef etl::generic_pool<")
     cog.out("etl::largest<")
@@ -110,25 +108,22 @@ namespace etl
     cog.outl("T%s>::alignment," % int(NTypes))
     cog.outl("                          MAX_SIZE_> base_t;")
     ]]]*/
-    /*[[[end]]]*/
+  /*[[[end]]]*/
 
-    static const size_t MAX_SIZE = MAX_SIZE_;
+  static const size_t MAX_SIZE = MAX_SIZE_;
 
-    //*************************************************************************
-    /// Default constructor.
-    //*************************************************************************
-    variant_pool()
-    {
-    }
+  //*************************************************************************
+  /// Default constructor.
+  //*************************************************************************
+  variant_pool() {}
 
 #if ETL_CPP11_NOT_SUPPORTED || ETL_USING_STLPORT
-    //*************************************************************************
-    /// Creates the object. Default constructor.
-    //*************************************************************************
-    template <typename T>
-    T* create()
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Default constructor.
+  //*************************************************************************
+  template <typename T>
+  T* create() {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -138,18 +133,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>();
-    }
+    return base_t::template create<T>();
+  }
 
-    //*************************************************************************
-    /// Creates the object. One parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1>
-    T* create(const TP1& p1)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. One parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1>
+  T* create(const TP1& p1) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -159,18 +153,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1);
-    }
+    return base_t::template create<T>(p1);
+  }
 
-    //*************************************************************************
-    /// Creates the object. Two parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1, typename TP2>
-    T* create(const TP1& p1, const TP2& p2)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Two parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1, typename TP2>
+  T* create(const TP1& p1, const TP2& p2) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -180,18 +173,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1, p2);
-    }
+    return base_t::template create<T>(p1, p2);
+  }
 
-    //*************************************************************************
-    /// Creates the object. Three parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3>
-    T* create(const TP1& p1, const TP2& p2, const TP3& p3)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Three parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1, typename TP2, typename TP3>
+  T* create(const TP1& p1, const TP2& p2, const TP3& p3) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -201,18 +193,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1, p2, p3);
-    }
+    return base_t::template create<T>(p1, p2, p3);
+  }
 
-    //*************************************************************************
-    /// Creates the object. Four parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
-    T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Four parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
+  T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -222,18 +213,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1, p2, p3, p4);
-    }
+    return base_t::template create<T>(p1, p2, p3, p4);
+  }
 #else
-    //*************************************************************************
-    /// Creates the object from a type. Variadic parameter constructor.
-    //*************************************************************************
-    template <typename T, typename... Args>
-    T* create(Args&&... args)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object from a type. Variadic parameter constructor.
+  //*************************************************************************
+  template <typename T, typename... Args>
+  T* create(Args && ... args) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -243,19 +233,18 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(args...);
-    }
+    return base_t::template create<T>(args...);
+  }
 #endif
 
-    //*************************************************************************
-    /// Destroys the object.
-    //*************************************************************************
-    template <typename T>
-    void destroy(const T* const p)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Destroys the object.
+  //*************************************************************************
+  template <typename T>
+  void destroy(const T* const p) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -270,27 +259,25 @@ namespace etl
       cog.outl("                   etl::is_base_of<T, T%s>::value), \"Invalid type\");" % int(NTypes))
 
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      base_t::destroy(p);
-    }
+    base_t::destroy(p);
+  }
 
-    //*************************************************************************
-    /// Returns the maximum number of items in the variant_pool.
-    //*************************************************************************
-    size_t max_size() const
-    {
-      return MAX_SIZE;
-    }
+  //*************************************************************************
+  /// Returns the maximum number of items in the variant_pool.
+  //*************************************************************************
+  size_t max_size() const {
+    return MAX_SIZE;
+  }
 
-  private:
+ private:
+  variant_pool(const variant_pool&) ETL_DELETE;
+  variant_pool& operator=(const variant_pool&) ETL_DELETE;
+};
 
-    variant_pool(const variant_pool&) ETL_DELETE;
-    variant_pool& operator =(const variant_pool&) ETL_DELETE;
-  };
-
-  //***************************************************************************
-  /*[[[cog
+//***************************************************************************
+/*[[[cog
   import cog
   cog.outl("template <typename T1,")
   for n in range(2, int(NTypes)):
@@ -307,11 +294,10 @@ namespace etl
       cog.out("T%s, " % n)
   cog.outl("T%s>::alignment>" % int(NTypes))
   ]]]*/
-  /*[[[end]]]*/
-  {
-  public:
-
-    /*[[[cog
+/*[[[end]]]*/
+{
+ public:
+  /*[[[cog
     import cog
     cog.out("typedef etl::generic_pool_ext<")
     cog.out("etl::largest<")
@@ -323,24 +309,21 @@ namespace etl
         cog.out("T%s, " % n)
     cog.outl("T%s>::alignment> base_t;" % int(NTypes))
     ]]]*/
-    /*[[[end]]]*/
+  /*[[[end]]]*/
 
-    //*************************************************************************
-    /// Default constructor.
-    //*************************************************************************
-    variant_pool_ext(typename base_t::element* buffer, size_t size)
-      : base_t(buffer, size) 
-    {
-    }
+  //*************************************************************************
+  /// Default constructor.
+  //*************************************************************************
+  variant_pool_ext(typename base_t::element * buffer, size_t size)
+      : base_t(buffer, size) {}
 
 #if ETL_CPP11_NOT_SUPPORTED || ETL_USING_STLPORT
-    //*************************************************************************
-    /// Creates the object. Default constructor.
-    //*************************************************************************
-    template <typename T>
-    T* create()
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Default constructor.
+  //*************************************************************************
+  template <typename T>
+  T* create() {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -350,18 +333,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>();
-    }
+    return base_t::template create<T>();
+  }
 
-    //*************************************************************************
-    /// Creates the object. One parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1>
-    T* create(const TP1& p1)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. One parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1>
+  T* create(const TP1& p1) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -371,18 +353,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1);
-    }
+    return base_t::template create<T>(p1);
+  }
 
-    //*************************************************************************
-    /// Creates the object. Two parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1, typename TP2>
-    T* create(const TP1& p1, const TP2& p2)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Two parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1, typename TP2>
+  T* create(const TP1& p1, const TP2& p2) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -392,18 +373,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1, p2);
-    }
+    return base_t::template create<T>(p1, p2);
+  }
 
-    //*************************************************************************
-    /// Creates the object. Three parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3>
-    T* create(const TP1& p1, const TP2& p2, const TP3& p3)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Three parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1, typename TP2, typename TP3>
+  T* create(const TP1& p1, const TP2& p2, const TP3& p3) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -413,18 +393,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1, p2, p3);
-    }
+    return base_t::template create<T>(p1, p2, p3);
+  }
 
-    //*************************************************************************
-    /// Creates the object. Four parameter constructor.
-    //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
-    T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object. Four parameter constructor.
+  //*************************************************************************
+  template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
+  T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -434,18 +413,17 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(p1, p2, p3, p4);
-    }
+    return base_t::template create<T>(p1, p2, p3, p4);
+  }
 #else
-    //*************************************************************************
-    /// Creates the object from a type. Variadic parameter constructor.
-    //*************************************************************************
-    template <typename T, typename... Args>
-    T* create(Args&&... args)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Creates the object from a type. Variadic parameter constructor.
+  //*************************************************************************
+  template <typename T, typename... Args>
+  T* create(Args && ... args) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -455,19 +433,18 @@ namespace etl
               cog.out("                              ")
       cog.outl("T%s>::value), \"Unsupported type\");" % int(NTypes))
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      return base_t::template create<T>(args...);
-    }
+    return base_t::template create<T>(args...);
+  }
 #endif
 
-    //*************************************************************************
-    /// Destroys the object.
-    //*************************************************************************
-    template <typename T>
-    void destroy(const T* const p)
-    {
-      /*[[[cog
+  //*************************************************************************
+  /// Destroys the object.
+  //*************************************************************************
+  template <typename T>
+  void destroy(const T* const p) {
+    /*[[[cog
       import cog
       cog.out("ETL_STATIC_ASSERT((etl::is_one_of<T, ")
       for n in range(1, int(NTypes)):
@@ -482,24 +459,22 @@ namespace etl
       cog.outl("                   etl::is_base_of<T, T%s>::value), \"Invalid type\");" % int(NTypes))
 
       ]]]*/
-      /*[[[end]]]*/
+    /*[[[end]]]*/
 
-      base_t::destroy(p);
-    }
+    base_t::destroy(p);
+  }
 
-    //*************************************************************************
-    /// Returns the maximum number of items in the variant_pool.
-    //*************************************************************************
-    size_t max_size() const 
-    { 
-      return base_t::max_size(); 
-    }
+  //*************************************************************************
+  /// Returns the maximum number of items in the variant_pool.
+  //*************************************************************************
+  size_t max_size() const {
+    return base_t::max_size();
+  }
 
-  private:
-
-    variant_pool_ext(const variant_pool_ext&) ETL_DELETE;
-    variant_pool_ext& operator =(const variant_pool_ext&) ETL_DELETE;
-  };
-}
+ private:
+  variant_pool_ext(const variant_pool_ext&) ETL_DELETE;
+  variant_pool_ext& operator=(const variant_pool_ext&) ETL_DELETE;
+};
+}  // namespace etl
 
 #endif

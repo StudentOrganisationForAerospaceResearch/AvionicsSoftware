@@ -38,42 +38,36 @@ SOFTWARE.
 #include <math.h>
 #include <stdint.h>
 
-namespace etl
-{
-  //***************************************************************************
-  /// Threshold.
-  //***************************************************************************
-  template<typename TInput, typename TCompare = etl::less<TInput> >
-  class threshold : public etl::unary_function<TInput, TInput>
-  {
-  public:
+namespace etl {
+//***************************************************************************
+/// Threshold.
+//***************************************************************************
+template <typename TInput, typename TCompare = etl::less<TInput>>
+class threshold : public etl::unary_function<TInput, TInput> {
+ public:
+  //*****************************************************************
+  // Constructor.
+  //*****************************************************************
+  threshold(TInput threshold_value_, TInput true_value_, TInput false_value_,
+            TCompare compare_ = TCompare())
+      : threshold_value(threshold_value_),
+        true_value(true_value_),
+        false_value(false_value_),
+        compare(compare_) {}
 
-    //*****************************************************************
-    // Constructor.
-    //*****************************************************************
-    threshold(TInput threshold_value_, TInput true_value_, TInput false_value_, TCompare compare_ = TCompare())
-      : threshold_value(threshold_value_)
-      , true_value(true_value_)
-      , false_value(false_value_)
-      , compare(compare_)
-    {
-    }
+  //*****************************************************************
+  // operator ()
+  //*****************************************************************
+  TInput operator()(TInput value) const {
+    return compare(value, threshold_value) ? true_value : false_value;
+  }
 
-    //*****************************************************************
-    // operator ()
-    //*****************************************************************
-    TInput operator ()(TInput value) const
-    {
-      return compare(value, threshold_value) ? true_value : false_value;
-    }
-
-  private:
-
-    const TInput   threshold_value;
-    const TInput   true_value;
-    const TInput   false_value;
-    const TCompare compare;
-  };
-}
+ private:
+  const TInput threshold_value;
+  const TInput true_value;
+  const TInput false_value;
+  const TCompare compare;
+};
+}  // namespace etl
 
 #endif

@@ -31,165 +31,129 @@ SOFTWARE.
 #ifndef ETL_SUCCESSOR_INCLUDED
 #define ETL_SUCCESSOR_INCLUDED
 
-#include "platform.h"
-#include "nullptr.h"
-#include "exception.h"
 #include "error_handler.h"
+#include "exception.h"
 #include "file_error_numbers.h"
+#include "nullptr.h"
+#include "platform.h"
 
-namespace etl
-{
-  //***************************************************************************
-  /// Exception for the successor.
-  //***************************************************************************
-  class successor_exception : public etl::exception
-  {
-  public:
+namespace etl {
+//***************************************************************************
+/// Exception for the successor.
+//***************************************************************************
+class successor_exception : public etl::exception {
+ public:
+  successor_exception(string_type reason_, string_type file_name_,
+                      numeric_type line_number_)
+      : exception(reason_, file_name_, line_number_) {}
+};
 
-    successor_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
-      : exception(reason_, file_name_, line_number_)
-    {
-    }
-  };
+//***************************************************************************
+/// Invalid exception for successor.
+//***************************************************************************
+class successor_invalid : public etl::successor_exception {
+ public:
+  successor_invalid(string_type file_name_, numeric_type line_number_)
+      : etl::successor_exception(
+            ETL_ERROR_TEXT("successor:invalid", ETL_SUCCESSOR_FILE_ID "A"),
+            file_name_, line_number_) {}
+};
 
-  //***************************************************************************
-  /// Invalid exception for successor.
-  //***************************************************************************
-  class successor_invalid : public etl::successor_exception
-  {
-  public:
+//***************************************************************************
+/// Adds successor traits to a class.
+//***************************************************************************
+template <typename T>
+class successor {
+ public:
+  typedef T successor_type;
 
-    successor_invalid(string_type file_name_, numeric_type line_number_)
-      : etl::successor_exception(ETL_ERROR_TEXT("successor:invalid", ETL_SUCCESSOR_FILE_ID"A"), file_name_, line_number_)
-    {
-    }
-  };
+  //*************************************************************************
+  /// Default constructor
+  //*************************************************************************
+  successor() : p_successor(ETL_NULLPTR) {}
 
-  //***************************************************************************
-  /// Adds successor traits to a class.
-  //***************************************************************************
-  template <typename T>
-  class successor
-  {
-  public:
+  //*************************************************************************
+  /// Construct from a successor type
+  //*************************************************************************
+  successor(successor_type& s) : p_successor(&s) {}
 
-    typedef T successor_type;
-
-    //*************************************************************************
-    /// Default constructor
-    //*************************************************************************
-    successor()
-      : p_successor(ETL_NULLPTR)
-    {
-    }
-
-    //*************************************************************************
-    /// Construct from a successor type
-    //*************************************************************************
-    successor(successor_type& s)
-      : p_successor(&s)
-    {
-    }
-
-    //*************************************************************************
-    /// Set the successor.
-    //*************************************************************************
-    void set_successor(successor_type& s)
-    {
-      p_successor = &s;
-    }
+  //*************************************************************************
+  /// Set the successor.
+  //*************************************************************************
+  void set_successor(successor_type& s) { p_successor = &s; }
 
 #if ETL_CPP11_SUPPORTED
-    //*************************************************************************
-    /// Set a list of successors to this.
-    //*************************************************************************
-    template <typename... TSuccessors>
-    void set_successor(successor_type& s, TSuccessors&... rest)
-    {
+  //*************************************************************************
+  /// Set a list of successors to this.
+  //*************************************************************************
+  template <typename... TSuccessors>
+  void set_successor(successor_type& s, TSuccessors&... rest) {
+    set_successor(s);
+    s.set_successor(rest...);
+  }
+#endif
+
+  //*************************************************************************
+  /// Append a successor.
+  //*************************************************************************
+  template <typename TSuccessor>
+  void append_successor(TSuccessor& s) {
+    if (has_successor()) {
+      get_successor().append_successor(s);
+    } else {
       set_successor(s);
-      s.set_successor(rest...);
     }
-#endif
-
-    //*************************************************************************
-    /// Append a successor.
-    //*************************************************************************
-    template <typename TSuccessor>
-    void append_successor(TSuccessor& s)
-    {
-      if (has_successor())
-      {
-        get_successor().append_successor(s);
-      }
-      else
-      {
-        set_successor(s);
-      }
-    }
+  }
 
 #if ETL_CPP11_SUPPORTED
-    //*************************************************************************
-    /// Append the successor.
-    //*************************************************************************
-    template <typename TSuccessor, typename... TSuccessors>
-    void append_successor(TSuccessor& s, TSuccessors&... rest)
-    {
-      if (has_successor())
-      {
-        get_successor().append_successor(s);
-        get_successor().append_successor(rest...);
-      }
-      else
-      {
-        set_successor(s);
-        append_successor(rest...);
-      }
+  //*************************************************************************
+  /// Append the successor.
+  //*************************************************************************
+  template <typename TSuccessor, typename... TSuccessors>
+  void append_successor(TSuccessor& s, TSuccessors&... rest) {
+    if (has_successor()) {
+      get_successor().append_successor(s);
+      get_successor().append_successor(rest...);
+    } else {
+      set_successor(s);
+      append_successor(rest...);
     }
+  }
 #endif
 
-    //*************************************************************************
-    /// Clear the successor.
-    //*************************************************************************
-    void clear_successor()
-    {
-      p_successor = ETL_NULLPTR;
+  //*************************************************************************
+  /// Clear the successor.
+  //*************************************************************************
+  void clear_successor() { p_successor = ETL_NULLPTR; }
+
+  //*************************************************************************
+  /// Clear the successor chain.
+  //*************************************************************************
+  void clear_successor_chain() {
+    if (has_successor()) {
+      get_successor().clear_successor_chain();
+      clear_successor();
     }
+  }
 
-    //*************************************************************************
-    /// Clear the successor chain.
-    //*************************************************************************
-    void clear_successor_chain()
-    {
-      if (has_successor())
-      {
-        get_successor().clear_successor_chain();
-        clear_successor();
-      }
-    }
+  //*************************************************************************
+  /// Get the successor.
+  /// Emits an etl::successor_invalid if a successor has not been set.
+  //*************************************************************************
+  successor_type& get_successor() const {
+    ETL_ASSERT(has_successor(), ETL_ERROR(successor_invalid));
 
-    //*************************************************************************
-    /// Get the successor.
-    /// Emits an etl::successor_invalid if a successor has not been set.
-    //*************************************************************************
-    successor_type& get_successor() const
-    {
-      ETL_ASSERT(has_successor(), ETL_ERROR(successor_invalid));
+    return *p_successor;
+  }
 
-      return *p_successor;
-    }
+  //*************************************************************************
+  /// Does this have a successor?
+  //*************************************************************************
+  bool has_successor() const { return (p_successor != ETL_NULLPTR); }
 
-    //*************************************************************************
-    /// Does this have a successor?
-    //*************************************************************************
-    bool has_successor() const
-    {
-      return (p_successor != ETL_NULLPTR);
-    }
-
-  private:
-
-    successor_type* p_successor;
-  };
-}
+ private:
+  successor_type* p_successor;
+};
+}  // namespace etl
 
 #endif

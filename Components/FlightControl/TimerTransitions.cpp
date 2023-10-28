@@ -4,28 +4,28 @@
  * Description        : Handles Automatic Ignition Sequence and following timed transitions
  ******************************************************************************
 */
+#include "TimerTransitions.hpp"
+#include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "SystemDefines.hpp"
 #include "Timer.hpp"
-#include "TimerTransitions.hpp"
-#include "FlightTask.hpp"
 
 TimerTransitions::TimerTransitions() {
-//    ignitionConformation = nullptr;
+  //    ignitionConformation = nullptr;
 }
 
 void TimerTransitions::Setup() {
-	// Ignition timer unused
-	//ignitionCountdown = new Timer(IngnitionToLaunchCallback);
-	//ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD_MS);
-	burnCountdown = new Timer(LaunchToBurnCallback);
-	burnCountdown->ChangePeriodMs(BURN_TIMER_PERIOD_MS);
-	coastCountdown = new Timer(BurnToCoastCallback);
-	coastCountdown->ChangePeriodMs(COAST_TIMER_PERIOD_MS);
-	descentCountdown = new Timer(CoastToDescentCallback);
-	descentCountdown->ChangePeriodMs(DESCENT_TIMER_PERIOD_MS);
-	recoveryCountdown = new Timer(DescentToRecoveryCallback);
-	recoveryCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
+  // Ignition timer unused
+  //ignitionCountdown = new Timer(IngnitionToLaunchCallback);
+  //ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD_MS);
+  burnCountdown = new Timer(LaunchToBurnCallback);
+  burnCountdown->ChangePeriodMs(BURN_TIMER_PERIOD_MS);
+  coastCountdown = new Timer(BurnToCoastCallback);
+  coastCountdown->ChangePeriodMs(COAST_TIMER_PERIOD_MS);
+  descentCountdown = new Timer(CoastToDescentCallback);
+  descentCountdown->ChangePeriodMs(DESCENT_TIMER_PERIOD_MS);
+  recoveryCountdown = new Timer(DescentToRecoveryCallback);
+  recoveryCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
 }
 
 // Ignition sequence unused
@@ -36,27 +36,27 @@ void TimerTransitions::Setup() {
 //}
 
 void TimerTransitions::BurnSequence() {
-	if (!burnCountdown->Start())
-		burnCountdown->ResetTimerAndStart();
-    return;
+  if (!burnCountdown->Start())
+    burnCountdown->ResetTimerAndStart();
+  return;
 }
 
 void TimerTransitions::CoastSequence() {
-	if(!coastCountdown->Start())
-		coastCountdown->ResetTimerAndStart();
-    return;
+  if (!coastCountdown->Start())
+    coastCountdown->ResetTimerAndStart();
+  return;
 }
 
 void TimerTransitions::DescentSequence() {
-	if(!descentCountdown->Start())
-		descentCountdown->ResetTimerAndStart();
-    return;
+  if (!descentCountdown->Start())
+    descentCountdown->ResetTimerAndStart();
+  return;
 }
 
 void TimerTransitions::RecoverySequence() {
-	if(!recoveryCountdown->Start())
-		recoveryCountdown->ResetTimerAndStart();
-    return;
+  if (!recoveryCountdown->Start())
+    recoveryCountdown->ResetTimerAndStart();
+  return;
 }
 
 //void TimerTransitions::IRSequence() {
@@ -85,4 +85,3 @@ void TimerTransitions::RecoverySequence() {
 //
 //    return;
 //}
-

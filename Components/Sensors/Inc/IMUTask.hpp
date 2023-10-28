@@ -7,56 +7,56 @@
 #ifndef SOAR_SENSOR_IMU_TASK_HPP_
 #define SOAR_SENSOR_IMU_TASK_HPP_
 /* Includes ------------------------------------------------------------------*/
-#include "Task.hpp"
 #include "Data.h"
 #include "SystemDefines.hpp"
-
+#include "Task.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
 enum IMU_TASK_COMMANDS {
-    IMU_NONE = 0,
-    IMU_REQUEST_NEW_SAMPLE,// Get a new IMU sample, task will be blocked for polling time
-    IMU_REQUEST_TRANSMIT,    // Send the current IMU data over the Radio and Logs to Flash
-    IMU_REQUEST_DEBUG,        // Send the current IMU data over the Debug UART
-    IMU_REQUEST_FLASH_LOG,
+  IMU_NONE = 0,
+  IMU_REQUEST_NEW_SAMPLE,  // Get a new IMU sample, task will be blocked for polling time
+  IMU_REQUEST_TRANSMIT,  // Send the current IMU data over the Radio and Logs to Flash
+  IMU_REQUEST_DEBUG,  // Send the current IMU data over the Debug UART
+  IMU_REQUEST_FLASH_LOG,
 };
 
 /* Class ------------------------------------------------------------------*/
-class IMUTask : public Task
-{
-public:
-    static IMUTask& Inst() {
-        static IMUTask inst;
-        return inst;
-    }
+class IMUTask : public Task {
+ public:
+  static IMUTask& Inst() {
+    static IMUTask inst;
+    return inst;
+  }
 
-    void InitTask();
+  void InitTask();
 
-protected:
-    static void RunTask(void* pvParams) { IMUTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+ protected:
+  static void RunTask(void* pvParams) {
+    IMUTask::Inst().Run(pvParams);
+  }  // Static Task Interface, passes control to the instance Run();
 
-    void Run(void* pvParams);    // Main run code
-    
-    void HandleCommand(Command& cm);
-    void HandleRequestCommand(uint16_t taskCommand);
+  void Run(void* pvParams);  // Main run code
 
-    // Transmit/Log Functions
-    void TransmitProtocolData();
-    void LogDataToFlash();
+  void HandleCommand(Command& cm);
+  void HandleRequestCommand(uint16_t taskCommand);
 
-    // Sampling
-    void SampleIMU();
+  // Transmit/Log Functions
+  void TransmitProtocolData();
+  void LogDataToFlash();
 
-    // Setup Functions
-    uint8_t SetupIMU();
+  // Sampling
+  void SampleIMU();
 
-    // Data
-    AccelGyroMagnetismData* data;
+  // Setup Functions
+  uint8_t SetupIMU();
 
-private:
-    IMUTask();                                        // Private constructor
-    IMUTask(const IMUTask&);                    // Prevent copy-construction
-    IMUTask& operator=(const IMUTask&);            // Prevent assignment
+  // Data
+  AccelGyroMagnetismData* data;
+
+ private:
+  IMUTask();                           // Private constructor
+  IMUTask(const IMUTask&);             // Prevent copy-construction
+  IMUTask& operator=(const IMUTask&);  // Prevent assignment
 };
 
-#endif    // SOAR_SENSOR_IMU_TASK_HPP_
+#endif  // SOAR_SENSOR_IMU_TASK_HPP_

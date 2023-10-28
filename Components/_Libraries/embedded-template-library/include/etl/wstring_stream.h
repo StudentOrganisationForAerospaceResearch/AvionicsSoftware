@@ -33,16 +33,17 @@ SOFTWARE.
 
 ///\ingroup string
 
+#include "basic_string_stream.h"
 #include "platform.h"
 #include "string.h"
-#include "wformat_spec.h"
-#include "to_wstring.h"
 #include "string_view.h"
-#include "basic_string_stream.h"
+#include "to_wstring.h"
+#include "wformat_spec.h"
 
-namespace etl
-{
-  typedef etl::basic_string_stream<etl::wformat_spec, etl::iwstring, etl::wstring_view> wstring_stream;
+namespace etl {
+typedef etl::basic_string_stream<etl::wformat_spec, etl::iwstring,
+                                 etl::wstring_view>
+    wstring_stream;
 }
 
 #endif

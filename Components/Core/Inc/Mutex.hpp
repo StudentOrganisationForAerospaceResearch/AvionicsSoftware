@@ -11,30 +11,26 @@
 
 /* Macros --------------------------------------------------------------------*/
 
-
 /* Class -----------------------------------------------------------------*/
 
 /**
  * @brief Mutex class is a wrapper for rtos mutexes.
  */
-class Mutex
-{
-public:
-    // Constructors / Destructor
-    Mutex();
-    ~Mutex();
+class Mutex {
+ public:
+  // Constructors / Destructor
+  Mutex();
+  ~Mutex();
 
-    // Public functions
-    bool Lock(uint32_t timeout_ms = portMAX_DELAY);
-    bool Unlock();
+  // Public functions
+  bool Lock(uint32_t timeout_ms = portMAX_DELAY);
+  bool Unlock();
 
-    bool LockFromISR();
-    bool UnlockFromISR();
+  bool LockFromISR();
+  bool UnlockFromISR();
 
-private:
-    SemaphoreHandle_t rtSemaphoreHandle;
-
+ private:
+  SemaphoreHandle_t rtSemaphoreHandle;
 };
-
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_MUTEX_H */

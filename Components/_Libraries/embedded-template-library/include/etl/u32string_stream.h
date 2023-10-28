@@ -33,16 +33,17 @@ SOFTWARE.
 
 ///\ingroup string
 
-#include "platform.h"
-#include "u32string.h"
-#include "u32format_spec.h"
-#include "to_u32string.h"
-#include "string_view.h"
 #include "basic_string_stream.h"
+#include "platform.h"
+#include "string_view.h"
+#include "to_u32string.h"
+#include "u32format_spec.h"
+#include "u32string.h"
 
-namespace etl
-{
-  typedef etl::basic_string_stream<etl::u32format_spec, etl::iu32string, etl::u32string_view> u32string_stream;
+namespace etl {
+typedef etl::basic_string_stream<etl::u32format_spec, etl::iu32string,
+                                 etl::u32string_view>
+    u32string_stream;
 }
 
 #endif

@@ -38,80 +38,58 @@ SOFTWARE.
 ///\defgroup instance_count instance count
 ///\ingroup utilities
 
-namespace etl
-{
-  //***************************************************************************
-  /// Inherit from this to count instances of a type.
-  ///\ingroup reference
-  //***************************************************************************
-  template <typename T, typename TCounter = int32_t>
-  class instance_count
-  {
-  public:
+namespace etl {
+//***************************************************************************
+/// Inherit from this to count instances of a type.
+///\ingroup reference
+//***************************************************************************
+template <typename T, typename TCounter = int32_t>
+class instance_count {
+ public:
+  typedef T type;
+  typedef TCounter counter_type;
 
-    typedef T        type;
-    typedef TCounter counter_type;
+  //*************************************************************************
+  /// Construct and add 1.
+  //*************************************************************************
+  instance_count() { ++current_instance_count(); }
 
-    //*************************************************************************
-    /// Construct and add 1.
-    //*************************************************************************
-    instance_count()
-    {
-      ++current_instance_count();
-    }
+  //*************************************************************************
+  /// Copy construct and add 1.
+  //*************************************************************************
+  instance_count(const instance_count&) { ++current_instance_count(); }
 
-    //*************************************************************************
-    /// Copy construct and add 1.
-    //*************************************************************************
-    instance_count(const instance_count&)
-    {
-      ++current_instance_count();
-    }
+  //*************************************************************************
+  /// Assignment operator.
+  //*************************************************************************
+  instance_count& operator=(const instance_count&) { return *this; }
 
-    //*************************************************************************
-    /// Assignment operator.
-    //*************************************************************************
-    instance_count& operator =(const instance_count&)
-    {
-      return *this;
-    }
+  //*************************************************************************
+  /// Destruct and subtract 1.
+  //*************************************************************************
+  ~instance_count() { --current_instance_count(); }
 
-    //*************************************************************************
-    /// Destruct and subtract 1.
-    //*************************************************************************
-    ~instance_count()
-    {
-      --current_instance_count();
-    }
+  //*************************************************************************
+  /// Get how many instances we have.
+  //*************************************************************************
+  static const counter_type& get_instance_count() {
+    return current_instance_count();
+  }
 
-    //*************************************************************************
-    /// Get how many instances we have.
-    //*************************************************************************
-    static const counter_type& get_instance_count()
-    {
-      return current_instance_count();
-    }
+  //*************************************************************************
+  /// Get how many instances we have.
+  //*************************************************************************
+  static void reset_instance_count() { current_instance_count() = 0; }
 
-    //*************************************************************************
-    /// Get how many instances we have.
-    //*************************************************************************
-    static void reset_instance_count()
-    {
-      current_instance_count() = 0;
-    }
-
-  private:
-
-    //*************************************************************************
-    /// Get a reference to the count.
-    //*************************************************************************
-    static counter_type& current_instance_count()
-    {
-      static counter_type counter = 0;
-      return counter;
-    }
-  };
-}
+ private:
+  //*************************************************************************
+  /// Get a reference to the count.
+  //*************************************************************************
+  static counter_type& current_instance_count() {
+    static counter_type counter = 0;
+    return counter;
+  }
+};
+}  // namespace etl
 
 #endif
-

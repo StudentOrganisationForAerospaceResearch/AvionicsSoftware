@@ -33,55 +33,41 @@ SOFTWARE.
 
 #include "platform.h"
 
-namespace etl
-{
-  //***************************************************************************
-  /// Creates .
-  //***************************************************************************
-  template <typename TObject>
-  class singleton
-  {
-  public:
+namespace etl {
+//***************************************************************************
+/// Creates .
+//***************************************************************************
+template <typename TObject>
+class singleton {
+ public:
+  static TObject& get_instance() { return p_instance.get(); }
 
-    static TObject& get_instance()
-    {
-      return p_instance.get();
+ protected:
+  static TObject* p_instance;
+
+ private:
+  singleton() ETL_DELETE;
+  singleton(const singleton&) ETL_DELETE;
+  singleton& operator=(const singleton&) ETL_DELETE;
+};
+
+template <typename TSingleton>
+class singleton_factory {
+  virtual ~singleton_factory() {}
+
+  template <typename... TArgs>
+  TSingleton* create(TArgs args...) {
+    if (is_created) {
+      return TSingleton::mp_Instance.get();
     }
 
-  protected:
+    is_created = true;
+    static Singleton Tmp;
+    _TSingleton::mp_Instance.reset(pTmp);
 
-    static TObject* p_instance;
-
-  private:
-
-    singleton() ETL_DELETE;
-    singleton(const singleton&) ETL_DELETE;
-    singleton& operator =(const singleton&) ETL_DELETE;
-  };
-
-
-  template <typename TSingleton>
-  class singleton_factory
-  {
-    virtual ~singleton_factory() {}
-
-    template <typename... TArgs>
-    TSingleton* create(TArgs args...)
-    {
-      if (is_created)
-      {
-        return TSingleton::mp_Instance.get();
-      }
-
-
-      is_created = true;
-      static Singleton Tmp;
-      _TSingleton::mp_Instance.reset(pTmp);
-
-      return _TSingleton::mp_Instance.get();
-    }
-
-  };
-}
+    return _TSingleton::mp_Instance.get();
+  }
+};
+}  // namespace etl
 
 #endif

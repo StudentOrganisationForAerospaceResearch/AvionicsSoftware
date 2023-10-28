@@ -34,116 +34,126 @@ SOFTWARE.
 ///\ingroup string
 
 #include "platform.h"
-#include "type_traits.h"
-#include "wstring.h"
-#include "wformat_spec.h"
 #include "private/to_string_helper.h"
+#include "type_traits.h"
+#include "wformat_spec.h"
+#include "wstring.h"
 
-namespace etl
-{
-  //***************************************************************************
-  /// Default format spec.
-  /// !etl::iwstring && !etl::wstring_view
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value && !etl::is_same<T, etl::wstring_view>::value, const etl::iwstring&>::type
-    to_string(const T value, etl::iwstring& str, bool append = false)
-  {
-    etl::wformat_spec format;
+namespace etl {
+//***************************************************************************
+/// Default format spec.
+/// !etl::iwstring && !etl::wstring_view
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value &&
+                            !etl::is_same<T, etl::wstring_view>::value,
+                        const etl::iwstring&>::type
+to_string(const T value, etl::iwstring& str, bool append = false) {
+  etl::wformat_spec format;
 
-    return private_to_string::to_string(value, str, format, append);
-  }
-
-  //***************************************************************************
-  /// Supplied format spec.
-  /// !etl::iwstring && !etl::wstring_view
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value && !etl::is_same<T, etl::wstring_view>::value, const etl::iwstring&>::type
-    to_string(const T value, etl::iwstring& str, const etl::wformat_spec& format, bool append = false)
-  {
-    return private_to_string::to_string(value, str, format, append);
-  }
-
-  //***************************************************************************
-  /// Default format spec.
-  /// !etl::iu32string && !etl::u16string_view
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value && !etl::is_same<T, etl::u16string_view>::value, const etl::iwstring&>::type
-    to_string(const T value, uint32_t denominator_exponent, etl::iwstring& str, bool append = false)
-  {
-    etl::wformat_spec format;
-
-    return private_to_string::to_string(value, denominator_exponent, str, format, append);
-  }
-
-  //***************************************************************************
-  /// Supplied format spec.
-  /// !etl::u16string_view && !etl::u16string_view
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value && !etl::is_same<T, etl::u16string_view>::value, const etl::iwstring&>::type
-    to_string(const T value, uint32_t denominator_exponent, etl::iwstring& str, const etl::wformat_spec& format, bool append = false)
-  {
-    return private_to_string::to_string(value, denominator_exponent, str, format, append);
-  }
-
-  //***************************************************************************
-  /// Default format spec.
-  /// etl::iwstring
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<etl::is_same<T, etl::iwstring>::value, const etl::iwstring&>::type
-    to_string(const T& value, etl::iwstring& str, bool append = false)
-  {
-    etl::wformat_spec format;
-
-    private_to_string::add_string(value, str, format, append);
-
-    return str;
-  }
-
-  //***************************************************************************
-  /// Supplied format spec.
-  /// etl::iwstring
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<etl::is_same<T, etl::iwstring>::value, const etl::iwstring&>::type
-    to_string(const etl::iwstring& value, T& str, const etl::wformat_spec& format, bool append = false)
-  {
-    private_to_string::add_string(value, str, format, append);
-
-    return str;
-  }
-
-  //***************************************************************************
-  /// Default format spec.
-  /// etl::wstring_view
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<etl::is_same<T, etl::wstring_view>::value, const etl::iwstring&>::type
-    to_string(T value, etl::iwstring& str, bool append = false)
-  {
-    etl::wformat_spec format;
-
-    private_to_string::add_string_view(value, str, format, append);
-
-    return str;
-  }
-
-  //***************************************************************************
-  /// Supplied format spec.
-  /// etl::wstring_view
-  //***************************************************************************
-  template <typename T>
-  typename etl::enable_if<etl::is_same<T, etl::wstring_view>::value, const etl::iwstring&>::type
-    to_string(T value, etl::iwstring& str, const etl::wformat_spec& format, bool append = false)
-  {
-    private_to_string::add_string_view(value, str, format, append);
-
-    return str;
-  }
+  return private_to_string::to_string(value, str, format, append);
 }
+
+//***************************************************************************
+/// Supplied format spec.
+/// !etl::iwstring && !etl::wstring_view
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value &&
+                            !etl::is_same<T, etl::wstring_view>::value,
+                        const etl::iwstring&>::type
+to_string(const T value, etl::iwstring& str, const etl::wformat_spec& format,
+          bool append = false) {
+  return private_to_string::to_string(value, str, format, append);
+}
+
+//***************************************************************************
+/// Default format spec.
+/// !etl::iu32string && !etl::u16string_view
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value &&
+                            !etl::is_same<T, etl::u16string_view>::value,
+                        const etl::iwstring&>::type
+to_string(const T value, uint32_t denominator_exponent, etl::iwstring& str,
+          bool append = false) {
+  etl::wformat_spec format;
+
+  return private_to_string::to_string(value, denominator_exponent, str, format,
+                                      append);
+}
+
+//***************************************************************************
+/// Supplied format spec.
+/// !etl::u16string_view && !etl::u16string_view
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<!etl::is_same<T, etl::iwstring>::value &&
+                            !etl::is_same<T, etl::u16string_view>::value,
+                        const etl::iwstring&>::type
+to_string(const T value, uint32_t denominator_exponent, etl::iwstring& str,
+          const etl::wformat_spec& format, bool append = false) {
+  return private_to_string::to_string(value, denominator_exponent, str, format,
+                                      append);
+}
+
+//***************************************************************************
+/// Default format spec.
+/// etl::iwstring
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<etl::is_same<T, etl::iwstring>::value,
+                        const etl::iwstring&>::type
+to_string(const T& value, etl::iwstring& str, bool append = false) {
+  etl::wformat_spec format;
+
+  private_to_string::add_string(value, str, format, append);
+
+  return str;
+}
+
+//***************************************************************************
+/// Supplied format spec.
+/// etl::iwstring
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<etl::is_same<T, etl::iwstring>::value,
+                        const etl::iwstring&>::type
+to_string(const etl::iwstring& value, T& str, const etl::wformat_spec& format,
+          bool append = false) {
+  private_to_string::add_string(value, str, format, append);
+
+  return str;
+}
+
+//***************************************************************************
+/// Default format spec.
+/// etl::wstring_view
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<etl::is_same<T, etl::wstring_view>::value,
+                        const etl::iwstring&>::type
+to_string(T value, etl::iwstring& str, bool append = false) {
+  etl::wformat_spec format;
+
+  private_to_string::add_string_view(value, str, format, append);
+
+  return str;
+}
+
+//***************************************************************************
+/// Supplied format spec.
+/// etl::wstring_view
+//***************************************************************************
+template <typename T>
+typename etl::enable_if<etl::is_same<T, etl::wstring_view>::value,
+                        const etl::iwstring&>::type
+to_string(T value, etl::iwstring& str, const etl::wformat_spec& format,
+          bool append = false) {
+  private_to_string::add_string_view(value, str, format, append);
+
+  return str;
+}
+}  // namespace etl
 
 #endif

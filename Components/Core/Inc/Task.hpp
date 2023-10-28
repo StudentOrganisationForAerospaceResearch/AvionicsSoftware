@@ -7,8 +7,8 @@
 #ifndef AVIONICS_INCLUDE_SOAR_CORE_TASK_H
 #define AVIONICS_INCLUDE_SOAR_CORE_TASK_H
 /* Includes ------------------------------------------------------------------*/
-#include "cmsis_os.h"
 #include "Queue.hpp"
+#include "cmsis_os.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -17,23 +17,23 @@
 /* Class -----------------------------------------------------------------*/
 
 class Task {
-public:
-    //Constructors
-    Task(void);
-    Task(uint16_t depth);
+ public:
+  //Constructors
+  Task(void);
+  Task(uint16_t depth);
 
-    void InitTask();
+  void InitTask();
 
-    Queue* GetEventQueue() const { return qEvtQueue; }
-    void SendCommand(Command cmd) { qEvtQueue->Send(cmd); }
-    void SendCommandReference(Command& cmd) { qEvtQueue->Send(cmd); }
+  Queue* GetEventQueue() const { return qEvtQueue; }
+  void SendCommand(Command cmd) { qEvtQueue->Send(cmd); }
+  void SendCommandReference(Command& cmd) { qEvtQueue->Send(cmd); }
 
-protected:
-    //RTOS
-    TaskHandle_t rtTaskHandle;        // RTOS Task Handle
+ protected:
+  //RTOS
+  TaskHandle_t rtTaskHandle;  // RTOS Task Handle
 
-    //Task structures
-    Queue* qEvtQueue;    // Task event queue
+  //Task structures
+  Queue* qEvtQueue;  // Task event queue
 };
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_TASK_H */

@@ -32,498 +32,407 @@ SOFTWARE.
 #define ETL_MULTI_LOOP_INCLUDED
 
 #include <etl/functional.h>
-#include "platform.h"
-#include "nullptr.h"
-#include "exception.h"
 #include "error_handler.h"
+#include "exception.h"
+#include "nullptr.h"
+#include "platform.h"
 
-namespace etl
-{
+namespace etl {
+//***************************************************************************
+/// Exception for the multi_range.
+//***************************************************************************
+class multi_range_exception : public etl::exception {
+ public:
+  multi_range_exception(string_type reason_, string_type file_name_,
+                        numeric_type line_number_)
+      : exception(reason_, file_name_, line_number_) {}
+};
+
+//***************************************************************************
+/// Circular reference exception.
+//***************************************************************************
+class multi_range_circular_reference : public etl::multi_range_exception {
+ public:
+  multi_range_circular_reference(string_type file_name_,
+                                 numeric_type line_number_)
+      : etl::multi_range_exception(
+            ETL_ERROR_TEXT("multi_range:circular reference",
+                           ETL_MULTI_LOOP_FILE_ID "A"),
+            file_name_, line_number_) {}
+};
+
+//***************************************************************************
+/// The base class for multi_range.
+//***************************************************************************
+class imulti_range {
+ public:
   //***************************************************************************
-  /// Exception for the multi_range.
+  /// Insert after this range.
   //***************************************************************************
-  class multi_range_exception : public etl::exception
-  {
-  public:
+  imulti_range& insert(imulti_range& inner_range) {
+    ETL_ASSERT(is_valid(inner_range),
+               ETL_ERROR(multi_range_circular_reference));
 
-    multi_range_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
-      : exception(reason_, file_name_, line_number_)
-    {
-    }
-  };
+    // Remember what the next range was.
+    imulti_range* next = inner;
 
-  //***************************************************************************
-  /// Circular reference exception.
-  //***************************************************************************
-  class multi_range_circular_reference : public etl::multi_range_exception
-  {
-  public:
+    // Append the new range
+    inner = &inner_range;
 
-    multi_range_circular_reference(string_type file_name_, numeric_type line_number_)
-      : etl::multi_range_exception(ETL_ERROR_TEXT("multi_range:circular reference", ETL_MULTI_LOOP_FILE_ID"A"), file_name_, line_number_)
-    {
-    }
-  };
+    // Link to the original next range.
+    inner_range.set_last(next);
+
+    return *this;
+  }
 
   //***************************************************************************
-  /// The base class for multi_range.
+  /// Append to the most inner range.
   //***************************************************************************
-  class imulti_range
-  {
-  public:
+  imulti_range& append(imulti_range& inner_range) {
+    ETL_ASSERT(is_valid(inner_range),
+               ETL_ERROR(multi_range_circular_reference));
 
-    //***************************************************************************
-    /// Insert after this range.
-    //***************************************************************************
-    imulti_range& insert(imulti_range& inner_range)
-    {
-      ETL_ASSERT(is_valid(inner_range), ETL_ERROR(multi_range_circular_reference));
-
-      // Remember what the next range was.
-      imulti_range* next = inner;
-
-      // Append the new range
+    if (inner != ETL_NULLPTR) {
+      inner->append(inner_range);
+    } else {
       inner = &inner_range;
-
-      // Link to the original next range.
-      inner_range.set_last(next);
-
-      return *this;
     }
 
-    //***************************************************************************
-    /// Append to the most inner range.
-    //***************************************************************************
-    imulti_range& append(imulti_range& inner_range)
-    {
-      ETL_ASSERT(is_valid(inner_range), ETL_ERROR(multi_range_circular_reference));
+    return *this;
+  }
 
-      if (inner != ETL_NULLPTR)
-      {
-        inner->append(inner_range);
-      }
-      else
-      {
-        inner = &inner_range;
-      }
+  //***************************************************************************
+  /// Unlinks this range from its inner.
+  //***************************************************************************
+  void detach() { inner = ETL_NULLPTR; }
 
-      return *this;
+  //***************************************************************************
+  /// Unlinks this and all inner ranges.
+  //***************************************************************************
+  void detach_all() {
+    if (inner != ETL_NULLPTR) {
+      inner->detach_all();
     }
 
-    //***************************************************************************
-    /// Unlinks this range from its inner.
-    //***************************************************************************
-    void detach()
-    {
-      inner = ETL_NULLPTR;
+    detach();
+  }
+
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  bool completed() const { return has_completed; }
+
+  //***************************************************************************
+  /// Gets the total number of ranges, from this range inclusive.
+  //***************************************************************************
+  size_t number_of_ranges() const {
+    size_t count = 1UL;
+
+    imulti_range* p_range = inner;
+
+    while (p_range != ETL_NULLPTR) {
+      ++count;
+      p_range = p_range->inner;
     }
 
-    //***************************************************************************
-    /// Unlinks this and all inner ranges.
-    //***************************************************************************
-    void detach_all()
-    {
-      if (inner != ETL_NULLPTR)
-      {
-        inner->detach_all();
-      }
+    return count;
+  }
 
-      detach();
+  //***************************************************************************
+  /// Gets the total number of iterations over all ranges, from this range inclusive.
+  //***************************************************************************
+  size_t number_of_iterations() {
+    size_t count = 0UL;
+
+    for (start(); !completed(); next()) {
+      ++count;
     }
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    bool completed() const
-    {
-      return has_completed;
-    }
+    return count;
+  }
 
-    //***************************************************************************
-    /// Gets the total number of ranges, from this range inclusive.
-    //***************************************************************************
-    size_t number_of_ranges() const
-    {
-      size_t count = 1UL;
+  //***************************************************************************
+  /// Pure virtual functions.
+  //***************************************************************************
+  virtual void next() = 0;
+  virtual void start() = 0;
 
-      imulti_range* p_range = inner;
+ protected:
+  //***************************************************************************
+  /// Constructor
+  //***************************************************************************
+  imulti_range() : has_completed(true), inner(ETL_NULLPTR) {}
 
-      while (p_range != ETL_NULLPTR)
-      {
-        ++count;
-        p_range = p_range->inner;
-      }
+  //***************************************************************************
+  /// Checks that there are no circular references.
+  //***************************************************************************
+  bool is_valid(imulti_range& inner_range) {
+    imulti_range* range = &inner_range;
 
-      return count;
-    }
-
-    //***************************************************************************
-    /// Gets the total number of iterations over all ranges, from this range inclusive.
-    //***************************************************************************
-    size_t number_of_iterations()
-    {
-      size_t count = 0UL;
-
-      for (start(); !completed(); next())
-      {
-        ++count;
+    while (range != ETL_NULLPTR) {
+      if (range == this) {
+        return false;
       }
 
-      return count;
+      range = range->inner;
     }
 
-    //***************************************************************************
-    /// Pure virtual functions.
-    //***************************************************************************
-    virtual void next() = 0;
-    virtual void start() = 0;
+    return true;
+  }
 
-  protected:
+  //***************************************************************************
+  /// Set the inner range of the last linked range.
+  //***************************************************************************
+  void set_last(imulti_range* next) {
+    // Find the last range.
+    imulti_range* range = this;
 
-    //***************************************************************************
-    /// Constructor
-    //***************************************************************************
-    imulti_range()
-      : has_completed(true)
-      , inner(ETL_NULLPTR)
-    {
+    while (range->inner != ETL_NULLPTR) {
+      range = range->inner;
     }
 
-    //***************************************************************************
-    /// Checks that there are no circular references.
-    //***************************************************************************
-    bool is_valid(imulti_range& inner_range)
-    {
-      imulti_range* range = &inner_range;
+    range->inner = next;
+  }
 
-      while (range != ETL_NULLPTR)
-      {
-        if (range == this)
-        {
-          return false;
-        }
+  bool has_completed;
+  imulti_range* inner;
+};
 
-        range = range->inner;
-      }
+//***************************************************************************
+/// multi_range
+/// \tparam T The type to range over.
+//***************************************************************************
+template <typename T>
+class multi_range : public imulti_range {
+ public:
+  typedef T value_type;
+  typedef const T& const_reference;
 
-      return true;
-    }
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct step_type {
+    typedef T value_type;
 
-    //***************************************************************************
-    /// Set the inner range of the last linked range.
-    //***************************************************************************
-    void set_last(imulti_range* next)
-    {
-      // Find the last range.
-      imulti_range* range = this;
-
-      while (range->inner != ETL_NULLPTR)
-      {
-        range = range->inner;
-      }
-
-      range->inner = next;
-    }
-
-    bool has_completed;
-    imulti_range* inner;
+    virtual void operator()(value_type& value) = 0;
   };
 
   //***************************************************************************
-  /// multi_range
-  /// \tparam T The type to range over.
+  ///
   //***************************************************************************
-  template <typename T>
-  class multi_range : public imulti_range
-  {
-  public:
+  struct forward_step : public step_type {
+    typedef T value_type;
 
-    typedef T        value_type;
-    typedef const T& const_reference;
+    virtual void operator()(value_type& value) { ++value; }
+  };
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct step_type
-    {
-      typedef T value_type;
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct forward_step_by : public step_type {
+    typedef T value_type;
 
-      virtual void operator()(value_type& value) = 0;
-    };
+    explicit forward_step_by(const value_type& step_value_)
+        : step_value(step_value_) {}
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct forward_step : public step_type
-    {
-      typedef T value_type;
+    virtual void operator()(value_type& value) { value += step_value; }
 
-      virtual void operator()(value_type& value)
-      {
-        ++value;
-      }
-    };
+    const value_type step_value;
+  };
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct forward_step_by : public step_type
-    {
-      typedef T value_type;
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct reverse_step : public step_type {
+    typedef T value_type;
 
-      explicit forward_step_by(const value_type& step_value_)
-        : step_value(step_value_)
-      {
-      }
+    virtual void operator()(value_type& value) { --value; }
+  };
 
-      virtual void operator()(value_type& value)
-      {
-        value += step_value;
-      }
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct reverse_step_by : public step_type {
+    typedef T value_type;
 
-      const value_type step_value;
-    };
+    explicit reverse_step_by(const value_type& step_value_)
+        : step_value(step_value_) {}
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct reverse_step : public step_type
-    {
-      typedef T value_type;
+    virtual void operator()(value_type& value) { value -= step_value; }
 
-      virtual void operator()(value_type& value)
-      {
-        --value;
-      }
-    };
+    const value_type step_value;
+  };
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct reverse_step_by : public step_type
-    {
-      typedef T value_type;
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct compare_type {
+    typedef T value_type;
 
-      explicit reverse_step_by(const value_type& step_value_)
-        : step_value(step_value_)
-      {
-      }
+    virtual bool operator()(const value_type& current,
+                            const value_type& last) const = 0;
+  };
 
-      virtual void operator()(value_type& value)
-      {
-        value -= step_value;
-      }
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct not_equal_compare : public compare_type {
+    typedef T value_type;
 
-      const value_type step_value;
-    };
+    virtual bool operator()(const value_type& current,
+                            const value_type& last) const ETL_OVERRIDE {
+      return etl::not_equal_to<value_type>()(current, last);
+    }
+  };
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct compare_type
-    {
-      typedef T value_type;
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct less_than_compare : public compare_type {
+    typedef T value_type;
 
-      virtual bool operator()(const value_type& current, const value_type& last) const = 0;
-    };
+    virtual bool operator()(const value_type& current,
+                            const value_type& last) const ETL_OVERRIDE {
+      return etl::less<value_type>()(current, last);
+    }
+  };
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct not_equal_compare : public compare_type
-    {
-      typedef T value_type;
+  //***************************************************************************
+  ///
+  //***************************************************************************
+  struct greater_than_compare : public compare_type {
+    typedef T value_type;
 
-      virtual bool operator()(const value_type& current, const value_type& last) const ETL_OVERRIDE
-      {
-        return etl::not_equal_to<value_type>()(current, last);
-      }
-    };
+    virtual bool operator()(const value_type& current,
+                            const value_type& last) const ETL_OVERRIDE {
+      return etl::greater<value_type>()(current, last);
+    }
+  };
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct less_than_compare : public compare_type
-    {
-      typedef T value_type;
+  //***************************************************************************
+  /// Constructor
+  /// \param first The starting value of the range.
+  /// \param last  The terminating value of the range. Equal to the last required value + 1.
+  //***************************************************************************
+  multi_range(value_type first_, value_type last_)
+      : first(first_),
+        last(last_),
+        current(first_),
+        p_stepper(&default_stepper),
+        p_compare(&default_compare) {}
 
-      virtual bool operator()(const value_type& current, const value_type& last) const ETL_OVERRIDE
-      {
-        return etl::less<value_type>()(current, last);
-      }
-    };
+  //***************************************************************************
+  /// Constructor
+  /// \param first The starting value of the range.
+  /// \param last  The terminating value of the range. Equal to the last required value + 1.
+  //***************************************************************************
+  multi_range(value_type first_, value_type last_, step_type& stepper_)
+      : first(first_),
+        last(last_),
+        current(first_),
+        p_stepper(&stepper_),
+        p_compare(&default_compare) {}
 
-    //***************************************************************************
-    ///
-    //***************************************************************************
-    struct greater_than_compare : public compare_type
-    {
-      typedef T value_type;
+  //***************************************************************************
+  /// Constructor
+  /// \param first The starting value of the range.
+  /// \param last  The terminating value of the range.
+  //***************************************************************************
+  multi_range(value_type first_, value_type last_, compare_type& compare_)
+      : first(first_),
+        last(last_),
+        current(first_),
+        p_stepper(&default_stepper),
+        p_compare(&compare_) {}
 
-      virtual bool operator()(const value_type& current, const value_type& last) const ETL_OVERRIDE
-      {
-        return etl::greater<value_type>()(current, last);
-      }
-    };
+  //***************************************************************************
+  /// Constructor
+  /// \param first The starting value of the range.
+  /// \param last  The terminating value of the range. Equal to the last required value + 1.
+  //***************************************************************************
+  multi_range(value_type first_, value_type last_, step_type& stepper_,
+              compare_type& compare_)
+      : first(first_),
+        last(last_),
+        current(first_),
+        p_stepper(&stepper_),
+        p_compare(&compare_) {}
 
-    //***************************************************************************
-    /// Constructor
-    /// \param first The starting value of the range.
-    /// \param last  The terminating value of the range. Equal to the last required value + 1.
-    //***************************************************************************
-    multi_range(value_type first_,
-                value_type last_)
-      : first(first_)
-      , last(last_)
-      , current(first_)
-      , p_stepper(&default_stepper)
-      , p_compare(&default_compare)
-    {
+  //***************************************************************************
+  /// Get a const reference to the starting value of the range.
+  //***************************************************************************
+  const_reference begin() { return first; }
+
+  //***************************************************************************
+  /// Get a const reference to the terminating value of the range.
+  /// Equal to the last required value + 1.
+  //***************************************************************************
+  const_reference end() { return last; }
+
+  //***************************************************************************
+  /// Initialises the ranges to the starting values.
+  //***************************************************************************
+  void start() ETL_OVERRIDE {
+    if (inner != ETL_NULLPTR) {
+      inner->start();
     }
 
-    //***************************************************************************
-    /// Constructor
-    /// \param first The starting value of the range.
-    /// \param last  The terminating value of the range. Equal to the last required value + 1.
-    //***************************************************************************
-    multi_range(value_type first_,
-                value_type last_,
-                step_type& stepper_)
-      : first(first_)
-      , last(last_)
-      , current(first_)
-      , p_stepper(&stepper_)
-      , p_compare(&default_compare)
-    {
-    }
+    current = first;
+    has_completed = !(*p_compare)(current, last);  // Check for null range.
+  }
 
-    //***************************************************************************
-    /// Constructor
-    /// \param first The starting value of the range.
-    /// \param last  The terminating value of the range.
-    //***************************************************************************
-    multi_range(value_type    first_,
-                value_type    last_,
-                compare_type& compare_)
-      : first(first_)
-      , last(last_)
-      , current(first_)
-      , p_stepper(&default_stepper)
-      , p_compare(&compare_)
-    {
-    }
+  //***************************************************************************
+  /// Step to the next logical values in the ranges.
+  //***************************************************************************
+  void next() ETL_OVERRIDE {
+    has_completed = false;
 
-    //***************************************************************************
-    /// Constructor
-    /// \param first The starting value of the range.
-    /// \param last  The terminating value of the range. Equal to the last required value + 1.
-    //***************************************************************************
-    multi_range(value_type    first_,
-                value_type    last_,
-                step_type&    stepper_,
-                compare_type& compare_)
-      : first(first_)
-      , last(last_)
-      , current(first_)
-      , p_stepper(&stepper_)
-      , p_compare(&compare_)
-    {
-    }
+    if (inner != ETL_NULLPTR) {
+      inner->next();
 
-    //***************************************************************************
-    /// Get a const reference to the starting value of the range.
-    //***************************************************************************
-    const_reference begin()
-    {
-      return first;
-    }
-
-    //***************************************************************************
-    /// Get a const reference to the terminating value of the range.
-    /// Equal to the last required value + 1.
-    //***************************************************************************
-    const_reference end()
-    {
-      return last;
-    }
-
-    //***************************************************************************
-    /// Initialises the ranges to the starting values.
-    //***************************************************************************
-    void start() ETL_OVERRIDE
-    {
-      if (inner != ETL_NULLPTR)
-      {
-        inner->start();
-      }
-
-      current = first;
-      has_completed = !(*p_compare)(current, last); // Check for null range.
-    }
-
-    //***************************************************************************
-    /// Step to the next logical values in the ranges.
-    //***************************************************************************
-    void next() ETL_OVERRIDE
-    {
-      has_completed = false;
-
-      if (inner != ETL_NULLPTR)
-      {
-        inner->next();
-
-        if (inner->completed())
-        {
-          has_completed = step();
-        }
-      }
-      else
-      {
+      if (inner->completed()) {
         has_completed = step();
       }
+    } else {
+      has_completed = step();
+    }
+  }
+
+  //***************************************************************************
+  /// Returns a const reference to the current range value.
+  //***************************************************************************
+  const_reference value() const { return current; }
+
+ private:
+  //***************************************************************************
+  /// Increments the current range value.
+  //***************************************************************************
+  bool step() {
+    (*p_stepper)(current);
+
+    const bool has_rolled_over = !(*p_compare)(current, last);
+
+    if (has_rolled_over) {
+      current = first;
     }
 
-    //***************************************************************************
-    /// Returns a const reference to the current range value.
-    //***************************************************************************
-    const_reference value() const
-    {
-      return current;
-    }
+    return has_rolled_over;
+  }
 
-  private:
+  multi_range() ETL_DELETE;
+  multi_range(const multi_range&) ETL_DELETE;
+  multi_range& operator=(const multi_range&) ETL_DELETE;
 
-    //***************************************************************************
-    /// Increments the current range value.
-    //***************************************************************************
-    bool step()
-    {
-      (*p_stepper)(current);
+  value_type first;    ///< The first value of the range.
+  value_type last;     ///< The terminating value of the range.
+  value_type current;  ///< The current value of the range.
 
-      const bool has_rolled_over = !(*p_compare)(current, last);
+  step_type* p_stepper;
+  forward_step default_stepper;
 
-      if (has_rolled_over)
-      {
-        current = first;
-      }
-
-      return has_rolled_over;
-    }
-
-    multi_range() ETL_DELETE;
-    multi_range(const multi_range&) ETL_DELETE;
-    multi_range& operator =(const multi_range&) ETL_DELETE;
-
-    value_type first;   ///< The first value of the range.
-    value_type last;    ///< The terminating value of the range.
-    value_type current; ///< The current value of the range.
-
-    step_type*   p_stepper;
-    forward_step default_stepper;
-
-    compare_type*     p_compare;
-    not_equal_compare default_compare;
-  };
-}
+  compare_type* p_compare;
+  not_equal_compare default_compare;
+};
+}  // namespace etl
 
 #endif

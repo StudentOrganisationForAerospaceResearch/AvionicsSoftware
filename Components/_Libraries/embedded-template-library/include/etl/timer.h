@@ -29,8 +29,8 @@ SOFTWARE.
 #ifndef ETL_TIMER_INCLUDED
 #define ETL_TIMER_INCLUDED
 
-#include "platform.h"
 #include "atomic.h"
+#include "platform.h"
 
 #include <stdint.h>
 
@@ -38,65 +38,45 @@ SOFTWARE.
 // Definitions common to timers.
 //*****************************************************************************
 
-namespace etl
-{
+namespace etl {
 #ifdef ETL_TIMER_SEMAPHORE_TYPE
-  typedef ETL_TIMER_SEMAPHORE_TYPE timer_semaphore_t;
+typedef ETL_TIMER_SEMAPHORE_TYPE timer_semaphore_t;
 #else
-  #if ETL_HAS_ATOMIC
-    typedef etl::atomic_uint32_t timer_semaphore_t;
-  #endif
+#if ETL_HAS_ATOMIC
+typedef etl::atomic_uint32_t timer_semaphore_t;
+#endif
 #endif
 
-  //***************************************************************************
-  /// Common definitions for the timer framework.
-  //***************************************************************************
-  struct timer
-  {
-    // Timer modes.
-    struct mode
-    {
-      enum
-      {
-        SINGLE_SHOT = false,
-        REPEATING   = true
-      };
+//***************************************************************************
+/// Common definitions for the timer framework.
+//***************************************************************************
+struct timer {
+  // Timer modes.
+  struct mode {
+    enum { SINGLE_SHOT = false, REPEATING = true };
 
-      typedef bool type;
-    };
-
-    // Timer start status.
-    struct start
-    {
-      enum
-      {
-        DELAYED   = false,
-        IMMEDIATE = true
-      };
-
-      typedef bool type;
-    };
-
-    // Timer id.
-    struct id
-    {
-      enum
-      {
-        NO_TIMER = 255
-      };
-
-      typedef uint_least8_t type;
-    };
-
-    // Timer state.
-    struct state
-    {
-      enum
-      {
-        INACTIVE = 0xFFFFFFFFUL
-      };
-    };
+    typedef bool type;
   };
-}
+
+  // Timer start status.
+  struct start {
+    enum { DELAYED = false, IMMEDIATE = true };
+
+    typedef bool type;
+  };
+
+  // Timer id.
+  struct id {
+    enum { NO_TIMER = 255 };
+
+    typedef uint_least8_t type;
+  };
+
+  // Timer state.
+  struct state {
+    enum { INACTIVE = 0xFFFFFFFFUL };
+  };
+};
+}  // namespace etl
 
 #endif

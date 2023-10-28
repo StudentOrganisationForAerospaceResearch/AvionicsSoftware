@@ -31,84 +31,69 @@ SOFTWARE.
 #ifndef ETL_FIXED_MEMORY_BLOCK_POOL_INCLUDED
 #define ETL_FIXED_MEMORY_BLOCK_POOL_INCLUDED
 
-#include "platform.h"
-#include "imemory_block_allocator.h"
-#include "generic_pool.h"
 #include "alignment.h"
+#include "generic_pool.h"
+#include "imemory_block_allocator.h"
+#include "platform.h"
 
-namespace etl
-{
+namespace etl {
+//*************************************************************************
+/// The fixed sized memory block pool.
+/// The allocated memory blocks are all the same size.
+//*************************************************************************
+template <size_t VBlock_Size, size_t VAlignment, size_t VSize>
+class fixed_sized_memory_block_allocator : public imemory_block_allocator {
+ public:
+  static ETL_CONSTANT size_t Block_Size = VBlock_Size;
+  static ETL_CONSTANT size_t Alignment = VAlignment;
+  static ETL_CONSTANT size_t Size = VSize;
+
   //*************************************************************************
-  /// The fixed sized memory block pool.
-  /// The allocated memory blocks are all the same size.
+  /// Default constructor
   //*************************************************************************
-  template <size_t VBlock_Size, size_t VAlignment, size_t VSize>
-  class fixed_sized_memory_block_allocator : public imemory_block_allocator
-  {
-  public:
-    static ETL_CONSTANT size_t Block_Size = VBlock_Size;
-    static ETL_CONSTANT size_t Alignment  = VAlignment;
-    static ETL_CONSTANT size_t Size       = VSize;
+  fixed_sized_memory_block_allocator() {}
 
-    //*************************************************************************
-    /// Default constructor
-    //*************************************************************************
-    fixed_sized_memory_block_allocator()
-    {
-    }
-
-  private:
-
-    /// A structure that has the size Block_Size.
-    struct block
-    {
-      char data[Block_Size];
-    };
-
-    //*************************************************************************
-    /// The overridden virtual function to allocate a block.
-    //*************************************************************************
-    virtual void* allocate_block(size_t required_size, size_t required_alignment) ETL_OVERRIDE
-    {
-      if ((required_alignment <= Alignment) &&
-          (required_size <= Block_Size) && 
-          !pool.full())
-      {
-        return  pool.template allocate<block>();
-      }
-      else
-      {
-        return ETL_NULLPTR;
-      }
-    }
-
-    //*************************************************************************
-    /// The overridden virtual function to release a block.
-    //*************************************************************************
-    virtual bool release_block(const void* const pblock) ETL_OVERRIDE
-    {
-      if (pool.is_in_pool(pblock))
-      {
-        pool.release(static_cast<const block* const>(pblock));
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    //*************************************************************************
-    /// Returns true if the allocator is the owner of the block.
-    //*************************************************************************
-    virtual bool is_owner_of_block(const void* const pblock) const ETL_OVERRIDE
-    {
-      return pool.is_in_pool(pblock);
-    }
-
-    /// The generic pool from which allocate memory blocks.
-    etl::generic_pool<Block_Size, Alignment, Size> pool;
+ private:
+  /// A structure that has the size Block_Size.
+  struct block {
+    char data[Block_Size];
   };
-}
+
+  //*************************************************************************
+  /// The overridden virtual function to allocate a block.
+  //*************************************************************************
+  virtual void* allocate_block(size_t required_size,
+                               size_t required_alignment) ETL_OVERRIDE {
+    if ((required_alignment <= Alignment) && (required_size <= Block_Size) &&
+        !pool.full()) {
+      return pool.template allocate<block>();
+    } else {
+      return ETL_NULLPTR;
+    }
+  }
+
+  //*************************************************************************
+  /// The overridden virtual function to release a block.
+  //*************************************************************************
+  virtual bool release_block(const void* const pblock) ETL_OVERRIDE {
+    if (pool.is_in_pool(pblock)) {
+      pool.release(static_cast<const block* const>(pblock));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //*************************************************************************
+  /// Returns true if the allocator is the owner of the block.
+  //*************************************************************************
+  virtual bool is_owner_of_block(const void* const pblock) const ETL_OVERRIDE {
+    return pool.is_in_pool(pblock);
+  }
+
+  /// The generic pool from which allocate memory blocks.
+  etl::generic_pool<Block_Size, Alignment, Size> pool;
+};
+}  // namespace etl
 
 #endif

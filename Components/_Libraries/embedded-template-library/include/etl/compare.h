@@ -32,8 +32,8 @@ SOFTWARE.
 #define ETL_COMPARE_INCLUDED
 
 #include <etl/functional.h>
-#include "platform.h"
 #include "parameter_type.h"
+#include "platform.h"
 
 //*****************************************************************************
 ///\defgroup compare compare
@@ -41,39 +41,33 @@ SOFTWARE.
 ///\ingroup utilities
 //*****************************************************************************
 
-namespace etl
-{
-  //***************************************************************************
-  /// Defines <=, >, >= in terms of <
-  /// Default
-  //***************************************************************************
-  template <typename T, typename TLess = etl::less<T> >
-  struct compare
-  {
-    typedef typename etl::parameter_type<T>::type first_argument_type;
-    typedef typename etl::parameter_type<T>::type second_argument_type;
-    typedef bool result_type;
+namespace etl {
+//***************************************************************************
+/// Defines <=, >, >= in terms of <
+/// Default
+//***************************************************************************
+template <typename T, typename TLess = etl::less<T>>
+struct compare {
+  typedef typename etl::parameter_type<T>::type first_argument_type;
+  typedef typename etl::parameter_type<T>::type second_argument_type;
+  typedef bool result_type;
 
-    static result_type lt(first_argument_type lhs, second_argument_type rhs)
-    {
-      return TLess()(lhs, rhs);
-    }
+  static result_type lt(first_argument_type lhs, second_argument_type rhs) {
+    return TLess()(lhs, rhs);
+  }
 
-    static result_type gt(first_argument_type lhs, second_argument_type rhs)
-    {
-      return TLess()(rhs, lhs);
-    }
+  static result_type gt(first_argument_type lhs, second_argument_type rhs) {
+    return TLess()(rhs, lhs);
+  }
 
-    static result_type lte(first_argument_type lhs, second_argument_type rhs)
-    {
-      return !gt(lhs, rhs);
-    }
+  static result_type lte(first_argument_type lhs, second_argument_type rhs) {
+    return !gt(lhs, rhs);
+  }
 
-    static result_type gte(first_argument_type lhs, second_argument_type rhs)
-    {
-      return !lt(lhs, rhs);
-    }
-  };
-}
+  static result_type gte(first_argument_type lhs, second_argument_type rhs) {
+    return !lt(lhs, rhs);
+  }
+};
+}  // namespace etl
 
 #endif

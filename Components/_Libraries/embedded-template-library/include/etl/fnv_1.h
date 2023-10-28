@@ -31,11 +31,11 @@ SOFTWARE.
 #ifndef ETL_FNV_1_INCLUDED
 #define ETL_FNV_1_INCLUDED
 
+#include "frame_check_sequence.h"
+#include "ihash.h"
 #include "platform.h"
 #include "static_assert.h"
 #include "type_traits.h"
-#include "ihash.h"
-#include "frame_check_sequence.h"
 
 #include <stdint.h>
 
@@ -46,241 +46,184 @@ SOFTWARE.
 ///\defgroup fnv_1 FNV-1 & FNV-1a 32 & 64 bit hash calculations
 ///\ingroup maths
 
-namespace etl
-{
+namespace etl {
 #if ETL_USING_64BIT_TYPES
-  //***************************************************************************
-  /// fnv_1 policy.
-  /// Calculates FNV1.
-  //***************************************************************************
-  struct fnv_1_policy_64
-  {
-    typedef uint64_t value_type;
+//***************************************************************************
+/// fnv_1 policy.
+/// Calculates FNV1.
+//***************************************************************************
+struct fnv_1_policy_64 {
+  typedef uint64_t value_type;
 
-    uint64_t initial() const
-    {
-      return OFFSET_BASIS;
-    }
+  uint64_t initial() const { return OFFSET_BASIS; }
 
-    uint64_t add(uint64_t hash, uint8_t value) const
-    {
-      hash *= PRIME;
-      hash ^= value;
-      return  hash;
-    }
+  uint64_t add(uint64_t hash, uint8_t value) const {
+    hash *= PRIME;
+    hash ^= value;
+    return hash;
+  }
 
-    uint64_t final(uint64_t hash) const
-    {
-      return hash;
-    }
+  uint64_t final(uint64_t hash) const { return hash; }
 
-    static ETL_CONSTANT uint64_t OFFSET_BASIS = 0xCBF29CE484222325ull;
-    static ETL_CONSTANT uint64_t PRIME        = 0x00000100000001b3ull;
-  };
+  static ETL_CONSTANT uint64_t OFFSET_BASIS = 0xCBF29CE484222325ull;
+  static ETL_CONSTANT uint64_t PRIME = 0x00000100000001b3ull;
+};
 
-  //***************************************************************************
-  /// Calculates the fnv_1_64 hash.
-  ///\ingroup fnv_1_64
-  //***************************************************************************
-  class fnv_1_64 : public etl::frame_check_sequence<fnv_1_policy_64>
-  {
-  public:
+//***************************************************************************
+/// Calculates the fnv_1_64 hash.
+///\ingroup fnv_1_64
+//***************************************************************************
+class fnv_1_64 : public etl::frame_check_sequence<fnv_1_policy_64> {
+ public:
+  //*************************************************************************
+  /// Default constructor.
+  //*************************************************************************
+  fnv_1_64() { this->reset(); }
 
-    //*************************************************************************
-    /// Default constructor.
-    //*************************************************************************
-    fnv_1_64()
-    {
-      this->reset();
-    }
+  //*************************************************************************
+  /// Constructor from range.
+  /// \param begin Start of the range.
+  /// \param end   End of the range.
+  //*************************************************************************
+  template <typename TIterator>
+  fnv_1_64(TIterator begin, const TIterator end) {
+    this->reset();
+    this->add(begin, end);
+  }
+};
 
-    //*************************************************************************
-    /// Constructor from range.
-    /// \param begin Start of the range.
-    /// \param end   End of the range.
-    //*************************************************************************
-    template<typename TIterator>
-    fnv_1_64(TIterator begin, const TIterator end)
-    {
-      this->reset();
-      this->add(begin, end);
-    }
-  };
+//***************************************************************************
+/// fnv_1a policy.
+/// Calculates FNV1A.
+//***************************************************************************
+struct fnv_1a_policy_64 {
+  typedef uint64_t value_type;
 
-  //***************************************************************************
-  /// fnv_1a policy.
-  /// Calculates FNV1A.
-  //***************************************************************************
-  struct fnv_1a_policy_64
-    {
-    typedef uint64_t value_type;
+  uint64_t initial() const { return OFFSET_BASIS; }
 
-    uint64_t initial() const
-      {
-      return OFFSET_BASIS;
-    }
+  uint64_t add(uint64_t hash, uint8_t value) const {
+    hash ^= value;
+    hash *= PRIME;
+    return hash;
+  }
 
-    uint64_t add(uint64_t hash, uint8_t value) const
-    {
-      hash ^= value;
-      hash *= PRIME;
-      return hash;
-    }
+  uint64_t final(uint64_t hash) const { return hash; }
 
-    uint64_t final(uint64_t hash) const
-    {
-      return hash;
-    }
+  static ETL_CONSTANT uint64_t OFFSET_BASIS = 0xCBF29CE484222325ull;
+  static ETL_CONSTANT uint64_t PRIME = 0x00000100000001b3ull;
+};
 
-    static ETL_CONSTANT uint64_t OFFSET_BASIS = 0xCBF29CE484222325ull;
-    static ETL_CONSTANT uint64_t PRIME        = 0x00000100000001b3ull;
-  };
+//***************************************************************************
+/// Calculates the fnv_1a_64 hash.
+///\ingroup fnv_1a_64
+//***************************************************************************
+class fnv_1a_64 : public etl::frame_check_sequence<fnv_1a_policy_64> {
+ public:
+  //*************************************************************************
+  /// Default constructor.
+  //*************************************************************************
+  fnv_1a_64() { this->reset(); }
 
-  //***************************************************************************
-  /// Calculates the fnv_1a_64 hash.
-  ///\ingroup fnv_1a_64
-  //***************************************************************************
-  class fnv_1a_64 : public etl::frame_check_sequence<fnv_1a_policy_64>
-  {
-  public:
-
-    //*************************************************************************
-    /// Default constructor.
-    //*************************************************************************
-    fnv_1a_64()
-    {
-      this->reset();
-    }
-
-    //*************************************************************************
-    /// Constructor from range.
-    /// \param begin Start of the range.
-    /// \param end   End of the range.
-    //*************************************************************************
-    template<typename TIterator>
-    fnv_1a_64(TIterator begin, const TIterator end)
-    {
-      this->reset();
-      this->add(begin, end);
-    }
-  };
+  //*************************************************************************
+  /// Constructor from range.
+  /// \param begin Start of the range.
+  /// \param end   End of the range.
+  //*************************************************************************
+  template <typename TIterator>
+  fnv_1a_64(TIterator begin, const TIterator end) {
+    this->reset();
+    this->add(begin, end);
+  }
+};
 #endif
 
-  //***************************************************************************
-  /// fnv_1 policy.
-  /// Calculates FNV1.
-  //***************************************************************************
-  struct fnv_1_policy_32
-    {
-    typedef uint32_t value_type;
+//***************************************************************************
+/// fnv_1 policy.
+/// Calculates FNV1.
+//***************************************************************************
+struct fnv_1_policy_32 {
+  typedef uint32_t value_type;
 
-    uint32_t initial() const
-      {
-      return OFFSET_BASIS;
-    }
+  uint32_t initial() const { return OFFSET_BASIS; }
 
-    uint32_t add(uint32_t hash, uint8_t value) const
-    {
-      hash *= PRIME;
-      hash ^= value;
-      return hash;
-    }
+  uint32_t add(uint32_t hash, uint8_t value) const {
+    hash *= PRIME;
+    hash ^= value;
+    return hash;
+  }
 
-    uint32_t final(uint32_t hash) const
-    {
-      return hash;
-    }
+  uint32_t final(uint32_t hash) const { return hash; }
 
-    static ETL_CONSTANT uint32_t OFFSET_BASIS = 0x811C9DC5UL;
-    static ETL_CONSTANT uint32_t PRIME        = 0x01000193UL;
-  };
+  static ETL_CONSTANT uint32_t OFFSET_BASIS = 0x811C9DC5UL;
+  static ETL_CONSTANT uint32_t PRIME = 0x01000193UL;
+};
 
-  //***************************************************************************
-  /// Calculates the fnv_1_32 hash.
-  ///\ingroup fnv_1_32
-  //***************************************************************************
-  class fnv_1_32 : public etl::frame_check_sequence<fnv_1_policy_32>
-  {
-  public:
+//***************************************************************************
+/// Calculates the fnv_1_32 hash.
+///\ingroup fnv_1_32
+//***************************************************************************
+class fnv_1_32 : public etl::frame_check_sequence<fnv_1_policy_32> {
+ public:
+  //*************************************************************************
+  /// Default constructor.
+  //*************************************************************************
+  fnv_1_32() { this->reset(); }
 
-    //*************************************************************************
-    /// Default constructor.
-    //*************************************************************************
-    fnv_1_32()
-    {
-      this->reset();
-    }
+  //*************************************************************************
+  /// Constructor from range.
+  /// \param begin Start of the range.
+  /// \param end   End of the range.
+  //*************************************************************************
+  template <typename TIterator>
+  fnv_1_32(TIterator begin, const TIterator end) {
+    this->reset();
+    this->add(begin, end);
+  }
+};
 
-    //*************************************************************************
-    /// Constructor from range.
-    /// \param begin Start of the range.
-    /// \param end   End of the range.
-    //*************************************************************************
-    template<typename TIterator>
-    fnv_1_32(TIterator begin, const TIterator end)
-    {
-      this->reset();
-      this->add(begin, end);
-    }
-  };
+//***************************************************************************
+/// fnv_1a policy.
+/// Calculates FNV1A.
+//***************************************************************************
+struct fnv_1a_policy_32 {
+  typedef uint32_t value_type;
 
-  //***************************************************************************
-  /// fnv_1a policy.
-  /// Calculates FNV1A.
-  //***************************************************************************
-  struct fnv_1a_policy_32
-    {
-    typedef uint32_t value_type;
+  uint32_t initial() const { return OFFSET_BASIS; }
 
-    uint32_t initial() const
-      {
-      return OFFSET_BASIS;
-    }
+  uint32_t add(uint32_t hash, uint8_t value) const {
+    hash ^= value;
+    hash *= PRIME;
+    return hash;
+  }
 
-    uint32_t add(uint32_t hash, uint8_t value) const
-    {
-      hash ^= value;
-      hash *= PRIME;
-      return hash;
-    }
+  uint32_t final(uint32_t hash) const { return hash; }
 
-    uint32_t final(uint32_t hash) const
-    {
-      return hash;
-    }
+  static ETL_CONSTANT uint32_t OFFSET_BASIS = 0x811C9DC5UL;
+  static ETL_CONSTANT uint32_t PRIME = 0x01000193UL;
+};
 
-    static ETL_CONSTANT uint32_t OFFSET_BASIS = 0x811C9DC5UL;
-    static ETL_CONSTANT uint32_t PRIME        = 0x01000193UL;
-  };
+//***************************************************************************
+/// Calculates the fnv_1a_32 hash.
+///\ingroup fnv_1a_32
+//***************************************************************************
+class fnv_1a_32 : public etl::frame_check_sequence<fnv_1a_policy_32> {
+ public:
+  //*************************************************************************
+  /// Default constructor.
+  //*************************************************************************
+  fnv_1a_32() { this->reset(); }
 
-  //***************************************************************************
-  /// Calculates the fnv_1a_32 hash.
-  ///\ingroup fnv_1a_32
-  //***************************************************************************
-  class fnv_1a_32 : public etl::frame_check_sequence<fnv_1a_policy_32>
-  {
-  public:
-
-    //*************************************************************************
-    /// Default constructor.
-    //*************************************************************************
-    fnv_1a_32()
-    {
-      this->reset();
-    }
-
-    //*************************************************************************
-    /// Constructor from range.
-    /// \param begin Start of the range.
-    /// \param end   End of the range.
-    //*************************************************************************
-    template<typename TIterator>
-    fnv_1a_32(TIterator begin, const TIterator end)
-    {
-      this->reset();
-      this->add(begin, end);
-    }
-  };
-}
+  //*************************************************************************
+  /// Constructor from range.
+  /// \param begin Start of the range.
+  /// \param end   End of the range.
+  //*************************************************************************
+  template <typename TIterator>
+  fnv_1a_32(TIterator begin, const TIterator end) {
+    this->reset();
+    this->add(begin, end);
+  }
+};
+}  // namespace etl
 
 #endif

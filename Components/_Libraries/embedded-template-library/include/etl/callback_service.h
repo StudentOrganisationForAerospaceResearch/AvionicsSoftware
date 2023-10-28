@@ -31,129 +31,111 @@ SOFTWARE.
 #ifndef ETL_CALLBACK_SERVICE_INCLUDED
 #define ETL_CALLBACK_SERVICE_INCLUDED
 
-#include "platform.h"
-#include "nullptr.h"
-#include "static_assert.h"
-#include "function.h"
 #include "array.h"
+#include "function.h"
+#include "nullptr.h"
+#include "platform.h"
+#include "static_assert.h"
 
-namespace etl
-{
-  //***************************************************************************
-  /// An indexed callback service.
-  /// \tparam RANGE  The number of callbacks to handle.
-  /// \tparam OFFSET The lowest callback id value.
-  /// The callback ids must range between OFFSET and OFFSET + RANGE - 1.
-  //***************************************************************************
-  template <const size_t RANGE, const size_t OFFSET = 0U>
-  class callback_service
-  {
-  public:
+namespace etl {
+//***************************************************************************
+/// An indexed callback service.
+/// \tparam RANGE  The number of callbacks to handle.
+/// \tparam OFFSET The lowest callback id value.
+/// The callback ids must range between OFFSET and OFFSET + RANGE - 1.
+//***************************************************************************
+template <const size_t RANGE, const size_t OFFSET = 0U>
+class callback_service {
+ public:
+  //*************************************************************************
+  /// Reset the callback service.
+  /// Sets all callbacks to the internal default.
+  //*************************************************************************
+  callback_service() : unhandled_callback(*this), p_unhandled(ETL_NULLPTR) {
+    lookup.fill(&unhandled_callback);
+  }
 
-    //*************************************************************************
-    /// Reset the callback service.
-    /// Sets all callbacks to the internal default.
-    //*************************************************************************
-    callback_service()
-      : unhandled_callback(*this),
-        p_unhandled(ETL_NULLPTR)
-    {
-      lookup.fill(&unhandled_callback);
+  //*************************************************************************
+  /// Registers a callback for the specified id.
+  /// Compile time assert if the id is out of range.
+  /// \tparam ID The id of the callback.
+  /// \param callback Reference to the callback.
+  //*************************************************************************
+  template <const size_t ID>
+  void register_callback(etl::ifunction<size_t>& callback) {
+    ETL_STATIC_ASSERT(ID < (OFFSET + RANGE), "Callback Id out of range");
+    ETL_STATIC_ASSERT(ID >= OFFSET, "Callback Id out of range");
+
+    lookup[ID - OFFSET] = &callback;
+  }
+
+  //*************************************************************************
+  /// Registers a callback for the specified id.
+  /// No action if the id is out of range.
+  /// \param id       Id of the callback.
+  /// \param callback Reference to the callback.
+  //*************************************************************************
+  void register_callback(const size_t id, etl::ifunction<size_t>& callback) {
+    if ((id >= OFFSET) && (id < (OFFSET + RANGE))) {
+      lookup[id - OFFSET] = &callback;
     }
+  }
 
-    //*************************************************************************
-    /// Registers a callback for the specified id.
-    /// Compile time assert if the id is out of range.
-    /// \tparam ID The id of the callback.
-    /// \param callback Reference to the callback.
-    //*************************************************************************
-    template <const size_t ID>
-    void register_callback(etl::ifunction<size_t>& callback)
-    {
-      ETL_STATIC_ASSERT(ID < (OFFSET + RANGE), "Callback Id out of range");
-      ETL_STATIC_ASSERT(ID >= OFFSET,          "Callback Id out of range");
+  //*************************************************************************
+  /// Registers an alternative callback for unhandled ids.
+  /// \param callback A reference to the user supplied 'unhandled' callback.
+  //*************************************************************************
+  void register_unhandled_callback(etl::ifunction<size_t>& callback) {
+    p_unhandled = &callback;
+  }
 
-      lookup[ID - OFFSET] = &callback;
+  //*************************************************************************
+  /// Executes the callback function for the index.
+  /// Compile time assert if the id is out of range.
+  /// \tparam ID The id of the callback.
+  //*************************************************************************
+  template <const size_t ID>
+  void callback() {
+    ETL_STATIC_ASSERT(ID < (OFFSET + RANGE), "Callback Id out of range");
+    ETL_STATIC_ASSERT(ID >= OFFSET, "Callback Id out of range");
+
+    (*lookup[ID - OFFSET])(ID);
+  }
+
+  //*************************************************************************
+  /// Executes the callback function for the index.
+  /// \param id Id of the callback.
+  //*************************************************************************
+  void callback(const size_t id) {
+    if ((id >= OFFSET) && (id < (OFFSET + RANGE))) {
+      (*lookup[id - OFFSET])(id);
+    } else {
+      unhandled(id);
     }
+  }
 
-    //*************************************************************************
-    /// Registers a callback for the specified id.
-    /// No action if the id is out of range.
-    /// \param id       Id of the callback.
-    /// \param callback Reference to the callback.
-    //*************************************************************************
-    void register_callback(const size_t id, etl::ifunction<size_t>& callback)
-    {
-      if ((id >= OFFSET) && (id < (OFFSET + RANGE)))
-      {
-        lookup[id - OFFSET] = &callback;
-      }
+ private:
+  //*************************************************************************
+  /// The default callback function.
+  /// Calls the user defined 'unhandled' callback if it exists.
+  //*************************************************************************
+  void unhandled(size_t id) {
+    if (p_unhandled != ETL_NULLPTR) {
+      (*p_unhandled)(id);
     }
+  }
 
-    //*************************************************************************
-    /// Registers an alternative callback for unhandled ids.
-    /// \param callback A reference to the user supplied 'unhandled' callback.
-    //*************************************************************************
-    void register_unhandled_callback(etl::ifunction<size_t>& callback)
-    {
-      p_unhandled = &callback;
-    }
+  /// The default callback for unhandled ids.
+  etl::function_mp<callback_service<RANGE, OFFSET>, size_t,
+                   &callback_service<RANGE, OFFSET>::unhandled>
+      unhandled_callback;
 
-    //*************************************************************************
-    /// Executes the callback function for the index.
-    /// Compile time assert if the id is out of range.
-    /// \tparam ID The id of the callback.
-    //*************************************************************************
-    template <const size_t ID>
-    void callback()
-    {
-      ETL_STATIC_ASSERT(ID < (OFFSET + RANGE), "Callback Id out of range");
-      ETL_STATIC_ASSERT(ID >= OFFSET,          "Callback Id out of range");
+  /// Pointer to the user defined 'unhandled' callback.
+  etl::ifunction<size_t>* p_unhandled;
 
-      (*lookup[ID - OFFSET])(ID);
-    }
-
-    //*************************************************************************
-    /// Executes the callback function for the index.
-    /// \param id Id of the callback.
-    //*************************************************************************
-    void callback(const size_t id)
-    {
-      if ((id >= OFFSET) && (id < (OFFSET + RANGE)))
-      {
-        (*lookup[id - OFFSET])(id);
-      }
-      else
-      {
-        unhandled(id);
-      }
-    }
-
-  private:
-
-    //*************************************************************************
-    /// The default callback function.
-    /// Calls the user defined 'unhandled' callback if it exists.
-    //*************************************************************************
-    void unhandled(size_t id)
-    {
-      if (p_unhandled != ETL_NULLPTR)
-      {
-        (*p_unhandled)(id);
-      }
-    }
-
-    /// The default callback for unhandled ids.
-    etl::function_mp<callback_service<RANGE, OFFSET>,
-                     size_t,
-                     &callback_service<RANGE, OFFSET>::unhandled> unhandled_callback;
-
-    /// Pointer to the user defined 'unhandled' callback.
-    etl::ifunction<size_t>* p_unhandled;
-
-    /// Lookup table of callbacks.
-    etl::array<etl::ifunction<size_t>*, RANGE> lookup;
-  };
-}
+  /// Lookup table of callbacks.
+  etl::array<etl::ifunction<size_t>*, RANGE> lookup;
+};
+}  // namespace etl
 
 #endif

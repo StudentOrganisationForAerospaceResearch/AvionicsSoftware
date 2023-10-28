@@ -31,12 +31,11 @@ SOFTWARE.
 #ifndef ETL_DYNAMIC_EXTENT_INCLUDED
 #define ETL_DYNAMIC_EXTENT_INCLUDED
 
-#include "../platform.h"
 #include "../integral_limits.h"
+#include "../platform.h"
 
-namespace etl
-{
-  static ETL_CONSTANT size_t dynamic_extent = etl::integral_limits<size_t>::max;
+namespace etl {
+static ETL_CONSTANT size_t dynamic_extent = etl::integral_limits<size_t>::max;
 }
 
 #endif

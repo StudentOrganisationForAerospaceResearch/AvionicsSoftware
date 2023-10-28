@@ -38,20 +38,17 @@ SOFTWARE.
 ///\ingroup utilities
 //*****************************************************************************
 
-namespace etl
-{
-  template <typename T, const T VALUE>
-  class constant
-  {
-  public:
+namespace etl {
+template <typename T, const T VALUE>
+class constant {
+ public:
+  typedef T value_type;
 
-    typedef T value_type;
+  static ETL_CONSTANT T value = VALUE;
+};
 
-    static ETL_CONSTANT T value = VALUE;
-  };
-
-  template <typename T, const T VALUE>
-  const T constant<T, VALUE>::value;
-}
+template <typename T, const T VALUE>
+const T constant<T, VALUE>::value;
+}  // namespace etl
 
 #endif

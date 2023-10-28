@@ -1,28 +1,28 @@
 #include "MEVManager.hpp"
-                  #include "PBBRxProtocolTask.hpp"
-  #include "CommandMessage.hpp"
+#include "CommandMessage.hpp"
+#include "PBBRxProtocolTask.hpp"
 
-MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE    ;
+MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
 
 void MEVManager::OpenMEV() {
-    shouldMevBeOpen = OPEN;
-    PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
+  shouldMevBeOpen = OPEN;
+  PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
 }
 
 void MEVManager::CloseMEV() {
-    shouldMevBeOpen = CLOSE;
-    PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV );
+  shouldMevBeOpen = CLOSE;
+  PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
 }
 
 void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {
-    if (     shouldMevBeOpen == INDETERMINATE || !msg.has_mevstate()) {
-        // Do nothing
-        return;
-    }
+  if (shouldMevBeOpen == INDETERMINATE || !msg.has_mevstate()) {
+    // Do nothing
+    return;
+  }
 
-    if (!msg.mevstate().mev_open() && shouldMevBeOpen == OPEN) {
-        OpenMEV();
-    } else if (msg.mevstate().mev_open() && shouldMevBeOpen == CLOSE) {
-        CloseMEV();
-    }
+  if (!msg.mevstate().mev_open() && shouldMevBeOpen == OPEN) {
+    OpenMEV();
+  } else if (msg.mevstate().mev_open() && shouldMevBeOpen == CLOSE) {
+    CloseMEV();
+  }
 }

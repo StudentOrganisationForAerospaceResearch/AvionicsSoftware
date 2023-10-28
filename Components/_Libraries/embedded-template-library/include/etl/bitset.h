@@ -34,9 +34,9 @@ SOFTWARE.
 #include "platform.h"
 
 #if defined(ETL_USE_LEGACY_BITSET)
-  #include "private/bitset_legacy.h"
+#include "private/bitset_legacy.h"
 #else
-  #include "private/bitset_new.h"
+#include "private/bitset_new.h"
 #endif
 
 #endif

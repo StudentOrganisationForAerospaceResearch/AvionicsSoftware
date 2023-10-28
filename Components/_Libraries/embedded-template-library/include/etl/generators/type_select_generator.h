@@ -29,10 +29,10 @@ SOFTWARE.
 #ifndef ETL_TYPE_SELECT_INCLUDED
 #define ETL_TYPE_SELECT_INCLUDED
 
+#include "null_type.h"
 #include "platform.h"
 #include "static_assert.h"
 #include "type_traits.h"
-#include "null_type.h"
 
 /*[[[cog
 import cog
@@ -54,56 +54,50 @@ cog.outl("//********************************************************************
 ]]]*/
 /*[[[end]]]*/
 
-namespace etl
-{
+namespace etl {
 #if ETL_USING_CPP11 && !defined(ETL_TYPE_SELECT_FORCE_CPP03_IMPLEMENTATION)
-  //***************************************************************************
-  // Variadic version.
-  //***************************************************************************
-  template <typename... TTypes>
-  struct type_select
-  {
-  private:
-
-    //***********************************
-    template <size_t ID, size_t N, typename T1, typename... TRest>
-    struct type_select_helper
-    {
-      using type = typename etl::conditional<ID == N,
-                                             T1,
-                                             typename type_select_helper<ID, N + 1, TRest...>::type>::type;
-    };
-
-    //***********************************
-    template <size_t ID, size_t N, typename T1>
-    struct type_select_helper<ID, N, T1>
-    {
-      using type = T1;
-    };
-
-  public:
-
-    template <size_t ID>
-    struct select
-    {
-      static_assert(ID < sizeof...(TTypes), "Illegal type_select::select index");
-
-      using type = typename type_select_helper<ID, 0, TTypes...>::type;
-    };
-
-    template <size_t ID>
-    using select_t = typename select<ID>::type;
+//***************************************************************************
+// Variadic version.
+//***************************************************************************
+template <typename... TTypes>
+struct type_select {
+ private:
+  //***********************************
+  template <size_t ID, size_t N, typename T1, typename... TRest>
+  struct type_select_helper {
+    using type = typename etl::conditional<
+        ID == N, T1,
+        typename type_select_helper<ID, N + 1, TRest...>::type>::type;
   };
 
-  //***************************************************************************
-  // Select type alias
-  //***************************************************************************
-  template <size_t N, typename... TTypes>
-  using type_select_t = typename etl::type_select<TTypes...>:: template select_t<N>;
+  //***********************************
+  template <size_t ID, size_t N, typename T1>
+  struct type_select_helper<ID, N, T1> {
+    using type = T1;
+  };
+
+ public:
+  template <size_t ID>
+  struct select {
+    static_assert(ID < sizeof...(TTypes), "Illegal type_select::select index");
+
+    using type = typename type_select_helper<ID, 0, TTypes...>::type;
+  };
+
+  template <size_t ID>
+  using select_t = typename select<ID>::type;
+};
+
+//***************************************************************************
+// Select type alias
+//***************************************************************************
+template <size_t N, typename... TTypes>
+using type_select_t =
+    typename etl::type_select<TTypes...>::template select_t<N>;
 
 #else
 
-  /*[[[cog
+/*[[[cog
   import cog
   cog.outl("//***************************************************************************")
   cog.outl("// For %s types." % int(NTypes))
@@ -170,8 +164,8 @@ namespace etl
       cog.outl("  };")
       cog.outl("};")
   ]]]*/
-  /*[[[end]]]*/
+/*[[[end]]]*/
 #endif
-}
+}  // namespace etl
 
 #endif

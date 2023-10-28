@@ -33,41 +33,34 @@ SOFTWARE.
 
 #include "platform.h"
 
-namespace etl
-{
-  class ireference_counted_message;
+namespace etl {
+class ireference_counted_message;
+
+//***************************************************************************
+/// Interface for a reference counted message pool.
+//***************************************************************************
+class ireference_counted_message_pool {
+ public:
+  virtual ~ireference_counted_message_pool() {}
+  virtual void release(const etl::ireference_counted_message& msg) = 0;
+
+ protected:
+  //***************************************************************************
+  /// The pool lock function.
+  /// Override to add thread or interrupt locking to the pool.
+  //***************************************************************************
+  virtual void lock() {
+    // The default implementation does nothing.
+  }
 
   //***************************************************************************
-  /// Interface for a reference counted message pool.
+  /// The pool unlock function.
+  /// Override to add thread or interrupt unlocking to the pool.
   //***************************************************************************
-  class ireference_counted_message_pool
-  {
-  public:
-
-    virtual ~ireference_counted_message_pool() {}
-    virtual void release(const etl::ireference_counted_message& msg) = 0;
-
-  protected:
-
-    //***************************************************************************
-    /// The pool lock function.
-    /// Override to add thread or interrupt locking to the pool.
-    //***************************************************************************
-    virtual void lock()
-    {
-      // The default implementation does nothing.
-    }
-
-    //***************************************************************************
-    /// The pool unlock function.
-    /// Override to add thread or interrupt unlocking to the pool.
-    //***************************************************************************
-    virtual void unlock()
-    {
-      // The default implementation does nothing.
-    }
-  };
-}
+  virtual void unlock() {
+    // The default implementation does nothing.
+  }
+};
+}  // namespace etl
 
 #endif
-
