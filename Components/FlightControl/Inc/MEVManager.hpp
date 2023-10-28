@@ -12,15 +12,15 @@
 #include "PBBRxProtocolTask.hpp"
 
 class MEVManager {
- public:
-  enum MEVState { INDETERMINATE, OPEN, CLOSE };
+   public:
+    enum MEVState { INDETERMINATE, OPEN, CLOSE };
 
-  static void OpenMEV();
-  static void CloseMEV();
-  static void HandleMEVTelemetry(Proto::TelemetryMessage& msg);
+    static void OpenMEV();
+    static void CloseMEV();
+    static void HandleMEVTelemetry(Proto::TelemetryMessage& msg);
 
- private:
-  static MEVState shouldMevBeOpen;
+   private:
+    static MEVState shouldMevBeOpen;
 };
 
 #endif  // MEV_MANAGER_HPP

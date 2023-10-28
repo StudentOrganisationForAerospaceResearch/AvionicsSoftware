@@ -50,22 +50,22 @@ struct size_type_lookup;
 
 template <>
 struct size_type_lookup<etl::memory_model::MEMORY_MODEL_SMALL> {
-  typedef uint_least8_t type;
+    typedef uint_least8_t type;
 };
 
 template <>
 struct size_type_lookup<etl::memory_model::MEMORY_MODEL_MEDIUM> {
-  typedef uint_least16_t type;
+    typedef uint_least16_t type;
 };
 
 template <>
 struct size_type_lookup<etl::memory_model::MEMORY_MODEL_LARGE> {
-  typedef uint_least32_t type;
+    typedef uint_least32_t type;
 };
 
 template <>
 struct size_type_lookup<etl::memory_model::MEMORY_MODEL_HUGE> {
-  typedef uint_least64_t type;
+    typedef uint_least64_t type;
 };
 }  // namespace etl
 

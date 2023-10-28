@@ -44,14 +44,14 @@ namespace etl {
 namespace private_multi_vector {
 template <class T, size_t TD1, size_t... TDn>
 struct multi_vector_t {
-  using type = etl::vector<typename multi_vector_t<T, TDn...>::type, TD1>;
-  static constexpr size_t Max_Size = TD1;
+    using type = etl::vector<typename multi_vector_t<T, TDn...>::type, TD1>;
+    static constexpr size_t Max_Size = TD1;
 };
 
 template <class T, size_t TD1>
 struct multi_vector_t<T, TD1> {
-  using type = etl::vector<T, TD1>;
-  static constexpr size_t Max_Size = TD1;
+    using type = etl::vector<T, TD1>;
+    static constexpr size_t Max_Size = TD1;
 };
 }  // namespace private_multi_vector
 

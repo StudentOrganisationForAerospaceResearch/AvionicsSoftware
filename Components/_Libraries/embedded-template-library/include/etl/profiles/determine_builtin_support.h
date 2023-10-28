@@ -66,19 +66,20 @@ SOFTWARE.
 
 #if !defined(ETL_USING_BUILTIN_IS_TRIVIALLY_CONSTRUCTIBLE)
 #define ETL_USING_BUILTIN_IS_TRIVIALLY_CONSTRUCTIBLE \
-  (__has_builtin(__has_trivial_constructor) ||       \
-   __has_builtin(__is_trivially_constructible))
+    (__has_builtin(__has_trivial_constructor) ||     \
+     __has_builtin(__is_trivially_constructible))
 #endif
 
 #if !defined(ETL_USING_BUILTIN_IS_TRIVIALLY_DESTRUCTIBLE)
 #define ETL_USING_BUILTIN_IS_TRIVIALLY_DESTRUCTIBLE \
-  (__has_builtin(__has_trivial_destructor) ||       \
-   __has_builtin(__is_trivially_destructible))
+    (__has_builtin(__has_trivial_destructor) ||     \
+     __has_builtin(__is_trivially_destructible))
 #endif
 
 #if !defined(ETL_USING_BUILTIN_IS_TRIVIALLY_COPYABLE)
 #define ETL_USING_BUILTIN_IS_TRIVIALLY_COPYABLE \
-  (__has_builtin(__has_trivial_copy) || __has_builtin(__is_trivially_copyable))
+    (__has_builtin(__has_trivial_copy) ||       \
+     __has_builtin(__is_trivially_copyable))
 #endif
 #endif
 

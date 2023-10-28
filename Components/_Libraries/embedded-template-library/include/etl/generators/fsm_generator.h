@@ -115,91 +115,92 @@ class fsm_state;
 /// Base exception class for FSM.
 //***************************************************************************
 class fsm_exception : public etl::exception {
- public:
-  fsm_exception(string_type reason_, string_type file_name_,
-                numeric_type line_number_)
-      : etl::exception(reason_, file_name_, line_number_) {}
+   public:
+    fsm_exception(string_type reason_, string_type file_name_,
+                  numeric_type line_number_)
+        : etl::exception(reason_, file_name_, line_number_) {}
 };
 
 //***************************************************************************
 /// Exception for null state pointer.
 //***************************************************************************
 class fsm_null_state_exception : public etl::fsm_exception {
- public:
-  fsm_null_state_exception(string_type file_name_, numeric_type line_number_)
-      : etl::fsm_exception(
-            ETL_ERROR_TEXT("fsm:null state", ETL_FSM_FILE_ID "A"), file_name_,
-            line_number_) {}
+   public:
+    fsm_null_state_exception(string_type file_name_, numeric_type line_number_)
+        : etl::fsm_exception(
+              ETL_ERROR_TEXT("fsm:null state", ETL_FSM_FILE_ID "A"), file_name_,
+              line_number_) {}
 };
 
 //***************************************************************************
 /// Exception for invalid state id.
 //***************************************************************************
 class fsm_state_id_exception : public etl::fsm_exception {
- public:
-  fsm_state_id_exception(string_type file_name_, numeric_type line_number_)
-      : etl::fsm_exception(ETL_ERROR_TEXT("fsm:state id", ETL_FSM_FILE_ID "B"),
-                           file_name_, line_number_) {}
+   public:
+    fsm_state_id_exception(string_type file_name_, numeric_type line_number_)
+        : etl::fsm_exception(
+              ETL_ERROR_TEXT("fsm:state id", ETL_FSM_FILE_ID "B"), file_name_,
+              line_number_) {}
 };
 
 //***************************************************************************
 /// Exception for incompatible state list.
 //***************************************************************************
 class fsm_state_list_exception : public etl::fsm_exception {
- public:
-  fsm_state_list_exception(string_type file_name_, numeric_type line_number_)
-      : etl::fsm_exception(
-            ETL_ERROR_TEXT("fsm:state list", ETL_FSM_FILE_ID "C"), file_name_,
-            line_number_) {}
+   public:
+    fsm_state_list_exception(string_type file_name_, numeric_type line_number_)
+        : etl::fsm_exception(
+              ETL_ERROR_TEXT("fsm:state list", ETL_FSM_FILE_ID "C"), file_name_,
+              line_number_) {}
 };
 
 //***************************************************************************
 /// Exception for incompatible order state list.
 //***************************************************************************
 class fsm_state_list_order_exception : public etl::fsm_exception {
- public:
-  fsm_state_list_order_exception(string_type file_name_,
-                                 numeric_type line_number_)
-      : etl::fsm_exception(
-            ETL_ERROR_TEXT("fsm:state list order", ETL_FSM_FILE_ID "D"),
-            file_name_, line_number_) {}
+   public:
+    fsm_state_list_order_exception(string_type file_name_,
+                                   numeric_type line_number_)
+        : etl::fsm_exception(
+              ETL_ERROR_TEXT("fsm:state list order", ETL_FSM_FILE_ID "D"),
+              file_name_, line_number_) {}
 };
 
 //***************************************************************************
 /// Exception for forbidden state chages.
 //***************************************************************************
 class fsm_state_composite_state_change_forbidden : public etl::fsm_exception {
- public:
-  fsm_state_composite_state_change_forbidden(string_type file_name_,
-                                             numeric_type line_number_)
-      : etl::fsm_exception(
-            ETL_ERROR_TEXT("fsm:change in composite state forbidden",
-                           ETL_FSM_FILE_ID "E"),
-            file_name_, line_number_) {}
+   public:
+    fsm_state_composite_state_change_forbidden(string_type file_name_,
+                                               numeric_type line_number_)
+        : etl::fsm_exception(
+              ETL_ERROR_TEXT("fsm:change in composite state forbidden",
+                             ETL_FSM_FILE_ID "E"),
+              file_name_, line_number_) {}
 };
 
 //***************************************************************************
 /// Interface class for FSM states.
 //***************************************************************************
 class ifsm_state {
- public:
-  // Pass this whenever no state change is desired.
-  // The highest unsigned value of fsm_state_id_t.
-  static ETL_CONSTANT fsm_state_id_t No_State_Change =
-      etl::integral_limits<fsm_state_id_t>::max;
-  // Pass this when this event also needs to be passed to the parent.
-  static ETL_CONSTANT fsm_state_id_t Pass_To_Parent = No_State_Change - 1U;
+   public:
+    // Pass this whenever no state change is desired.
+    // The highest unsigned value of fsm_state_id_t.
+    static ETL_CONSTANT fsm_state_id_t No_State_Change =
+        etl::integral_limits<fsm_state_id_t>::max;
+    // Pass this when this event also needs to be passed to the parent.
+    static ETL_CONSTANT fsm_state_id_t Pass_To_Parent = No_State_Change - 1U;
 
-  /// Allows ifsm_state functions to be private.
-  friend class etl::fsm;
-  friend class etl::hfsm;
+    /// Allows ifsm_state functions to be private.
+    friend class etl::fsm;
+    friend class etl::hfsm;
 
 #if ETL_USING_CPP17 && \
     !defined(ETL_FSM_FORCE_CPP03_IMPLEMENTATION)  // For C++17 and above
-  template <typename, typename, const etl::fsm_state_id_t, typename...>
-  friend class fsm_state;
+    template <typename, typename, const etl::fsm_state_id_t, typename...>
+    friend class fsm_state;
 #else
-  /*[[[cog
+    /*[[[cog
     import cog
     cog.outl("  template <typename, typename, const etl::fsm_state_id_t,")
     cog.out("            ")
@@ -210,261 +211,262 @@ class ifsm_state {
           cog.out("            ")
     cog.outl("typename>")
     ]]]*/
-  /*[[[end]]]*/
-  friend class etl::fsm_state;
+    /*[[[end]]]*/
+    friend class etl::fsm_state;
 #endif
 
-  //*******************************************
-  /// Gets the id for this state.
-  //*******************************************
-  etl::fsm_state_id_t get_state_id() const { return state_id; }
+    //*******************************************
+    /// Gets the id for this state.
+    //*******************************************
+    etl::fsm_state_id_t get_state_id() const { return state_id; }
 
-  //*******************************************
-  /// Adds a child to this state.
-  /// Only of use when part of an HFSM.
-  //*******************************************
-  void add_child_state(etl::ifsm_state& state) {
-    ETL_ASSERT(state.p_parent == ETL_NULLPTR,
-               ETL_ERROR(etl::fsm_null_state_exception));
-    state.p_parent = this;
+    //*******************************************
+    /// Adds a child to this state.
+    /// Only of use when part of an HFSM.
+    //*******************************************
+    void add_child_state(etl::ifsm_state& state) {
+        ETL_ASSERT(state.p_parent == ETL_NULLPTR,
+                   ETL_ERROR(etl::fsm_null_state_exception));
+        state.p_parent = this;
 
-    if (p_default_child == ETL_NULLPTR) {
-      p_active_child = &state;
-      p_default_child = &state;
+        if (p_default_child == ETL_NULLPTR) {
+            p_active_child = &state;
+            p_default_child = &state;
+        }
     }
-  }
 
-  //*******************************************
-  /// Adds a list of child states.
-  /// Only of use when part of an HFSM.
-  //*******************************************
-  template <typename TSize>
-  void set_child_states(etl::ifsm_state** state_list, TSize size) {
-    p_active_child = ETL_NULLPTR;
-    p_default_child = ETL_NULLPTR;
+    //*******************************************
+    /// Adds a list of child states.
+    /// Only of use when part of an HFSM.
+    //*******************************************
+    template <typename TSize>
+    void set_child_states(etl::ifsm_state** state_list, TSize size) {
+        p_active_child = ETL_NULLPTR;
+        p_default_child = ETL_NULLPTR;
 
-    for (TSize i = 0; i < size; ++i) {
-      ETL_ASSERT(state_list[i] != ETL_NULLPTR,
-                 ETL_ERROR(etl::fsm_null_state_exception));
-      add_child_state(*state_list[i]);
+        for (TSize i = 0; i < size; ++i) {
+            ETL_ASSERT(state_list[i] != ETL_NULLPTR,
+                       ETL_ERROR(etl::fsm_null_state_exception));
+            add_child_state(*state_list[i]);
+        }
     }
-  }
 
- protected:
-  //*******************************************
-  /// Constructor.
-  //*******************************************
-  ifsm_state(etl::fsm_state_id_t state_id_)
-      : state_id(state_id_),
-        p_context(ETL_NULLPTR),
-        p_parent(ETL_NULLPTR),
-        p_active_child(ETL_NULLPTR),
-        p_default_child(ETL_NULLPTR) {}
+   protected:
+    //*******************************************
+    /// Constructor.
+    //*******************************************
+    ifsm_state(etl::fsm_state_id_t state_id_)
+        : state_id(state_id_),
+          p_context(ETL_NULLPTR),
+          p_parent(ETL_NULLPTR),
+          p_active_child(ETL_NULLPTR),
+          p_default_child(ETL_NULLPTR) {}
 
-  //*******************************************
-  /// Destructor.
-  //*******************************************
-  virtual ~ifsm_state() {}
+    //*******************************************
+    /// Destructor.
+    //*******************************************
+    virtual ~ifsm_state() {}
 
-  //*******************************************
-  etl::fsm& get_fsm_context() const { return *p_context; }
+    //*******************************************
+    etl::fsm& get_fsm_context() const { return *p_context; }
 
- private:
-  virtual fsm_state_id_t process_event(const etl::imessage& message) = 0;
+   private:
+    virtual fsm_state_id_t process_event(const etl::imessage& message) = 0;
 
-  virtual fsm_state_id_t on_enter_state() {
-    return No_State_Change;
-  }                                // By default, do nothing.
-  virtual void on_exit_state() {}  // By default, do nothing.
+    virtual fsm_state_id_t on_enter_state() {
+        return No_State_Change;
+    }                                // By default, do nothing.
+    virtual void on_exit_state() {}  // By default, do nothing.
 
-  //*******************************************
-  void set_fsm_context(etl::fsm& context) { p_context = &context; }
+    //*******************************************
+    void set_fsm_context(etl::fsm& context) { p_context = &context; }
 
-  // The state id.
-  const etl::fsm_state_id_t state_id;
+    // The state id.
+    const etl::fsm_state_id_t state_id;
 
-  // A pointer to the FSM context.
-  etl::fsm* p_context;
+    // A pointer to the FSM context.
+    etl::fsm* p_context;
 
-  // A pointer to the parent.
-  ifsm_state* p_parent;
+    // A pointer to the parent.
+    ifsm_state* p_parent;
 
-  // A pointer to the active child.
-  ifsm_state* p_active_child;
+    // A pointer to the active child.
+    ifsm_state* p_active_child;
 
-  // A pointer to the default active child.
-  ifsm_state* p_default_child;
+    // A pointer to the default active child.
+    ifsm_state* p_default_child;
 
-  // Disabled.
-  ifsm_state(const ifsm_state&);
-  ifsm_state& operator=(const ifsm_state&);
+    // Disabled.
+    ifsm_state(const ifsm_state&);
+    ifsm_state& operator=(const ifsm_state&);
 };
 
 //***************************************************************************
 /// The FSM class.
 //***************************************************************************
 class fsm : public etl::imessage_router {
- public:
-  friend etl::hfsm;
-  using imessage_router::receive;
+   public:
+    friend etl::hfsm;
+    using imessage_router::receive;
 
-  //*******************************************
-  /// Constructor.
-  //*******************************************
-  fsm(etl::message_router_id_t id)
-      : imessage_router(id),
-        p_state(ETL_NULLPTR),
-        state_list(ETL_NULLPTR),
-        number_of_states(0U) {}
+    //*******************************************
+    /// Constructor.
+    //*******************************************
+    fsm(etl::message_router_id_t id)
+        : imessage_router(id),
+          p_state(ETL_NULLPTR),
+          state_list(ETL_NULLPTR),
+          number_of_states(0U) {}
 
-  //*******************************************
-  /// Set the states for the FSM
-  //*******************************************
-  template <typename TSize>
-  void set_states(etl::ifsm_state** p_states, TSize size) {
-    state_list = p_states;
-    number_of_states = etl::fsm_state_id_t(size);
+    //*******************************************
+    /// Set the states for the FSM
+    //*******************************************
+    template <typename TSize>
+    void set_states(etl::ifsm_state** p_states, TSize size) {
+        state_list = p_states;
+        number_of_states = etl::fsm_state_id_t(size);
 
-    ETL_ASSERT(number_of_states > 0, ETL_ERROR(etl::fsm_state_list_exception));
-    ETL_ASSERT(number_of_states < ifsm_state::No_State_Change,
-               ETL_ERROR(etl::fsm_state_list_exception));
+        ETL_ASSERT(number_of_states > 0,
+                   ETL_ERROR(etl::fsm_state_list_exception));
+        ETL_ASSERT(number_of_states < ifsm_state::No_State_Change,
+                   ETL_ERROR(etl::fsm_state_list_exception));
 
-    for (etl::fsm_state_id_t i = 0; i < size; ++i) {
-      ETL_ASSERT(state_list[i] != ETL_NULLPTR,
-                 ETL_ERROR(etl::fsm_null_state_exception));
-      ETL_ASSERT(state_list[i]->get_state_id() == i,
-                 ETL_ERROR(etl::fsm_state_list_order_exception));
-      state_list[i]->set_fsm_context(*this);
+        for (etl::fsm_state_id_t i = 0; i < size; ++i) {
+            ETL_ASSERT(state_list[i] != ETL_NULLPTR,
+                       ETL_ERROR(etl::fsm_null_state_exception));
+            ETL_ASSERT(state_list[i]->get_state_id() == i,
+                       ETL_ERROR(etl::fsm_state_list_order_exception));
+            state_list[i]->set_fsm_context(*this);
+        }
     }
-  }
 
-  //*******************************************
-  /// Starts the FSM.
-  /// Can only be called once.
-  /// Subsequent calls will do nothing.
-  ///\param call_on_enter_state If true will call on_enter_state() for the first state. Default = true.
-  //*******************************************
-  void start(bool call_on_enter_state = true) {
-    // Can only be started once.
-    if (p_state == ETL_NULLPTR) {
-      p_state = state_list[0];
-      ETL_ASSERT(p_state != ETL_NULLPTR,
-                 ETL_ERROR(etl::fsm_null_state_exception));
+    //*******************************************
+    /// Starts the FSM.
+    /// Can only be called once.
+    /// Subsequent calls will do nothing.
+    ///\param call_on_enter_state If true will call on_enter_state() for the first state. Default = true.
+    //*******************************************
+    void start(bool call_on_enter_state = true) {
+        // Can only be started once.
+        if (p_state == ETL_NULLPTR) {
+            p_state = state_list[0];
+            ETL_ASSERT(p_state != ETL_NULLPTR,
+                       ETL_ERROR(etl::fsm_null_state_exception));
 
-      if (call_on_enter_state) {
-        etl::fsm_state_id_t next_state_id;
-        etl::ifsm_state* p_last_state;
+            if (call_on_enter_state) {
+                etl::fsm_state_id_t next_state_id;
+                etl::ifsm_state* p_last_state;
 
-        do {
-          p_last_state = p_state;
-          next_state_id = p_state->on_enter_state();
-          if (next_state_id != ifsm_state::No_State_Change) {
-            ETL_ASSERT(next_state_id < number_of_states,
-                       ETL_ERROR(etl::fsm_state_id_exception));
-            p_state = state_list[next_state_id];
-          }
-        } while (p_last_state != p_state);
-      }
+                do {
+                    p_last_state = p_state;
+                    next_state_id = p_state->on_enter_state();
+                    if (next_state_id != ifsm_state::No_State_Change) {
+                        ETL_ASSERT(next_state_id < number_of_states,
+                                   ETL_ERROR(etl::fsm_state_id_exception));
+                        p_state = state_list[next_state_id];
+                    }
+                } while (p_last_state != p_state);
+            }
+        }
     }
-  }
 
-  //*******************************************
-  /// Top level message handler for the FSM.
-  //*******************************************
-  void receive(const etl::imessage& message) ETL_OVERRIDE {
-    etl::fsm_state_id_t next_state_id = p_state->process_event(message);
-
-    if (have_changed_state(next_state_id)) {
-      ETL_ASSERT(next_state_id < number_of_states,
-                 ETL_ERROR(etl::fsm_state_id_exception));
-      etl::ifsm_state* p_next_state = state_list[next_state_id];
-
-      do {
-        p_state->on_exit_state();
-        p_state = p_next_state;
-
-        next_state_id = p_state->on_enter_state();
+    //*******************************************
+    /// Top level message handler for the FSM.
+    //*******************************************
+    void receive(const etl::imessage& message) ETL_OVERRIDE {
+        etl::fsm_state_id_t next_state_id = p_state->process_event(message);
 
         if (have_changed_state(next_state_id)) {
-          ETL_ASSERT(next_state_id < number_of_states,
-                     ETL_ERROR(etl::fsm_state_id_exception));
-          p_next_state = state_list[next_state_id];
+            ETL_ASSERT(next_state_id < number_of_states,
+                       ETL_ERROR(etl::fsm_state_id_exception));
+            etl::ifsm_state* p_next_state = state_list[next_state_id];
+
+            do {
+                p_state->on_exit_state();
+                p_state = p_next_state;
+
+                next_state_id = p_state->on_enter_state();
+
+                if (have_changed_state(next_state_id)) {
+                    ETL_ASSERT(next_state_id < number_of_states,
+                               ETL_ERROR(etl::fsm_state_id_exception));
+                    p_next_state = state_list[next_state_id];
+                }
+            } while (p_next_state != p_state);  // Have we changed state again?
         }
-      } while (p_next_state != p_state);  // Have we changed state again?
-    }
-  }
-
-  using imessage_router::accepts;
-
-  //*******************************************
-  /// Does this FSM accept the message id?
-  /// Yes, it accepts everything!
-  //*******************************************
-  bool accepts(etl::message_id_t) const ETL_OVERRIDE { return true; }
-
-  //*******************************************
-  /// Gets the current state id.
-  //*******************************************
-  etl::fsm_state_id_t get_state_id() const {
-    ETL_ASSERT(p_state != ETL_NULLPTR,
-               ETL_ERROR(etl::fsm_null_state_exception));
-    return p_state->get_state_id();
-  }
-
-  //*******************************************
-  /// Gets a reference to the current state interface.
-  //*******************************************
-  ifsm_state& get_state() {
-    ETL_ASSERT(p_state != ETL_NULLPTR,
-               ETL_ERROR(etl::fsm_null_state_exception));
-    return *p_state;
-  }
-
-  //*******************************************
-  /// Gets a const reference to the current state interface.
-  //*******************************************
-  const ifsm_state& get_state() const {
-    ETL_ASSERT(p_state != ETL_NULLPTR,
-               ETL_ERROR(etl::fsm_null_state_exception));
-    return *p_state;
-  }
-
-  //*******************************************
-  /// Checks if the FSM has been started.
-  //*******************************************
-  bool is_started() const { return p_state != ETL_NULLPTR; }
-
-  //*******************************************
-  /// Reset the FSM to pre-started state.
-  ///\param call_on_exit_state If true will call on_exit_state() for the current state. Default = false.
-  //*******************************************
-  void reset(bool call_on_exit_state = false) {
-    if ((p_state != ETL_NULLPTR) && call_on_exit_state) {
-      p_state->on_exit_state();
     }
 
-    p_state = ETL_NULLPTR;
-  }
+    using imessage_router::accepts;
 
-  //********************************************
-  ETL_DEPRECATED bool is_null_router() const ETL_OVERRIDE { return false; }
+    //*******************************************
+    /// Does this FSM accept the message id?
+    /// Yes, it accepts everything!
+    //*******************************************
+    bool accepts(etl::message_id_t) const ETL_OVERRIDE { return true; }
 
-  //********************************************
-  bool is_producer() const ETL_OVERRIDE { return true; }
+    //*******************************************
+    /// Gets the current state id.
+    //*******************************************
+    etl::fsm_state_id_t get_state_id() const {
+        ETL_ASSERT(p_state != ETL_NULLPTR,
+                   ETL_ERROR(etl::fsm_null_state_exception));
+        return p_state->get_state_id();
+    }
 
-  //********************************************
-  bool is_consumer() const ETL_OVERRIDE { return true; }
+    //*******************************************
+    /// Gets a reference to the current state interface.
+    //*******************************************
+    ifsm_state& get_state() {
+        ETL_ASSERT(p_state != ETL_NULLPTR,
+                   ETL_ERROR(etl::fsm_null_state_exception));
+        return *p_state;
+    }
 
- private:
-  //********************************************
-  bool have_changed_state(etl::fsm_state_id_t next_state_id) const {
-    return (next_state_id != p_state->get_state_id()) &&
-           (next_state_id != ifsm_state::No_State_Change);
-  }
+    //*******************************************
+    /// Gets a const reference to the current state interface.
+    //*******************************************
+    const ifsm_state& get_state() const {
+        ETL_ASSERT(p_state != ETL_NULLPTR,
+                   ETL_ERROR(etl::fsm_null_state_exception));
+        return *p_state;
+    }
 
-  etl::ifsm_state* p_state;              ///< A pointer to the current state.
-  etl::ifsm_state** state_list;          ///< The list of added states.
-  etl::fsm_state_id_t number_of_states;  ///< The number of states.
+    //*******************************************
+    /// Checks if the FSM has been started.
+    //*******************************************
+    bool is_started() const { return p_state != ETL_NULLPTR; }
+
+    //*******************************************
+    /// Reset the FSM to pre-started state.
+    ///\param call_on_exit_state If true will call on_exit_state() for the current state. Default = false.
+    //*******************************************
+    void reset(bool call_on_exit_state = false) {
+        if ((p_state != ETL_NULLPTR) && call_on_exit_state) {
+            p_state->on_exit_state();
+        }
+
+        p_state = ETL_NULLPTR;
+    }
+
+    //********************************************
+    ETL_DEPRECATED bool is_null_router() const ETL_OVERRIDE { return false; }
+
+    //********************************************
+    bool is_producer() const ETL_OVERRIDE { return true; }
+
+    //********************************************
+    bool is_consumer() const ETL_OVERRIDE { return true; }
+
+   private:
+    //********************************************
+    bool have_changed_state(etl::fsm_state_id_t next_state_id) const {
+        return (next_state_id != p_state->get_state_id()) &&
+               (next_state_id != ifsm_state::No_State_Change);
+    }
+
+    etl::ifsm_state* p_state;              ///< A pointer to the current state.
+    etl::ifsm_state** state_list;          ///< The list of added states.
+    etl::fsm_state_id_t number_of_states;  ///< The number of states.
 };
 
 //*************************************************************************************************
@@ -478,55 +480,55 @@ class fsm : public etl::imessage_router {
 template <typename TContext, typename TDerived,
           const etl::fsm_state_id_t STATE_ID_, typename... TMessageTypes>
 class fsm_state : public ifsm_state {
- public:
- public:
-  enum { STATE_ID = STATE_ID_ };
+   public:
+   public:
+    enum { STATE_ID = STATE_ID_ };
 
-  fsm_state() : ifsm_state(STATE_ID) {}
+    fsm_state() : ifsm_state(STATE_ID) {}
 
- protected:
-  ~fsm_state() {}
+   protected:
+    ~fsm_state() {}
 
-  TContext& get_fsm_context() const {
-    return static_cast<TContext&>(ifsm_state::get_fsm_context());
-  }
-
- private:
-  //********************************************
-  struct result_t {
-    bool was_handled;
-    etl::fsm_state_id_t state_id;
-  };
-
-  //********************************************
-  etl::fsm_state_id_t process_event(const etl::imessage& message) {
-    etl::fsm_state_id_t new_state_id;
-
-    const bool was_handled =
-        (process_event_type<TMessageTypes>(message, new_state_id) || ...);
-
-    if (!was_handled || (new_state_id == Pass_To_Parent)) {
-      new_state_id =
-          (p_parent != nullptr)
-              ? p_parent->process_event(message)
-              : static_cast<TDerived*>(this)->on_event_unknown(message);
+    TContext& get_fsm_context() const {
+        return static_cast<TContext&>(ifsm_state::get_fsm_context());
     }
 
-    return new_state_id;
-  }
+   private:
+    //********************************************
+    struct result_t {
+        bool was_handled;
+        etl::fsm_state_id_t state_id;
+    };
 
-  //********************************************
-  template <typename TMessage>
-  bool process_event_type(const etl::imessage& msg,
-                          etl::fsm_state_id_t& state_id) {
-    if (TMessage::ID == msg.get_message_id()) {
-      state_id = static_cast<TDerived*>(this)->on_event(
-          static_cast<const TMessage&>(msg));
-      return true;
-    } else {
-      return false;
+    //********************************************
+    etl::fsm_state_id_t process_event(const etl::imessage& message) {
+        etl::fsm_state_id_t new_state_id;
+
+        const bool was_handled =
+            (process_event_type<TMessageTypes>(message, new_state_id) || ...);
+
+        if (!was_handled || (new_state_id == Pass_To_Parent)) {
+            new_state_id =
+                (p_parent != nullptr)
+                    ? p_parent->process_event(message)
+                    : static_cast<TDerived*>(this)->on_event_unknown(message);
+        }
+
+        return new_state_id;
     }
-  }
+
+    //********************************************
+    template <typename TMessage>
+    bool process_event_type(const etl::imessage& msg,
+                            etl::fsm_state_id_t& state_id) {
+        if (TMessage::ID == msg.get_message_id()) {
+            state_id = static_cast<TDerived*>(this)->on_event(
+                static_cast<const TMessage&>(msg));
+            return true;
+        } else {
+            return false;
+        }
+    }
 };
 #else
 //*************************************************************************************************

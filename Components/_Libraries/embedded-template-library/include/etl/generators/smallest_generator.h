@@ -83,22 +83,22 @@ namespace etl {
 //***************************************************************************
 template <typename T1, typename... TRest>
 class smallest_type {
- private:
-  // Define 'smallest_other' as 'smallest_type' with all but the first parameter.
-  using smallest_other = typename smallest_type<TRest...>::type;
+   private:
+    // Define 'smallest_other' as 'smallest_type' with all but the first parameter.
+    using smallest_other = typename smallest_type<TRest...>::type;
 
- public:
-  // Set 'type' to be the smallest of the first parameter and any of the others.
-  // This is recursive.
-  using type = typename etl::conditional<
-      (etl::size_of<T1>::value <
-       etl::size_of<smallest_other>::value),  // Boolean
-      T1,                                     // TrueType
-      smallest_other>                         // FalseType
-      ::type;                                 // The smallest type of the two.
+   public:
+    // Set 'type' to be the smallest of the first parameter and any of the others.
+    // This is recursive.
+    using type = typename etl::conditional<
+        (etl::size_of<T1>::value <
+         etl::size_of<smallest_other>::value),  // Boolean
+        T1,                                     // TrueType
+        smallest_other>                         // FalseType
+        ::type;                                 // The smallest type of the two.
 
-  // The size of the smallest type.
-  enum { size = etl::size_of<type>::value };
+    // The size of the smallest type.
+    enum { size = etl::size_of<type>::value };
 };
 
 //***************************************************************************
@@ -106,10 +106,10 @@ class smallest_type {
 //***************************************************************************
 template <typename T1>
 class smallest_type<T1> {
- public:
-  using type = T1;
+   public:
+    using type = T1;
 
-  enum { size = etl::size_of<type>::value };
+    enum { size = etl::size_of<type>::value };
 };
 
 #if ETL_USING_CPP11
@@ -223,7 +223,7 @@ struct best_fit_uint_type;
 //*************************************************************************
 template <>
 struct best_fit_uint_type<0> {
-  typedef uint_least8_t type;
+    typedef uint_least8_t type;
 };
 
 //*************************************************************************
@@ -231,7 +231,7 @@ struct best_fit_uint_type<0> {
 //*************************************************************************
 template <>
 struct best_fit_uint_type<1> {
-  typedef uint_least16_t type;
+    typedef uint_least16_t type;
 };
 
 //*************************************************************************
@@ -239,7 +239,7 @@ struct best_fit_uint_type<1> {
 //*************************************************************************
 template <>
 struct best_fit_uint_type<2> {
-  typedef uint_least32_t type;
+    typedef uint_least32_t type;
 };
 
 //*************************************************************************
@@ -247,7 +247,7 @@ struct best_fit_uint_type<2> {
 //*************************************************************************
 template <>
 struct best_fit_uint_type<3> {
-  typedef uint_least64_t type;
+    typedef uint_least64_t type;
 };
 
 //*************************************************************************
@@ -261,7 +261,7 @@ struct best_fit_int_type;
 //*************************************************************************
 template <>
 struct best_fit_int_type<0> {
-  typedef int_least8_t type;
+    typedef int_least8_t type;
 };
 
 //*************************************************************************
@@ -269,7 +269,7 @@ struct best_fit_int_type<0> {
 //*************************************************************************
 template <>
 struct best_fit_int_type<1> {
-  typedef int_least16_t type;
+    typedef int_least16_t type;
 };
 
 //*************************************************************************
@@ -277,7 +277,7 @@ struct best_fit_int_type<1> {
 //*************************************************************************
 template <>
 struct best_fit_int_type<2> {
-  typedef int_least32_t type;
+    typedef int_least32_t type;
 };
 
 //*************************************************************************
@@ -285,7 +285,7 @@ struct best_fit_int_type<2> {
 //*************************************************************************
 template <>
 struct best_fit_int_type<3> {
-  typedef int_least64_t type;
+    typedef int_least64_t type;
 };
 }  // namespace private_smallest
 
@@ -297,13 +297,14 @@ struct best_fit_int_type<3> {
 //***************************************************************************
 template <size_t NBITS>
 struct smallest_uint_for_bits {
- private:
-  // Determines the index of the best unsigned type for the required number of bits.
-  static ETL_CONSTANT int TYPE_INDEX =
-      ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
+   private:
+    // Determines the index of the best unsigned type for the required number of bits.
+    static ETL_CONSTANT int TYPE_INDEX =
+        ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
 
- public:
-  typedef typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
+   public:
+    typedef
+        typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
 };
 
 #if ETL_USING_CPP11
@@ -319,13 +320,13 @@ using smallest_uint_for_bits_t = typename smallest_uint_for_bits<NBITS>::type;
 //***************************************************************************
 template <size_t NBITS>
 struct smallest_int_for_bits {
- private:
-  // Determines the index of the best unsigned type for the required number of bits.
-  static ETL_CONSTANT int TYPE_INDEX =
-      ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
+   private:
+    // Determines the index of the best unsigned type for the required number of bits.
+    static ETL_CONSTANT int TYPE_INDEX =
+        ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
 
- public:
-  typedef typename private_smallest::best_fit_int_type<TYPE_INDEX>::type type;
+   public:
+    typedef typename private_smallest::best_fit_int_type<TYPE_INDEX>::type type;
 };
 
 #if ETL_USING_CPP11
@@ -341,14 +342,15 @@ using smallest_int_for_bits_t = typename smallest_int_for_bits<NBITS>::type;
 //***************************************************************************
 template <uintmax_t VALUE>
 struct smallest_uint_for_value {
- private:
-  // Determines the index of the best unsigned type for the required value.
-  static ETL_CONSTANT int TYPE_INDEX = ((VALUE > UINT_LEAST8_MAX) ? 1 : 0) +
-                                       ((VALUE > UINT16_MAX) ? 1 : 0) +
-                                       ((VALUE > UINT32_MAX) ? 1 : 0);
+   private:
+    // Determines the index of the best unsigned type for the required value.
+    static ETL_CONSTANT int TYPE_INDEX = ((VALUE > UINT_LEAST8_MAX) ? 1 : 0) +
+                                         ((VALUE > UINT16_MAX) ? 1 : 0) +
+                                         ((VALUE > UINT32_MAX) ? 1 : 0);
 
- public:
-  typedef typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
+   public:
+    typedef
+        typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
 };
 
 #if ETL_USING_CPP11
@@ -364,20 +366,20 @@ using smallest_uint_for_value_t = typename smallest_uint_for_value<VALUE>::type;
 //***************************************************************************
 template <const intmax_t VALUE>
 struct smallest_int_for_value {
- private:
-  // Determines the index of the best signed type for the required value.
-  static ETL_CONSTANT int TYPE_INDEX =
-      (((VALUE > intmax_t(INT_LEAST8_MAX)) ||
-        (VALUE < intmax_t(INT_LEAST8_MIN)))
-           ? 1
-           : 0) +
-      (((VALUE > intmax_t(INT16_MAX)) || (VALUE < intmax_t(INT16_MIN))) ? 1
-                                                                        : 0) +
-      (((VALUE > intmax_t(INT32_MAX)) || (VALUE < intmax_t(INT32_MIN))) ? 1
-                                                                        : 0);
+   private:
+    // Determines the index of the best signed type for the required value.
+    static ETL_CONSTANT int TYPE_INDEX =
+        (((VALUE > intmax_t(INT_LEAST8_MAX)) ||
+          (VALUE < intmax_t(INT_LEAST8_MIN)))
+             ? 1
+             : 0) +
+        (((VALUE > intmax_t(INT16_MAX)) || (VALUE < intmax_t(INT16_MIN))) ? 1
+                                                                          : 0) +
+        (((VALUE > intmax_t(INT32_MAX)) || (VALUE < intmax_t(INT32_MIN))) ? 1
+                                                                          : 0);
 
- public:
-  typedef typename private_smallest::best_fit_int_type<TYPE_INDEX>::type type;
+   public:
+    typedef typename private_smallest::best_fit_int_type<TYPE_INDEX>::type type;
 };
 
 #if ETL_USING_CPP11

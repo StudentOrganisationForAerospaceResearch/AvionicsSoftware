@@ -14,45 +14,45 @@
 
 /* Macros/Enums ------------------------------------------------------------*/
 enum BATTERY_TASK_COMMANDS {
-  BATTERY_NONE = 0,
-  BATTERY_REQUEST_NEW_SAMPLE,  // Get a new battery voltage sample, task will be blocked for polling time
-  BATTERY_REQUEST_TRANSMIT,  // Send the current battery voltage data over the Radio
-  BATTERY_REQUEST_DEBUG,  // Send the current battery voltage data over the Debug UART
+    BATTERY_NONE = 0,
+    BATTERY_REQUEST_NEW_SAMPLE,  // Get a new battery voltage sample, task will be blocked for polling time
+    BATTERY_REQUEST_TRANSMIT,  // Send the current battery voltage data over the Radio
+    BATTERY_REQUEST_DEBUG,  // Send the current battery voltage data over the Debug UART
 };
 
 /* Class ------------------------------------------------------------------*/
 class BatteryTask : public Task {
- public:
-  static BatteryTask& Inst() {
-    static BatteryTask inst;
-    return inst;
-  }
+   public:
+    static BatteryTask& Inst() {
+        static BatteryTask inst;
+        return inst;
+    }
 
-  void InitTask();
+    void InitTask();
 
- protected:
-  static void RunTask(void* pvParams) {
-    BatteryTask::Inst().Run(pvParams);
-  }  // Static Task Interface, passes control to the instance Run();
+   protected:
+    static void RunTask(void* pvParams) {
+        BatteryTask::Inst().Run(pvParams);
+    }  // Static Task Interface, passes control to the instance Run();
 
-  void Run(void* pvParams);  // Main run code
+    void Run(void* pvParams);  // Main run code
 
-  void HandleCommand(Command& cm);
-  void HandleRequestCommand(uint16_t taskCommand);
+    void HandleCommand(Command& cm);
+    void HandleRequestCommand(uint16_t taskCommand);
 
-  // Sampling
-  void SampleBatteryVoltage();
-  void TransmitProtocolBatteryData();
-  enum Proto::Battery::power_source GetPowerState();
+    // Sampling
+    void SampleBatteryVoltage();
+    void TransmitProtocolBatteryData();
+    enum Proto::Battery::power_source GetPowerState();
 
-  // Data
-  BatteryData* data;
-  uint32_t timestampPT;
+    // Data
+    BatteryData* data;
+    uint32_t timestampPT;
 
- private:
-  BatteryTask();                               // Private constructor
-  BatteryTask(const BatteryTask&);             // Prevent copy-construction
-  BatteryTask& operator=(const BatteryTask&);  // Prevent assignment
+   private:
+    BatteryTask();                               // Private constructor
+    BatteryTask(const BatteryTask&);             // Prevent copy-construction
+    BatteryTask& operator=(const BatteryTask&);  // Prevent assignment
 };
 
 #endif  // SOAR_SENSOR_BATTERY_TASK_HPP_

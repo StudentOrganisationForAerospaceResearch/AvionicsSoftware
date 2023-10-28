@@ -39,24 +39,24 @@ namespace etl {
 ///\brief This mutex class is implemented using CMSIS's RTOS2 mutexes
 //***************************************************************************
 class mutex {
- public:
-  mutex() : id(0) {
-    osMutexAttr_t attr = {
-        "ETL", osMutexRecursive | osMutexPrioInherit | osMutexRobust, 0, 0};
-    id = osMutexNew(&attr);
-  }
+   public:
+    mutex() : id(0) {
+        osMutexAttr_t attr = {
+            "ETL", osMutexRecursive | osMutexPrioInherit | osMutexRobust, 0, 0};
+        id = osMutexNew(&attr);
+    }
 
-  void lock() { osMutexAcquire(id, osWaitForever); }
+    void lock() { osMutexAcquire(id, osWaitForever); }
 
-  bool try_lock() { return osMutexAcquire(id, 0) == osOK; }
+    bool try_lock() { return osMutexAcquire(id, 0) == osOK; }
 
-  void unlock() { osMutexRelease(id); }
+    void unlock() { osMutexRelease(id); }
 
- private:
-  mutex(const mutex&) ETL_DELETE;
-  mutex& operator=(const mutex&) ETL_DELETE;
+   private:
+    mutex(const mutex&) ETL_DELETE;
+    mutex& operator=(const mutex&) ETL_DELETE;
 
-  osMutexId_t id;
+    osMutexId_t id;
 };
 }  // namespace etl
 

@@ -50,15 +50,16 @@ HDITask::HDITask() : Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(false) {}
 * @brief Initialize the HDITask
 */
 void HDITask::InitTask() {
-  // Make sure the task is not already initialized
-  SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize HDI task twice");
+    // Make sure the task is not already initialized
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize HDI task twice");
 
-  BaseType_t rtValue = xTaskCreate(
-      (TaskFunction_t)HDITask::RunTask, (const char*)"HDITask",
-      (uint16_t)HDI_TASK_STACK_DEPTH_WORDS, (void*)this,
-      (UBaseType_t)HDI_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate(
+        (TaskFunction_t)HDITask::RunTask, (const char*)"HDITask",
+        (uint16_t)HDI_TASK_STACK_DEPTH_WORDS, (void*)this,
+        (UBaseType_t)HDI_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
-  SOAR_ASSERT(rtValue == pdPASS, "HDITask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS,
+                "HDITask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -67,21 +68,21 @@ void HDITask::InitTask() {
 */
 void HDITask::Run(void* pvParams) {
 
-  while (1) {
-    htim2.Instance->CCR1 = BUZZER_DEFAULT_DUTY_CYCLE;
+    while (1) {
+        htim2.Instance->CCR1 = BUZZER_DEFAULT_DUTY_CYCLE;
 
-    Command cm;
+        Command cm;
 
-    //Wait forever for a command,
-    //look forward for anything in queue, if there is , if there is anything update index, if there isn't anything do what was done before
-    //state field, last known state
-    if (qEvtQueue->Receive(cm, 1000)) {
-      HandleCommand(cm);
-    } else {
-      BuzzBlinkSequence(currentConfig);
+        //Wait forever for a command,
+        //look forward for anything in queue, if there is , if there is anything update index, if there isn't anything do what was done before
+        //state field, last known state
+        if (qEvtQueue->Receive(cm, 1000)) {
+            HandleCommand(cm);
+        } else {
+            BuzzBlinkSequence(currentConfig);
+        }
+        //Process the command
     }
-    //Process the command
-  }
 }
 
 /**
@@ -89,30 +90,30 @@ void HDITask::Run(void* pvParams) {
 * @param cm Command reference to handle
 */
 void HDITask::HandleCommand(Command& cm) {
-  //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
-  //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
+    //TODO: Since this task will stall for a few milliseconds, we may need a way to eat the whole queue (combine similar eg. REQUEST commands and eat to WDG command etc)
+    //TODO: Maybe a HandleEvtQueue instead that takes in the whole queue and eats the whole thing in order of non-blocking to blocking
 
-  //Switch for the GLOBAL_COMMAND
-  switch (cm.GetCommand()) {
-    case REQUEST_COMMAND: {
-      HandleRequestCommand(cm.GetTaskCommand());
-      break;
+    //Switch for the GLOBAL_COMMAND
+    switch (cm.GetCommand()) {
+        case REQUEST_COMMAND: {
+            HandleRequestCommand(cm.GetTaskCommand());
+            break;
+        }
+        case TASK_SPECIFIC_COMMAND: {
+            if (HDITaskCommands::MUTE == cm.GetTaskCommand()) {
+                buzzerMuted_ = true;
+            } else if (HDITaskCommands::UNMUTE == cm.GetTaskCommand()) {
+                buzzerMuted_ = false;
+            }
+            break;
+        }
+        default:
+            SOAR_PRINT("HDITask - Received Unsupported Command {%d}\n",
+                       cm.GetCommand());
+            break;
     }
-    case TASK_SPECIFIC_COMMAND: {
-      if (HDITaskCommands::MUTE == cm.GetTaskCommand()) {
-        buzzerMuted_ = true;
-      } else if (HDITaskCommands::UNMUTE == cm.GetTaskCommand()) {
-        buzzerMuted_ = false;
-      }
-      break;
-    }
-    default:
-      SOAR_PRINT("HDITask - Received Unsupported Command {%d}\n",
-                 cm.GetCommand());
-      break;
-  }
 
-  cm.Reset();
+    cm.Reset();
 }
 
 /**
@@ -120,35 +121,35 @@ void HDITask::HandleCommand(Command& cm) {
 * @param taskCommand The command to handle
 */
 void HDITask::HandleRequestCommand(uint16_t taskCommand) {
-  //Switch for task specific command within DATA_COMMAND
-  if ((RocketState)taskCommand >= RS_PRELAUNCH &&
-      (RocketState)taskCommand < RS_NONE) {
-    auto it = stateBlinks.find((RocketState)taskCommand);
-    if (it != stateBlinks.end()) {
-      currentConfig = it->second;
-      BuzzBlinkSequence(currentConfig);
+    //Switch for task specific command within DATA_COMMAND
+    if ((RocketState)taskCommand >= RS_PRELAUNCH &&
+        (RocketState)taskCommand < RS_NONE) {
+        auto it = stateBlinks.find((RocketState)taskCommand);
+        if (it != stateBlinks.end()) {
+            currentConfig = it->second;
+            BuzzBlinkSequence(currentConfig);
+        }
     }
-  }
 }
 
 void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence) {
-  for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
-    // Start the buzzer
-    if (!buzzerMuted_) {
-      HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    for (uint8_t i = 0; i < blinkSequence.numBlinks; i++) {
+        // Start the buzzer
+        if (!buzzerMuted_) {
+            HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+        }
+
+        // Turn on the LED and play the beep
+        GPIO::LED1::On();
+        osDelay(blinkSequence.delayMs);  // a beep lasts this long
+
+        // Stop the buzzer and turn off the LED
+        if (!buzzerMuted_) {
+            HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        }
+        GPIO::LED1::Off();
+
+        // Wait for the silence duration between beeps
+        osDelay(blinkSequence.delayMs);
     }
-
-    // Turn on the LED and play the beep
-    GPIO::LED1::On();
-    osDelay(blinkSequence.delayMs);  // a beep lasts this long
-
-    // Stop the buzzer and turn off the LED
-    if (!buzzerMuted_) {
-      HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
-    }
-    GPIO::LED1::Off();
-
-    // Wait for the silence duration between beeps
-    osDelay(blinkSequence.delayMs);
-  }
 }

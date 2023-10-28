@@ -8,11 +8,11 @@ typename etl::enable_if<(sizeof(TDestination) == sizeof(TSource)) &&
                             etl::is_trivially_copyable<TDestination>::value,
                         TDestination>::type
 bit_cast(const TSource& source) ETL_NOEXCEPT {
-  TDestination destination;
+    TDestination destination;
 
-  memcpy(&destination, &source, sizeof(TDestination));
+    memcpy(&destination, &source, sizeof(TDestination));
 
-  return destination;
+    return destination;
 }
 
 template <typename TDestination, typename TSource>
@@ -22,9 +22,9 @@ ETL_CONSTEXPR
                                 etl::is_trivially_copyable<TDestination>::value,
                             TDestination>::type
     bit_cast(const TSource& source) ETL_NOEXCEPT {
-  TDestination destination;
+    TDestination destination;
 
-  __builtin_memcpy(&destination, &source, sizeof(TDestination));
+    __builtin_memcpy(&destination, &source, sizeof(TDestination));
 
-  return destination;
+    return destination;
 }

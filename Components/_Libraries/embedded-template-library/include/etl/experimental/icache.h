@@ -46,63 +46,63 @@ namespace etl {
 ///**************************************************************************
 template <typename TKey, typename TValue>
 class icache {
- public:
-  ///************************************************************************
-  /// Constructor.
-  /// By default, 'write_through' is set to true.
-  ///************************************************************************
-  icache() : write_through(true), read_store(nullptr), write_store(nullptr) {}
+   public:
+    ///************************************************************************
+    /// Constructor.
+    /// By default, 'write_through' is set to true.
+    ///************************************************************************
+    icache() : write_through(true), read_store(nullptr), write_store(nullptr) {}
 
-  ///************************************************************************
-  /// Destructor.
-  /// Flushes the cache if necessary.
-  ///************************************************************************
-  virtual ~icache() {
-    if (!write_through) {
-      flush();
+    ///************************************************************************
+    /// Destructor.
+    /// Flushes the cache if necessary.
+    ///************************************************************************
+    virtual ~icache() {
+        if (!write_through) {
+            flush();
+        }
     }
-  }
 
-  ///************************************************************************
-  /// Sets the function that reads from the store.
-  ///************************************************************************
-  void set_read_function(etl::delegate<key_value_t&(void)> reader_) {
-    read_store = reader;
-  }
+    ///************************************************************************
+    /// Sets the function that reads from the store.
+    ///************************************************************************
+    void set_read_function(etl::delegate<key_value_t&(void)> reader_) {
+        read_store = reader;
+    }
 
-  ///************************************************************************
-  /// Sets the function that writes to the store.
-  ///************************************************************************
-  void set_write_function(etl::delegate<void(const key_value_t&)> writer_) {
-    write_store = writer;
-  }
+    ///************************************************************************
+    /// Sets the function that writes to the store.
+    ///************************************************************************
+    void set_write_function(etl::delegate<void(const key_value_t&)> writer_) {
+        write_store = writer;
+    }
 
-  ///************************************************************************
-  /// Sets the 'write through'' flag.
-  ///************************************************************************
-  void set_write_through(bool write_through_) {
-    write_through = write_through_;
-  }
+    ///************************************************************************
+    /// Sets the 'write through'' flag.
+    ///************************************************************************
+    void set_write_through(bool write_through_) {
+        write_through = write_through_;
+    }
 
-  virtual const T& read(const TKey& key)
-      const = 0;  ///< Reads from the cache. May read from the store using read_store.
-  virtual void write(
-      const TKey& key,
-      const TValue&
-          value) = 0;  ///< Writes to the cache. May write to the store using write_store.
-  virtual void
-  flush() = 0;  ///< The overridden function should write all changed values to the store.
+    virtual const T& read(const TKey& key)
+        const = 0;  ///< Reads from the cache. May read from the store using read_store.
+    virtual void write(
+        const TKey& key,
+        const TValue&
+            value) = 0;  ///< Writes to the cache. May write to the store using write_store.
+    virtual void
+    flush() = 0;  ///< The overridden function should write all changed values to the store.
 
- protected:
-  typedef ETL_OR_STD::pair<TKey, TValue> key_value_t;
+   protected:
+    typedef ETL_OR_STD::pair<TKey, TValue> key_value_t;
 
-  bool
-      write_through;  ///< If true, the cache should write changed items back to the store immediately. If false then a flush() or destruct will be required.
+    bool
+        write_through;  ///< If true, the cache should write changed items back to the store immediately. If false then a flush() or destruct will be required.
 
-  etl::delegate<key_value_t&(void)>*
-      read_store;  ///< A function that will read a value from the store into the cache.
-  etl::delegate<void(const key_value_t&)>*
-      write_store;  ///< A function that will write a value from the cache into the store.
+    etl::delegate<key_value_t&(void)>*
+        read_store;  ///< A function that will read a value from the store into the cache.
+    etl::delegate<void(const key_value_t&)>*
+        write_store;  ///< A function that will write a value from the cache into the store.
 }
 }  // namespace etl
 

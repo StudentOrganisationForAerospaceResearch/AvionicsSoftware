@@ -52,10 +52,10 @@ namespace etl {
 //***************************************************************************
 template <size_t NV, size_t BASE>
 struct log {
-  enum value_type {
-    // Recursive definition.
-    value = (NV >= BASE) ? 1 + log<NV / BASE, BASE>::value : 0
-  };
+    enum value_type {
+        // Recursive definition.
+        value = (NV >= BASE) ? 1 + log<NV / BASE, BASE>::value : 0
+    };
 };
 
 //***************************************************************************
@@ -63,7 +63,7 @@ struct log {
 //***************************************************************************
 template <size_t BASE>
 struct log<1, BASE> {
-  enum value_type { value = 0 };
+    enum value_type { value = 0 };
 };
 
 //***************************************************************************
@@ -71,7 +71,7 @@ struct log<1, BASE> {
 //***************************************************************************
 template <size_t BASE>
 struct log<0, BASE> {
-  enum value_type { value = 0 };
+    enum value_type { value = 0 };
 };
 
 #if ETL_USING_CPP17
@@ -85,7 +85,7 @@ inline constexpr size_t log_v = log<NV, BASE>::value;
 //***************************************************************************
 template <const size_t NV>
 struct log2 {
-  enum value_type { value = log<NV, 2>::value };
+    enum value_type { value = log<NV, 2>::value };
 };
 
 #if ETL_USING_CPP17
@@ -99,7 +99,7 @@ inline constexpr size_t log2_v = log2<NV>::value;
 //***************************************************************************
 template <const size_t NV>
 struct log10 {
-  enum value_type { value = log<NV, 10>::value };
+    enum value_type { value = log<NV, 10>::value };
 };
 
 #if ETL_USING_CPP17

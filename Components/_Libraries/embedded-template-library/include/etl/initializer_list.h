@@ -59,45 +59,45 @@ namespace std {
 ///**************************************************************************
 template <typename T>
 class initializer_list {
- public:
-  using value_type = T;
-  using reference = const T&;
-  using const_reference = const T&;
-  using size_type = size_t;
-  using iterator = const T*;
-  using const_iterator = const T*;
+   public:
+    using value_type = T;
+    using reference = const T&;
+    using const_reference = const T&;
+    using size_type = size_t;
+    using iterator = const T*;
+    using const_iterator = const T*;
 
-  //*************************************************************************
-  /// Default constructor
-  //*************************************************************************
-  constexpr initializer_list() noexcept : pfirst(nullptr), plast(nullptr) {}
+    //*************************************************************************
+    /// Default constructor
+    //*************************************************************************
+    constexpr initializer_list() noexcept : pfirst(nullptr), plast(nullptr) {}
 
-  //*************************************************************************
-  /// Constructor
-  //*************************************************************************
-  constexpr initializer_list(const T* pfirst_, const T* plast_) noexcept
-      : pfirst(pfirst_), plast(plast_) {}
+    //*************************************************************************
+    /// Constructor
+    //*************************************************************************
+    constexpr initializer_list(const T* pfirst_, const T* plast_) noexcept
+        : pfirst(pfirst_), plast(plast_) {}
 
-  //*************************************************************************
-  /// Get the beginning of the list.
-  //*************************************************************************
-  constexpr const T* begin() const noexcept { return pfirst; }
+    //*************************************************************************
+    /// Get the beginning of the list.
+    //*************************************************************************
+    constexpr const T* begin() const noexcept { return pfirst; }
 
-  //*************************************************************************
-  /// Get the end of the list.
-  //*************************************************************************
-  constexpr const T* end() const noexcept { return plast; }
+    //*************************************************************************
+    /// Get the end of the list.
+    //*************************************************************************
+    constexpr const T* end() const noexcept { return plast; }
 
-  //*************************************************************************
-  /// Get the size of the list.
-  //*************************************************************************
-  constexpr size_t size() const noexcept {
-    return static_cast<size_t>(plast - pfirst);
-  }
+    //*************************************************************************
+    /// Get the size of the list.
+    //*************************************************************************
+    constexpr size_t size() const noexcept {
+        return static_cast<size_t>(plast - pfirst);
+    }
 
- private:
-  const T* pfirst;
-  const T* plast;
+   private:
+    const T* pfirst;
+    const T* plast;
 };
 
 //*************************************************************************
@@ -105,7 +105,7 @@ class initializer_list {
 //*************************************************************************
 template <typename T>
 constexpr const T* begin(initializer_list<T> init) noexcept {
-  return init.begin();
+    return init.begin();
 }
 
 //*************************************************************************
@@ -113,7 +113,7 @@ constexpr const T* begin(initializer_list<T> init) noexcept {
 //*************************************************************************
 template <typename T>
 constexpr const T* end(initializer_list<T> init) noexcept {
-  return init.end();
+    return init.end();
 }
 
 #elif defined(ETL_COMPILER_GCC) || defined(ETL_COMPILER_CLANG) ||           \
@@ -126,43 +126,43 @@ constexpr const T* end(initializer_list<T> init) noexcept {
 ///**************************************************************************
 template <class T>
 class initializer_list {
- public:
-  using value_type = T;
-  using reference = const T&;
-  using const_reference = const T&;
-  using size_type = size_t;
-  using iterator = const T*;
-  using const_iterator = const T*;
+   public:
+    using value_type = T;
+    using reference = const T&;
+    using const_reference = const T&;
+    using size_type = size_t;
+    using iterator = const T*;
+    using const_iterator = const T*;
 
-  //*************************************************************************
-  /// Default constructor
-  //*************************************************************************
-  constexpr initializer_list() noexcept : pfirst(nullptr), length(0) {}
+    //*************************************************************************
+    /// Default constructor
+    //*************************************************************************
+    constexpr initializer_list() noexcept : pfirst(nullptr), length(0) {}
 
-  //*************************************************************************
-  /// Get the beginning of the list.
-  //*************************************************************************
-  constexpr const T* begin() const noexcept { return pfirst; }
+    //*************************************************************************
+    /// Get the beginning of the list.
+    //*************************************************************************
+    constexpr const T* begin() const noexcept { return pfirst; }
 
-  //*************************************************************************
-  /// Get the end of the list.
-  //*************************************************************************
-  constexpr const T* end() const noexcept { return pfirst + length; }
+    //*************************************************************************
+    /// Get the end of the list.
+    //*************************************************************************
+    constexpr const T* end() const noexcept { return pfirst + length; }
 
-  //*************************************************************************
-  /// Get the size of the list.
-  //*************************************************************************
-  constexpr size_t size() const noexcept { return length; }
+    //*************************************************************************
+    /// Get the size of the list.
+    //*************************************************************************
+    constexpr size_t size() const noexcept { return length; }
 
- private:
-  //*************************************************************************
-  /// Constructor
-  //*************************************************************************
-  constexpr initializer_list(const T* pfirst_, size_t length_) noexcept
-      : pfirst(pfirst_), length(length_) {}
+   private:
+    //*************************************************************************
+    /// Constructor
+    //*************************************************************************
+    constexpr initializer_list(const T* pfirst_, size_t length_) noexcept
+        : pfirst(pfirst_), length(length_) {}
 
-  const T* pfirst;
-  size_t length;
+    const T* pfirst;
+    size_t length;
 };
 
 //*************************************************************************
@@ -170,7 +170,7 @@ class initializer_list {
 //*************************************************************************
 template <class T>
 constexpr const T* begin(initializer_list<T> init) noexcept {
-  return init.begin();
+    return init.begin();
 }
 
 //*************************************************************************
@@ -178,7 +178,7 @@ constexpr const T* begin(initializer_list<T> init) noexcept {
 //*************************************************************************
 template <class T>
 constexpr const T* end(initializer_list<T> init) noexcept {
-  return init.end();
+    return init.end();
 }
 #else
 

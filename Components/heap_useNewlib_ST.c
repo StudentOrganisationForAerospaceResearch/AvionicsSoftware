@@ -63,7 +63,7 @@
 #define configISR_STACK_SIZE_WORDS (0x100)
 #define STM_VERSION  // Replace sane LD symbols with STM CubeMX's poor standard exported LD symbols
 #define ISR_STACK_LENGTH_BYTES \
-  (configISR_STACK_SIZE_WORDS * 4)  // bytes to reserve for ISR (MSP) stack
+    (configISR_STACK_SIZE_WORDS * 4)  // bytes to reserve for ISR (MSP) stack
 // =======================================  Configuration  ========================================
 // ================================================================================================
 
@@ -129,7 +129,7 @@ register char* stack_ptr asm("sp");
 // Kludge below uses CubeMX-generated symbols instead of sane LD definitions
 #define __HeapBase end
 #define __HeapLimit \
-  _estack  // In K64F LD this is already adjusted for ISR stack space...
+    _estack  // In K64F LD this is already adjusted for ISR stack space...
 static int heapBytesRemaining;
 // no DRN HEAP_SIZE symbol from LD... // that's (&__HeapLimit)-(&__HeapBase)
 uint32_t
@@ -147,19 +147,19 @@ static int heapBytesRemaining =
 // We can't use vTaskSuspendAll() within an ISR.
 // STM's stunningly bad coding malpractice calls malloc within ISRs (for example, on USB connect function USBD_CDC_Init)
 // So, we must just suspend/resume interrupts, lengthening max interrupt response time, aarrggg...
-#define DRN_ENTER_CRITICAL_SECTION(_usis)  \
-  {                                        \
-    _usis = taskENTER_CRITICAL_FROM_ISR(); \
-  }  // Disables interrupts (after saving prior state)
-#define DRN_EXIT_CRITICAL_SECTION(_usis) \
-  {                                      \
-    taskEXIT_CRITICAL_FROM_ISR(_usis);   \
-  }  // Re-enables interrupts (unless already disabled prior taskENTER_CRITICAL)
+#define DRN_ENTER_CRITICAL_SECTION(_usis)      \
+    {                                          \
+        _usis = taskENTER_CRITICAL_FROM_ISR(); \
+    }  // Disables interrupts (after saving prior state)
+#define DRN_EXIT_CRITICAL_SECTION(_usis)   \
+    {                                      \
+        taskEXIT_CRITICAL_FROM_ISR(_usis); \
+    }  // Re-enables interrupts (unless already disabled prior taskENTER_CRITICAL)
 #else
 #define DRN_ENTER_CRITICAL_SECTION(_usis) \
-  vTaskSuspendAll();  // Note: safe to use before FreeRTOS scheduler started, but not in ISR
+    vTaskSuspendAll();  // Note: safe to use before FreeRTOS scheduler started, but not in ISR
 #define DRN_EXIT_CRITICAL_SECTION(_usis) \
-  xTaskResumeAll();  // Note: safe to use before FreeRTOS scheduler started, but not in ISR
+    xTaskResumeAll();  // Note: safe to use before FreeRTOS scheduler started, but not in ISR
 #endif
 
 #ifndef NDEBUG
@@ -173,83 +173,83 @@ extern char __HeapBase, __HeapLimit;  // symbols from linker LD command file
 //! _sbrk_r version supporting reentrant newlib (depends upon above symbols defined by linker control file).
 void* _sbrk_r(struct _reent* pReent, int incr) {
 #ifdef MALLOCS_INSIDE_ISRs  // block interrupts during free-storage use
-  UBaseType_t usis;         // saved interrupt status
+    UBaseType_t usis;       // saved interrupt status
 #endif
-  static char* currentHeapEnd = &__HeapBase;
+    static char* currentHeapEnd = &__HeapBase;
 #ifdef STM_VERSION  // Use STM CubeMX LD symbols for heap
-  if (TotalHeapSize == 0) {
-    TotalHeapSize = heapBytesRemaining =
-        (int)((&__HeapLimit) - (&__HeapBase)) - ISR_STACK_LENGTH_BYTES;
-  };
+    if (TotalHeapSize == 0) {
+        TotalHeapSize = heapBytesRemaining =
+            (int)((&__HeapLimit) - (&__HeapBase)) - ISR_STACK_LENGTH_BYTES;
+    };
 #endif
-  char* limit =
-      (xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED)
-          ? stack_ptr
-          :  // Before scheduler is started, limit is stack pointer (risky!)
-          &__HeapLimit -
-              ISR_STACK_LENGTH_BYTES;  // Once running, OK to reuse all remaining RAM except ISR stack (MSP) stack
-  DRN_ENTER_CRITICAL_SECTION(usis);
-  if (currentHeapEnd + incr > limit) {
+    char* limit =
+        (xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED)
+            ? stack_ptr
+            :  // Before scheduler is started, limit is stack pointer (risky!)
+            &__HeapLimit -
+                ISR_STACK_LENGTH_BYTES;  // Once running, OK to reuse all remaining RAM except ISR stack (MSP) stack
+    DRN_ENTER_CRITICAL_SECTION(usis);
+    if (currentHeapEnd + incr > limit) {
 // Ooops, no more memory available...
 #if (configUSE_MALLOC_FAILED_HOOK == 1)
-    {
-      extern void vApplicationMallocFailedHook(void);
-      DRN_EXIT_CRITICAL_SECTION(usis);
-      vApplicationMallocFailedHook();
-    }
+        {
+            extern void vApplicationMallocFailedHook(void);
+            DRN_EXIT_CRITICAL_SECTION(usis);
+            vApplicationMallocFailedHook();
+        }
 #elif defined(configHARD_STOP_ON_MALLOC_FAILURE)
-    // If you want to alert debugger or halt...
-    // WARNING: brkpt instruction may prevent watchdog operation...
-    while (1) {
-      __asm("bkpt #0");
-    };  // Stop in GUI as if at a breakpoint (if debugging, otherwise loop forever)
+        // If you want to alert debugger or halt...
+        // WARNING: brkpt instruction may prevent watchdog operation...
+        while (1) {
+            __asm("bkpt #0");
+        };  // Stop in GUI as if at a breakpoint (if debugging, otherwise loop forever)
 #else
-    // Default, if you prefer to believe your application will gracefully trap out-of-memory...
-    pReent->_errno = ENOMEM;  // newlib's thread-specific errno
-    DRN_EXIT_CRITICAL_SECTION(usis);
+        // Default, if you prefer to believe your application will gracefully trap out-of-memory...
+        pReent->_errno = ENOMEM;  // newlib's thread-specific errno
+        DRN_EXIT_CRITICAL_SECTION(usis);
 #endif
-    return (
-        char*)-1;  // the malloc-family routine that called sbrk will return 0
-  }
-  // 'incr' of memory is available: update accounting and return it.
-  char* previousHeapEnd = currentHeapEnd;
-  currentHeapEnd += incr;
-  heapBytesRemaining -= incr;
+        return (
+            char*)-1;  // the malloc-family routine that called sbrk will return 0
+    }
+    // 'incr' of memory is available: update accounting and return it.
+    char* previousHeapEnd = currentHeapEnd;
+    currentHeapEnd += incr;
+    heapBytesRemaining -= incr;
 #ifndef NDEBUG
-  totalBytesProvidedBySBRK += incr;
+    totalBytesProvidedBySBRK += incr;
 #endif
-  DRN_EXIT_CRITICAL_SECTION(usis);
-  return (char*)previousHeapEnd;
+    DRN_EXIT_CRITICAL_SECTION(usis);
+    return (char*)previousHeapEnd;
 }
 //! non-reentrant sbrk uses is actually reentrant by using current context
 // ... because the current _reent structure is pointed to by global _impure_ptr
 char* sbrk(int incr) {
-  return _sbrk_r(_impure_ptr, incr);
+    return _sbrk_r(_impure_ptr, incr);
 }
 //! _sbrk is a synonym for sbrk.
 char* _sbrk(int incr) {
-  return sbrk(incr);
+    return sbrk(incr);
 };
 
 #ifdef MALLOCS_INSIDE_ISRs  // block interrupts during free-storage use
 static UBaseType_t malLock_uxSavedInterruptStatus;
 #endif
 void __malloc_lock(struct _reent* r) {
-  (void)(r);
+    (void)(r);
 #if defined(MALLOCS_INSIDE_ISRs)
-  DRN_ENTER_CRITICAL_SECTION(malLock_uxSavedInterruptStatus);
+    DRN_ENTER_CRITICAL_SECTION(malLock_uxSavedInterruptStatus);
 #else
-  bool insideAnISR = xPortIsInsideInterrupt();
-  configASSERT(!insideAnISR);  // Make damn sure no more mallocs inside ISRs!!
-  vTaskSuspendAll();
+    bool insideAnISR = xPortIsInsideInterrupt();
+    configASSERT(!insideAnISR);  // Make damn sure no more mallocs inside ISRs!!
+    vTaskSuspendAll();
 #endif
 };
 void __malloc_unlock(struct _reent* r) {
-  (void)(r);
+    (void)(r);
 #if defined(MALLOCS_INSIDE_ISRs)
-  DRN_EXIT_CRITICAL_SECTION(malLock_uxSavedInterruptStatus);
+    DRN_EXIT_CRITICAL_SECTION(malLock_uxSavedInterruptStatus);
 #else
-  (void)xTaskResumeAll();
+    (void)xTaskResumeAll();
 #endif
 };
 
@@ -259,10 +259,10 @@ void __malloc_unlock(struct _reent* r) {
 // Not required (and trimmed by linker) in applications not using environment variables.
 // ToDo: Move __env_lock/unlock to a separate newlib helper file.
 void __env_lock() {
-  vTaskSuspendAll();
+    vTaskSuspendAll();
 };
 void __env_unlock() {
-  (void)xTaskResumeAll();
+    (void)xTaskResumeAll();
 };
 
 #if 1  // Provide malloc debug and accounting wrappers
@@ -273,23 +273,23 @@ size_t TotalMallocdBytes;
 int MallocCallCnt;
 static bool inside_malloc;
 void* __wrap_malloc(size_t nbytes) {
-  extern void* __real_malloc(size_t nbytes);
-  MallocCallCnt++;
-  TotalMallocdBytes += nbytes;
-  inside_malloc = true;
-  void* p = __real_malloc(nbytes);  // will call malloc_r...
-  inside_malloc = false;
-  return p;
-};
-void* __wrap__malloc_r(void* reent, size_t nbytes) {
-  (void)(reent);
-  extern void* __real__malloc_r(size_t nbytes);
-  if (!inside_malloc) {
+    extern void* __real_malloc(size_t nbytes);
     MallocCallCnt++;
     TotalMallocdBytes += nbytes;
-  };
-  void* p = __real__malloc_r(nbytes);
-  return p;
+    inside_malloc = true;
+    void* p = __real_malloc(nbytes);  // will call malloc_r...
+    inside_malloc = false;
+    return p;
+};
+void* __wrap__malloc_r(void* reent, size_t nbytes) {
+    (void)(reent);
+    extern void* __real__malloc_r(size_t nbytes);
+    if (!inside_malloc) {
+        MallocCallCnt++;
+        TotalMallocdBytes += nbytes;
+    };
+    void* p = __real__malloc_r(nbytes);
+    return p;
 };
 #endif
 
@@ -298,17 +298,17 @@ void* __wrap__malloc_r(void* reent, size_t nbytes) {
 // ================================================================================================
 
 void* pvPortMalloc(size_t xSize) PRIVILEGED_FUNCTION {
-  void* p = malloc(xSize);
-  return p;
+    void* p = malloc(xSize);
+    return p;
 }
 void vPortFree(void* pv) PRIVILEGED_FUNCTION {
-  free(pv);
+    free(pv);
 };
 
 size_t xPortGetFreeHeapSize(void) PRIVILEGED_FUNCTION {
-  struct mallinfo mi = mallinfo();  // available space now managed by newlib
-  return mi.fordblks +
-         heapBytesRemaining;  // plus space not yet handed to newlib by sbrk
+    struct mallinfo mi = mallinfo();  // available space now managed by newlib
+    return mi.fordblks +
+           heapBytesRemaining;  // plus space not yet handed to newlib by sbrk
 }
 
 // GetMinimumEverFree is not available in newlib's malloc implementation.

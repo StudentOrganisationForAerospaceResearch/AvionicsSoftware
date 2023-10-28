@@ -44,7 +44,7 @@ namespace etl {
 //***************************************************************************
 template <const size_t NV, const size_t KV>
 struct permutations {
-  static ETL_CONSTANT size_t value = NV * permutations<NV - 1, KV - 1>::value;
+    static ETL_CONSTANT size_t value = NV * permutations<NV - 1, KV - 1>::value;
 };
 
 //***************************************************************************
@@ -53,7 +53,7 @@ struct permutations {
 //***************************************************************************
 template <const size_t NV>
 struct permutations<NV, 0> {
-  static ETL_CONSTANT size_t value = 1UL;
+    static ETL_CONSTANT size_t value = 1UL;
 };
 
 #if ETL_USING_CPP17

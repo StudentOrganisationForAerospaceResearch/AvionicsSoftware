@@ -30,18 +30,18 @@ UARTDriver uart5(UART5);
  * @return True if the transmission was successful, false otherwise
  */
 bool UARTDriver::Transmit(uint8_t* data, uint16_t len) {
-  // Loop through and transmit each byte via. polling
-  for (uint16_t i = 0; i < len; i++) {
-    LL_USART_TransmitData8(kUart_, data[i]);
+    // Loop through and transmit each byte via. polling
+    for (uint16_t i = 0; i < len; i++) {
+        LL_USART_TransmitData8(kUart_, data[i]);
 
-    // Wait until the TX Register Empty Flag is set
-    while (!LL_USART_IsActiveFlag_TXE(kUart_)) {}
-  }
+        // Wait until the TX Register Empty Flag is set
+        while (!LL_USART_IsActiveFlag_TXE(kUart_)) {}
+    }
 
-  // Wait until the transfer complete flag is set
-  while (!LL_USART_IsActiveFlag_TC(kUart_)) {}
+    // Wait until the transfer complete flag is set
+    while (!LL_USART_IsActiveFlag_TC(kUart_)) {}
 
-  return true;
+    return true;
 }
 
 /**
@@ -50,20 +50,20 @@ bool UARTDriver::Transmit(uint8_t* data, uint16_t len) {
 * @return TRUE if interrupt was successfully enabled, FALSE otherwise
 */
 bool UARTDriver::ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver) {
-  // Check flags
-  HandleAndClearRxError();
-  if (LL_USART_IsActiveFlag_RXNE(kUart_)) {
-    LL_USART_ClearFlag_RXNE(kUart_);
-  }
+    // Check flags
+    HandleAndClearRxError();
+    if (LL_USART_IsActiveFlag_RXNE(kUart_)) {
+        LL_USART_ClearFlag_RXNE(kUart_);
+    }
 
-  // Set the buffer and receiver
-  rxCharBuf_ = charBuf;
-  rxReceiver_ = receiver;
+    // Set the buffer and receiver
+    rxCharBuf_ = charBuf;
+    rxReceiver_ = receiver;
 
-  // Enable the receive interrupt
-  LL_USART_EnableIT_RXNE(kUart_);
+    // Enable the receive interrupt
+    LL_USART_EnableIT_RXNE(kUart_);
 
-  return true;
+    return true;
 }
 
 /**
@@ -71,25 +71,25 @@ bool UARTDriver::ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver) {
  * @return true if flags had to be cleared, false otherwise
  */
 bool UARTDriver::HandleAndClearRxError() {
-  bool shouldClearFlags = false;
-  if (LL_USART_IsActiveFlag_ORE(kUart_)) {
-    shouldClearFlags = true;
-  }
-  if (LL_USART_IsActiveFlag_NE(kUart_)) {
-    shouldClearFlags = true;
-  }
-  if (LL_USART_IsActiveFlag_FE(kUart_)) {
-    shouldClearFlags = true;
-  }
-  if (LL_USART_IsActiveFlag_PE(kUart_)) {
-    shouldClearFlags = true;
-  }
+    bool shouldClearFlags = false;
+    if (LL_USART_IsActiveFlag_ORE(kUart_)) {
+        shouldClearFlags = true;
+    }
+    if (LL_USART_IsActiveFlag_NE(kUart_)) {
+        shouldClearFlags = true;
+    }
+    if (LL_USART_IsActiveFlag_FE(kUart_)) {
+        shouldClearFlags = true;
+    }
+    if (LL_USART_IsActiveFlag_PE(kUart_)) {
+        shouldClearFlags = true;
+    }
 
-  // Clearing the ORE here also clears PE, NE, FE, IDLE
-  if (shouldClearFlags)
-    LL_USART_ClearFlag_ORE(kUart_);
+    // Clearing the ORE here also clears PE, NE, FE, IDLE
+    if (shouldClearFlags)
+        LL_USART_ClearFlag_ORE(kUart_);
 
-  return !shouldClearFlags;
+    return !shouldClearFlags;
 }
 
 /**
@@ -97,19 +97,19 @@ bool UARTDriver::HandleAndClearRxError() {
  * @return true if any error flags are set, false otherwise
  */
 bool UARTDriver::GetRxErrors() {
-  bool hasErrors = false;
+    bool hasErrors = false;
 
-  if (LL_USART_IsActiveFlag_ORE(kUart_)) {
-    hasErrors = true;
-  } else if (LL_USART_IsActiveFlag_NE(kUart_)) {
-    hasErrors = true;
-  } else if (LL_USART_IsActiveFlag_FE(kUart_)) {
-    hasErrors = true;
-  } else if (LL_USART_IsActiveFlag_PE(kUart_)) {
-    hasErrors = true;
-  }
+    if (LL_USART_IsActiveFlag_ORE(kUart_)) {
+        hasErrors = true;
+    } else if (LL_USART_IsActiveFlag_NE(kUart_)) {
+        hasErrors = true;
+    } else if (LL_USART_IsActiveFlag_FE(kUart_)) {
+        hasErrors = true;
+    } else if (LL_USART_IsActiveFlag_PE(kUart_)) {
+        hasErrors = true;
+    }
 
-  return hasErrors;
+    return hasErrors;
 }
 
 /**
@@ -117,16 +117,16 @@ bool UARTDriver::GetRxErrors() {
  * @attention MUST be called inside USARTx_IRQHandler
  */
 void UARTDriver::HandleIRQ_UART() {
-  // Call the callback if RXNE is set
-  if (LL_USART_IsActiveFlag_RXNE(kUart_)) {
-    // Read the data from the data register
-    if (rxCharBuf_ != nullptr) {
-      *rxCharBuf_ = LL_USART_ReceiveData8(kUart_);
-    }
+    // Call the callback if RXNE is set
+    if (LL_USART_IsActiveFlag_RXNE(kUart_)) {
+        // Read the data from the data register
+        if (rxCharBuf_ != nullptr) {
+            *rxCharBuf_ = LL_USART_ReceiveData8(kUart_);
+        }
 
-    // Call the receiver interrupt
-    if (rxReceiver_ != nullptr) {
-      rxReceiver_->InterruptRxData(GetRxErrors());
+        // Call the receiver interrupt
+        if (rxReceiver_ != nullptr) {
+            rxReceiver_->InterruptRxData(GetRxErrors());
+        }
     }
-  }
 }

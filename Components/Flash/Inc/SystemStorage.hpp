@@ -23,22 +23,22 @@ constexpr uint32_t SYSTEM_STORAGE_START_SECTOR_ADDR =
 
 // System Info Struct ---------------------------------------------------------------------
 struct SystemState {
-  RocketState rocketState;
+    RocketState rocketState;
 };
 
 // System Info Struct ---------------------------------------------------------------------
 class SystemStorage : public SafeSimpleDualSectorStorage<SystemState> {
- public:
-  // Singleton instance for SystemStorage
-  static SystemStorage& Inst() {
-    static SystemStorage inst;
-    return inst;
-  }
+   public:
+    // Singleton instance for SystemStorage
+    static SystemStorage& Inst() {
+        static SystemStorage inst;
+        return inst;
+    }
 
- private:
-  SystemStorage();
-  SystemStorage(const SystemStorage&);             // Prevent copy-construction
-  SystemStorage& operator=(const SystemStorage&);  // Prevent assignment
+   private:
+    SystemStorage();
+    SystemStorage(const SystemStorage&);  // Prevent copy-construction
+    SystemStorage& operator=(const SystemStorage&);  // Prevent assignment
 };
 
 inline SystemStorage::SystemStorage()

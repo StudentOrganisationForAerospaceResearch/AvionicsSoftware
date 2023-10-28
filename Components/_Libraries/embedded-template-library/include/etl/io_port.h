@@ -47,52 +47,52 @@ namespace etl {
 //***************************************************************************
 template <typename T, uintptr_t ADDRESS = 0>
 class io_port_rw : public etl::iterator<ETL_OR_STD::forward_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
+   public:
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-  /// Read.
-  operator T() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
+    /// Read.
+    operator T() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
 
-  /// Read.
-  T read() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
+    /// Read.
+    T read() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
 
-  /// Write.
-  void write(T value_) { *reinterpret_cast<pointer>(ADDRESS) = value_; }
+    /// Write.
+    void write(T value_) { *reinterpret_cast<pointer>(ADDRESS) = value_; }
 
-  /// Write.
-  io_port_rw& operator=(T value_) {
-    *reinterpret_cast<pointer>(ADDRESS) = value_;
-    return *this;
-  }
+    /// Write.
+    io_port_rw& operator=(T value_) {
+        *reinterpret_cast<pointer>(ADDRESS) = value_;
+        return *this;
+    }
 
-  /// Read / Write
-  reference operator*() { return *reinterpret_cast<pointer>(ADDRESS); }
+    /// Read / Write
+    reference operator*() { return *reinterpret_cast<pointer>(ADDRESS); }
 
-  /// Read
-  const_reference operator*() const {
-    return *reinterpret_cast<const_pointer>(ADDRESS);
-  }
+    /// Read
+    const_reference operator*() const {
+        return *reinterpret_cast<const_pointer>(ADDRESS);
+    }
 
-  /// Increment
-  io_port_rw& operator++() { return *this; }
+    /// Increment
+    io_port_rw& operator++() { return *this; }
 
-  /// Increment
-  io_port_rw operator++(int) { return *this; }
+    /// Increment
+    io_port_rw operator++(int) { return *this; }
 
-  /// Get the IO port address.
-  pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
+    /// Get the IO port address.
+    pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
 
-  /// Get the IO port address.
-  const_pointer get_address() const {
-    return reinterpret_cast<const_pointer>(ADDRESS);
-  }
+    /// Get the IO port address.
+    const_pointer get_address() const {
+        return reinterpret_cast<const_pointer>(ADDRESS);
+    }
 
- private:
-  /// Disabled.
-  io_port_rw& operator=(const io_port_rw&);
+   private:
+    /// Disabled.
+    io_port_rw& operator=(const io_port_rw&);
 };
 
 //***************************************************************************
@@ -100,43 +100,43 @@ class io_port_rw : public etl::iterator<ETL_OR_STD::forward_iterator_tag, T> {
 //***************************************************************************
 template <typename T, uintptr_t ADDRESS = 0>
 class io_port_ro : public etl::iterator<ETL_OR_STD::input_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
+   public:
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-  /// Read.
-  operator T() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
+    /// Read.
+    operator T() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
 
-  /// Read.
-  T read() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
+    /// Read.
+    T read() const { return *reinterpret_cast<const_pointer>(ADDRESS); }
 
-  /// Read
-  const_reference operator*() const {
-    return *reinterpret_cast<const_pointer>(ADDRESS);
-  }
+    /// Read
+    const_reference operator*() const {
+        return *reinterpret_cast<const_pointer>(ADDRESS);
+    }
 
-  /// Increment
-  io_port_ro& operator++() { return *this; }
+    /// Increment
+    io_port_ro& operator++() { return *this; }
 
-  /// Increment
-  io_port_ro operator++(int) { return *this; }
+    /// Increment
+    io_port_ro operator++(int) { return *this; }
 
-  /// Get the IO port address.
-  pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
+    /// Get the IO port address.
+    pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
 
-  /// Get the IO port address.
-  const_pointer get_address() const {
-    return reinterpret_cast<const_pointer>(ADDRESS);
-  }
+    /// Get the IO port address.
+    const_pointer get_address() const {
+        return reinterpret_cast<const_pointer>(ADDRESS);
+    }
 
- private:
-  /// Write disabled.
-  void operator=(T value);
+   private:
+    /// Write disabled.
+    void operator=(T value);
 
-  /// Disabled.
-  io_port_ro& operator=(const io_port_ro&);
+    /// Disabled.
+    io_port_ro& operator=(const io_port_ro&);
 };
 
 //***************************************************************************
@@ -144,41 +144,41 @@ class io_port_ro : public etl::iterator<ETL_OR_STD::input_iterator_tag, T> {
 //***************************************************************************
 template <typename T, uintptr_t ADDRESS = 0>
 class io_port_wo : public etl::iterator<ETL_OR_STD::output_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
+   public:
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-  /// Write.
-  void operator=(T value) { *reinterpret_cast<pointer>(ADDRESS) = value; }
+    /// Write.
+    void operator=(T value) { *reinterpret_cast<pointer>(ADDRESS) = value; }
 
-  /// Write.
-  void write(T value_) { *reinterpret_cast<pointer>(ADDRESS) = value_; }
+    /// Write.
+    void write(T value_) { *reinterpret_cast<pointer>(ADDRESS) = value_; }
 
-  /// Write
-  io_port_wo& operator*() { return *this; }
+    /// Write
+    io_port_wo& operator*() { return *this; }
 
-  /// Increment
-  io_port_wo& operator++() { return *this; }
+    /// Increment
+    io_port_wo& operator++() { return *this; }
 
-  /// Increment
-  io_port_wo operator++(int) { return *this; }
+    /// Increment
+    io_port_wo operator++(int) { return *this; }
 
-  /// Get the IO port address.
-  pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
+    /// Get the IO port address.
+    pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
 
-  /// Get the IO port address.
-  const_pointer get_address() const {
-    return reinterpret_cast<const_pointer>(ADDRESS);
-  }
+    /// Get the IO port address.
+    const_pointer get_address() const {
+        return reinterpret_cast<const_pointer>(ADDRESS);
+    }
 
- private:
-  /// Read disabled.
-  operator T() const;
+   private:
+    /// Read disabled.
+    operator T() const;
 
-  /// Disabled.
-  io_port_wo& operator=(const io_port_wo&);
+    /// Disabled.
+    io_port_wo& operator=(const io_port_wo&);
 };
 
 //***************************************************************************
@@ -186,54 +186,54 @@ class io_port_wo : public etl::iterator<ETL_OR_STD::output_iterator_tag, T> {
 //***************************************************************************
 template <typename T, uintptr_t ADDRESS = 0>
 class io_port_wos : public etl::iterator<ETL_OR_STD::forward_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
+   public:
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-  /// Default constructor.
-  io_port_wos() : shadow_value(T()) {}
+    /// Default constructor.
+    io_port_wos() : shadow_value(T()) {}
 
-  /// Read.
-  operator T() const { return shadow_value; }
+    /// Read.
+    operator T() const { return shadow_value; }
 
-  /// Read.
-  T read() const { return shadow_value; }
+    /// Read.
+    T read() const { return shadow_value; }
 
-  /// Write.
-  void write(T value_) {
-    shadow_value = value_;
-    *reinterpret_cast<pointer>(ADDRESS) = shadow_value;
-  }
+    /// Write.
+    void write(T value_) {
+        shadow_value = value_;
+        *reinterpret_cast<pointer>(ADDRESS) = shadow_value;
+    }
 
-  /// Write.
-  io_port_wos& operator=(T value_) {
-    shadow_value = value_;
-    *reinterpret_cast<pointer>(ADDRESS) = shadow_value;
-    return *this;
-  }
+    /// Write.
+    io_port_wos& operator=(T value_) {
+        shadow_value = value_;
+        *reinterpret_cast<pointer>(ADDRESS) = shadow_value;
+        return *this;
+    }
 
-  /// Read / Write
-  io_port_wos& operator*() { return *this; }
+    /// Read / Write
+    io_port_wos& operator*() { return *this; }
 
-  /// Read
-  const_reference operator*() const { return shadow_value; }
+    /// Read
+    const_reference operator*() const { return shadow_value; }
 
-  /// Increment
-  io_port_wos& operator++() { return *this; }
+    /// Increment
+    io_port_wos& operator++() { return *this; }
 
-  /// Increment
-  io_port_wos operator++(int) { return *this; }
+    /// Increment
+    io_port_wos operator++(int) { return *this; }
 
-  /// Get the IO port address.
-  pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
+    /// Get the IO port address.
+    pointer get_address() { return reinterpret_cast<pointer>(ADDRESS); }
 
- private:
-  /// Disabled.
-  io_port_wos& operator=(const io_port_wos&);
+   private:
+    /// Disabled.
+    io_port_wos& operator=(const io_port_wos&);
 
-  T shadow_value;
+    T shadow_value;
 };
 
 //***************************************************************************
@@ -243,68 +243,68 @@ class io_port_wos : public etl::iterator<ETL_OR_STD::forward_iterator_tag, T> {
 template <typename T>
 class io_port_rw<T, 0>
     : public etl::iterator<ETL_OR_STD::forward_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
+   public:
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-  /// Default constructor.
-  io_port_rw() : address(ETL_NULLPTR) {}
+    /// Default constructor.
+    io_port_rw() : address(ETL_NULLPTR) {}
 
-  /// Constructor.
-  io_port_rw(void* address_) : address(reinterpret_cast<pointer>(address_)) {}
+    /// Constructor.
+    io_port_rw(void* address_) : address(reinterpret_cast<pointer>(address_)) {}
 
-  /// Copy Constructor.
-  io_port_rw(const io_port_rw& other_)
-      : address(reinterpret_cast<pointer>(other_.address)) {}
+    /// Copy Constructor.
+    io_port_rw(const io_port_rw& other_)
+        : address(reinterpret_cast<pointer>(other_.address)) {}
 
-  /// Assignment.
-  io_port_rw& operator=(const io_port_rw& other_) {
-    address = other_.address;
-    return *this;
-  }
+    /// Assignment.
+    io_port_rw& operator=(const io_port_rw& other_) {
+        address = other_.address;
+        return *this;
+    }
 
-  /// Set the IO port address.
-  void set_address(void* address_) {
-    address = reinterpret_cast<pointer>(address_);
-  }
+    /// Set the IO port address.
+    void set_address(void* address_) {
+        address = reinterpret_cast<pointer>(address_);
+    }
 
-  /// Get the IO port address.
-  pointer get_address() { return address; }
+    /// Get the IO port address.
+    pointer get_address() { return address; }
 
-  /// Get the IO port address.
-  const_pointer get_address() const { return address; }
+    /// Get the IO port address.
+    const_pointer get_address() const { return address; }
 
-  /// Read.
-  operator T() const { return *address; }
+    /// Read.
+    operator T() const { return *address; }
 
-  /// Read.
-  T read() const { return *address; }
+    /// Read.
+    T read() const { return *address; }
 
-  /// Write.
-  void write(T value_) { *address = value_; }
+    /// Write.
+    void write(T value_) { *address = value_; }
 
-  /// Write.
-  io_port_rw& operator=(T value_) {
-    *address = value_;
-    return *this;
-  }
+    /// Write.
+    io_port_rw& operator=(T value_) {
+        *address = value_;
+        return *this;
+    }
 
-  /// Read / Write
-  reference operator*() { return *address; }
+    /// Read / Write
+    reference operator*() { return *address; }
 
-  /// Read
-  const_reference operator*() const { return *address; }
+    /// Read
+    const_reference operator*() const { return *address; }
 
-  /// Increment
-  io_port_rw& operator++() { return *this; }
+    /// Increment
+    io_port_rw& operator++() { return *this; }
 
-  /// Increment
-  io_port_rw operator++(int) { return *this; }
+    /// Increment
+    io_port_rw operator++(int) { return *this; }
 
- private:
-  pointer address;
+   private:
+    pointer address;
 };
 
 //***************************************************************************
@@ -314,56 +314,56 @@ class io_port_rw<T, 0>
 template <typename T>
 class io_port_ro<T, 0>
     : public etl::iterator<ETL_OR_STD::input_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
+   public:
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-  /// Default constructor.
-  io_port_ro() : address(ETL_NULLPTR) {}
+    /// Default constructor.
+    io_port_ro() : address(ETL_NULLPTR) {}
 
-  /// Constructor.
-  io_port_ro(void* address_) : address(reinterpret_cast<pointer>(address_)) {}
+    /// Constructor.
+    io_port_ro(void* address_) : address(reinterpret_cast<pointer>(address_)) {}
 
-  /// Copy Constructor.
-  io_port_ro(const io_port_ro& other_)
-      : address(reinterpret_cast<pointer>(other_.address)) {}
+    /// Copy Constructor.
+    io_port_ro(const io_port_ro& other_)
+        : address(reinterpret_cast<pointer>(other_.address)) {}
 
-  /// Assignment.
-  io_port_ro& operator=(const io_port_ro& other_) {
-    address = other_.address;
-    return *this;
-  }
+    /// Assignment.
+    io_port_ro& operator=(const io_port_ro& other_) {
+        address = other_.address;
+        return *this;
+    }
 
-  /// Set the IO port address.
-  void set_address(void* address_) {
-    address = reinterpret_cast<pointer>(address_);
-  }
+    /// Set the IO port address.
+    void set_address(void* address_) {
+        address = reinterpret_cast<pointer>(address_);
+    }
 
-  /// Get the IO port address.
-  const_pointer get_address() const { return address; }
+    /// Get the IO port address.
+    const_pointer get_address() const { return address; }
 
-  /// Read.
-  operator T() const { return *address; }
+    /// Read.
+    operator T() const { return *address; }
 
-  /// Read.
-  T read() const { return *address; }
+    /// Read.
+    T read() const { return *address; }
 
-  /// Read
-  const_reference operator*() const { return *address; }
+    /// Read
+    const_reference operator*() const { return *address; }
 
-  /// Increment
-  io_port_ro& operator++() { return *this; }
+    /// Increment
+    io_port_ro& operator++() { return *this; }
 
-  /// Increment
-  io_port_ro operator++(int) { return *this; }
+    /// Increment
+    io_port_ro operator++(int) { return *this; }
 
- private:
-  /// Write disabled.
-  void operator=(T value);
+   private:
+    /// Write disabled.
+    void operator=(T value);
 
-  pointer address;
+    pointer address;
 };
 
 //***************************************************************************
@@ -373,59 +373,59 @@ class io_port_ro<T, 0>
 template <typename T>
 class io_port_wo<T, 0>
     : public etl::iterator<ETL_OR_STD::output_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
+   public:
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-  /// Default constructor.
-  io_port_wo() : address(ETL_NULLPTR) {}
+    /// Default constructor.
+    io_port_wo() : address(ETL_NULLPTR) {}
 
-  /// Constructor.
-  io_port_wo(void* address_) : address(reinterpret_cast<pointer>(address_)) {}
+    /// Constructor.
+    io_port_wo(void* address_) : address(reinterpret_cast<pointer>(address_)) {}
 
-  /// Copy Constructor.
-  io_port_wo(const io_port_wo& other_)
-      : address(reinterpret_cast<pointer>(other_.address)) {}
+    /// Copy Constructor.
+    io_port_wo(const io_port_wo& other_)
+        : address(reinterpret_cast<pointer>(other_.address)) {}
 
-  /// Assignment.
-  io_port_wo& operator=(const io_port_wo& other_) {
-    address = other_.address;
-    return *this;
-  }
+    /// Assignment.
+    io_port_wo& operator=(const io_port_wo& other_) {
+        address = other_.address;
+        return *this;
+    }
 
-  /// Set the IO port address.
-  void set_address(void* address_) {
-    address = reinterpret_cast<pointer>(address_);
-  }
+    /// Set the IO port address.
+    void set_address(void* address_) {
+        address = reinterpret_cast<pointer>(address_);
+    }
 
-  /// Get the IO port address.
-  pointer get_address() { return address; }
+    /// Get the IO port address.
+    pointer get_address() { return address; }
 
-  /// Get the IO port address.
-  const_pointer get_address() const { return address; }
+    /// Get the IO port address.
+    const_pointer get_address() const { return address; }
 
-  /// Write.
-  void write(T value_) { *address = value_; }
+    /// Write.
+    void write(T value_) { *address = value_; }
 
-  /// Write.
-  void operator=(T value) { *address = value; }
+    /// Write.
+    void operator=(T value) { *address = value; }
 
-  /// Write
-  io_port_wo& operator*() { return *this; }
+    /// Write
+    io_port_wo& operator*() { return *this; }
 
-  /// Increment
-  io_port_wo& operator++() { return *this; }
+    /// Increment
+    io_port_wo& operator++() { return *this; }
 
-  /// Write
-  io_port_wo operator++(int) { return *this; }
+    /// Write
+    io_port_wo operator++(int) { return *this; }
 
- private:
-  /// Read disabled.
-  operator T() const;
+   private:
+    /// Read disabled.
+    operator T() const;
 
-  pointer address;
+    pointer address;
 };
 
 //***************************************************************************
@@ -435,108 +435,109 @@ class io_port_wo<T, 0>
 template <typename T>
 class io_port_wos<T, 0>
     : public etl::iterator<ETL_OR_STD::forward_iterator_tag, T> {
- public:
-  typedef volatile T* pointer;
-  typedef volatile const T* const_pointer;
-  typedef volatile T& reference;
-  typedef volatile const T& const_reference;
-
-  class iterator
-      : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, T> {
-    typedef io_port_wos<T, 0> iop_t;
-
    public:
-    iterator(iop_t& iop) : p_iop(&iop) {}
+    typedef volatile T* pointer;
+    typedef volatile const T* const_pointer;
+    typedef volatile T& reference;
+    typedef volatile const T& const_reference;
 
-    iterator(const iterator& other) : p_iop(other.p_iop) {}
+    class iterator
+        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, T> {
+        typedef io_port_wos<T, 0> iop_t;
 
-    iterator& operator=(const iterator& other) {
-      p_iop = other.p_iop;
-      return *this;
+       public:
+        iterator(iop_t& iop) : p_iop(&iop) {}
+
+        iterator(const iterator& other) : p_iop(other.p_iop) {}
+
+        iterator& operator=(const iterator& other) {
+            p_iop = other.p_iop;
+            return *this;
+        }
+
+        iop_t& operator*() { return *p_iop; }
+
+        const iop_t& operator*() const { return *p_iop; }
+
+        iterator& operator++() { return *this; }
+
+        iterator operator++(int) { return *this; }
+
+        iterator& operator--() { return *this; }
+
+        iterator operator--(int) { return *this; }
+
+       private:
+        iop_t* p_iop;
+    };
+
+    /// Default constructor.
+    io_port_wos() : address(ETL_NULLPTR) {}
+
+    /// Constructor.
+    io_port_wos(void* address_)
+        : address(reinterpret_cast<pointer>(address_)) {}
+
+    /// Copy Constructor.
+    io_port_wos(const io_port_wos& other_)
+        : shadow_value(other_.shadow_value),
+          address(reinterpret_cast<pointer>(other_.address)) {}
+
+    /// Assignment.
+    io_port_wos& operator=(const io_port_wos& other_) {
+        shadow_value = other_.shadow_value;
+        address = other_.address;
+        return *this;
     }
 
-    iop_t& operator*() { return *p_iop; }
+    /// Set the IO port address.
+    void set_address(void* address_) {
+        address = reinterpret_cast<pointer>(address_);
+    }
 
-    const iop_t& operator*() const { return *p_iop; }
+    /// Get the IO port address.
+    pointer get_address() { return address; }
 
-    iterator& operator++() { return *this; }
+    /// Get the IO port address.
+    const_pointer get_address() const { return address; }
 
-    iterator operator++(int) { return *this; }
+    /// Get the iterator.
+    iterator get_iterator() { return iterator(*this); }
 
-    iterator& operator--() { return *this; }
+    /// Read.
+    operator T() const { return shadow_value; }
 
-    iterator operator--(int) { return *this; }
+    /// Read.
+    T read() const { return shadow_value; }
+
+    /// Write.
+    void write(T value_) {
+        shadow_value = value_;
+        *address = shadow_value;
+    }
+
+    /// Write.
+    io_port_wos& operator=(T value_) {
+        shadow_value = value_;
+        *address = shadow_value;
+        return *this;
+    }
+
+    /// Read / Write
+    io_port_wos& operator*() { return *this; }
+
+    /// Read
+    const_reference operator*() const { return shadow_value; }
+
+    /// Increment
+    io_port_wos& operator++() { return *this; }
+
+    /// Increment
+    io_port_wos operator++(int) { return *this; }
 
    private:
-    iop_t* p_iop;
-  };
-
-  /// Default constructor.
-  io_port_wos() : address(ETL_NULLPTR) {}
-
-  /// Constructor.
-  io_port_wos(void* address_) : address(reinterpret_cast<pointer>(address_)) {}
-
-  /// Copy Constructor.
-  io_port_wos(const io_port_wos& other_)
-      : shadow_value(other_.shadow_value),
-        address(reinterpret_cast<pointer>(other_.address)) {}
-
-  /// Assignment.
-  io_port_wos& operator=(const io_port_wos& other_) {
-    shadow_value = other_.shadow_value;
-    address = other_.address;
-    return *this;
-  }
-
-  /// Set the IO port address.
-  void set_address(void* address_) {
-    address = reinterpret_cast<pointer>(address_);
-  }
-
-  /// Get the IO port address.
-  pointer get_address() { return address; }
-
-  /// Get the IO port address.
-  const_pointer get_address() const { return address; }
-
-  /// Get the iterator.
-  iterator get_iterator() { return iterator(*this); }
-
-  /// Read.
-  operator T() const { return shadow_value; }
-
-  /// Read.
-  T read() const { return shadow_value; }
-
-  /// Write.
-  void write(T value_) {
-    shadow_value = value_;
-    *address = shadow_value;
-  }
-
-  /// Write.
-  io_port_wos& operator=(T value_) {
-    shadow_value = value_;
-    *address = shadow_value;
-    return *this;
-  }
-
-  /// Read / Write
-  io_port_wos& operator*() { return *this; }
-
-  /// Read
-  const_reference operator*() const { return shadow_value; }
-
-  /// Increment
-  io_port_wos& operator++() { return *this; }
-
-  /// Increment
-  io_port_wos operator++(int) { return *this; }
-
- private:
-  T shadow_value;
-  pointer address;
+    T shadow_value;
+    pointer address;
 };
 }  // namespace etl
 

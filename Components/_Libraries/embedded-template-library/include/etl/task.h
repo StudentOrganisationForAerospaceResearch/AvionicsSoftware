@@ -40,10 +40,10 @@ namespace etl {
 /// Base exception class for task.
 //***************************************************************************
 class task_exception : public etl::exception {
- public:
-  task_exception(string_type reason_, string_type file_name_,
-                 numeric_type line_number_)
-      : etl::exception(reason_, file_name_, line_number_) {}
+   public:
+    task_exception(string_type reason_, string_type file_name_,
+                   numeric_type line_number_)
+        : etl::exception(reason_, file_name_, line_number_) {}
 };
 
 typedef uint_least8_t task_priority_t;
@@ -52,55 +52,55 @@ typedef uint_least8_t task_priority_t;
 /// Task.
 //***************************************************************************
 class task {
- public:
-  //*******************************************
-  /// Constructor.
-  //*******************************************
-  task(task_priority_t priority)
-      : task_running(true), task_priority(priority) {}
+   public:
+    //*******************************************
+    /// Constructor.
+    //*******************************************
+    task(task_priority_t priority)
+        : task_running(true), task_priority(priority) {}
 
-  //*******************************************
-  /// Destructor.
-  //*******************************************
-  virtual ~task() {}
+    //*******************************************
+    /// Destructor.
+    //*******************************************
+    virtual ~task() {}
 
-  //*******************************************
-  /// Called to check if the task has work.
-  /// Returns a score as to the amount of work it has to do.
-  //*******************************************
-  virtual uint32_t task_request_work() const = 0;
+    //*******************************************
+    /// Called to check if the task has work.
+    /// Returns a score as to the amount of work it has to do.
+    //*******************************************
+    virtual uint32_t task_request_work() const = 0;
 
-  //*******************************************
-  /// Called to get the task to do work.
-  //*******************************************
-  virtual void task_process_work() = 0;
+    //*******************************************
+    /// Called to get the task to do work.
+    //*******************************************
+    virtual void task_process_work() = 0;
 
-  //*******************************************
-  /// Called when the task has been added to the scheduler.
-  //*******************************************
-  virtual void on_task_added() {
-    // Do nothing.
-  }
+    //*******************************************
+    /// Called when the task has been added to the scheduler.
+    //*******************************************
+    virtual void on_task_added() {
+        // Do nothing.
+    }
 
-  //*******************************************
-  /// Set the running state for the task.
-  //*******************************************
-  void set_task_running(bool task_running_) { task_running = task_running_; }
+    //*******************************************
+    /// Set the running state for the task.
+    //*******************************************
+    void set_task_running(bool task_running_) { task_running = task_running_; }
 
-  //*******************************************
-  /// Get the running state for the task.
-  //*******************************************
-  bool task_is_running() const { return task_running; }
+    //*******************************************
+    /// Get the running state for the task.
+    //*******************************************
+    bool task_is_running() const { return task_running; }
 
-  //*******************************************
-  /// Get the priority of the task.
-  /// Higher value = higher priority.
-  //*******************************************
-  etl::task_priority_t get_task_priority() const { return task_priority; }
+    //*******************************************
+    /// Get the priority of the task.
+    /// Higher value = higher priority.
+    //*******************************************
+    etl::task_priority_t get_task_priority() const { return task_priority; }
 
- private:
-  bool task_running;
-  etl::task_priority_t task_priority;
+   private:
+    bool task_running;
+    etl::task_priority_t task_priority;
 };
 }  // namespace etl
 

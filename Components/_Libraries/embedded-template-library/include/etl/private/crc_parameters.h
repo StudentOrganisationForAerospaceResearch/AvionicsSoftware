@@ -43,13 +43,13 @@ namespace private_crc {
 template <typename TAccumulator, TAccumulator Polynomial_,
           TAccumulator Initial_, TAccumulator Xor_Out_, bool Reflect_>
 struct crc_parameters {
-  typedef TAccumulator accumulator_type;
-  static ETL_CONSTANT TAccumulator Polynomial = Polynomial_;
-  static ETL_CONSTANT TAccumulator Initial = Initial_;
-  static ETL_CONSTANT TAccumulator Xor_Out = Xor_Out_;
-  static ETL_CONSTANT bool Reflect = Reflect_;
-  static ETL_CONSTANT size_t Accumulator_Bits =
-      etl::integral_limits<accumulator_type>::bits;
+    typedef TAccumulator accumulator_type;
+    static ETL_CONSTANT TAccumulator Polynomial = Polynomial_;
+    static ETL_CONSTANT TAccumulator Initial = Initial_;
+    static ETL_CONSTANT TAccumulator Xor_Out = Xor_Out_;
+    static ETL_CONSTANT bool Reflect = Reflect_;
+    static ETL_CONSTANT size_t Accumulator_Bits =
+        etl::integral_limits<accumulator_type>::bits;
 };
 
 // 8 bit.

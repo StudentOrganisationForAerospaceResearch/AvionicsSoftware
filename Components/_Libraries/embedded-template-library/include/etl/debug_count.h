@@ -63,70 +63,70 @@ namespace etl {
 //***************************************************************************
 
 class debug_count {
- public:
-  debug_count() : count(0) {}
+   public:
+    debug_count() : count(0) {}
 
-  ~debug_count() { assert(count == 0); }
+    ~debug_count() { assert(count == 0); }
 
-  debug_count& operator++() {
-    ++count;
-    return *this;
-  }
+    debug_count& operator++() {
+        ++count;
+        return *this;
+    }
 
-  debug_count& operator--() {
-    --count;
-    assert(count >= 0);
-    return *this;
-  }
+    debug_count& operator--() {
+        --count;
+        assert(count >= 0);
+        return *this;
+    }
 
-  template <typename T>
-  debug_count& operator+=(T n) {
-    count += int32_t(n);
-    return *this;
-  }
+    template <typename T>
+    debug_count& operator+=(T n) {
+        count += int32_t(n);
+        return *this;
+    }
 
-  template <typename T>
-  debug_count& operator-=(T n) {
-    count -= int32_t(n);
-    return *this;
-  }
+    template <typename T>
+    debug_count& operator-=(T n) {
+        count -= int32_t(n);
+        return *this;
+    }
 
-  debug_count& operator=(const debug_count& other) {
-    count.store(other.count.load());
+    debug_count& operator=(const debug_count& other) {
+        count.store(other.count.load());
 
-    return *this;
-  }
+        return *this;
+    }
 
 #if ETL_HAS_ATOMIC
-  void swap(debug_count& other) ETL_NOEXCEPT  // NOT ATOMIC
-  {
-    int32_t temp = other.count.load();
-    other.count.store(count.load());
-    count.store(temp);
-  }
+    void swap(debug_count& other) ETL_NOEXCEPT  // NOT ATOMIC
+    {
+        int32_t temp = other.count.load();
+        other.count.store(count.load());
+        count.store(temp);
+    }
 #else
-  void swap(debug_count& other) ETL_NOEXCEPT { swap(count, other.count); }
+    void swap(debug_count& other) ETL_NOEXCEPT { swap(count, other.count); }
 #endif
 
-  operator int32_t() const { return count; }
+    operator int32_t() const { return count; }
 
-  int32_t get() const { return int32_t(count); }
+    int32_t get() const { return int32_t(count); }
 
-  void set(int32_t n) { count = n; }
+    void set(int32_t n) { count = n; }
 
-  void clear() { count = 0; }
+    void clear() { count = 0; }
 
- private:
+   private:
 #if ETL_HAS_ATOMIC
-  etl::atomic_int32_t count;
+    etl::atomic_int32_t count;
 #else
-  int32_t count;
+    int32_t count;
 #endif
 };
 }  // namespace etl
 
 inline void swap(etl::debug_count& lhs, etl::debug_count& rhs) {
-  lhs.swap(rhs);
+    lhs.swap(rhs);
 }
 
 #else

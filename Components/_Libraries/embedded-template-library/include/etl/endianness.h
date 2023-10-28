@@ -87,16 +87,16 @@ namespace etl {
 ///\ingroup endian
 //***************************************************************************
 struct endian {
-  enum enum_type {
-    little = static_cast<int>(ETL_ENDIAN_LITTLE),
-    big = static_cast<int>(ETL_ENDIAN_BIG),
-    native = static_cast<int>(ETL_ENDIAN_NATIVE),
-  };
+    enum enum_type {
+        little = static_cast<int>(ETL_ENDIAN_LITTLE),
+        big = static_cast<int>(ETL_ENDIAN_BIG),
+        native = static_cast<int>(ETL_ENDIAN_NATIVE),
+    };
 
-  ETL_DECLARE_ENUM_TYPE(endian, int)
-  ETL_ENUM_TYPE(little, "little")
-  ETL_ENUM_TYPE(big, "big")
-  ETL_END_ENUM_TYPE
+    ETL_DECLARE_ENUM_TYPE(endian, int)
+    ETL_ENUM_TYPE(little, "little")
+    ETL_ENUM_TYPE(big, "big")
+    ETL_END_ENUM_TYPE
 };
 
 //***************************************************************************
@@ -104,33 +104,33 @@ struct endian {
 ///\ingroup endian
 //***************************************************************************
 struct endianness {
-  etl::endian operator()() const { return etl::endian(*this); }
+    etl::endian operator()() const { return etl::endian(*this); }
 
 #if ETL_HAS_CONSTEXPR_ENDIANNESS
-  ETL_CONSTEXPR
+    ETL_CONSTEXPR
 #endif
-  operator etl::endian() const { return get(); }
+    operator etl::endian() const { return get(); }
 
 #if ETL_HAS_CONSTEXPR_ENDIANNESS
-  static ETL_CONSTEXPR etl::endian value()
+    static ETL_CONSTEXPR etl::endian value()
 #else
-  static etl::endian value()
+    static etl::endian value()
 #endif
-  {
-    return get();
-  }
+    {
+        return get();
+    }
 
- private:
+   private:
 #if ETL_HAS_CONSTEXPR_ENDIANNESS
-  static ETL_CONSTEXPR etl::endian get() { return etl::endian::native; }
+    static ETL_CONSTEXPR etl::endian get() { return etl::endian::native; }
 #else
-  static etl::endian get() {
-    static const uint32_t i = 0xFFFF0000;
+    static etl::endian get() {
+        static const uint32_t i = 0xFFFF0000;
 
-    return (*reinterpret_cast<const unsigned char*>(&i) == 0)
-               ? etl::endian::little
-               : etl::endian::big;
-  }
+        return (*reinterpret_cast<const unsigned char*>(&i) == 0)
+                   ? etl::endian::little
+                   : etl::endian::big;
+    }
 #endif
 };
 
@@ -138,22 +138,22 @@ struct endianness {
 template <typename T>
 ETL_CONSTEXPR14 typename etl::enable_if<etl::is_integral<T>::value, T>::type
 ntoh(T value) {
-  if (endianness::value() == endian::little) {
-    return etl::reverse_bytes(value);
-  } else {
-    return value;
-  }
+    if (endianness::value() == endian::little) {
+        return etl::reverse_bytes(value);
+    } else {
+        return value;
+    }
 }
 
 //***************************************************************************
 template <typename T>
 ETL_CONSTEXPR14 typename etl::enable_if<etl::is_integral<T>::value, T>::type
 hton(T value) {
-  if (endianness::value() == endian::little) {
-    return etl::reverse_bytes(value);
-  } else {
-    return value;
-  }
+    if (endianness::value() == endian::little) {
+        return etl::reverse_bytes(value);
+    } else {
+        return value;
+    }
 }
 }  // namespace etl
 

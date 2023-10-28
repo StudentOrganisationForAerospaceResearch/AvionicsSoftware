@@ -15,30 +15,30 @@
  */
 
 typedef struct {
-  int32_t accelX_;
-  int32_t accelY_;
-  int32_t accelZ_;
-  int32_t gyroX_;
-  int32_t gyroY_;
-  int32_t gyroZ_;
-  int32_t magnetoX_;
-  int32_t magnetoY_;
-  int32_t magnetoZ_;
-  int32_t time;
+    int32_t accelX_;
+    int32_t accelY_;
+    int32_t accelZ_;
+    int32_t gyroX_;
+    int32_t gyroY_;
+    int32_t gyroZ_;
+    int32_t magnetoX_;
+    int32_t magnetoY_;
+    int32_t magnetoZ_;
+    int32_t time;
 } AccelGyroMagnetismData;
 
 typedef struct {
-  int32_t pressure_;
-  int32_t temperature_;
-  int32_t time;
+    int32_t pressure_;
+    int32_t temperature_;
+    int32_t time;
 } BarometerData;
 
 typedef struct {
-  int32_t pressure_1;
+    int32_t pressure_1;
 } PressureTransducerData;
 
 typedef struct {
-  int32_t voltage_;  // Volts * 1000, eg. 3300 == 3.3V
+    int32_t voltage_;  // Volts * 1000, eg. 3300 == 3.3V
 } BatteryData;
 
 /* GPS Data */
@@ -46,23 +46,23 @@ typedef struct {
 #define NMEA_MAX_LENGTH 82
 
 typedef struct {
-  int32_t degrees_;
-  int32_t minutes_;
+    int32_t degrees_;
+    int32_t minutes_;
 } LatLongType;
 
 typedef struct {
-  int32_t altitude_;
-  char unit_;
+    int32_t altitude_;
+    char unit_;
 } AltitudeType;
 
 typedef struct {
-  char buffer_[NMEA_MAX_LENGTH + 1];
-  uint32_t time_;
-  LatLongType latitude_;
-  LatLongType longitude_;
-  AltitudeType antennaAltitude_;
-  AltitudeType geoidAltitude_;
-  AltitudeType totalAltitude_;
+    char buffer_[NMEA_MAX_LENGTH + 1];
+    uint32_t time_;
+    LatLongType latitude_;
+    LatLongType longitude_;
+    AltitudeType antennaAltitude_;
+    AltitudeType geoidAltitude_;
+    AltitudeType totalAltitude_;
 } GpsData;
 
 /* Data Containers */
@@ -72,16 +72,16 @@ typedef struct {
  */
 
 typedef struct {
-  AccelGyroMagnetismData* accelGyroMagnetismData_;
-  BarometerData* barometerData_;
-  GpsData* gpsData_;
-  PressureTransducerData* pressureTransducerData_;
-  BatteryData* batteryData_;
+    AccelGyroMagnetismData* accelGyroMagnetismData_;
+    BarometerData* barometerData_;
+    GpsData* gpsData_;
+    PressureTransducerData* pressureTransducerData_;
+    BatteryData* batteryData_;
 } AllData;
 
 typedef struct {
-  AccelGyroMagnetismData* accelGyroMagnetismData_;
-  BarometerData* barometerData_;
+    AccelGyroMagnetismData* accelGyroMagnetismData_;
+    BarometerData* barometerData_;
 } ParachutesControlData;
 
 #endif  //AVIONICS_INCLUDE_SOAR_DATA_H

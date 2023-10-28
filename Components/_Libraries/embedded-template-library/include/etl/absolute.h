@@ -41,7 +41,7 @@ namespace etl {
 template <typename T>
 ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, T>::type
 absolute(T value) {
-  return (value < T(0)) ? -value : value;
+    return (value < T(0)) ? -value : value;
 }
 
 //***************************************************************************
@@ -50,7 +50,7 @@ absolute(T value) {
 template <typename T>
 ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, T>::type
 absolute(T value) {
-  return value;
+    return value;
 }
 
 //***************************************************************************
@@ -64,10 +64,10 @@ template <typename T, typename TReturn>
 #endif
 ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, TReturn>::type
 absolute_unsigned(T value) {
-  return (value == etl::integral_limits<T>::min)
-             ? etl::integral_limits<TReturn>::max / 2U
-         : (value < T(0)) ? TReturn(-value)
-                          : TReturn(value);
+    return (value == etl::integral_limits<T>::min)
+               ? etl::integral_limits<TReturn>::max / 2U
+           : (value < T(0)) ? TReturn(-value)
+                            : TReturn(value);
 }
 
 //***************************************************************************
@@ -77,7 +77,7 @@ absolute_unsigned(T value) {
 template <typename T>
 ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, T>::type
 absolute_unsigned(T value) {
-  return etl::absolute(value);
+    return etl::absolute(value);
 }
 }  // namespace etl
 

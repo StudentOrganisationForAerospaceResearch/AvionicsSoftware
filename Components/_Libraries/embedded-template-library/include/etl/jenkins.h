@@ -54,56 +54,56 @@ namespace etl {
 /// Calculates 32 bit Jenkins hash.
 //***************************************************************************
 struct jenkins_policy {
-  typedef uint32_t value_type;
+    typedef uint32_t value_type;
 
-  uint32_t initial() const {
-    is_finalised = false;
+    uint32_t initial() const {
+        is_finalised = false;
 
-    return 0;
-  }
+        return 0;
+    }
 
-  uint32_t add(value_type hash, uint8_t value) const {
-    ETL_ASSERT(!is_finalised, ETL_ERROR(hash_finalised));
+    uint32_t add(value_type hash, uint8_t value) const {
+        ETL_ASSERT(!is_finalised, ETL_ERROR(hash_finalised));
 
-    hash += value;
-    hash += (hash << 10U);
-    hash ^= (hash >> 6U);
+        hash += value;
+        hash += (hash << 10U);
+        hash ^= (hash >> 6U);
 
-    return hash;
-  }
+        return hash;
+    }
 
-  uint32_t final(value_type hash) const {
-    hash += (hash << 3U);
-    hash ^= (hash >> 11U);
-    hash += (hash << 15U);
-    is_finalised = true;
+    uint32_t final(value_type hash) const {
+        hash += (hash << 3U);
+        hash ^= (hash >> 11U);
+        hash += (hash << 15U);
+        is_finalised = true;
 
-    return hash;
-  }
+        return hash;
+    }
 
-  mutable bool is_finalised;
+    mutable bool is_finalised;
 };
 
 //*************************************************************************
 /// jenkins
 //*************************************************************************
 class jenkins : public etl::frame_check_sequence<etl::jenkins_policy> {
- public:
-  //*************************************************************************
-  /// Default constructor.
-  //*************************************************************************
-  jenkins() { this->reset(); }
+   public:
+    //*************************************************************************
+    /// Default constructor.
+    //*************************************************************************
+    jenkins() { this->reset(); }
 
-  //*************************************************************************
-  /// Constructor from range.
-  /// \param begin Start of the range.
-  /// \param end   End of the range.
-  //*************************************************************************
-  template <typename TIterator>
-  jenkins(TIterator begin, const TIterator end) {
-    this->reset();
-    this->add(begin, end);
-  }
+    //*************************************************************************
+    /// Constructor from range.
+    /// \param begin Start of the range.
+    /// \param end   End of the range.
+    //*************************************************************************
+    template <typename TIterator>
+    jenkins(TIterator begin, const TIterator end) {
+        this->reset();
+        this->add(begin, end);
+    }
 };
 }  // namespace etl
 

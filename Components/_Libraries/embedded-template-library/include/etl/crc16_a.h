@@ -46,22 +46,22 @@ using crc16_a_t =
 template <size_t Table_Size>
 class crc16_a_t
     : public etl::crc_type<etl::private_crc::crc16_a_parameters, Table_Size> {
- public:
-  //*************************************************************************
-  /// Default constructor.
-  //*************************************************************************
-  crc16_a_t() { this->reset(); }
+   public:
+    //*************************************************************************
+    /// Default constructor.
+    //*************************************************************************
+    crc16_a_t() { this->reset(); }
 
-  //*************************************************************************
-  /// Constructor from range.
-  /// \param begin Start of the range.
-  /// \param end   End of the range.
-  //*************************************************************************
-  template <typename TIterator>
-  crc16_a_t(TIterator begin, const TIterator end) {
-    this->reset();
-    this->add(begin, end);
-  }
+    //*************************************************************************
+    /// Constructor from range.
+    /// \param begin Start of the range.
+    /// \param end   End of the range.
+    //*************************************************************************
+    template <typename TIterator>
+    crc16_a_t(TIterator begin, const TIterator end) {
+        this->reset();
+        this->add(begin, end);
+    }
 };
 #endif
 

@@ -49,9 +49,9 @@ typename etl::enable_if<!etl::is_same<T, etl::iu32string>::value &&
                             !etl::is_same<T, etl::u32string_view>::value,
                         const etl::iu32string&>::type
 to_string(const T value, etl::iu32string& str, bool append = false) {
-  etl::u32format_spec format;
+    etl::u32format_spec format;
 
-  return private_to_string::to_string(value, str, format, append);
+    return private_to_string::to_string(value, str, format, append);
 }
 
 //***************************************************************************
@@ -64,7 +64,7 @@ typename etl::enable_if<!etl::is_same<T, etl::iu32string>::value &&
                         const etl::iu32string&>::type
 to_string(const T value, etl::iu32string& str,
           const etl::u32format_spec& format, bool append = false) {
-  return private_to_string::to_string(value, str, format, append);
+    return private_to_string::to_string(value, str, format, append);
 }
 
 //***************************************************************************
@@ -77,10 +77,10 @@ typename etl::enable_if<!etl::is_same<T, etl::iu32string>::value &&
                         const etl::iu32string&>::type
 to_string(const T value, uint32_t denominator_exponent, etl::iu32string& str,
           bool append = false) {
-  etl::u32format_spec format;
+    etl::u32format_spec format;
 
-  return private_to_string::to_string(value, denominator_exponent, str, format,
-                                      append);
+    return private_to_string::to_string(value, denominator_exponent, str,
+                                        format, append);
 }
 
 //***************************************************************************
@@ -93,8 +93,8 @@ typename etl::enable_if<!etl::is_same<T, etl::iu32string>::value &&
                         const etl::iu32string&>::type
 to_string(const T value, uint32_t denominator_exponent, etl::iu32string& str,
           const etl::u32format_spec& format, bool append = false) {
-  return private_to_string::to_string(value, denominator_exponent, str, format,
-                                      append);
+    return private_to_string::to_string(value, denominator_exponent, str,
+                                        format, append);
 }
 
 //***************************************************************************
@@ -105,11 +105,11 @@ template <typename T>
 typename etl::enable_if<etl::is_same<T, etl::iu32string>::value,
                         const etl::iu32string&>::type
 to_string(const T& value, etl::iu32string& str, bool append = false) {
-  etl::u32format_spec format;
+    etl::u32format_spec format;
 
-  private_to_string::add_string(value, str, format, append);
+    private_to_string::add_string(value, str, format, append);
 
-  return str;
+    return str;
 }
 
 //***************************************************************************
@@ -121,9 +121,9 @@ typename etl::enable_if<etl::is_same<T, etl::iu32string>::value,
                         const etl::iu32string&>::type
 to_string(const etl::iu32string& value, T& str,
           const etl::u32format_spec& format, bool append = false) {
-  private_to_string::add_string(value, str, format, append);
+    private_to_string::add_string(value, str, format, append);
 
-  return str;
+    return str;
 }
 
 //***************************************************************************
@@ -134,11 +134,11 @@ template <typename T>
 typename etl::enable_if<etl::is_same<T, etl::u32string_view>::value,
                         const etl::iu32string&>::type
 to_string(T value, etl::iu32string& str, bool append = false) {
-  etl::u32format_spec format;
+    etl::u32format_spec format;
 
-  private_to_string::add_string_view(value, str, format, append);
+    private_to_string::add_string_view(value, str, format, append);
 
-  return str;
+    return str;
 }
 
 //***************************************************************************
@@ -150,9 +150,9 @@ typename etl::enable_if<etl::is_same<T, etl::u32string_view>::value,
                         const etl::iu32string&>::type
 to_string(T value, etl::iu32string& str, const etl::u32format_spec& format,
           bool append = false) {
-  private_to_string::add_string_view(value, str, format, append);
+    private_to_string::add_string_view(value, str, format, append);
 
-  return str;
+    return str;
 }
 }  // namespace etl
 

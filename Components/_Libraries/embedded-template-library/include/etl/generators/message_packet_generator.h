@@ -80,205 +80,208 @@ namespace etl {
 template <typename... TMessageTypes>
 class message_packet {
 
- private:
-  template <typename T>
-  static constexpr bool IsMessagePacket =
-      etl::is_same_v<etl::remove_const_t<etl::remove_reference_t<T>>,
-                     etl::message_packet<TMessageTypes...>>;
+   private:
+    template <typename T>
+    static constexpr bool IsMessagePacket =
+        etl::is_same_v<etl::remove_const_t<etl::remove_reference_t<T>>,
+                       etl::message_packet<TMessageTypes...>>;
 
-  template <typename T>
-  static constexpr bool IsInMessageList =
-      etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<T>>,
-                       TMessageTypes...>;
+    template <typename T>
+    static constexpr bool IsInMessageList =
+        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<T>>,
+                         TMessageTypes...>;
 
-  template <typename T>
-  static constexpr bool IsIMessage =
-      etl::is_same_v<remove_const_t<etl::remove_reference_t<T>>, etl::imessage>;
+    template <typename T>
+    static constexpr bool IsIMessage =
+        etl::is_same_v<remove_const_t<etl::remove_reference_t<T>>,
+                       etl::imessage>;
 
- public:
-  //********************************************
-  message_packet() : data(), valid(false) {}
+   public:
+    //********************************************
+    message_packet() : data(), valid(false) {}
 
-  //********************************************
-  ///
-  //********************************************
-  template <typename T>
-  explicit message_packet(T&& msg) : data(), valid(true) {
-    if constexpr (IsIMessage<T>) {
-      if (accepts(msg)) {
-        add_new_message(etl::forward<T>(msg));
-        valid = true;
-      } else {
-        valid = false;
-      }
+    //********************************************
+    ///
+    //********************************************
+    template <typename T>
+    explicit message_packet(T&& msg) : data(), valid(true) {
+        if constexpr (IsIMessage<T>) {
+            if (accepts(msg)) {
+                add_new_message(etl::forward<T>(msg));
+                valid = true;
+            } else {
+                valid = false;
+            }
 
-      ETL_ASSERT(valid, ETL_ERROR(unhandled_message_exception));
-    } else if constexpr (IsInMessageList<T>) {
-      add_new_message_type<T>(etl::forward<T>(msg));
-    } else if constexpr (IsMessagePacket<T>) {
-      copy(etl::forward<T>(msg));
-    } else {
-      ETL_STATIC_ASSERT(IsInMessageList<T>, "Message not in packet type list");
-    }
-  }
-
-  //**********************************************
-  void copy(const message_packet& other) {
-    valid = other.is_valid();
-
-    if (valid) {
-      add_new_message(other.get());
-    }
-  }
-
-  //**********************************************
-  void copy(message_packet&& other) {
-    valid = other.is_valid();
-
-    if (valid) {
-      add_new_message(etl::move(other.get()));
-    }
-  }
-
-  //**********************************************
-  message_packet& operator=(const message_packet& rhs) {
-    delete_current_message();
-    valid = rhs.is_valid();
-    if (valid) {
-      add_new_message(rhs.get());
+            ETL_ASSERT(valid, ETL_ERROR(unhandled_message_exception));
+        } else if constexpr (IsInMessageList<T>) {
+            add_new_message_type<T>(etl::forward<T>(msg));
+        } else if constexpr (IsMessagePacket<T>) {
+            copy(etl::forward<T>(msg));
+        } else {
+            ETL_STATIC_ASSERT(IsInMessageList<T>,
+                              "Message not in packet type list");
+        }
     }
 
-    return *this;
-  }
+    //**********************************************
+    void copy(const message_packet& other) {
+        valid = other.is_valid();
 
-  //**********************************************
-  message_packet& operator=(message_packet&& rhs) {
-    delete_current_message();
-    valid = rhs.is_valid();
-    if (valid) {
-      add_new_message(etl::move(rhs.get()));
+        if (valid) {
+            add_new_message(other.get());
+        }
     }
 
-    return *this;
-  }
+    //**********************************************
+    void copy(message_packet&& other) {
+        valid = other.is_valid();
 
-  //********************************************
-  ~message_packet() { delete_current_message(); }
-
-  //********************************************
-  etl::imessage& get() ETL_NOEXCEPT {
-    return *static_cast<etl::imessage*>(data);
-  }
-
-  //********************************************
-  const etl::imessage& get() const ETL_NOEXCEPT {
-    return *static_cast<const etl::imessage*>(data);
-  }
-
-  //********************************************
-  bool is_valid() const { return valid; }
-
-  //**********************************************
-  static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-    return (accepts_message<TMessageTypes::ID>(id) || ...);
-  }
-
-  //**********************************************
-  static ETL_CONSTEXPR bool accepts(const etl::imessage& msg) {
-    return accepts(msg.get_message_id());
-  }
-
-  //**********************************************
-  template <etl::message_id_t Id>
-  static ETL_CONSTEXPR bool accepts() {
-    return (accepts_message<TMessageTypes::ID, Id>() || ...);
-  }
-
-  //**********************************************
-  template <typename TMessage>
-  static ETL_CONSTEXPR
-      typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                              bool>::type
-      accepts() {
-    return accepts<TMessage::ID>();
-  }
-
-  enum {
-    SIZE = etl::largest<TMessageTypes...>::size,
-    ALIGNMENT = etl::largest<TMessageTypes...>::alignment
-  };
-
- private:
-  //**********************************************
-  template <etl::message_id_t Id1, etl::message_id_t Id2>
-  static bool accepts_message() {
-    return Id1 == Id2;
-  }
-
-  //**********************************************
-  template <etl::message_id_t Id1>
-  static bool accepts_message(etl::message_id_t id2) {
-    return Id1 == id2;
-  }
-
-  //********************************************
-  void delete_current_message() {
-    if (valid) {
-      etl::imessage* pmsg = static_cast<etl::imessage*>(data);
-
-      pmsg->~imessage();
+        if (valid) {
+            add_new_message(etl::move(other.get()));
+        }
     }
-  }
 
-  //********************************************
-  void add_new_message(const etl::imessage& msg) {
-    (add_new_message_type<TMessageTypes>(msg) || ...);
-  }
+    //**********************************************
+    message_packet& operator=(const message_packet& rhs) {
+        delete_current_message();
+        valid = rhs.is_valid();
+        if (valid) {
+            add_new_message(rhs.get());
+        }
 
-  //********************************************
-  void add_new_message(etl::imessage&& msg) {
-    (add_new_message_type<TMessageTypes>(etl::move(msg)) || ...);
-  }
-
-  //********************************************
-  /// Only enabled for types that are in the typelist.
-  //********************************************
-  template <typename TMessage>
-  etl::enable_if_t<
-      etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<TMessage>>,
-                       TMessageTypes...>,
-      void>
-  add_new_message_type(TMessage&& msg) {
-    void* p = data;
-    new (p) etl::remove_reference_t<TMessage>((etl::forward<TMessage>(msg)));
-  }
-
-  typename etl::aligned_storage<SIZE, ALIGNMENT>::type data;
-  bool valid;
-
-  //********************************************
-  template <typename TType>
-  bool add_new_message_type(const etl::imessage& msg) {
-    if (TType::ID == msg.get_message_id()) {
-      void* p = data;
-      new (p) TType(static_cast<const TType&>(msg));
-      return true;
-    } else {
-      return false;
+        return *this;
     }
-  }
 
-  //********************************************
-  template <typename TType>
-  bool add_new_message_type(etl::imessage&& msg) {
-    if (TType::ID == msg.get_message_id()) {
-      void* p = data;
-      new (p) TType(static_cast<TType&&>(msg));
-      return true;
-    } else {
-      return false;
+    //**********************************************
+    message_packet& operator=(message_packet&& rhs) {
+        delete_current_message();
+        valid = rhs.is_valid();
+        if (valid) {
+            add_new_message(etl::move(rhs.get()));
+        }
+
+        return *this;
     }
-  }
+
+    //********************************************
+    ~message_packet() { delete_current_message(); }
+
+    //********************************************
+    etl::imessage& get() ETL_NOEXCEPT {
+        return *static_cast<etl::imessage*>(data);
+    }
+
+    //********************************************
+    const etl::imessage& get() const ETL_NOEXCEPT {
+        return *static_cast<const etl::imessage*>(data);
+    }
+
+    //********************************************
+    bool is_valid() const { return valid; }
+
+    //**********************************************
+    static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
+        return (accepts_message<TMessageTypes::ID>(id) || ...);
+    }
+
+    //**********************************************
+    static ETL_CONSTEXPR bool accepts(const etl::imessage& msg) {
+        return accepts(msg.get_message_id());
+    }
+
+    //**********************************************
+    template <etl::message_id_t Id>
+    static ETL_CONSTEXPR bool accepts() {
+        return (accepts_message<TMessageTypes::ID, Id>() || ...);
+    }
+
+    //**********************************************
+    template <typename TMessage>
+    static ETL_CONSTEXPR
+        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
+                                bool>::type
+        accepts() {
+        return accepts<TMessage::ID>();
+    }
+
+    enum {
+        SIZE = etl::largest<TMessageTypes...>::size,
+        ALIGNMENT = etl::largest<TMessageTypes...>::alignment
+    };
+
+   private:
+    //**********************************************
+    template <etl::message_id_t Id1, etl::message_id_t Id2>
+    static bool accepts_message() {
+        return Id1 == Id2;
+    }
+
+    //**********************************************
+    template <etl::message_id_t Id1>
+    static bool accepts_message(etl::message_id_t id2) {
+        return Id1 == id2;
+    }
+
+    //********************************************
+    void delete_current_message() {
+        if (valid) {
+            etl::imessage* pmsg = static_cast<etl::imessage*>(data);
+
+            pmsg->~imessage();
+        }
+    }
+
+    //********************************************
+    void add_new_message(const etl::imessage& msg) {
+        (add_new_message_type<TMessageTypes>(msg) || ...);
+    }
+
+    //********************************************
+    void add_new_message(etl::imessage&& msg) {
+        (add_new_message_type<TMessageTypes>(etl::move(msg)) || ...);
+    }
+
+    //********************************************
+    /// Only enabled for types that are in the typelist.
+    //********************************************
+    template <typename TMessage>
+    etl::enable_if_t<
+        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<TMessage>>,
+                         TMessageTypes...>,
+        void>
+    add_new_message_type(TMessage&& msg) {
+        void* p = data;
+        new (p)
+            etl::remove_reference_t<TMessage>((etl::forward<TMessage>(msg)));
+    }
+
+    typename etl::aligned_storage<SIZE, ALIGNMENT>::type data;
+    bool valid;
+
+    //********************************************
+    template <typename TType>
+    bool add_new_message_type(const etl::imessage& msg) {
+        if (TType::ID == msg.get_message_id()) {
+            void* p = data;
+            new (p) TType(static_cast<const TType&>(msg));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //********************************************
+    template <typename TType>
+    bool add_new_message_type(etl::imessage&& msg) {
+        if (TType::ID == msg.get_message_id()) {
+            void* p = data;
+            new (p) TType(static_cast<TType&&>(msg));
+            return true;
+        } else {
+            return false;
+        }
+    }
 };
 
 #else

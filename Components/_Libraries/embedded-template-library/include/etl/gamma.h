@@ -44,25 +44,25 @@ namespace etl {
 //***************************************************************************
 template <typename TInput>
 class gamma_encode : public etl::unary_function<TInput, TInput> {
- public:
-  //*********************************
-  /// Constructor.
-  //*********************************
-  gamma_encode(double gamma_, TInput maximum_)
-      : one_over_gamma(1.0 / gamma_), maximum(maximum_) {}
+   public:
+    //*********************************
+    /// Constructor.
+    //*********************************
+    gamma_encode(double gamma_, TInput maximum_)
+        : one_over_gamma(1.0 / gamma_), maximum(maximum_) {}
 
-  //*********************************
-  /// operator ()
-  /// Get the gamma.
-  //*********************************
-  TInput operator()(TInput value) const {
-    return TInput(
-        TInput(maximum * pow(double(value) / maximum, one_over_gamma)));
-  }
+    //*********************************
+    /// operator ()
+    /// Get the gamma.
+    //*********************************
+    TInput operator()(TInput value) const {
+        return TInput(
+            TInput(maximum * pow(double(value) / maximum, one_over_gamma)));
+    }
 
- private:
-  const double one_over_gamma;
-  const double maximum;
+   private:
+    const double one_over_gamma;
+    const double maximum;
 };
 
 //***************************************************************************
@@ -70,24 +70,24 @@ class gamma_encode : public etl::unary_function<TInput, TInput> {
 //***************************************************************************
 template <typename TInput>
 class gamma_decode : public etl::unary_function<TInput, TInput> {
- public:
-  //*********************************
-  /// Constructor.
-  //*********************************
-  gamma_decode(double gamma_, TInput maximum_)
-      : gamma(gamma_), maximum(maximum_) {}
+   public:
+    //*********************************
+    /// Constructor.
+    //*********************************
+    gamma_decode(double gamma_, TInput maximum_)
+        : gamma(gamma_), maximum(maximum_) {}
 
-  //*********************************
-  /// operator ()
-  /// Get the gamma.
-  //*********************************
-  TInput operator()(TInput value) const {
-    return TInput(TInput(maximum * pow(double(value) / maximum, gamma)));
-  }
+    //*********************************
+    /// operator ()
+    /// Get the gamma.
+    //*********************************
+    TInput operator()(TInput value) const {
+        return TInput(TInput(maximum * pow(double(value) / maximum, gamma)));
+    }
 
- private:
-  const double gamma;
-  const double maximum;
+   private:
+    const double gamma;
+    const double maximum;
 };
 }  // namespace etl
 

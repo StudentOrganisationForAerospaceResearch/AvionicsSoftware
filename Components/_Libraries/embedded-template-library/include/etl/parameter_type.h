@@ -40,10 +40,10 @@ namespace etl {
 //*************************************************************************
 template <typename T>
 struct parameter_type {
-  /// By default fundamental and pointer types are passed by value.
-  typedef typename etl::conditional<etl::is_fundamental<T>::value ||
-                                        etl::is_pointer<T>::value,
-                                    T, const T&>::type type;
+    /// By default fundamental and pointer types are passed by value.
+    typedef typename etl::conditional<etl::is_fundamental<T>::value ||
+                                          etl::is_pointer<T>::value,
+                                      T, const T&>::type type;
 };
 }  // namespace etl
 

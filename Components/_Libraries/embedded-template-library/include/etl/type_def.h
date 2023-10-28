@@ -35,8 +35,8 @@ SOFTWARE.
 
 namespace etl {
 #define ETL_TYPEDEF(T, name) \
-  class name##_tag;          \
-  typedef etl::type_def<name##_tag, T> name
+    class name##_tag;        \
+    typedef etl::type_def<name##_tag, T> name
 
 //*************************************************************************
 /// A template type to define strong typedefs.
@@ -52,206 +52,206 @@ namespace etl {
 //*************************************************************************
 template <typename TIdType, typename TValue>
 class type_def {
- public:
-  typedef TValue value_type;
-  typedef TIdType id_type;
+   public:
+    typedef TValue value_type;
+    typedef TIdType id_type;
 
-  //*********************************************************************
-  type_def() : value(TValue()) {}
+    //*********************************************************************
+    type_def() : value(TValue()) {}
 
-  //*********************************************************************
-  type_def(TValue value_) : value(value_) {}
+    //*********************************************************************
+    type_def(TValue value_) : value(value_) {}
 
-  //*********************************************************************
-  type_def(const type_def& other) : value(other.value) {}
+    //*********************************************************************
+    type_def(const type_def& other) : value(other.value) {}
 
-  //*********************************************************************
-  operator TValue() const { return value; }
+    //*********************************************************************
+    operator TValue() const { return value; }
 
-  //*********************************************************************
-  type_def& operator++() {
-    ++value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator++() {
+        ++value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def operator++(int) {
-    type_def temp(*this);
-    type_def::operator++();
-    return temp;
-  }
+    //*********************************************************************
+    type_def operator++(int) {
+        type_def temp(*this);
+        type_def::operator++();
+        return temp;
+    }
 
-  //*********************************************************************
-  type_def& operator--() {
-    --value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator--() {
+        --value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def operator--(int) {
-    type_def temp(*this);
-    type_def::operator--();
-    return temp;
-  }
+    //*********************************************************************
+    type_def operator--(int) {
+        type_def temp(*this);
+        type_def::operator--();
+        return temp;
+    }
 
-  //*********************************************************************
-  type_def& operator+=(TValue rhs) {
-    value += rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator+=(TValue rhs) {
+        value += rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator+=(const type_def& rhs) {
-    value += rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator+=(const type_def& rhs) {
+        value += rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator-=(TValue rhs) {
-    value -= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator-=(TValue rhs) {
+        value -= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator-=(const type_def& rhs) {
-    value -= rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator-=(const type_def& rhs) {
+        value -= rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator*=(TValue rhs) {
-    value *= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator*=(TValue rhs) {
+        value *= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator*=(const type_def& rhs) {
-    value *= rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator*=(const type_def& rhs) {
+        value *= rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator/=(TValue rhs) {
-    value /= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator/=(TValue rhs) {
+        value /= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator/=(const type_def& rhs) {
-    value /= rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator/=(const type_def& rhs) {
+        value /= rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator%=(TValue rhs) {
-    value %= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator%=(TValue rhs) {
+        value %= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator%=(const type_def& rhs) {
-    value %= rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator%=(const type_def& rhs) {
+        value %= rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator&=(TValue rhs) {
-    value &= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator&=(TValue rhs) {
+        value &= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator&=(const type_def& rhs) {
-    value &= rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator&=(const type_def& rhs) {
+        value &= rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator|=(TValue rhs) {
-    value |= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator|=(TValue rhs) {
+        value |= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator|=(const type_def& rhs) {
-    value |= rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator|=(const type_def& rhs) {
+        value |= rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator^=(TValue rhs) {
-    value ^= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator^=(TValue rhs) {
+        value ^= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator^=(const type_def& rhs) {
-    value ^= rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator^=(const type_def& rhs) {
+        value ^= rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator<<=(TValue rhs) {
-    value <<= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator<<=(TValue rhs) {
+        value <<= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator>>=(TValue rhs) {
-    value >>= rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator>>=(TValue rhs) {
+        value >>= rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator=(TValue rhs) {
-    value = rhs;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator=(TValue rhs) {
+        value = rhs;
+        return *this;
+    }
 
-  //*********************************************************************
-  type_def& operator=(const type_def& rhs) {
-    value = rhs.value;
-    return *this;
-  }
+    //*********************************************************************
+    type_def& operator=(const type_def& rhs) {
+        value = rhs.value;
+        return *this;
+    }
 
-  //*********************************************************************
-  TValue& get() { return value; }
+    //*********************************************************************
+    TValue& get() { return value; }
 
-  //*********************************************************************
-  const TValue& get() const { return value; }
+    //*********************************************************************
+    const TValue& get() const { return value; }
 
-  //*********************************************************************
-  friend bool operator<(const type_def& lhs, const type_def& rhs) {
-    return lhs.value < rhs.value;
-  }
+    //*********************************************************************
+    friend bool operator<(const type_def& lhs, const type_def& rhs) {
+        return lhs.value < rhs.value;
+    }
 
-  //*********************************************************************
-  friend bool operator<=(const type_def& lhs, const type_def& rhs) {
-    return lhs.value <= rhs.value;
-  }
+    //*********************************************************************
+    friend bool operator<=(const type_def& lhs, const type_def& rhs) {
+        return lhs.value <= rhs.value;
+    }
 
-  //*********************************************************************
-  friend bool operator>(const type_def& lhs, const type_def& rhs) {
-    return lhs.value > rhs.value;
-  }
+    //*********************************************************************
+    friend bool operator>(const type_def& lhs, const type_def& rhs) {
+        return lhs.value > rhs.value;
+    }
 
-  //*********************************************************************
-  friend bool operator>=(const type_def& lhs, const type_def& rhs) {
-    return lhs.value >= rhs.value;
-  }
+    //*********************************************************************
+    friend bool operator>=(const type_def& lhs, const type_def& rhs) {
+        return lhs.value >= rhs.value;
+    }
 
-  //*********************************************************************
-  friend bool operator==(const type_def& lhs, const type_def& rhs) {
-    return lhs.value == rhs.value;
-  }
+    //*********************************************************************
+    friend bool operator==(const type_def& lhs, const type_def& rhs) {
+        return lhs.value == rhs.value;
+    }
 
-  //*********************************************************************
-  friend bool operator!=(const type_def& lhs, const type_def& rhs) {
-    return lhs.value != rhs.value;
-  }
+    //*********************************************************************
+    friend bool operator!=(const type_def& lhs, const type_def& rhs) {
+        return lhs.value != rhs.value;
+    }
 
- private:
-  TValue value;
+   private:
+    TValue value;
 };
 }  // namespace etl
 

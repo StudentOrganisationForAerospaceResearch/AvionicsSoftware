@@ -178,10 +178,10 @@ constexpr UARTDriver* const DEFAULT_ASSERT_UART_DRIVER =
 // Assert macro, use this for checking all possible program errors eg. malloc success etc. supports a custom message in printf format
 // This is our version of the stm32f4xx_hal_conf.h 'assert_param' macro with support for optional messages
 // Example Usage: SOAR_ASSERT(ptr != 0, "Pointer on loop index %d is null!", index);
-#define SOAR_ASSERT(expr, ...)                                        \
-  ((expr) ? (void)0U                                                  \
-          : soar_assert_debug(false, (const char*)__FILE__, __LINE__, \
-                              ##__VA_ARGS__))
+#define SOAR_ASSERT(expr, ...)                                          \
+    ((expr) ? (void)0U                                                  \
+            : soar_assert_debug(false, (const char*)__FILE__, __LINE__, \
+                                ##__VA_ARGS__))
 
 // SOAR_PRINT macro, acts as an interface to the print function which sends a packet to the UART Task to print data
 #define SOAR_PRINT(str, ...) (print(str, ##__VA_ARGS__))
@@ -193,13 +193,13 @@ constexpr UARTDriver* const DEFAULT_ASSERT_UART_DRIVER =
 */
 inline uint8_t* soar_malloc(uint32_t size) {
 #ifdef COMPUTER_ENVIRONMENT
-  uint8_t* ret = (uint8_t*)malloc(size);
+    uint8_t* ret = (uint8_t*)malloc(size);
 #else
-  uint8_t* ret = (uint8_t*)pvPortMalloc(size);
+    uint8_t* ret = (uint8_t*)pvPortMalloc(size);
 #endif
 
-  SOAR_ASSERT(ret, "soar_malloc failed");
-  return ret;
+    SOAR_ASSERT(ret, "soar_malloc failed");
+    return ret;
 }
 
 /**
@@ -208,9 +208,9 @@ inline uint8_t* soar_malloc(uint32_t size) {
  */
 inline void soar_free(void* ptr) {
 #ifdef COMPUTER_ENVIRONMENT
-  free(ptr);
+    free(ptr);
 #else
-  vPortFree(ptr);
+    vPortFree(ptr);
 #endif
 }
 
@@ -219,10 +219,10 @@ inline void soar_free(void* ptr) {
 /* Other ------------------------------------------------------------------*/
 // Override the new and delete operator to ensure heap4 is used for dynamic memory allocation
 inline void* operator new(size_t size) {
-  return soar_malloc(size);
+    return soar_malloc(size);
 }
 inline void operator delete(void* ptr) {
-  soar_free(ptr);
+    soar_free(ptr);
 }
 
 #endif  // SOAR_MAIN_SYSTEM_DEFINES_H

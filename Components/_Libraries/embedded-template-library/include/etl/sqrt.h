@@ -43,17 +43,17 @@ namespace etl {
 //***************************************************************************
 template <size_t VALUE, size_t I = 1>
 struct sqrt {
-  typedef typename etl::conditional<((I * I) > VALUE),
-                                    etl::constant<intmax_t, I - 1>,
-                                    etl::sqrt<VALUE, I + 1>>::type type;
+    typedef typename etl::conditional<((I * I) > VALUE),
+                                      etl::constant<intmax_t, I - 1>,
+                                      etl::sqrt<VALUE, I + 1>>::type type;
 
 #if ETL_USING_CPP11
-  static constexpr size_t value = type::value;
+    static constexpr size_t value = type::value;
 #else
-  enum {
-    // Recursive definition.
-    value = type::value
-  };
+    enum {
+        // Recursive definition.
+        value = type::value
+    };
 #endif
 };
 

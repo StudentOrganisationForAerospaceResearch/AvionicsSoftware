@@ -14,16 +14,16 @@
  * @brief Constructor for the Mutex class.
  */
 Mutex::Mutex() {
-  rtSemaphoreHandle = xSemaphoreCreateMutex();
+    rtSemaphoreHandle = xSemaphoreCreateMutex();
 
-  SOAR_ASSERT(rtSemaphoreHandle != NULL, "Semaphore creation failed.");
+    SOAR_ASSERT(rtSemaphoreHandle != NULL, "Semaphore creation failed.");
 }
 
 /**
  * @brief Destructor for the Mutex class.
  */
 Mutex::~Mutex() {
-  vSemaphoreDelete(rtSemaphoreHandle);
+    vSemaphoreDelete(rtSemaphoreHandle);
 }
 
 /**
@@ -32,7 +32,7 @@ Mutex::~Mutex() {
  * @return True on success, false on failure.
 */
 bool Mutex::Lock(uint32_t timeout_ms) {
-  return xSemaphoreTake(rtSemaphoreHandle, MS_TO_TICKS(timeout_ms)) == pdTRUE;
+    return xSemaphoreTake(rtSemaphoreHandle, MS_TO_TICKS(timeout_ms)) == pdTRUE;
 }
 
 /**
@@ -40,7 +40,7 @@ bool Mutex::Lock(uint32_t timeout_ms) {
  * @return True on success (mutex unlocked) false in failure (mutex was not unlocked)
 */
 bool Mutex::Unlock() {
-  return xSemaphoreGive(rtSemaphoreHandle) == pdTRUE;
+    return xSemaphoreGive(rtSemaphoreHandle) == pdTRUE;
 }
 
 /**
@@ -49,7 +49,7 @@ bool Mutex::Unlock() {
  * @return True on success, false on failure.
 */
 bool Mutex::LockFromISR() {
-  return xSemaphoreTakeFromISR(rtSemaphoreHandle, NULL);
+    return xSemaphoreTakeFromISR(rtSemaphoreHandle, NULL);
 }
 
 /**
@@ -57,5 +57,5 @@ bool Mutex::LockFromISR() {
  * @return True on success (mutex unlocked) false in failure (mutex was not unlocked)
 */
 bool Mutex::UnlockFromISR() {
-  return xSemaphoreGiveFromISR(rtSemaphoreHandle, NULL) == pdTRUE;
+    return xSemaphoreGiveFromISR(rtSemaphoreHandle, NULL) == pdTRUE;
 }

@@ -45,7 +45,7 @@ namespace private_mean {
 //***************************************************************************
 template <typename TInput, typename TCalc>
 struct mean_traits {
-  typedef TCalc calc_t;
+    typedef TCalc calc_t;
 };
 
 //***************************************************************************
@@ -53,7 +53,7 @@ struct mean_traits {
 //***************************************************************************
 template <typename TCalc>
 struct mean_traits<float, TCalc> {
-  typedef float calc_t;
+    typedef float calc_t;
 };
 
 //***************************************************************************
@@ -61,7 +61,7 @@ struct mean_traits<float, TCalc> {
 //***************************************************************************
 template <typename TCalc>
 struct mean_traits<double, TCalc> {
-  typedef double calc_t;
+    typedef double calc_t;
 };
 }  // namespace private_mean
 
@@ -71,102 +71,102 @@ struct mean_traits<double, TCalc> {
 template <typename TInput, typename TCalc = TInput>
 class mean : public private_mean::mean_traits<TInput, TCalc>,
              public etl::binary_function<TInput, TInput, void> {
- private:
-  typedef typename private_mean::mean_traits<TInput, TCalc>::calc_t calc_t;
+   private:
+    typedef typename private_mean::mean_traits<TInput, TCalc>::calc_t calc_t;
 
- public:
-  //*********************************
-  /// Constructor.
-  //*********************************
-  mean() { clear(); }
+   public:
+    //*********************************
+    /// Constructor.
+    //*********************************
+    mean() { clear(); }
 
-  //*********************************
-  /// Constructor.
-  //*********************************
-  template <typename TIterator>
-  mean(TIterator first, TIterator last) {
-    clear();
-    add(first, last);
-  }
-
-  //*********************************
-  /// Add a pair of values.
-  //*********************************
-  void add(TInput value) {
-    sum += TCalc(value);
-    ++counter;
-    recalculate = true;
-  }
-
-  //*********************************
-  /// Add a range.
-  //*********************************
-  template <typename TIterator>
-  void add(TIterator first, TIterator last) {
-    while (first != last) {
-      add(*first);
-      ++first;
-    }
-  }
-
-  //*********************************
-  /// operator ()
-  /// Add a pair of values.
-  //*********************************
-  void operator()(TInput value) { add(value); }
-
-  //*********************************
-  /// operator ()
-  /// Add a range.
-  //*********************************
-  template <typename TIterator>
-  void operator()(TIterator first, TIterator last) {
-    add(first, last);
-  }
-
-  //*********************************
-  /// Get the mean.
-  //*********************************
-  double get_mean() const {
-    if (recalculate) {
-      mean_value = 0.0;
-
-      if (counter != 0) {
-        double n = double(counter);
-        mean_value = sum / n;
-      }
-
-      recalculate = false;
+    //*********************************
+    /// Constructor.
+    //*********************************
+    template <typename TIterator>
+    mean(TIterator first, TIterator last) {
+        clear();
+        add(first, last);
     }
 
-    return mean_value;
-  }
+    //*********************************
+    /// Add a pair of values.
+    //*********************************
+    void add(TInput value) {
+        sum += TCalc(value);
+        ++counter;
+        recalculate = true;
+    }
 
-  //*********************************
-  /// Get the mean.
-  //*********************************
-  operator double() const { return get_mean(); }
+    //*********************************
+    /// Add a range.
+    //*********************************
+    template <typename TIterator>
+    void add(TIterator first, TIterator last) {
+        while (first != last) {
+            add(*first);
+            ++first;
+        }
+    }
 
-  //*********************************
-  /// Get the total number added entries.
-  //*********************************
-  size_t count() const { return size_t(counter); }
+    //*********************************
+    /// operator ()
+    /// Add a pair of values.
+    //*********************************
+    void operator()(TInput value) { add(value); }
 
-  //*********************************
-  /// Clear the correlation.
-  //*********************************
-  void clear() {
-    sum = calc_t(0);
-    counter = 0U;
-    mean_value = 0.0;
-    recalculate = true;
-  }
+    //*********************************
+    /// operator ()
+    /// Add a range.
+    //*********************************
+    template <typename TIterator>
+    void operator()(TIterator first, TIterator last) {
+        add(first, last);
+    }
 
- private:
-  calc_t sum;
-  uint32_t counter;
-  mutable double mean_value;
-  mutable bool recalculate;
+    //*********************************
+    /// Get the mean.
+    //*********************************
+    double get_mean() const {
+        if (recalculate) {
+            mean_value = 0.0;
+
+            if (counter != 0) {
+                double n = double(counter);
+                mean_value = sum / n;
+            }
+
+            recalculate = false;
+        }
+
+        return mean_value;
+    }
+
+    //*********************************
+    /// Get the mean.
+    //*********************************
+    operator double() const { return get_mean(); }
+
+    //*********************************
+    /// Get the total number added entries.
+    //*********************************
+    size_t count() const { return size_t(counter); }
+
+    //*********************************
+    /// Clear the correlation.
+    //*********************************
+    void clear() {
+        sum = calc_t(0);
+        counter = 0U;
+        mean_value = 0.0;
+        recalculate = true;
+    }
+
+   private:
+    calc_t sum;
+    uint32_t counter;
+    mutable double mean_value;
+    mutable bool recalculate;
 };
 }  // namespace etl
 

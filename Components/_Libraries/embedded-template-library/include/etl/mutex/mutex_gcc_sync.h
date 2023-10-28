@@ -39,22 +39,22 @@ namespace etl {
 ///\brief This mutex class is implemented using GCC's __sync functions.
 //***************************************************************************
 class mutex {
- public:
-  mutex() : flag(0) { __sync_lock_release(&flag); }
+   public:
+    mutex() : flag(0) { __sync_lock_release(&flag); }
 
-  void lock() {
-    while (__sync_lock_test_and_set(&flag, 1U)) {}
-  }
+    void lock() {
+        while (__sync_lock_test_and_set(&flag, 1U)) {}
+    }
 
-  bool try_lock() { return (__sync_lock_test_and_set(&flag, 1U) == 0U); }
+    bool try_lock() { return (__sync_lock_test_and_set(&flag, 1U) == 0U); }
 
-  void unlock() { __sync_lock_release(&flag); }
+    void unlock() { __sync_lock_release(&flag); }
 
- private:
-  mutex(const mutex&) ETL_DELETE;
-  mutex& operator=(const mutex&) ETL_DELETE;
+   private:
+    mutex(const mutex&) ETL_DELETE;
+    mutex& operator=(const mutex&) ETL_DELETE;
 
-  char flag;
+    char flag;
 };
 }  // namespace etl
 

@@ -51,31 +51,31 @@ typedef etl::atomic_uint32_t timer_semaphore_t;
 /// Common definitions for the timer framework.
 //***************************************************************************
 struct timer {
-  // Timer modes.
-  struct mode {
-    enum { SINGLE_SHOT = false, REPEATING = true };
+    // Timer modes.
+    struct mode {
+        enum { SINGLE_SHOT = false, REPEATING = true };
 
-    typedef bool type;
-  };
+        typedef bool type;
+    };
 
-  // Timer start status.
-  struct start {
-    enum { DELAYED = false, IMMEDIATE = true };
+    // Timer start status.
+    struct start {
+        enum { DELAYED = false, IMMEDIATE = true };
 
-    typedef bool type;
-  };
+        typedef bool type;
+    };
 
-  // Timer id.
-  struct id {
-    enum { NO_TIMER = 255 };
+    // Timer id.
+    struct id {
+        enum { NO_TIMER = 255 };
 
-    typedef uint_least8_t type;
-  };
+        typedef uint_least8_t type;
+    };
 
-  // Timer state.
-  struct state {
-    enum { INACTIVE = 0xFFFFFFFFUL };
-  };
+    // Timer state.
+    struct state {
+        enum { INACTIVE = 0xFFFFFFFFUL };
+    };
 };
 }  // namespace etl
 

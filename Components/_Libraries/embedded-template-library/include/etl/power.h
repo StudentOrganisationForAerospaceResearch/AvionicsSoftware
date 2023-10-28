@@ -57,8 +57,8 @@ typedef uint64_t type;
 //***************************************************************************
 template <const size_t NV, const size_t POWER>
 struct power {
-  static ETL_CONSTANT private_power::type value =
-      NV * power<NV, POWER - 1>::value;
+    static ETL_CONSTANT private_power::type value =
+        NV * power<NV, POWER - 1>::value;
 };
 
 //***************************************************************************
@@ -68,7 +68,7 @@ struct power {
 //***************************************************************************
 template <const size_t NV>
 struct power<NV, 0> {
-  static ETL_CONSTANT private_power::type value = 1;
+    static ETL_CONSTANT private_power::type value = 1;
 };
 
 #if ETL_USING_CPP17
@@ -82,7 +82,7 @@ inline constexpr size_t power_v = power<NV, POWER>::value;
 //***************************************************************************
 template <const size_t NV>
 struct power_of_2_round_up {
-  enum value_type { value = 1 << (etl::log2<NV - 1>::value + 1) };
+    enum value_type { value = 1 << (etl::log2<NV - 1>::value + 1) };
 };
 
 //***************************************************************************
@@ -92,7 +92,7 @@ struct power_of_2_round_up {
 //***************************************************************************
 template <>
 struct power_of_2_round_up<0> {
-  enum value_type { value = 2 };
+    enum value_type { value = 2 };
 };
 
 #if ETL_USING_CPP17
@@ -106,7 +106,7 @@ inline constexpr size_t power_of_2_round_up_v = power_of_2_round_up<NV>::value;
 //***************************************************************************
 template <const size_t NV>
 struct power_of_2_round_down {
-  enum value_type { value = 1 << (etl::log2<NV - 1>::value) };
+    enum value_type { value = 1 << (etl::log2<NV - 1>::value) };
 };
 
 //***************************************************************************
@@ -116,7 +116,7 @@ struct power_of_2_round_down {
 //***************************************************************************
 template <>
 struct power_of_2_round_down<0> {
-  enum value_type { value = 2 };
+    enum value_type { value = 2 };
 };
 
 //***************************************************************************
@@ -126,7 +126,7 @@ struct power_of_2_round_down<0> {
 //***************************************************************************
 template <>
 struct power_of_2_round_down<1> {
-  enum value_type { value = 2 };
+    enum value_type { value = 2 };
 };
 
 //***************************************************************************
@@ -136,7 +136,7 @@ struct power_of_2_round_down<1> {
 //***************************************************************************
 template <>
 struct power_of_2_round_down<2> {
-  enum value_type { value = 2 };
+    enum value_type { value = 2 };
 };
 
 #if ETL_USING_CPP17
@@ -151,7 +151,7 @@ inline constexpr size_t power_of_2_round_down_v =
 //***************************************************************************
 template <const size_t NV>
 struct is_power_of_2 {
-  static ETL_CONSTANT bool value = (NV & (NV - 1)) == 0;
+    static ETL_CONSTANT bool value = (NV & (NV - 1)) == 0;
 };
 
 //***************************************************************************
@@ -161,7 +161,7 @@ struct is_power_of_2 {
 //***************************************************************************
 template <>
 struct is_power_of_2<0> {
-  static ETL_CONSTANT bool value = false;
+    static ETL_CONSTANT bool value = false;
 };
 
 //***************************************************************************
@@ -171,7 +171,7 @@ struct is_power_of_2<0> {
 //***************************************************************************
 template <>
 struct is_power_of_2<1> {
-  static ETL_CONSTANT bool value = false;
+    static ETL_CONSTANT bool value = false;
 };
 
 #if ETL_USING_CPP17

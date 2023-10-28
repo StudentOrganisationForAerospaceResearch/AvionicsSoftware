@@ -46,18 +46,18 @@ namespace etl {
 //***************************************************************************
 template <typename T>
 class has_begin {
-  typedef char one;
-  struct two {
-    char x[2];
-  };
+    typedef char one;
+    struct two {
+        char x[2];
+    };
 
-  template <typename C>
-  static constexpr one test(decltype(&C::begin)*);
-  template <typename C>
-  static constexpr two test(...);
+    template <typename C>
+    static constexpr one test(decltype(&C::begin)*);
+    template <typename C>
+    static constexpr two test(...);
 
- public:
-  static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
+   public:
+    static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
 };
 
 #if ETL_CPP17_SUPPORTED
@@ -70,18 +70,18 @@ static constexpr bool has_begin_v = has_begin<T>::value;
 //***************************************************************************
 template <typename T>
 class has_end {
-  typedef char one;
-  struct two {
-    char x[2];
-  };
+    typedef char one;
+    struct two {
+        char x[2];
+    };
 
-  template <typename C>
-  static constexpr one test(decltype(std::declval<C>().end()));
-  template <typename C>
-  static constexpr two test(...);
+    template <typename C>
+    static constexpr one test(decltype(std::declval<C>().end()));
+    template <typename C>
+    static constexpr two test(...);
 
- public:
-  static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
+   public:
+    static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
 };
 
 #if ETL_CPP17_SUPPORTED
@@ -94,18 +94,18 @@ static constexpr bool has_end_v = hasend<T>::value;
 //***************************************************************************
 template <typename T>
 class has_size {
-  typedef char one;
-  struct two {
-    char x[2];
-  };
+    typedef char one;
+    struct two {
+        char x[2];
+    };
 
-  template <typename C>
-  static one test(decltype(std::declval<C>().size()));
-  template <typename C>
-  static two test(...);
+    template <typename C>
+    static one test(decltype(std::declval<C>().size()));
+    template <typename C>
+    static two test(...);
 
- public:
-  static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
+   public:
+    static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
 };
 
 #if ETL_CPP17_SUPPORTED
@@ -118,18 +118,18 @@ static constexpr bool has_size_v = has_size<T>::value;
 //***************************************************************************
 template <typename T>
 class has_max_size {
-  typedef char one;
-  struct two {
-    char x[2];
-  };
+    typedef char one;
+    struct two {
+        char x[2];
+    };
 
-  template <typename C>
-  static one test(decltype(std::declval<C>().max_size()));
-  template <typename C>
-  static two test(...);
+    template <typename C>
+    static one test(decltype(std::declval<C>().max_size()));
+    template <typename C>
+    static two test(...);
 
- public:
-  static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
+   public:
+    static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
 };
 
 #if ETL_CPP17_SUPPORTED
@@ -142,18 +142,18 @@ static constexpr bool has_max_size_v = has_max_size<T>::value;
 //***************************************************************************
 template <typename T>
 class has_empty {
-  typedef char one;
-  struct two {
-    char x[2];
-  };
+    typedef char one;
+    struct two {
+        char x[2];
+    };
 
-  template <typename C>
-  static constexpr one test(decltype(std::declval<C>().empty()));
-  template <typename C>
-  static constexpr two test(...);
+    template <typename C>
+    static constexpr one test(decltype(std::declval<C>().empty()));
+    template <typename C>
+    static constexpr two test(...);
 
- public:
-  static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
+   public:
+    static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
 };
 
 #if ETL_CPP17_SUPPORTED
@@ -166,18 +166,18 @@ static constexpr bool has_empty_v = has_empty<T>::value;
 //***************************************************************************
 template <typename T>
 class has_data {
-  typedef char one;
-  struct two {
-    char x[2];
-  };
+    typedef char one;
+    struct two {
+        char x[2];
+    };
 
-  template <typename C>
-  static constexpr one test(decltype(std::declval<C>().data()));
-  template <typename C>
-  static constexpr two test(...);
+    template <typename C>
+    static constexpr one test(decltype(std::declval<C>().data()));
+    template <typename C>
+    static constexpr two test(...);
 
- public:
-  static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
+   public:
+    static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
 };
 
 #if ETL_CPP17_SUPPORTED

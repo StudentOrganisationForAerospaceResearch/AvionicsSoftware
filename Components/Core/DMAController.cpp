@@ -16,5 +16,5 @@ DMAController::DMAController() {}
  * @brief Sets up HAL callbacks
  */
 void DMAController::SetupCallbacks() {
-  //HAL_UART_RegisterCallback(&hdma_adc1, HAL_DMA_XFER_CPLT_CB_ID, &DMAController::DMACompleteCallback);
+    //HAL_UART_RegisterCallback(&hdma_adc1, HAL_DMA_XFER_CPLT_CB_ID, &DMAController::DMACompleteCallback);
 }

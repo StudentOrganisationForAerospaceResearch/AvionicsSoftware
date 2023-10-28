@@ -49,35 +49,35 @@ namespace etl {
 template <const size_t Range, const size_t Offset = 0U,
           const etl::delegate<void(size_t)>* Delegates = nullptr>
 class delegate_service {
- public:
-  typedef etl::delegate<void(size_t)> delegate_type;
+   public:
+    typedef etl::delegate<void(size_t)> delegate_type;
 
-  //*************************************************************************
-  /// Executes the delegate function for the index.
-  /// Compile time assert if the id is out of range.
-  /// \tparam Id The id of the delegate.
-  //*************************************************************************
-  template <const size_t Id>
-  void call() const {
-    ETL_STATIC_ASSERT(Id < (Offset + Range), "Callback Id out of range");
-    ETL_STATIC_ASSERT(Id >= Offset, "Callback Id out of range");
+    //*************************************************************************
+    /// Executes the delegate function for the index.
+    /// Compile time assert if the id is out of range.
+    /// \tparam Id The id of the delegate.
+    //*************************************************************************
+    template <const size_t Id>
+    void call() const {
+        ETL_STATIC_ASSERT(Id < (Offset + Range), "Callback Id out of range");
+        ETL_STATIC_ASSERT(Id >= Offset, "Callback Id out of range");
 
-    Delegates[Id - Offset](Id);
-  }
-
-  //*************************************************************************
-  /// Executes the delegate function for the index.
-  /// \param id Id of the delegate.
-  //*************************************************************************
-  void call(const size_t id) const {
-    if ((id >= Offset) && (id < (Offset + Range))) {
-      // Call the delegate with the specified Id.
-      Delegates[id - Offset](id);
-    } else {
-      // Call the 'unhandled' delegate.
-      Delegates[Range](id);
+        Delegates[Id - Offset](Id);
     }
-  }
+
+    //*************************************************************************
+    /// Executes the delegate function for the index.
+    /// \param id Id of the delegate.
+    //*************************************************************************
+    void call(const size_t id) const {
+        if ((id >= Offset) && (id < (Offset + Range))) {
+            // Call the delegate with the specified Id.
+            Delegates[id - Offset](id);
+        } else {
+            // Call the 'unhandled' delegate.
+            Delegates[Range](id);
+        }
+    }
 };
 #endif
 
@@ -94,99 +94,99 @@ class delegate_service<Range, Offset, nullptr>
 class delegate_service
 #endif
 {
- public:
-  typedef etl::delegate<void(size_t)> delegate_type;
+   public:
+    typedef etl::delegate<void(size_t)> delegate_type;
 
-  //*************************************************************************
-  /// Default constructor.
-  /// Sets all delegates to the internal default.
-  //*************************************************************************
-  delegate_service() {
-    delegate_type default_delegate =
-        delegate_type::create<delegate_service<Range, Offset>,
-                              &delegate_service<Range, Offset>::unhandled>(
-            *this);
+    //*************************************************************************
+    /// Default constructor.
+    /// Sets all delegates to the internal default.
+    //*************************************************************************
+    delegate_service() {
+        delegate_type default_delegate =
+            delegate_type::create<delegate_service<Range, Offset>,
+                                  &delegate_service<Range, Offset>::unhandled>(
+                *this);
 
-    lookup.fill(default_delegate);
-  }
-
-  //*************************************************************************
-  /// Registers a delegate for the specified id.
-  /// Compile time assert if the id is out of range.
-  /// \tparam Id The id of the delegate.
-  /// \param delegate Reference to the delegate.
-  //*************************************************************************
-  template <const size_t Id>
-  void register_delegate(delegate_type callback) {
-    ETL_STATIC_ASSERT(Id < (Offset + Range), "Callback Id out of range");
-    ETL_STATIC_ASSERT(Id >= Offset, "Callback Id out of range");
-
-    lookup[Id - Offset] = callback;
-  }
-
-  //*************************************************************************
-  /// Registers a delegate for the specified id.
-  /// No action if the id is out of range.
-  /// \param id       Id of the delegate.
-  /// \param delegate Reference to the delegate.
-  //*************************************************************************
-  void register_delegate(const size_t id, delegate_type callback) {
-    if ((id >= Offset) && (id < (Offset + Range))) {
-      lookup[id - Offset] = callback;
+        lookup.fill(default_delegate);
     }
-  }
 
-  //*************************************************************************
-  /// Registers an alternative delegate for unhandled ids.
-  /// \param delegate A reference to the user supplied 'unhandled' delegate.
-  //*************************************************************************
-  void register_unhandled_delegate(delegate_type callback) {
-    unhandled_delegate = callback;
-  }
+    //*************************************************************************
+    /// Registers a delegate for the specified id.
+    /// Compile time assert if the id is out of range.
+    /// \tparam Id The id of the delegate.
+    /// \param delegate Reference to the delegate.
+    //*************************************************************************
+    template <const size_t Id>
+    void register_delegate(delegate_type callback) {
+        ETL_STATIC_ASSERT(Id < (Offset + Range), "Callback Id out of range");
+        ETL_STATIC_ASSERT(Id >= Offset, "Callback Id out of range");
 
-  //*************************************************************************
-  /// Executes the delegate function for the index.
-  /// Compile time assert if the id is out of range.
-  /// \tparam Id The id of the delegate.
-  //*************************************************************************
-  template <const size_t Id>
-  void call() const {
-    ETL_STATIC_ASSERT(Id < (Offset + Range), "Callback Id out of range");
-    ETL_STATIC_ASSERT(Id >= Offset, "Callback Id out of range");
-
-    lookup[Id - Offset](Id);
-  }
-
-  //*************************************************************************
-  /// Executes the delegate function for the index.
-  /// \param id Id of the delegate.
-  //*************************************************************************
-  void call(const size_t id) const {
-    if ((id >= Offset) && (id < (Offset + Range))) {
-      // Call the delegate with the specified Id.
-      lookup[id - Offset](id);
-    } else {
-      // Call the 'unhandled' delegate.
-      unhandled(id);
+        lookup[Id - Offset] = callback;
     }
-  }
 
- private:
-  //*************************************************************************
-  /// The default callback function.
-  /// Calls the user defined 'unhandled' callback if it exists.
-  //*************************************************************************
-  void unhandled(size_t id) const {
-    if (unhandled_delegate.is_valid()) {
-      unhandled_delegate(id);
+    //*************************************************************************
+    /// Registers a delegate for the specified id.
+    /// No action if the id is out of range.
+    /// \param id       Id of the delegate.
+    /// \param delegate Reference to the delegate.
+    //*************************************************************************
+    void register_delegate(const size_t id, delegate_type callback) {
+        if ((id >= Offset) && (id < (Offset + Range))) {
+            lookup[id - Offset] = callback;
+        }
     }
-  }
 
-  /// The default delegate for unhandled ids.
-  delegate_type unhandled_delegate;
+    //*************************************************************************
+    /// Registers an alternative delegate for unhandled ids.
+    /// \param delegate A reference to the user supplied 'unhandled' delegate.
+    //*************************************************************************
+    void register_unhandled_delegate(delegate_type callback) {
+        unhandled_delegate = callback;
+    }
 
-  /// Lookup table of delegates.
-  etl::array<delegate_type, Range> lookup;
+    //*************************************************************************
+    /// Executes the delegate function for the index.
+    /// Compile time assert if the id is out of range.
+    /// \tparam Id The id of the delegate.
+    //*************************************************************************
+    template <const size_t Id>
+    void call() const {
+        ETL_STATIC_ASSERT(Id < (Offset + Range), "Callback Id out of range");
+        ETL_STATIC_ASSERT(Id >= Offset, "Callback Id out of range");
+
+        lookup[Id - Offset](Id);
+    }
+
+    //*************************************************************************
+    /// Executes the delegate function for the index.
+    /// \param id Id of the delegate.
+    //*************************************************************************
+    void call(const size_t id) const {
+        if ((id >= Offset) && (id < (Offset + Range))) {
+            // Call the delegate with the specified Id.
+            lookup[id - Offset](id);
+        } else {
+            // Call the 'unhandled' delegate.
+            unhandled(id);
+        }
+    }
+
+   private:
+    //*************************************************************************
+    /// The default callback function.
+    /// Calls the user defined 'unhandled' callback if it exists.
+    //*************************************************************************
+    void unhandled(size_t id) const {
+        if (unhandled_delegate.is_valid()) {
+            unhandled_delegate(id);
+        }
+    }
+
+    /// The default delegate for unhandled ids.
+    delegate_type unhandled_delegate;
+
+    /// Lookup table of delegates.
+    etl::array<delegate_type, Range> lookup;
 };
 }  // namespace etl
 

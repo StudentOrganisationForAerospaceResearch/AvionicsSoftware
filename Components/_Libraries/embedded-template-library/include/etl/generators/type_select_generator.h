@@ -61,31 +61,32 @@ namespace etl {
 //***************************************************************************
 template <typename... TTypes>
 struct type_select {
- private:
-  //***********************************
-  template <size_t ID, size_t N, typename T1, typename... TRest>
-  struct type_select_helper {
-    using type = typename etl::conditional<
-        ID == N, T1,
-        typename type_select_helper<ID, N + 1, TRest...>::type>::type;
-  };
+   private:
+    //***********************************
+    template <size_t ID, size_t N, typename T1, typename... TRest>
+    struct type_select_helper {
+        using type = typename etl::conditional<
+            ID == N, T1,
+            typename type_select_helper<ID, N + 1, TRest...>::type>::type;
+    };
 
-  //***********************************
-  template <size_t ID, size_t N, typename T1>
-  struct type_select_helper<ID, N, T1> {
-    using type = T1;
-  };
+    //***********************************
+    template <size_t ID, size_t N, typename T1>
+    struct type_select_helper<ID, N, T1> {
+        using type = T1;
+    };
 
- public:
-  template <size_t ID>
-  struct select {
-    static_assert(ID < sizeof...(TTypes), "Illegal type_select::select index");
+   public:
+    template <size_t ID>
+    struct select {
+        static_assert(ID < sizeof...(TTypes),
+                      "Illegal type_select::select index");
 
-    using type = typename type_select_helper<ID, 0, TTypes...>::type;
-  };
+        using type = typename type_select_helper<ID, 0, TTypes...>::type;
+    };
 
-  template <size_t ID>
-  using select_t = typename select<ID>::type;
+    template <size_t ID>
+    using select_t = typename select<ID>::type;
 };
 
 //***************************************************************************

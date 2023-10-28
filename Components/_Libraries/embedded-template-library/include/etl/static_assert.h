@@ -42,11 +42,11 @@ struct ETL_ETL_STATIC_ASSERT_FAILED<true> {};
 
 #define ETL_SA1(a, b) a##b
 #define ETL_SA2(a, b) ETL_SA1(a, b)
-#define ETL_STATIC_ASSERT(Condition, Message)                   \
-  enum {                                                        \
-    ETL_SA2(dummy, __LINE__) =                                  \
-        sizeof(ETL_ETL_STATIC_ASSERT_FAILED<(bool)(Condition)>) \
-  }
+#define ETL_STATIC_ASSERT(Condition, Message)                       \
+    enum {                                                          \
+        ETL_SA2(dummy, __LINE__) =                                  \
+            sizeof(ETL_ETL_STATIC_ASSERT_FAILED<(bool)(Condition)>) \
+    }
 #endif
 
 #endif

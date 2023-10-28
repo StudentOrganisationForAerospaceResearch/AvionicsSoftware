@@ -45,7 +45,7 @@ namespace private_rms {
 //***************************************************************************
 template <typename TInput, typename TCalc>
 struct rms_traits {
-  typedef TCalc calc_t;
+    typedef TCalc calc_t;
 };
 
 //***************************************************************************
@@ -53,7 +53,7 @@ struct rms_traits {
 //***************************************************************************
 template <typename TCalc>
 struct rms_traits<float, TCalc> {
-  typedef float calc_t;
+    typedef float calc_t;
 };
 
 //***************************************************************************
@@ -61,7 +61,7 @@ struct rms_traits<float, TCalc> {
 //***************************************************************************
 template <typename TCalc>
 struct rms_traits<double, TCalc> {
-  typedef double calc_t;
+    typedef double calc_t;
 };
 }  // namespace private_rms
 
@@ -71,106 +71,106 @@ struct rms_traits<double, TCalc> {
 template <typename TInput, typename TCalc = TInput>
 class rms : public private_rms::rms_traits<TInput, TCalc>,
             public etl::binary_function<TInput, TInput, void> {
- private:
-  typedef typename private_rms::rms_traits<TInput, TCalc>::calc_t calc_t;
+   private:
+    typedef typename private_rms::rms_traits<TInput, TCalc>::calc_t calc_t;
 
- public:
-  //*********************************
-  /// Constructor.
-  //*********************************
-  rms() : recalculate(true) { clear(); }
+   public:
+    //*********************************
+    /// Constructor.
+    //*********************************
+    rms() : recalculate(true) { clear(); }
 
-  //*********************************
-  /// Constructor.
-  //*********************************
-  template <typename TIterator>
-  rms(TIterator first, TIterator last) : recalculate(true) {
-    clear();
-    add(first, last);
-  }
-
-  //*********************************
-  /// Add a pair of values.
-  //*********************************
-  void add(TInput value) {
-    sum_of_squares += TCalc(value * value);
-    ++counter;
-    recalculate = true;
-  }
-
-  //*********************************
-  /// Add a range.
-  //*********************************
-  template <typename TIterator>
-  void add(TIterator first, TIterator last) {
-    while (first != last) {
-      add(*first);
-      ++first;
+    //*********************************
+    /// Constructor.
+    //*********************************
+    template <typename TIterator>
+    rms(TIterator first, TIterator last) : recalculate(true) {
+        clear();
+        add(first, last);
     }
-  }
 
-  //*********************************
-  /// operator ()
-  /// Add a pair of values.
-  //*********************************
-  void operator()(TInput value) { add(value); }
+    //*********************************
+    /// Add a pair of values.
+    //*********************************
+    void add(TInput value) {
+        sum_of_squares += TCalc(value * value);
+        ++counter;
+        recalculate = true;
+    }
 
-  //*********************************
-  /// operator ()
-  /// Add a range.
-  //*********************************
-  template <typename TIterator>
-  void operator()(TIterator first, TIterator last) {
-    add(first, last);
-  }
-
-  //*********************************
-  /// Get the rms.
-  //*********************************
-  double get_rms() const {
-    if (recalculate) {
-      rms_value = 0.0;
-
-      if (counter != 0) {
-        double n = double(counter);
-        double mean_of_squares = sum_of_squares / n;
-
-        if (mean_of_squares > 0) {
-          rms_value = sqrt(mean_of_squares);
+    //*********************************
+    /// Add a range.
+    //*********************************
+    template <typename TIterator>
+    void add(TIterator first, TIterator last) {
+        while (first != last) {
+            add(*first);
+            ++first;
         }
-      }
-
-      recalculate = false;
     }
 
-    return rms_value;
-  }
+    //*********************************
+    /// operator ()
+    /// Add a pair of values.
+    //*********************************
+    void operator()(TInput value) { add(value); }
 
-  //*********************************
-  /// Get the rms.
-  //*********************************
-  operator double() const { return get_rms(); }
+    //*********************************
+    /// operator ()
+    /// Add a range.
+    //*********************************
+    template <typename TIterator>
+    void operator()(TIterator first, TIterator last) {
+        add(first, last);
+    }
 
-  //*********************************
-  /// Get the total number added entries.
-  //*********************************
-  size_t count() const { return size_t(counter); }
+    //*********************************
+    /// Get the rms.
+    //*********************************
+    double get_rms() const {
+        if (recalculate) {
+            rms_value = 0.0;
 
-  //*********************************
-  /// Clear the histogram.
-  //*********************************
-  void clear() {
-    sum_of_squares = calc_t(0);
-    counter = 0U;
-    rms_value = 0.0;
-    recalculate = true;
-  }
+            if (counter != 0) {
+                double n = double(counter);
+                double mean_of_squares = sum_of_squares / n;
 
- private:
-  calc_t sum_of_squares;
-  uint32_t counter;
-  mutable double rms_value;
-  mutable bool recalculate;
+                if (mean_of_squares > 0) {
+                    rms_value = sqrt(mean_of_squares);
+                }
+            }
+
+            recalculate = false;
+        }
+
+        return rms_value;
+    }
+
+    //*********************************
+    /// Get the rms.
+    //*********************************
+    operator double() const { return get_rms(); }
+
+    //*********************************
+    /// Get the total number added entries.
+    //*********************************
+    size_t count() const { return size_t(counter); }
+
+    //*********************************
+    /// Clear the histogram.
+    //*********************************
+    void clear() {
+        sum_of_squares = calc_t(0);
+        counter = 0U;
+        rms_value = 0.0;
+        recalculate = true;
+    }
+
+   private:
+    calc_t sum_of_squares;
+    uint32_t counter;
+    mutable double rms_value;
+    mutable bool recalculate;
 };
 }  // namespace etl
 

@@ -57,9 +57,9 @@ namespace etl {
 //*****************************************************************
 template <typename T1, typename... Types>
 class visitable : public visitable<T1>, public visitable<Types...> {
- public:
-  using visitable<T1>::accept;
-  using visitable<Types...>::accept;
+   public:
+    using visitable<T1>::accept;
+    using visitable<Types...>::accept;
 };
 
 //*****************************************************************
@@ -68,10 +68,10 @@ class visitable : public visitable<T1>, public visitable<Types...> {
 //*****************************************************************
 template <typename T1>
 class visitable<T1> {
- public:
-  virtual ~visitable() = default;
+   public:
+    virtual ~visitable() = default;
 
-  virtual void accept(T1&) = 0;
+    virtual void accept(T1&) = 0;
 };
 
 #else
@@ -84,13 +84,13 @@ class visitable<T1> {
 template <typename T1, typename T2 = void, typename T3 = void,
           typename T4 = void>
 class visitable {
- public:
-  virtual ~visitable() {}
+   public:
+    virtual ~visitable() {}
 
-  virtual void accept(T1&) = 0;
-  virtual void accept(T2&) = 0;
-  virtual void accept(T3&) = 0;
-  virtual void accept(T4&) = 0;
+    virtual void accept(T1&) = 0;
+    virtual void accept(T2&) = 0;
+    virtual void accept(T3&) = 0;
+    virtual void accept(T4&) = 0;
 };
 
 //*****************************************************************
@@ -100,12 +100,12 @@ class visitable {
 //*****************************************************************
 template <typename T1, typename T2, typename T3>
 class visitable<T1, T2, T3> {
- public:
-  virtual ~visitable() {}
+   public:
+    virtual ~visitable() {}
 
-  virtual void accept(T1&) = 0;
-  virtual void accept(T2&) = 0;
-  virtual void accept(T3&) = 0;
+    virtual void accept(T1&) = 0;
+    virtual void accept(T2&) = 0;
+    virtual void accept(T3&) = 0;
 };
 
 //*****************************************************************
@@ -115,11 +115,11 @@ class visitable<T1, T2, T3> {
 //*****************************************************************
 template <typename T1, typename T2>
 class visitable<T1, T2> {
- public:
-  virtual ~visitable() {}
+   public:
+    virtual ~visitable() {}
 
-  virtual void accept(T1&) = 0;
-  virtual void accept(T2&) = 0;
+    virtual void accept(T1&) = 0;
+    virtual void accept(T2&) = 0;
 };
 
 //*****************************************************************
@@ -129,10 +129,10 @@ class visitable<T1, T2> {
 //*****************************************************************
 template <typename T1>
 class visitable<T1> {
- public:
-  virtual ~visitable() {}
+   public:
+    virtual ~visitable() {}
 
-  virtual void accept(T1&) = 0;
+    virtual void accept(T1&) = 0;
 };
 
 #endif
@@ -145,9 +145,9 @@ class visitable<T1> {
 //*****************************************************************
 template <typename T1, typename... Types>
 class visitor : public visitor<T1>, public visitor<Types...> {
- public:
-  using visitor<T1>::visit;
-  using visitor<Types...>::visit;
+   public:
+    using visitor<T1>::visit;
+    using visitor<Types...>::visit;
 };
 
 //*****************************************************************
@@ -156,10 +156,10 @@ class visitor : public visitor<T1>, public visitor<Types...> {
 //*****************************************************************
 template <typename T1>
 class visitor<T1> {
- public:
-  virtual ~visitor() = default;
+   public:
+    virtual ~visitor() = default;
 
-  virtual void visit(T1&) = 0;
+    virtual void visit(T1&) = 0;
 };
 
 #else
@@ -176,25 +176,25 @@ template <typename T1, typename T2 = void, typename T3 = void,
           typename T13 = void, typename T14 = void, typename T15 = void,
           typename T16 = void>
 class visitor {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
-  virtual void visit(T10&) = 0;
-  virtual void visit(T11&) = 0;
-  virtual void visit(T12&) = 0;
-  virtual void visit(T13&) = 0;
-  virtual void visit(T14&) = 0;
-  virtual void visit(T15&) = 0;
-  virtual void visit(T16&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
+    virtual void visit(T10&) = 0;
+    virtual void visit(T11&) = 0;
+    virtual void visit(T12&) = 0;
+    virtual void visit(T13&) = 0;
+    virtual void visit(T14&) = 0;
+    virtual void visit(T15&) = 0;
+    virtual void visit(T16&) = 0;
 };
 
 //*****************************************************************
@@ -207,24 +207,24 @@ template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T11, typename T12, typename T13, typename T14, typename T15>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14,
               T15> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
-  virtual void visit(T10&) = 0;
-  virtual void visit(T11&) = 0;
-  virtual void visit(T12&) = 0;
-  virtual void visit(T13&) = 0;
-  virtual void visit(T14&) = 0;
-  virtual void visit(T15&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
+    virtual void visit(T10&) = 0;
+    virtual void visit(T11&) = 0;
+    virtual void visit(T12&) = 0;
+    virtual void visit(T13&) = 0;
+    virtual void visit(T14&) = 0;
+    virtual void visit(T15&) = 0;
 };
 
 //*****************************************************************
@@ -236,23 +236,23 @@ template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8, typename T9, typename T10,
           typename T11, typename T12, typename T13, typename T14>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
-  virtual void visit(T10&) = 0;
-  virtual void visit(T11&) = 0;
-  virtual void visit(T12&) = 0;
-  virtual void visit(T13&) = 0;
-  virtual void visit(T14&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
+    virtual void visit(T10&) = 0;
+    virtual void visit(T11&) = 0;
+    virtual void visit(T12&) = 0;
+    virtual void visit(T13&) = 0;
+    virtual void visit(T14&) = 0;
 };
 
 //*****************************************************************
@@ -264,22 +264,22 @@ template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8, typename T9, typename T10,
           typename T11, typename T12, typename T13>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
-  virtual void visit(T10&) = 0;
-  virtual void visit(T11&) = 0;
-  virtual void visit(T12&) = 0;
-  virtual void visit(T13&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
+    virtual void visit(T10&) = 0;
+    virtual void visit(T11&) = 0;
+    virtual void visit(T12&) = 0;
+    virtual void visit(T13&) = 0;
 };
 
 //*****************************************************************
@@ -291,21 +291,21 @@ template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8, typename T9, typename T10,
           typename T11, typename T12>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
-  virtual void visit(T10&) = 0;
-  virtual void visit(T11&) = 0;
-  virtual void visit(T12&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
+    virtual void visit(T10&) = 0;
+    virtual void visit(T11&) = 0;
+    virtual void visit(T12&) = 0;
 };
 
 //*****************************************************************
@@ -317,20 +317,20 @@ template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8, typename T9, typename T10,
           typename T11>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
-  virtual void visit(T10&) = 0;
-  virtual void visit(T11&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
+    virtual void visit(T10&) = 0;
+    virtual void visit(T11&) = 0;
 };
 
 //*****************************************************************
@@ -341,19 +341,19 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> {
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8, typename T9, typename T10>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
-  virtual void visit(T10&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
+    virtual void visit(T10&) = 0;
 };
 
 //*****************************************************************
@@ -364,18 +364,18 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> {
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8, typename T9>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
-  virtual void visit(T9&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
+    virtual void visit(T9&) = 0;
 };
 
 //*****************************************************************
@@ -386,17 +386,17 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
-  virtual void visit(T8&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
+    virtual void visit(T8&) = 0;
 };
 
 //*****************************************************************
@@ -407,16 +407,16 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8> {
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7>
 class visitor<T1, T2, T3, T4, T5, T6, T7> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
-  virtual void visit(T7&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
+    virtual void visit(T7&) = 0;
 };
 
 //*****************************************************************
@@ -427,15 +427,15 @@ class visitor<T1, T2, T3, T4, T5, T6, T7> {
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6>
 class visitor<T1, T2, T3, T4, T5, T6> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
-  virtual void visit(T6&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
+    virtual void visit(T6&) = 0;
 };
 
 //*****************************************************************
@@ -445,14 +445,14 @@ class visitor<T1, T2, T3, T4, T5, T6> {
 //*****************************************************************
 template <typename T1, typename T2, typename T3, typename T4, typename T5>
 class visitor<T1, T2, T3, T4, T5> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
-  virtual void visit(T5&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
+    virtual void visit(T5&) = 0;
 };
 
 //*****************************************************************
@@ -462,13 +462,13 @@ class visitor<T1, T2, T3, T4, T5> {
 //*****************************************************************
 template <typename T1, typename T2, typename T3, typename T4>
 class visitor<T1, T2, T3, T4> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
-  virtual void visit(T4&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
+    virtual void visit(T4&) = 0;
 };
 
 //*****************************************************************
@@ -478,12 +478,12 @@ class visitor<T1, T2, T3, T4> {
 //*****************************************************************
 template <typename T1, typename T2, typename T3>
 class visitor<T1, T2, T3> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
-  virtual void visit(T3&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
+    virtual void visit(T3&) = 0;
 };
 
 //*****************************************************************
@@ -493,11 +493,11 @@ class visitor<T1, T2, T3> {
 //*****************************************************************
 template <typename T1, typename T2>
 class visitor<T1, T2> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
-  virtual void visit(T2&) = 0;
+    virtual void visit(T1&) = 0;
+    virtual void visit(T2&) = 0;
 };
 
 //*****************************************************************
@@ -507,10 +507,10 @@ class visitor<T1, T2> {
 //*****************************************************************
 template <typename T1>
 class visitor<T1> {
- public:
-  virtual ~visitor() {}
+   public:
+    virtual ~visitor() {}
 
-  virtual void visit(T1&) = 0;
+    virtual void visit(T1&) = 0;
 };
 
 #endif

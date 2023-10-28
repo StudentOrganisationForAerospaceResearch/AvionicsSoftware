@@ -40,27 +40,27 @@ namespace etl {
 ///\brief This mutex class is implemented using FreeRTOS's mutexes
 //***************************************************************************
 class mutex {
- public:
-  mutex() { access = xSemaphoreCreateMutexStatic(&mutex_allocation); }
+   public:
+    mutex() { access = xSemaphoreCreateMutexStatic(&mutex_allocation); }
 
-  void lock() {
-    xSemaphoreTake(access, portMAX_DELAY);  // portMAX_DELAY=block forever
-  }
+    void lock() {
+        xSemaphoreTake(access, portMAX_DELAY);  // portMAX_DELAY=block forever
+    }
 
-  bool try_lock() { return xSemaphoreTake(access, 0) == pdTRUE; }
+    bool try_lock() { return xSemaphoreTake(access, 0) == pdTRUE; }
 
-  void unlock() { xSemaphoreGive(access); }
+    void unlock() { xSemaphoreGive(access); }
 
- private:
-  // Non-copyable
-  mutex(const mutex&) ETL_DELETE;
-  mutex& operator=(const mutex&) ETL_DELETE;
+   private:
+    // Non-copyable
+    mutex(const mutex&) ETL_DELETE;
+    mutex& operator=(const mutex&) ETL_DELETE;
 
-  // Memory to hold the mutex
-  StaticSemaphore_t mutex_allocation;
+    // Memory to hold the mutex
+    StaticSemaphore_t mutex_allocation;
 
-  // The mutex handle itself
-  SemaphoreHandle_t access;
+    // The mutex handle itself
+    SemaphoreHandle_t access;
 };
 }  // namespace etl
 

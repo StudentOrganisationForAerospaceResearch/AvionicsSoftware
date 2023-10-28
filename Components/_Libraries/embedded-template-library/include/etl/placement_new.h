@@ -54,10 +54,10 @@ SOFTWARE.
 #else
 // Define placement new if no new header is available
 inline void* operator new(size_t, void* p) {
-  return p;
+    return p;
 }
 inline void* operator new[](size_t, void* p) {
-  return p;
+    return p;
 }
 
 inline void operator delete(void*, void*) ETL_NOEXCEPT {}

@@ -44,7 +44,7 @@ namespace etl {
 //*************************************************************************
 template <typename... TOverloads>
 struct overload : TOverloads... {
-  using TOverloads::operator()...;
+    using TOverloads::operator()...;
 };
 
 //*************************************************************************
@@ -60,13 +60,13 @@ overload(TOverloads...) -> overload<TOverloads...>;
 //*************************************************************************
 template <typename TFirst, typename... TOthers>
 struct overload : TFirst, overload<TOthers...> {
-  using TFirst::operator();
-  using overload<TOthers...>::operator();
+    using TFirst::operator();
+    using overload<TOthers...>::operator();
 };
 
 template <typename TFirst>
 struct overload<TFirst> : TFirst {
-  using TFirst::operator();
+    using TFirst::operator();
 };
 
 #endif
@@ -76,7 +76,7 @@ struct overload<TFirst> : TFirst {
 //*************************************************************************
 template <typename... TOverloads>
 constexpr overload<TOverloads...> make_overload(TOverloads&&... overloads) {
-  return overload<TOverloads...>{etl::forward<TOverloads>(overloads)...};
+    return overload<TOverloads...>{etl::forward<TOverloads>(overloads)...};
 }
 
 #endif

@@ -12,7 +12,7 @@ function(determine_version VER_FILE_NAME) file(READ ${
                 ${CMAKE_CURRENT_SOURCE_DIR} / cmake /
                 GetGitRevisionDescription.cmake) git_describe(VERSION ${
                 ARGN}) string(FIND $ {
-              VERSION
+                VERSION
             } "." VALID_VERSION) if (VALID_VERSION EQUAL - 1)
                 message(WARNING
                         "Version string ${VERSION} retrieved with git describe "
