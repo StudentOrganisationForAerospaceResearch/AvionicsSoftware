@@ -49,10 +49,12 @@ etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConf
     {RS_ABORT, {7, 100}}
 };
 
+
+#define DEBUGBUZZERSTARTMUTED true
 /**
 * @brief Constructor for HDITask
 */
-HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(false)
+HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(DEBUGBUZZERSTARTMUTED)
 {
 }
 

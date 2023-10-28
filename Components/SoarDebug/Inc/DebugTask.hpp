@@ -47,7 +47,8 @@ protected:
 
     // Helper functions
     static int32_t ExtractIntParameter(const char* msg, uint16_t identifierLen);
-    
+    static int32_t ExtractHexParameterAsInt(const char* msg, uint16_t identifierLen, bool* success);
+
     // Member variables
     uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];
     uint8_t debugMsgIdx;

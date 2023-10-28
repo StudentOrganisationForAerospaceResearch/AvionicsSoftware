@@ -49,9 +49,12 @@ namespace Utils
     inline bool IsAsciiNum(uint8_t c) { return (c >= '0' && c <= '9'); }
     inline bool IsAsciiChar(uint8_t c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
     inline bool IsAsciiLowercase(uint8_t c) { return (c >= 'a' && c <= 'z'); }
+    inline bool IsAToFUpper(uint8_t c) { return (c>='A' && c <= 'F'); }
+    inline bool IsAToFLower(uint8_t c) { return (c>='a' && c<='f'); }
 
     // String to number conversion
     int32_t stringToLong(const char* str);
+    int32_t hexstringToLong(const char* str, bool* success);
 
 }
 

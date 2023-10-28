@@ -158,3 +158,38 @@ int32_t Utils::stringToLong(const char* str)
     return result;
 
 }
+
+/**
+ * @brief Converts the value of a c string in hexadecimal (lowercase or uppercase) to a int32_t
+ * @param str The string to convert, must be null terminated
+ * @return The converted int32_t, or ERRVAL on an error
+ */
+int32_t Utils::hexstringToLong(const char* str, bool* success)
+{
+    int32_t result = 0;
+    const uint8_t size = (strlen(str) < 255) ? strlen(str) : 255;
+
+    for (uint8_t i = 0; i < size; i++)
+    {
+        const uint8_t c = str[i];
+        if (IsAsciiNum(c) )
+        {
+            result *= 16;
+            result += c - '0';
+        } else if (IsAToFUpper(c)) {
+        	result *= 16;
+        	result += c - 'A' + 10;
+        } else if (IsAToFLower(c)) {
+        	result *= 16;
+        	result += c - 'a' + 10;
+        }
+        else
+        {
+        	*success=false;
+            return ERRVAL;
+        }
+    }
+    *success=true;
+    return result;
+
+}

@@ -185,6 +185,35 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd((uint16_t)DUMP_FLASH_DATA);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
     }
+    else if (strncmp(msg, "dmpat ", 6) == 0) { // WIP
+    	// Takes address to dump in HEX
+    	bool hexsuccess;
+    	int32_t targetAddress = ExtractHexParameterAsInt(msg, 6,&hexsuccess);
+
+    	if(hexsuccess == false) {
+    		SOAR_PRINT("Invalid hex value\n");
+    	} else {
+    		SOAR_PRINT("Dump of flash address %d requested\n",targetAddress);
+    		 Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)FLASH_DUMP_AT);
+
+    		 cmd.CopyDataToCommand((uint8_t*)&targetAddress, sizeof(targetAddress));
+    		 FlashTask::Inst().GetEventQueue()->Send(cmd);
+    	}
+
+
+    } else if (strcmp(msg, "getfoffset") == 0) { // WIP
+    	SOAR_PRINT("Flash offset requested\n");
+    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)GET_FLASH_OFFSET);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+    } else if (strcmp(msg, "getpoffset") == 0) {
+    	SOAR_PRINT("Flash page offset requested\n");
+    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)GET_PAGE_OFFSET);
+    	FlashTask::Inst().GetEventQueue()->Send(cmd);
+
+    } else if (strcmp(msg, "flogtest") == 0) {
+    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)FLASH_DEBUGWRITE);
+    	FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
     else if (strcmp(msg, "flasherase") == 0) 
     {
         SOAR_PRINT("erase chip in flash requested\n");
@@ -335,6 +364,30 @@ int32_t DebugTask::ExtractIntParameter(const char* msg, uint16_t identifierLen)
     const int32_t val = Utils::stringToLong(&msg[identifierLen]);
     if (val == ERRVAL) {
         SOAR_PRINT("Int parameter command invalid value\r\n");
+    }
+
+    return val;
+}
+
+/**
+ * @brief Extracts an integer parameter from a string, where the number in the string is in hexadecimal (lowercase or uppercase)
+ * @brief msg Message to extract from, MUST be at least identifierLen long, and properly null terminated
+ * @brief identifierLen Length of the identifier eg. 'rsc ' (Including the space) is 4
+ * @return ERRVAL on failure, otherwise the extracted value
+ */
+int32_t DebugTask::ExtractHexParameterAsInt(const char* msg, uint16_t identifierLen, bool* success)
+{
+    // Handle a command with an int parameter at the end
+    if (static_cast<uint16_t>(strlen(msg)) < identifierLen+1) {
+        SOAR_PRINT("HexInt parameter command insufficient length\r\n");
+        return ERRVAL;
+    }
+
+    // Extract the value and attempt conversion to integer
+
+    const int32_t val = Utils::hexstringToLong(&msg[identifierLen],success);
+    if (*success == false) {
+        SOAR_PRINT("HexInt parameter command invalid value\r\n");
     }
 
     return val;

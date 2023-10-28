@@ -15,11 +15,19 @@
 #include "Data.h"
 #include <cstring>
 
+
 /**
  * @brief Constructor for FlashTask
  */
 FlashTask::FlashTask() : Task(FLASH_TASK_QUEUE_DEPTH_OBJS)
 {
+	logbufA = (uint8_t*)soar_malloc(FLASH_HEAP_BUF_SIZE);
+	logbufB = (uint8_t*)soar_malloc(FLASH_HEAP_BUF_SIZE);
+	currbuf = logbufA;
+	offsetWithinBuf=0;
+	SOAR_ASSERT(logbufA && logbufB, "Failed to allocate flash log bufs.\n");
+	currentLogPage = SPI_FLASH_LOGGING_STORAGE_START_ADDR / 256;
+	logsInLastSecond = 0;
 }
 
 /**
@@ -39,7 +47,10 @@ void FlashTask::InitTask()
             (TaskHandle_t*)&rtTaskHandle);
 
     SOAR_ASSERT(rtValue == pdPASS, "FlashTask::InitTask() - xTaskCreate() failed");
-
+    benchmarktimer = new Timer(benchmarkcallback);
+    benchmarktimer->SetAutoReload(true);
+    benchmarktimer->Start();
+    benchmarktimer->ResetTimerAndStart();
     SOAR_PRINT("Flash Task initialized");
 }
 
@@ -104,6 +115,67 @@ void FlashTask ::HandleCommand(Command& cm)
             W25qxx_EraseChip();
             currentOffsets_.writeDataOffset = 0;
         }
+        else if (cm.GetTaskCommand() == GET_FLASH_OFFSET) {
+        	SOAR_PRINT("Flash offset is at 0x%04x\n%d writes since update\n",currentOffsets_.writeDataOffset,writesSinceLastOffsetUpdate_);
+        } else if (cm.GetTaskCommand() == GET_PAGE_OFFSET) {
+        	SOAR_PRINT("Flash page offset is at %dth page\n",currentLogPage);
+        }
+        else if (cm.GetTaskCommand() == FLASH_DUMP_AT) { // WIP
+        	uint32_t dumptarget = *(uint32_t*)cm.GetDataPointer();
+        	SOAR_PRINT("we dumpin at %d\n", dumptarget);
+        	uint8_t databuf[256];
+        	W25qxx_ReadBytes(databuf, dumptarget, sizeof(databuf));
+        	for(size_t i = 0; i < sizeof(databuf); i++) {
+        		SOAR_PRINT("%02x ",databuf[i]);
+        		if(i%16==0) {
+        			SOAR_PRINT("\n");
+        		}
+        	}
+        	SOAR_PRINT("\n");
+        } else if (cm.GetTaskCommand() == FLASH_DEBUGWRITE) {
+
+        	SOAR_PRINT("yeah debug write at 0xA0000\n");
+
+
+        	//uint8_t debugdata[256]; // allocate on heap?
+
+        	W25qxx_EraseSector(W25qxx_PageToSector((0xA0000)/256));
+        	uint32_t lastCurrentLogPage = currentLogPage;
+        	currentLogPage = 0xA0000 / 256;
+
+        	SOAR_PRINT("Writing: ");
+
+        	SOAR_PRINT("\n30 TIMES doing it...");
+
+        	auto starttick = HAL_GetTick();
+
+        	uint8_t incomingdatatest[40];
+
+        	//int p = 0; // pages written
+    		offsetWithinBuf = 0;
+    		currbuf = logbufA;
+
+
+        	for(int log = 0; log < 30; log++) {
+
+            	for(size_t j = 0; j < 40; j++) {
+            		// listen i dont know how to get rand working, just set it to something
+            		//incomingdatatest[j]=((j*2)^(starttick*111^j^(starttick*111)^(starttick^j)*254^log*10^(log*starttick)*j^0b1010101010101010^(starttick>>5)^(log-starttick-j)^(j<<p)^(j > 0 ? incomingdatatest[j-1]>>1 : j))*111)&0xff; // just. yeah
+            		incomingdatatest[j]=log;
+            	}
+            	AddLog(incomingdatatest,40);
+        	}
+
+        	auto endtick = HAL_GetTick();
+
+        	SOAR_PRINT("completed in %d ms\n", (endtick-starttick));
+        	currentLogPage = lastCurrentLogPage;
+        }
+        else if(cm.GetTaskCommand() == GET_LOGS_PAST_SECOND) {
+        	SOAR_PRINT("%d logs in past second\n",logsInLastSecond);
+        	logsInLastSecond=0;
+        	break;
+        }
         else 
         {
             SOAR_PRINT("FlashTask Received Unsupported Task Command: %d\n", cm.GetTaskCommand());
@@ -117,9 +189,13 @@ void FlashTask ::HandleCommand(Command& cm)
             break;
         }
 
-        WriteLogDataToFlash(cm.GetDataPointer(), cm.GetDataSize());
+        //break; // dont log from sensors for now
+        AddLog(cm.GetDataPointer(), cm.GetDataSize());
+        //WriteLogDataToFlash(cm.GetDataPointer(), cm.GetDataSize()); // replace with AddLog when ready
         break;
     }
+
+
     default:
         SOAR_PRINT("FlashTask Received Unsupported Command: %d\n", cm.GetCommand());
         break;
@@ -141,12 +217,84 @@ void FlashTask::WriteLogDataToFlash(uint8_t* data, uint16_t size)
     SPIFlash::Inst().Write(SPI_FLASH_LOGGING_STORAGE_START_ADDR + currentOffsets_.writeDataOffset, buff, size + 1);
     currentOffsets_.writeDataOffset += size + 1;
 
+//    SOAR_PRINT("log size %d\n",size);
+
     //TODO: Consider adding a readback to check if it was successful
 
     //If the number of writes since the last offset update has exceeded the threshold, update the offsets in storage
-    if(++writesSinceLastOffsetUpdate_ >= FLASH_OFFSET_WRITES_UPDATE_THRESHOLD)
+    if(++writesSinceLastOffsetUpdate_ >= FLASH_OFFSET_WRITES_UPDATE_THRESHOLD) {
+
         offsetsStorage_->Write(currentOffsets_);
+        writesSinceLastOffsetUpdate_ = 0;
+    }
+
 }
+
+
+/**
+ * @brief Adds data to current buffer, plus header byte, and writes and switches buffers if full
+ * WIP
+ */
+void FlashTask::AddLog(const uint8_t* datain, uint32_t size) {
+	// want to have this called by queue msg, so that while writing pages,
+	// other readings can pile up.
+	// or make it async somehow
+
+	logsInLastSecond++;
+#if 0
+	SOAR_PRINT("Logging size %d (",size);
+	switch (size) {
+	case sizeof(BarometerData):
+			SOAR_PRINT("baro!");
+		break;
+	case sizeof(AccelGyroMagnetismData):
+			SOAR_PRINT("imu!");
+	break;
+	case 44:
+			SOAR_PRINT("GPS!");
+	break;
+	default:
+		SOAR_PRINT("idk what this is");
+		break;
+	}
+	SOAR_PRINT(") at page %d\n",currentLogPage);
+#endif
+
+	if(offsetWithinBuf + size + 1 >= FLASH_HEAP_BUF_SIZE) {
+		// this data wont fit, write current buf and start on other buf
+
+
+		//SOAR_PRINT("\nyeah, filled buf!! wow!!!\n");
+
+		WriteLogDataToFlashPageAligned(currbuf, offsetWithinBuf, currentLogPage);
+
+		offsetWithinBuf = 0;
+		currbuf = (currbuf == logbufA) ? (logbufB) : (logbufA);
+		currentLogPage++;
+	}
+
+	currbuf[offsetWithinBuf] = size;
+	offsetWithinBuf++;
+
+	memcpy(currbuf+offsetWithinBuf,datain,size);
+	offsetWithinBuf+=size;
+
+}
+
+/**
+ * @brief currently just writes. nothing fancy :) help
+ */
+void FlashTask::WriteLogDataToFlashPageAligned(uint8_t* data, uint16_t size,uint32_t pageAddr)
+{
+
+
+//    SPIFlash::Inst().Write(byteAddr, data, size);
+    W25qxx_WritePage(data, pageAddr, 0, size);
+
+
+}
+
+
 
 /**
  * @brief reads all data and prints it through UART up until offset read from struct
@@ -185,3 +333,8 @@ bool FlashTask::ReadLogDataFromFlash()
     }
     return res;
 }
+
+//void FlashTask::benchmarkcallback(TimerHandle_t x) {
+	//SOAR_PRINT("timer\n");
+//}
+
