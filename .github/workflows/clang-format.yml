@@ -1,0 +1,25 @@
+name: Clang Format
+
+on: [push]
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Clang Format
+      run: sudo apt-get install -y clang-format-10
+
+    - name: Run Clang Format
+      run: find ./Components -regex '.*\.\(cpp\|hpp\|c\|h\)' -exec clang-format-10 -i {} \;
+
+    - name: Commit changes
+      run: |
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'githubaction@example.com'
+        git add -u
+        git commit -m "Apply clang-format" || echo "No changes to commit"
+        git push
