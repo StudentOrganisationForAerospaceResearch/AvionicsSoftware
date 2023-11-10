@@ -25,4 +25,4 @@ jobs:
       github_token: ${{ secrets.WORKFLOW_TOKEN }}
 
     permissions:
-      contents: write
+      actions: write
