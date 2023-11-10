@@ -20,6 +20,6 @@ jobs:
       run: |
         git add -u
         git commit -m "Apply clang-format" || echo "No changes to commit"
-        git push
+      
     with:
       github_token: "${{ secrets.GITHUB_TOKEN }}"
