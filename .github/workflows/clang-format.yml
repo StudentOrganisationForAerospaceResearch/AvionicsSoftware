@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    with:
-      github_token: "${{ secrets.GITHUB_TOKEN }}"
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -20,8 +18,8 @@ jobs:
 
     - name: Commit changes
       run: |
-        git config --global user.name 'GitHub Action'
-        git config --global user.email 'githubaction@example.com'
         git add -u
         git commit -m "Apply clang-format" || echo "No changes to commit"
         git push
+    with:
+      github_token: "${{ secrets.GITHUB_TOKEN }}"
