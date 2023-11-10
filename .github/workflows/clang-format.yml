@@ -22,4 +22,4 @@ jobs:
         git config --global user.email 'githubaction@example.com'
         git add -u
         git commit -m "Apply clang-format" || echo "No changes to commit"
-        git push
+        git push https://${{ secrets.GITHUB_TOKEN }}@github.com/<Jgerbrandt>/<AvionicsSoftware>.git
