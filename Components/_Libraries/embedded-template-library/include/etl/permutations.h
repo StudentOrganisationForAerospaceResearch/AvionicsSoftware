@@ -37,32 +37,29 @@ SOFTWARE.
 /// permutations<N, K> : Calculates K permutations from N.
 ///\ingroup maths
 
-namespace etl
-{
-  //***************************************************************************
-  ///\ingroup permutations
-  /// Calculates permutations.
-  //***************************************************************************
-  template <const size_t NV, const size_t KV>
-  struct permutations
-  {
+namespace etl {
+//***************************************************************************
+///\ingroup permutations
+/// Calculates permutations.
+//***************************************************************************
+template <const size_t NV, const size_t KV>
+struct permutations {
     static ETL_CONSTANT size_t value = NV * permutations<NV - 1, KV - 1>::value;
-  };
+};
 
-  //***************************************************************************
-  /// Calculates permutations.
-  /// Specialisation for KV == 0.
-  //***************************************************************************
-  template <const size_t NV>
-  struct permutations<NV, 0>
-  {
+//***************************************************************************
+/// Calculates permutations.
+/// Specialisation for KV == 0.
+//***************************************************************************
+template <const size_t NV>
+struct permutations<NV, 0> {
     static ETL_CONSTANT size_t value = 1UL;
-  };
+};
 
 #if ETL_USING_CPP17
-  template <size_t NV, size_t KV>
-  inline constexpr size_t permutations_v = permutations<NV, KV>::value;
+template <size_t NV, size_t KV>
+inline constexpr size_t permutations_v = permutations<NV, KV>::value;
 #endif
-}
+}  // namespace etl
 
 #endif

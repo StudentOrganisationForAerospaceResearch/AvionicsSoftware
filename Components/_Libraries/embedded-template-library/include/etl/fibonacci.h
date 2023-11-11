@@ -39,41 +39,38 @@ SOFTWARE.
 /// fibonacci<N> : Calculates the Nth Fibonacci value.
 ///\ingroup maths
 
-namespace etl
-{
-  //***************************************************************************
-  ///\ingroup fibonacci
-  /// Defines <b>value</b> as the Nth Fibonacci number.
-  ///\tparam N The number to find the Fibonacci value of.
-  //***************************************************************************
-  template <size_t N>
-  struct fibonacci
-  {
-    static ETL_CONSTANT size_t value = fibonacci<N - 1>::value + fibonacci<N - 2>::value;
-  };
+namespace etl {
+//***************************************************************************
+///\ingroup fibonacci
+/// Defines <b>value</b> as the Nth Fibonacci number.
+///\tparam N The number to find the Fibonacci value of.
+//***************************************************************************
+template <size_t N>
+struct fibonacci {
+    static ETL_CONSTANT size_t value =
+        fibonacci<N - 1>::value + fibonacci<N - 2>::value;
+};
 
-  //***************************************************************************
-  // Specialisation for N = 1
-  //***************************************************************************
-  template <>
-  struct fibonacci<1>
-  {
+//***************************************************************************
+// Specialisation for N = 1
+//***************************************************************************
+template <>
+struct fibonacci<1> {
     static ETL_CONSTANT size_t value = 1UL;
-  };
+};
 
-  //***************************************************************************
-  // Specialisation for N = 0
-  //***************************************************************************
-  template <>
-  struct fibonacci<0>
-  {
+//***************************************************************************
+// Specialisation for N = 0
+//***************************************************************************
+template <>
+struct fibonacci<0> {
     static ETL_CONSTANT size_t value = 0UL;
-  };
+};
 
 #if ETL_USING_CPP17
-  template <size_t N>
-  inline constexpr size_t fibonacci_v = fibonacci<N>::value;
+template <size_t N>
+inline constexpr size_t fibonacci_v = fibonacci<N>::value;
 #endif
-}
+}  // namespace etl
 
 #endif

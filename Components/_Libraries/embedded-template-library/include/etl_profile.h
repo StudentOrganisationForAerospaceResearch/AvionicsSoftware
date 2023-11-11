@@ -58,6 +58,4 @@ SOFTWARE.
 /* SOAR CUSTOM ------------------------------------------------------------------*/
 #define ETL_NO_SMALL_CHAR_SUPPORT 0
 
-
-
 #endif /* LIBRARIES_EMBEDDED_TEMPLATE_LIBRARY_INCLUDE_ETL_PROFILE_H_ */

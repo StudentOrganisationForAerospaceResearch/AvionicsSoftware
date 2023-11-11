@@ -33,50 +33,44 @@ SOFTWARE.
 
 #include <etl/algorithm.h>
 #include <etl/functional.h>
-#include "platform.h"
-#include "type_traits.h"
 #include <math.h>
 #include <stdint.h>
+#include "platform.h"
+#include "type_traits.h"
 
-namespace etl
-{
-  //***************************************************************************
-  /// Rescale function.
-  //***************************************************************************
-  template<typename TInput, typename TOutput>
-  class rescale : public etl::unary_function<TOutput, TInput>
-  {
-  public:
-
+namespace etl {
+//***************************************************************************
+/// Rescale function.
+//***************************************************************************
+template <typename TInput, typename TOutput>
+class rescale : public etl::unary_function<TOutput, TInput> {
+   public:
     //*****************************************************************
     /// Constructor.
     //*****************************************************************
-    rescale(TInput  input_min_value_,
-            TInput  input_max_value_,
-            TOutput output_min_value_,
-            TOutput output_max_value_)
-        : input_min_value(input_min_value_)
-        , output_min_value(output_min_value_)
-        , output_max_value(output_max_value_)
-        , multiplier(double(output_max_value_ - output_min_value_) / double(input_max_value_ - input_min_value_))
-    {    
-    }
+    rescale(TInput input_min_value_, TInput input_max_value_,
+            TOutput output_min_value_, TOutput output_max_value_)
+        : input_min_value(input_min_value_),
+          output_min_value(output_min_value_),
+          output_max_value(output_max_value_),
+          multiplier(double(output_max_value_ - output_min_value_) /
+                     double(input_max_value_ - input_min_value_)) {}
 
     //*****************************************************************
     /// operator ()
     //*****************************************************************
-    TOutput operator ()(TInput value) const
-    {
-      return TOutput(((value - input_min_value) * multiplier)) + output_min_value;;
+    TOutput operator()(TInput value) const {
+        return TOutput(((value - input_min_value) * multiplier)) +
+               output_min_value;
+        ;
     }
 
-  private:
-
-    const TInput  input_min_value;
+   private:
+    const TInput input_min_value;
     const TOutput output_min_value;
     const TOutput output_max_value;
-    double multiplier;    
-  };
-}
+    double multiplier;
+};
+}  // namespace etl
 
 #endif

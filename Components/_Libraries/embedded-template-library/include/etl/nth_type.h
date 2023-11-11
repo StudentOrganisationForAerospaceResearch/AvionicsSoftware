@@ -31,24 +31,21 @@ SOFTWARE.
 
 #include "platform.h"
 
-namespace etl
-{
+namespace etl {
 #if ETL_USING_CPP11
-  template <size_t N, typename T1, typename... TRest>
-  struct nth_type
-  {
+template <size_t N, typename T1, typename... TRest>
+struct nth_type {
     using type = typename nth_type<N - 1U, TRest...>::type;
-  };
+};
 
-  template <typename T1, typename... TRest>
-  struct nth_type<0U, T1, TRest...>
-  {
+template <typename T1, typename... TRest>
+struct nth_type<0U, T1, TRest...> {
     using type = T1;
-  };
+};
 
-  template <size_t N, typename... TTypes>
-  using nth_type_t = typename nth_type<N, TTypes...>::type;
+template <size_t N, typename... TTypes>
+using nth_type_t = typename nth_type<N, TTypes...>::type;
 #endif
-}
+}  // namespace etl
 
 #endif

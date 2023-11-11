@@ -32,72 +32,61 @@ SOFTWARE.
 #include "platform.h"
 
 #if ETL_USING_STL && ETL_USING_CPP11
-  #include "mutex/mutex_std.h"
-  #define ETL_HAS_MUTEX 1
+#include "mutex/mutex_std.h"
+#define ETL_HAS_MUTEX 1
 #elif defined(ETL_TARGET_OS_CMSIS_OS2)
-  #include "mutex/mutex_cmsis_os2.h"
-  #define ETL_HAS_MUTEX 1
+#include "mutex/mutex_cmsis_os2.h"
+#define ETL_HAS_MUTEX 1
 #elif defined(ETL_TARGET_OS_FREERTOS)
-  #include "mutex/mutex_freertos.h"
-  #define ETL_HAS_MUTEX 1
-#elif defined(ETL_COMPILER_ARM5) || defined(ETL_COMPILER_ARM6) || defined(ETL_COMPILER_ARM7) || defined(ETL_COMPILER_ARM8)
-  #include "mutex/mutex_arm.h"
-  #define ETL_HAS_MUTEX 1
+#include "mutex/mutex_freertos.h"
+#define ETL_HAS_MUTEX 1
+#elif defined(ETL_COMPILER_ARM5) || defined(ETL_COMPILER_ARM6) || \
+    defined(ETL_COMPILER_ARM7) || defined(ETL_COMPILER_ARM8)
+#include "mutex/mutex_arm.h"
+#define ETL_HAS_MUTEX 1
 #elif defined(ETL_COMPILER_GCC)
-  #include "mutex/mutex_gcc_sync.h"
-  #define ETL_HAS_MUTEX 1
+#include "mutex/mutex_gcc_sync.h"
+#define ETL_HAS_MUTEX 1
 #elif defined(ETL_COMPILER_CLANG)
-  #include "mutex/mutex_clang_sync.h"
-  #define ETL_HAS_MUTEX 1
+#include "mutex/mutex_clang_sync.h"
+#define ETL_HAS_MUTEX 1
 #else
-  #define ETL_HAS_MUTEX 0
+#define ETL_HAS_MUTEX 0
 #endif
 
-namespace etl
-{
-  namespace traits
-  {
-    static ETL_CONSTANT bool has_mutex = (ETL_HAS_MUTEX == 1);
-  }
+namespace etl {
+namespace traits {
+static ETL_CONSTANT bool has_mutex = (ETL_HAS_MUTEX == 1);
+}
 
-  //***************************************************************************
-  /// lock_guard
-  /// A mutex wrapper that provides an RAII mechanism for owning a mutex for 
-  /// the duration of a scoped block.
-  //***************************************************************************
-  template <typename TMutex>
-  class lock_guard
-  {
-  public:
-
+//***************************************************************************
+/// lock_guard
+/// A mutex wrapper that provides an RAII mechanism for owning a mutex for
+/// the duration of a scoped block.
+//***************************************************************************
+template <typename TMutex>
+class lock_guard {
+   public:
     typedef TMutex mutex_type;
 
     //*****************************************************
     /// Constructor
     /// Locks the mutex.
     //*****************************************************
-    explicit lock_guard(mutex_type& m_)
-      : m(m_)
-    {
-      m.lock();
-    }
+    explicit lock_guard(mutex_type& m_) : m(m_) { m.lock(); }
 
     //*****************************************************
     /// Destructor
     //*****************************************************
-    ~lock_guard()
-    {
-      m.unlock();
-    }
+    ~lock_guard() { m.unlock(); }
 
-  private:
-
+   private:
     // Deleted.
     lock_guard(const lock_guard&) ETL_DELETE;
 
     mutex_type& m;
-  };
+};
 
-}
+}  // namespace etl
 
 #endif

@@ -38,71 +38,57 @@ SOFTWARE.
 #include <math.h>
 #include <stdint.h>
 
-namespace etl
-{
-  //***************************************************************************
-  /// Gamma encode function.
-  //***************************************************************************
-  template <typename TInput>
-  class gamma_encode : public etl::unary_function<TInput, TInput>
-  {
-  public:
-
+namespace etl {
+//***************************************************************************
+/// Gamma encode function.
+//***************************************************************************
+template <typename TInput>
+class gamma_encode : public etl::unary_function<TInput, TInput> {
+   public:
     //*********************************
     /// Constructor.
     //*********************************
     gamma_encode(double gamma_, TInput maximum_)
-      : one_over_gamma(1.0 / gamma_)
-      , maximum(maximum_)
-    {      
-    }
+        : one_over_gamma(1.0 / gamma_), maximum(maximum_) {}
 
     //*********************************
     /// operator ()
     /// Get the gamma.
     //*********************************
-    TInput operator ()(TInput value) const
-    {
-      return TInput(TInput(maximum * pow(double(value) / maximum, one_over_gamma)));
+    TInput operator()(TInput value) const {
+        return TInput(
+            TInput(maximum * pow(double(value) / maximum, one_over_gamma)));
     }
 
-  private:
-
+   private:
     const double one_over_gamma;
     const double maximum;
-  };
+};
 
-  //***************************************************************************
-  /// Gamma decode function.
-  //***************************************************************************
-  template <typename TInput>
-  class gamma_decode : public etl::unary_function<TInput, TInput>
-  {
-  public:
-
+//***************************************************************************
+/// Gamma decode function.
+//***************************************************************************
+template <typename TInput>
+class gamma_decode : public etl::unary_function<TInput, TInput> {
+   public:
     //*********************************
     /// Constructor.
     //*********************************
     gamma_decode(double gamma_, TInput maximum_)
-      : gamma(gamma_)
-      , maximum(maximum_)
-    {      
-    }
+        : gamma(gamma_), maximum(maximum_) {}
 
     //*********************************
     /// operator ()
     /// Get the gamma.
     //*********************************
-    TInput operator ()(TInput value) const
-    {
-      return TInput(TInput(maximum * pow(double(value) / maximum, gamma)));
+    TInput operator()(TInput value) const {
+        return TInput(TInput(maximum * pow(double(value) / maximum, gamma)));
     }
 
-  private:
-
+   private:
     const double gamma;
     const double maximum;
-  };
-}
+};
+}  // namespace etl
 
 #endif

@@ -41,90 +41,71 @@ SOFTWARE.
 /// log10<N>     : Calculates logs to base 10, rounded down to the nearest integer.<br>
 ///\ingroup maths
 
-namespace etl
-{
-  //***************************************************************************
-  ///\ingroup log
-  /// The base generic log template.
-  /// Defines <b>value</b> as the log of the number at the specified base.
-  /// The result is rounded down to the next integer.
-  ///\tparam NV   The number to find the log of.
-  ///\tparam BASE The base of the log.
-  //***************************************************************************
-  template <size_t NV, size_t BASE>
-  struct log
-  {
-    enum value_type
-    {
-      // Recursive definition.
-      value = (NV >= BASE) ? 1 + log<NV / BASE, BASE>::value : 0
+namespace etl {
+//***************************************************************************
+///\ingroup log
+/// The base generic log template.
+/// Defines <b>value</b> as the log of the number at the specified base.
+/// The result is rounded down to the next integer.
+///\tparam NV   The number to find the log of.
+///\tparam BASE The base of the log.
+//***************************************************************************
+template <size_t NV, size_t BASE>
+struct log {
+    enum value_type {
+        // Recursive definition.
+        value = (NV >= BASE) ? 1 + log<NV / BASE, BASE>::value : 0
     };
-  };
+};
 
-  //***************************************************************************
-  // Specialisation for N = 1
-  //***************************************************************************
-  template <size_t BASE>
-  struct log<1, BASE>
-  {
-    enum value_type
-    {
-      value = 0
-    };
-  };
+//***************************************************************************
+// Specialisation for N = 1
+//***************************************************************************
+template <size_t BASE>
+struct log<1, BASE> {
+    enum value_type { value = 0 };
+};
 
-  //***************************************************************************
-  // Specialisation for N = 0
-  //***************************************************************************
-  template <size_t BASE>
-  struct log<0, BASE>
-  {
-    enum value_type
-    {
-      value = 0
-    };
-  };
+//***************************************************************************
+// Specialisation for N = 0
+//***************************************************************************
+template <size_t BASE>
+struct log<0, BASE> {
+    enum value_type { value = 0 };
+};
 
 #if ETL_USING_CPP17
-  template <size_t NV, size_t BASE>
-  inline constexpr size_t log_v = log<NV, BASE>::value;
+template <size_t NV, size_t BASE>
+inline constexpr size_t log_v = log<NV, BASE>::value;
 #endif
 
-  //***************************************************************************
-  ///\ingroup log
-  /// Calculates base 2 logs.
-  //***************************************************************************
-  template <const size_t NV>
-  struct log2
-  {
-    enum value_type
-    {
-      value = log<NV, 2>::value
-    };
-  };
+//***************************************************************************
+///\ingroup log
+/// Calculates base 2 logs.
+//***************************************************************************
+template <const size_t NV>
+struct log2 {
+    enum value_type { value = log<NV, 2>::value };
+};
 
 #if ETL_USING_CPP17
-  template <size_t NV>
-  inline constexpr size_t log2_v = log2<NV>::value;
+template <size_t NV>
+inline constexpr size_t log2_v = log2<NV>::value;
 #endif
 
-  //***************************************************************************
-  ///\ingroup log
-  /// Calculates base 10 logs.
-  //***************************************************************************
-  template <const size_t NV>
-  struct log10
-  {
-    enum value_type
-    {
-      value = log<NV, 10>::value
-    };
-  };
+//***************************************************************************
+///\ingroup log
+/// Calculates base 10 logs.
+//***************************************************************************
+template <const size_t NV>
+struct log10 {
+    enum value_type { value = log<NV, 10>::value };
+};
 
 #if ETL_USING_CPP17
-  template <size_t NV>
-  inline constexpr size_t log10_v = log10<NV>::value;
+template <size_t NV>
+inline constexpr size_t log10_v = log10<NV>::value;
 #endif
-}
+}  // namespace etl
 
 #endif

@@ -31,38 +31,25 @@ SOFTWARE.
 
 #include "../platform.h"
 
-#include "FreeRTOS.h"
 #include <semphr.h>
+#include "FreeRTOS.h"
 
-namespace etl
-{
-  //***************************************************************************
-  ///\ingroup mutex
-  ///\brief This mutex class is implemented using FreeRTOS's mutexes
-  //***************************************************************************
-  class mutex
-  {
-  public:
+namespace etl {
+//***************************************************************************
+///\ingroup mutex
+///\brief This mutex class is implemented using FreeRTOS's mutexes
+//***************************************************************************
+class mutex {
+   public:
+    mutex() { access = xSemaphoreCreateMutexStatic(&mutex_allocation); }
 
-    mutex()
-    {
-      access = xSemaphoreCreateMutexStatic(&mutex_allocation);
+    void lock() {
+        xSemaphoreTake(access, portMAX_DELAY);  // portMAX_DELAY=block forever
     }
 
-    void lock()
-    {
-      xSemaphoreTake(access, portMAX_DELAY); // portMAX_DELAY=block forever
-    }
+    bool try_lock() { return xSemaphoreTake(access, 0) == pdTRUE; }
 
-    bool try_lock()
-    {
-      return xSemaphoreTake(access, 0) == pdTRUE;
-    }
-
-    void unlock()
-    {
-      xSemaphoreGive(access);
-    }
+    void unlock() { xSemaphoreGive(access); }
 
    private:
     // Non-copyable
@@ -71,10 +58,10 @@ namespace etl
 
     // Memory to hold the mutex
     StaticSemaphore_t mutex_allocation;
-  
+
     // The mutex handle itself
     SemaphoreHandle_t access;
-  };
-}
+};
+}  // namespace etl
 
 #endif

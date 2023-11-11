@@ -38,50 +38,42 @@ SOFTWARE.
 #include <math.h>
 #include <stdint.h>
 
-namespace etl
-{
-  //***************************************************************************
-  /// Quantize .
-  //***************************************************************************
-  template<typename TInput, typename TCompare = etl::less<TInput> >
-  class quantize  : public etl::unary_function<TInput, TInput>
-  {
-  public:
-
+namespace etl {
+//***************************************************************************
+/// Quantize .
+//***************************************************************************
+template <typename TInput, typename TCompare = etl::less<TInput>>
+class quantize : public etl::unary_function<TInput, TInput> {
+   public:
     //*****************************************************************
     // Constructor.
     //*****************************************************************
-    quantize (const TInput* p_thresholds_, const TInput* p_quantizations_, size_t n_quantizations_, TCompare compare_ = TCompare())
-      : p_thresholds(p_thresholds_)
-      , p_quantizations(p_quantizations_)
-      , n_levels(n_quantizations_ - 1U)
-      , compare(compare_)
-    {
-    }
+    quantize(const TInput* p_thresholds_, const TInput* p_quantizations_,
+             size_t n_quantizations_, TCompare compare_ = TCompare())
+        : p_thresholds(p_thresholds_),
+          p_quantizations(p_quantizations_),
+          n_levels(n_quantizations_ - 1U),
+          compare(compare_) {}
 
     //*****************************************************************
     // operator ()
     //*****************************************************************
-    TInput operator ()(TInput value) const
-    {
-      for (size_t i = 0UL; i < n_levels; ++i)
-      {
-        if (compare(value, p_thresholds[i]))
-        {
-          return p_quantizations[i];
+    TInput operator()(TInput value) const {
+        for (size_t i = 0UL; i < n_levels; ++i) {
+            if (compare(value, p_thresholds[i])) {
+                return p_quantizations[i];
+            }
         }
-      }
 
-      return p_quantizations[n_levels];
+        return p_quantizations[n_levels];
     }
 
-  private:
-
+   private:
     const TInput* const p_thresholds;
     const TInput* const p_quantizations;
-    const size_t   n_levels;
+    const size_t n_levels;
     const TCompare compare;
-  };
-}
+};
+}  // namespace etl
 
 #endif
