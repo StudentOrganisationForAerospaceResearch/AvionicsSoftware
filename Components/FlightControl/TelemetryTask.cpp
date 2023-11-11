@@ -32,9 +32,9 @@ void TelemetryTask::InitTask()
 
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)TelemetryTask::RunTask,
-            (const char*)"TelemetryTask",
+        				(const char*)"TelemetryTask",
             (uint16_t)TELEMETRY_TASK_STACK_DEPTH_WORDS,
-            (void*)this,
+               (void*)this,
             (UBaseType_t)TELEMETRY_TASK_RTOS_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
 
@@ -50,7 +50,7 @@ void TelemetryTask::Run(void* pvParams)
     while (1) {
         //Process all commands in queue this cycle
         Command cm;
-		while (qEvtQueue->Receive(cm))
+					while (qEvtQueue->Receive(cm))
             HandleCommand(cm);
 
         osDelay(loggingDelayMs);
@@ -67,7 +67,8 @@ void TelemetryTask::HandleCommand(Command& cm)
     //Switch for the GLOBAL_COMMAND
     switch (cm.GetCommand()) {
     case TELEMETRY_CHANGE_PERIOD: {
-        loggingDelayMs = (uint16_t)cm.GetTaskCommand();
+
+    		loggingDelayMs = (uint16_t)cm.GetTaskCommand();
 	break;
     }
     default:
@@ -91,7 +92,10 @@ void TelemetryTask::RunLogSequence()
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
 
     // IMU
-    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
+
+
+
+    			IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Pressure Transducer

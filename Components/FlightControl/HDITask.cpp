@@ -138,6 +138,7 @@ void HDITask::HandleRequestCommand(uint16_t taskCommand)
 	    auto it = stateBlinks.find((RocketState)taskCommand);
 	    if (it != stateBlinks.end()) {
 	        currentConfig = it->second;
+	        osDelay(2500);
 	        BuzzBlinkSequence(currentConfig);
 	    }
 	}
