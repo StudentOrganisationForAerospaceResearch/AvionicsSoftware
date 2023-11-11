@@ -11,11 +11,11 @@
 #include "RocketSM.hpp"
 #include "FlightTask.hpp"
 #include "Command.hpp"
-#include "etl/map.h"
+            #include "etl/map.h"
 
 
 extern TIM_HandleTypeDef htim2;
-constexpr uint16_t BUZZER_DEFAULT_DUTY_CYCLE = 190;
+   constexpr uint16_t BUZZER_DEFAULT_DUTY_CYCLE = 190;
 
 
 /* One cycle is defined as a certain amount of beeps for that state.
@@ -41,7 +41,7 @@ etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConf
     {RS_FILL, {3, 500}},
     {RS_ARM, {4, 500}},
     {RS_IGNITION, {1, 300}},
-    {RS_LAUNCH, {2, 300}},
+                                    {RS_LAUNCH, {2, 300}},
     {RS_BURN, {3, 300}},
     {RS_COAST, {4, 300}},
     {RS_DESCENT, {5, 180}},
@@ -52,7 +52,7 @@ etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConf
 /**
 * @brief Constructor for HDITask
 */
-HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(false)
+  HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(false)
 {
 }
 
@@ -68,7 +68,7 @@ void HDITask::InitTask()
         xTaskCreate((TaskFunction_t)HDITask::RunTask,
             (const char*)"HDITask",
             (uint16_t)HDI_TASK_STACK_DEPTH_WORDS,
-            (void*)this,
+                      (void*)this,
             (UBaseType_t)HDI_TASK_RTOS_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
 
