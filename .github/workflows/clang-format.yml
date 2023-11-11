@@ -26,3 +26,5 @@ jobs:
 
     permissions:
       actions: write
+      pages: write 
+      contents: write
