@@ -12,41 +12,37 @@
 */
 #ifndef SOAR_SYSTEM_STATE_STORAGE_HPP_
 #define SOAR_SYSTEM_STATE_STORAGE_HPP
-#include "SystemDefines.hpp"
 #include "RocketSM.hpp"
-#include "SafeSimpleDualSectorStorage.hpp"
 #include "SPIFlash.hpp"
+#include "SafeSimpleDualSectorStorage.hpp"
+#include "SystemDefines.hpp"
 
 // Macros/Constexprs ---------------------------------------------------------------------
-constexpr uint32_t SYSTEM_STORAGE_START_SECTOR_ADDR = SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR;
-
+constexpr uint32_t SYSTEM_STORAGE_START_SECTOR_ADDR =
+    SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR;
 
 // System Info Struct ---------------------------------------------------------------------
-struct SystemState
-{
+struct SystemState {
     RocketState rocketState;
 };
 
 // System Info Struct ---------------------------------------------------------------------
-class SystemStorage : public SafeSimpleDualSectorStorage<SystemState>
-{
-public:
+class SystemStorage : public SafeSimpleDualSectorStorage<SystemState> {
+   public:
     // Singleton instance for SystemStorage
     static SystemStorage& Inst() {
         static SystemStorage inst;
         return inst;
     }
 
-private:
+   private:
     SystemStorage();
-    SystemStorage(const SystemStorage&);                      // Prevent copy-construction
-    SystemStorage& operator=(const SystemStorage&);           // Prevent assignment
+    SystemStorage(const SystemStorage&);  // Prevent copy-construction
+    SystemStorage& operator=(const SystemStorage&);  // Prevent assignment
 };
 
-inline SystemStorage::SystemStorage() :
-    SafeSimpleDualSectorStorage<SystemState>(&SPIFlash::Inst(),
-        SYSTEM_STORAGE_START_SECTOR_ADDR)
-{
-}
+inline SystemStorage::SystemStorage()
+    : SafeSimpleDualSectorStorage<SystemState>(
+          &SPIFlash::Inst(), SYSTEM_STORAGE_START_SECTOR_ADDR) {}
 
-#endif // SOAR_SYSTEM_STATE_HPP
+#endif  // SOAR_SYSTEM_STATE_HPP

@@ -34,7 +34,7 @@ SOFTWARE.
  */
 
 #if defined(__GNUC__) && !defined(__clang__) && !defined(__llvm__)
-#pragma GCC diagnostic pop 
+#pragma GCC diagnostic pop
 #endif
 
 #if defined(__clang__) || defined(__llvm__)

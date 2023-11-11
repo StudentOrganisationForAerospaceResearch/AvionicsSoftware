@@ -8,11 +8,11 @@
 
 #include <cstring>
 
-#include "stm32f4xx.h"
-#include "stm32f4xx_hal_conf.h"
+#include "SystemDefines.hpp"
 #include "cmsis_os.h"
 #include "main_avionics.hpp"
-#include "SystemDefines.hpp"
+#include "stm32f4xx.h"
+#include "stm32f4xx_hal_conf.h"
 
 #include "etl/crc16_xmodem.h"
 
@@ -22,12 +22,10 @@
  * @param size: The size of the array
  * @return Returns the average as a uint16_t
  */
-uint16_t Utils::averageArray(uint16_t array[], int size)
-{
+uint16_t Utils::averageArray(uint16_t array[], int size) {
     uint16_t sum = 0;
 
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         sum += array[i];
     }
 
@@ -41,8 +39,7 @@ uint16_t Utils::averageArray(uint16_t array[], int size)
  * @param startIndex: The index to start storing the bytes at
  * @param value: The int32 to convert
  */
-void Utils::writeInt32ToArray(uint8_t* array, int startIndex, int32_t value)
-{
+void Utils::writeInt32ToArray(uint8_t* array, int startIndex, int32_t value) {
     array[startIndex + 0] = (value >> 24) & 0xFF;
     array[startIndex + 1] = (value >> 16) & 0xFF;
     array[startIndex + 2] = (value >> 8) & 0xFF;
@@ -55,10 +52,11 @@ void Utils::writeInt32ToArray(uint8_t* array, int startIndex, int32_t value)
  * @param startIndex, where the data field starts in the array
  * @param value, pointer to the data field that should be updated
  */
-void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* value)
-{
+void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex,
+                                     int32_t* value) {
     uint32_t temp = 0;
-    temp += (array[startIndex + 0] << 24); // eeprom reads little or big endian?
+    temp +=
+        (array[startIndex + 0] << 24);  // eeprom reads little or big endian?
     temp += (array[startIndex + 1] << 16);
     temp += (array[startIndex + 2] << 8);
     temp += (array[startIndex + 3]);
@@ -70,13 +68,12 @@ void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* va
  * @param data The data to generate the checksum for
  * @param size The size of the data array in uint8_t
  */
-uint32_t Utils::getCRC32Aligned(uint8_t* data, uint32_t size)
-{
+uint32_t Utils::getCRC32Aligned(uint8_t* data, uint32_t size) {
     // Figure out the number of bytes to pad by
     uint8_t pad = 0;
 
     // If the buffer is not a multiple of 4 bytes, then we need to pad the buffer by the remaining bytes
-    if(size % 4 == 0)
+    if (size % 4 == 0)
         pad = 4 - (size % 4);
 
     // Generate a buffer padded to uint32_t
@@ -92,7 +89,8 @@ uint32_t Utils::getCRC32Aligned(uint8_t* data, uint32_t size)
     //SOAR_PRINT("Warning, HCRC is not tested!\n");
 
     // Calculate the CRC32
-    return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, (size+pad)/4);
+    return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer,
+                             (size + pad) / 4);
 }
 
 /**
@@ -101,17 +99,15 @@ uint32_t Utils::getCRC32Aligned(uint8_t* data, uint32_t size)
  * @param size  The size of the data array in uint8_t
  * @return The CRC16 checksum
  */
-uint16_t Utils::getCRC16(uint8_t* data, uint16_t size)
-{
+uint16_t Utils::getCRC16(uint8_t* data, uint16_t size) {
     // ETL CRC16 object
     etl::crc16_xmodem crc;
     crc.reset();
 
-	// Use etl library to generate CRC16
-	for (uint16_t i = 0; i < size; i++)
-	{
+    // Use etl library to generate CRC16
+    for (uint16_t i = 0; i < size; i++) {
         crc.add(data[i]);
-	}
+    }
 
     return crc.value();
 }
@@ -123,8 +119,7 @@ uint16_t Utils::getCRC16(uint8_t* data, uint16_t size)
  * @param crc The internal checksum
  * @return 
  */
-bool Utils::IsCrc16Correct(uint8_t* data, uint16_t size, uint16_t crc)
-{
+bool Utils::IsCrc16Correct(uint8_t* data, uint16_t size, uint16_t crc) {
     // First we calculate the crc16 for the buffer
     uint16_t calculatedCrc = getCRC16(data, size);
 
@@ -136,25 +131,19 @@ bool Utils::IsCrc16Correct(uint8_t* data, uint16_t size, uint16_t crc)
  * @param str The string to convert, must be null terminated
  * @return The converted int32_t, or ERRVAL on an error
  */
-int32_t Utils::stringToLong(const char* str)
-{
+int32_t Utils::stringToLong(const char* str) {
     int32_t result = 0;
     const uint8_t size = (strlen(str) < 255) ? strlen(str) : 255;
 
-    for (uint8_t i = 0; i < size; i++)
-    {
+    for (uint8_t i = 0; i < size; i++) {
         const uint8_t c = str[i];
-        if (IsAsciiNum(c))
-        {
+        if (IsAsciiNum(c)) {
             result *= 10;
             result += c - '0';
-        }
-        else
-        {
+        } else {
             return ERRVAL;
         }
     }
 
     return result;
-
 }

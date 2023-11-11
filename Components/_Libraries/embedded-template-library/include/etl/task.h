@@ -29,51 +29,40 @@ SOFTWARE.
 #ifndef ETL_TASK_INCLUDED
 #define ETL_TASK_INCLUDED
 
-#include "platform.h"
 #include "error_handler.h"
 #include "exception.h"
+#include "platform.h"
 
 #include <stdint.h>
 
-namespace etl
-{
-  //***************************************************************************
-  /// Base exception class for task.
-  //***************************************************************************
-  class task_exception : public etl::exception
-  {
-  public:
+namespace etl {
+//***************************************************************************
+/// Base exception class for task.
+//***************************************************************************
+class task_exception : public etl::exception {
+   public:
+    task_exception(string_type reason_, string_type file_name_,
+                   numeric_type line_number_)
+        : etl::exception(reason_, file_name_, line_number_) {}
+};
 
-    task_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
-      : etl::exception(reason_, file_name_, line_number_)
-    {
-    }
-  };
+typedef uint_least8_t task_priority_t;
 
-  typedef uint_least8_t task_priority_t;
-
-  //***************************************************************************
-  /// Task.
-  //***************************************************************************
-  class task
-  {
-  public:
-
+//***************************************************************************
+/// Task.
+//***************************************************************************
+class task {
+   public:
     //*******************************************
     /// Constructor.
     //*******************************************
     task(task_priority_t priority)
-      : task_running(true),
-        task_priority(priority)
-    {
-    }
+        : task_running(true), task_priority(priority) {}
 
     //*******************************************
     /// Destructor.
     //*******************************************
-    virtual ~task()
-    {
-    }
+    virtual ~task() {}
 
     //*******************************************
     /// Called to check if the task has work.
@@ -89,41 +78,30 @@ namespace etl
     //*******************************************
     /// Called when the task has been added to the scheduler.
     //*******************************************
-    virtual void on_task_added()
-    {
-      // Do nothing.
+    virtual void on_task_added() {
+        // Do nothing.
     }
 
     //*******************************************
     /// Set the running state for the task.
     //*******************************************
-    void set_task_running(bool task_running_)
-    {
-      task_running = task_running_;
-    }
+    void set_task_running(bool task_running_) { task_running = task_running_; }
 
     //*******************************************
     /// Get the running state for the task.
     //*******************************************
-    bool task_is_running() const
-    {
-      return task_running;
-    }
+    bool task_is_running() const { return task_running; }
 
     //*******************************************
     /// Get the priority of the task.
     /// Higher value = higher priority.
     //*******************************************
-    etl::task_priority_t get_task_priority() const
-    {
-      return task_priority;
-    }
+    etl::task_priority_t get_task_priority() const { return task_priority; }
 
-  private:
-
+   private:
     bool task_running;
     etl::task_priority_t task_priority;
-  };
-}
+};
+}  // namespace etl
 
 #endif

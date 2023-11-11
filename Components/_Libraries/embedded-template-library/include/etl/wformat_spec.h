@@ -33,13 +33,12 @@ SOFTWARE.
 
 ///\ingroup string
 
-#include "platform.h"
 #include "basic_format_spec.h"
+#include "platform.h"
 #include "wstring.h"
 
-namespace etl
-{
-  typedef etl::basic_format_spec<etl::iwstring> wformat_spec;
+namespace etl {
+typedef etl::basic_format_spec<etl::iwstring> wformat_spec;
 }
 
 #endif

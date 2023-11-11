@@ -35,50 +35,47 @@ SOFTWARE.
 #include <stdint.h>
 
 #if ETL_CPP11_NOT_SUPPORTED
-  #if !defined(ETL_IN_UNIT_TEST)
-    #error NOT SUPPORTED FOR C++03 OR BELOW
-  #endif
+#if !defined(ETL_IN_UNIT_TEST)
+#error NOT SUPPORTED FOR C++03 OR BELOW
+#endif
 #else
-namespace etl
-{
-  //***************************************************************************
-  /// parameter_pack
-  //***************************************************************************
-  template <typename... TTypes>
-  class parameter_pack
-  {
-  public:
-
+namespace etl {
+//***************************************************************************
+/// parameter_pack
+//***************************************************************************
+template <typename... TTypes>
+class parameter_pack {
+   public:
     static constexpr size_t size = sizeof...(TTypes);
 
     //***************************************************************************
     /// index_of_type
     //***************************************************************************
     template <typename T>
-    class index_of_type
-    {
-    private:
+    class index_of_type {
+       private:
+        //***********************************
+        template <typename Type, typename T1, typename... TRest>
+        struct index_of_type_helper {
+            static constexpr size_t value =
+                etl::is_same<Type, T1>::value
+                    ? 1
+                    : 1 + index_of_type_helper<Type, TRest...>::value;
+        };
 
-      //***********************************
-      template <typename Type, typename T1, typename... TRest>
-      struct index_of_type_helper
-      {
-        static constexpr size_t value = etl::is_same<Type, T1>::value ? 1 : 1 + index_of_type_helper<Type, TRest...>::value;
-      };
+        //***********************************
+        template <typename Type, typename T1>
+        struct index_of_type_helper<Type, T1> {
+            static constexpr size_t value = 1;
+        };
 
-      //***********************************
-      template <typename Type, typename T1>
-      struct index_of_type_helper<Type, T1>
-      {
-        static constexpr size_t value = 1;
-      };
+       public:
+        static_assert(etl::is_one_of<T, TTypes...>::value,
+                      "T is not in parameter pack");
 
-    public:
-
-      static_assert(etl::is_one_of<T, TTypes...>::value, "T is not in parameter pack");
-
-      /// The index value.
-      static constexpr size_t value = index_of_type_helper<T, TTypes...>::value - 1;
+        /// The index value.
+        static constexpr size_t value =
+            index_of_type_helper<T, TTypes...>::value - 1;
     };
 
 #if ETL_USING_CPP17
@@ -90,44 +87,45 @@ namespace etl
     /// type_from_index
     //***************************************************************************
     template <size_t I>
-    class type_from_index
-    {
-    private:
+    class type_from_index {
+       private:
+        //***********************************
+        template <size_t II, size_t N, typename T1, typename... TRest>
+        struct type_from_index_helper {
+            using type =
+                typename etl::conditional<II == N, T1,
+                                          typename type_from_index_helper<
+                                              II, N + 1, TRest...>::type>::type;
+        };
 
-      //***********************************
-      template <size_t II, size_t N, typename T1, typename... TRest>
-      struct type_from_index_helper
-      {
-        using type = typename etl::conditional<II == N, T1, typename type_from_index_helper<II, N + 1, TRest...>::type>::type;
-      };
+        //***********************************
+        template <size_t II, size_t N, typename T1>
+        struct type_from_index_helper<II, N, T1> {
+            using type = T1;
+        };
 
-      //***********************************
-      template <size_t II, size_t N, typename T1>
-      struct type_from_index_helper<II, N, T1>
-      {
-        using type = T1;
-      };
+       public:
+        static_assert(I < sizeof...(TTypes),
+                      "Index out of bounds of parameter pack");
 
-    public:
-
-      static_assert(I < sizeof...(TTypes), "Index out of bounds of parameter pack");
-
-      /// Template alias
-      using type = typename type_from_index_helper<I, 0, TTypes...>::type;
+        /// Template alias
+        using type = typename type_from_index_helper<I, 0, TTypes...>::type;
     };
 
     //***********************************
     template <size_t I>
     using type_from_index_t = typename type_from_index<I>::type;
-  };
+};
 
-  template <size_t Index, typename... TTypes>
-  using parameter_pack_t = typename etl::parameter_pack<TTypes...>::template type_from_index_t<Index>;
+template <size_t Index, typename... TTypes>
+using parameter_pack_t =
+    typename etl::parameter_pack<TTypes...>::template type_from_index_t<Index>;
 
 #if ETL_USING_CPP17
-  template <typename T, typename... TTypes>
-  inline constexpr size_t parameter_pack_v = etl::parameter_pack<TTypes...>::template index_of_type<T>::value;
+template <typename T, typename... TTypes>
+inline constexpr size_t parameter_pack_v =
+    etl::parameter_pack<TTypes...>::template index_of_type<T>::value;
 #endif
-}
+}  // namespace etl
 #endif
 #endif

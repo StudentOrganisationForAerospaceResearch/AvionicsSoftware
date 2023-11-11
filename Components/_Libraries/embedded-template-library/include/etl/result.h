@@ -38,21 +38,18 @@ SOFTWARE.
 #include "variant.h"
 
 #if ETL_CPP11_NOT_SUPPORTED
-  #if !defined(ETL_IN_UNIT_TEST)
-  #error NOT SUPPORTED FOR C++03 OR BELOW
-  #endif
+#if !defined(ETL_IN_UNIT_TEST)
+#error NOT SUPPORTED FOR C++03 OR BELOW
+#endif
 #else
 
-namespace etl
-{
-  //*****************************************************************************
-  /// Result type.
-  //*****************************************************************************
-  template <typename TValue, typename TError>
-  class result
-  {
-  public:
-
+namespace etl {
+//*****************************************************************************
+/// Result type.
+//*****************************************************************************
+template <typename TValue, typename TError>
+class result {
+   public:
     //*******************************************
     /// Cannot be default constructed
     //*******************************************
@@ -61,268 +58,193 @@ namespace etl
     //*******************************************
     /// Copy constructor
     //*******************************************
-    result(const result& other)
-      : data(other.data)
-    {
-    }
+    result(const result& other) : data(other.data) {}
 
     //*******************************************
     /// Move constructor
     //*******************************************
-    result(result&& other)
-      : data(etl::move(other.data))
-    {
-    }
+    result(result&& other) : data(etl::move(other.data)) {}
 
     //*******************************************
     // Construct from a value
     //*******************************************
-    result(const TValue& value)
-      : data(value)
-    {
-    }
+    result(const TValue& value) : data(value) {}
 
     //*******************************************
     // Move construct from a value
     //*******************************************
-    result(TValue&& value)
-      : data(etl::move(value))
-    {
-    }
+    result(TValue&& value) : data(etl::move(value)) {}
 
     //*******************************************
     /// Construct from error
     //*******************************************
-    result(const TError& error)
-      : data(error)
-    {
-    }
+    result(const TError& error) : data(error) {}
 
     //*******************************************
     /// Move construct from error
     //*******************************************
-    result(TError&& error)
-      : data(etl::move(error))
-    {
-    }
+    result(TError&& error) : data(etl::move(error)) {}
 
     //*******************************************
     /// Copy assign
     //*******************************************
-    result& operator =(const result& other)
-    {
-      data = other.data;
-      return *this;
+    result& operator=(const result& other) {
+        data = other.data;
+        return *this;
     }
 
     //*******************************************
-    /// Move assign 
+    /// Move assign
     //*******************************************
-    result& operator =(result&& other)
-    {
-      data = etl::move(other.data);
-      return *this;
+    result& operator=(result&& other) {
+        data = etl::move(other.data);
+        return *this;
     }
 
     //*******************************************
     /// Copy assign from value
     //*******************************************
-    result& operator =(const TValue& value)
-    {
-      data = value;
-      return *this;
+    result& operator=(const TValue& value) {
+        data = value;
+        return *this;
     }
 
     //*******************************************
     /// Move assign from value
     //*******************************************
-    result& operator =(TValue&& value)
-    {
-      data = etl::move(value);
-      return *this;
+    result& operator=(TValue&& value) {
+        data = etl::move(value);
+        return *this;
     }
 
     //*******************************************
     /// Copy assign from error
     //*******************************************
-    result& operator =(const TError& error)
-    {
-      data = error;
-      return *this;
+    result& operator=(const TError& error) {
+        data = error;
+        return *this;
     }
 
     //*******************************************
     /// Move assign from error
     //*******************************************
-    result& operator =(TError&& error)
-    {
-      data = etl::move(error);
-      return *this;
+    result& operator=(TError&& error) {
+        data = etl::move(error);
+        return *this;
     }
 
     //*******************************************
     /// <b>true</b> if result contains a value
     //*******************************************
-    bool is_value() const
-    {
-      return (data.index() == 0U);
-    }
+    bool is_value() const { return (data.index() == 0U); }
 
     //*******************************************
     /// <b>true</b> if result contains an error
     //*******************************************
-    bool is_error() const
-    {
-      return (data.index() == 1U);
-    }
+    bool is_error() const { return (data.index() == 1U); }
 
     //*******************************************
     /// Returns a const reference to the value.
     /// Undefined if the result does not contain an value.
     //*******************************************
-    const TValue& value() const
-    {
-      return etl::get<TValue>(data);
-    }
+    const TValue& value() const { return etl::get<TValue>(data); }
 
     //*******************************************
     /// Returns an rvalue reference to the value.
     /// Undefined if the result does not contain an value.
     //*******************************************
-    TValue&& value()
-    {
-      return etl::move(etl::get<TValue>(etl::move(data)));
-    }
+    TValue&& value() { return etl::move(etl::get<TValue>(etl::move(data))); }
 
     //*******************************************
     /// Returns a const reference to the error.
     /// Undefined if the result does not contain an error.
     //*******************************************
-    const TError& error() const
-    {
-      return etl::get<TError>(data);
-    }
+    const TError& error() const { return etl::get<TError>(data); }
 
     //*******************************************
     /// Returns an rvalue reference to the error.
     /// Undefined if the result does not contain an error.
     //*******************************************
-    TError&& error()
-    {
-      return etl::move(etl::get<TError>(etl::move(data)));
-    }
+    TError&& error() { return etl::move(etl::get<TError>(etl::move(data))); }
 
-  private:
-
+   private:
     etl::variant<TValue, TError> data;
-  };
+};
 
-  //*****************************************************************************
-  /// Result type.
-  /// Specialisation for void value type.
-  //*****************************************************************************
-  template<typename TError>
-  class result<void, TError>
-  {
-  public:
-
+//*****************************************************************************
+/// Result type.
+/// Specialisation for void value type.
+//*****************************************************************************
+template <typename TError>
+class result<void, TError> {
+   public:
     //*******************************************
     /// Default Constructor
     //*******************************************
-    result()
-      : err(TError())
-    {
-    }
+    result() : err(TError()) {}
 
     //*******************************************
     /// Copy constructor
     //*******************************************
-    result(const result& other)
-      : err(other.err)
-    {
-    }
+    result(const result& other) : err(other.err) {}
 
     //*******************************************
     /// Move constructor
     //*******************************************
-    result(result&& other)
-      : err(etl::move(other.err))
-    {
-    }
+    result(result&& other) : err(etl::move(other.err)) {}
 
     //*******************************************
     /// Construct from error
     //*******************************************
-    result(const TError& err_)
-      : err(err_)
-    {
-    }
+    result(const TError& err_) : err(err_) {}
 
     //*******************************************
     /// Move construct from error
     //*******************************************
-    result(TError&& err_)
-      : err(etl::move(err_))
-    {
-    }
+    result(TError&& err_) : err(etl::move(err_)) {}
 
     //*******************************************
     /// Copy assign from error
     //*******************************************
-    result& operator =(const TError& err_)
-    {
-      err = err_;
-      return *this;
+    result& operator=(const TError& err_) {
+        err = err_;
+        return *this;
     }
 
     //*******************************************
     /// Move assign from error
     //*******************************************
-    result& operator =(TError&& err_)
-    {
-      err = etl::move(err_);
-      return *this;
+    result& operator=(TError&& err_) {
+        err = etl::move(err_);
+        return *this;
     }
 
     //*******************************************
     /// <b>true</b> if result contains a value
     //*******************************************
-    bool is_value() const
-    {
-      return false;
-    }
+    bool is_value() const { return false; }
 
     //*******************************************
     /// <b>true</b> if result contains an error
     //*******************************************
-    bool is_error() const
-    {
-      return true;
-    }
+    bool is_error() const { return true; }
 
     //*******************************************
     /// Returns a const reference to the error.
     /// Undefined if the result does not contain an error.
     //*******************************************
-    const TError& error() const
-    {
-      return err;
-    }
+    const TError& error() const { return err; }
 
     //*******************************************
     /// Returns an rvalue reference to the error.
     /// Undefined if the result does not contain an error.
     //*******************************************
-    TError&& error()
-    {
-      return etl::move(err);
-    }
+    TError&& error() { return etl::move(err); }
 
-  private:
-
+   private:
     TError err;
-  };
-}
+};
+}  // namespace etl
 
 #endif
 #endif

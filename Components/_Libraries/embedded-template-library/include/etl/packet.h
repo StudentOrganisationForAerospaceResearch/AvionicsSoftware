@@ -31,11 +31,11 @@ SOFTWARE.
 #ifndef ETL_PACKET_INCLUDED
 #define ETL_PACKET_INCLUDED
 
+#include "alignment.h"
+#include "placement_new.h"
 #include "platform.h"
 #include "static_assert.h"
-#include "alignment.h"
 #include "utility.h"
-#include "placement_new.h"
 
 //*****************************************************************************
 ///\defgroup packet packet
@@ -43,18 +43,15 @@ SOFTWARE.
 ///\ingroup containers
 //*****************************************************************************
 
-namespace etl
-{
-  //***************************************************************************
-  /// A template class that can store any types derived from TBase that conform
-  /// to the size and alignment requirements.
-  ///\ingroup packet
-  //***************************************************************************
-  template <typename TBase, size_t SIZE, size_t ALIGNMENT>
-  class packet
-  {
-  public:
-
+namespace etl {
+//***************************************************************************
+/// A template class that can store any types derived from TBase that conform
+/// to the size and alignment requirements.
+///\ingroup packet
+//***************************************************************************
+template <typename TBase, size_t SIZE, size_t ALIGNMENT>
+class packet {
+   public:
     typedef TBase base_t;
 
 #if ETL_USING_CPP11
@@ -62,37 +59,38 @@ namespace etl
     /// Constructor that static asserts any types that do not conform to the max size and alignment.
     //***************************************************************************
     template <typename T>
-    explicit packet(T&& value)
-    {
-      typedef typename etl::types<T>::type type;
+    explicit packet(T&& value) {
+        typedef typename etl::types<T>::type type;
 
-      ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value), "Unsupported type");
-      ETL_STATIC_ASSERT(sizeof(type) <= SIZE, "Unsupported size");
-      ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT, "Unsupported alignment");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value),
+                          "Unsupported type");
+        ETL_STATIC_ASSERT(sizeof(type) <= SIZE, "Unsupported size");
+        ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT,
+                          "Unsupported alignment");
 
-      ::new (static_cast<type*>(data)) type(etl::forward<T>(value));
+        ::new (static_cast<type*>(data)) type(etl::forward<T>(value));
     }
 #else
     //***************************************************************************
     /// Constructor that static asserts any types that do not conform to the max size and alignment.
     //***************************************************************************
     template <typename T>
-    explicit packet(const T& value)
-    {
-      ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value), "Unsupported type");
-      ETL_STATIC_ASSERT(sizeof(T) <= SIZE, "Unsupported size");
-      ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT, "Unsupported alignment");
+    explicit packet(const T& value) {
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value),
+                          "Unsupported type");
+        ETL_STATIC_ASSERT(sizeof(T) <= SIZE, "Unsupported size");
+        ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT,
+                          "Unsupported alignment");
 
-      ::new (static_cast<T*>(data)) T(value);
+        ::new (static_cast<T*>(data)) T(value);
     }
 #endif
 
     //***************************************************************************
     /// Destructor
     //***************************************************************************
-    ~packet()
-    {
-      static_cast<TBase*>(data)->~TBase();
+    ~packet() {
+        static_cast<TBase*>(data)->~TBase();
     }
 
 #if ETL_USING_CPP11
@@ -101,18 +99,19 @@ namespace etl
     ///\param value The value to assign.
     //***************************************************************************
     template <typename T>
-    packet& operator =(T&& value)
-    {
-      typedef typename etl::types<T>::type type;
+    packet& operator=(T&& value) {
+        typedef typename etl::types<T>::type type;
 
-      ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value), "Unsupported type");
-      ETL_STATIC_ASSERT(sizeof(type) <= SIZE, "Unsupported size");
-      ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT, "Unsupported alignment");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value),
+                          "Unsupported type");
+        ETL_STATIC_ASSERT(sizeof(type) <= SIZE, "Unsupported size");
+        ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT,
+                          "Unsupported alignment");
 
-      static_cast<TBase*>(data)->~TBase();
-      ::new (static_cast<type*>(data)) type(etl::forward<T>(value));
+        static_cast<TBase*>(data)->~TBase();
+        ::new (static_cast<type*>(data)) type(etl::forward<T>(value));
 
-      return *this;
+        return *this;
     }
 #else
     //***************************************************************************
@@ -120,46 +119,44 @@ namespace etl
     ///\param value The value to assign.
     //***************************************************************************
     template <typename T>
-    packet& operator =(const T& value)
-    {
-      ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value), "Unsupported type");
-      ETL_STATIC_ASSERT(sizeof(T) <= SIZE, "Unsupported size");
-      ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT, "Unsupported alignment");
+    packet& operator=(const T& value) {
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value),
+                          "Unsupported type");
+        ETL_STATIC_ASSERT(sizeof(T) <= SIZE, "Unsupported size");
+        ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT,
+                          "Unsupported alignment");
 
-      static_cast<TBase*>(data)->~TBase();
-      ::new (static_cast<T*>(data)) T(value);
+        static_cast<TBase*>(data)->~TBase();
+        ::new (static_cast<T*>(data)) T(value);
 
-      return *this;
+        return *this;
     }
 #endif
 
     //***************************************************************************
     /// Get access to the contained object.
     //***************************************************************************
-    TBase& get()
-    {
-      return *static_cast<TBase*>(data);
+    TBase& get() {
+        return *static_cast<TBase*>(data);
     }
 
     //***************************************************************************
     /// Get access to the contained object.
     //***************************************************************************
-    const TBase& get() const
-    {
-      return *static_cast<const TBase*>(data);
+    const TBase& get() const {
+        return *static_cast<const TBase*>(data);
     }
 
-  private:
-
+   private:
     packet(const packet& other);
-    packet& operator =(const packet& other);
+    packet& operator=(const packet& other);
 
     //***************************************************************************
     /// The internal storage.
     /// Aligned on a suitable boundary, which should be good for all types.
     //***************************************************************************
     typename etl::aligned_storage<SIZE, ALIGNMENT>::type data;
-  };
-}
+};
+}  // namespace etl
 
 #endif

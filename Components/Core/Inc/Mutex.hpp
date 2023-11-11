@@ -11,15 +11,13 @@
 
 /* Macros --------------------------------------------------------------------*/
 
-
 /* Class -----------------------------------------------------------------*/
 
 /**
  * @brief Mutex class is a wrapper for rtos mutexes.
  */
-class Mutex
-{
-public:
+class Mutex {
+   public:
     // Constructors / Destructor
     Mutex();
     ~Mutex();
@@ -31,10 +29,8 @@ public:
     bool LockFromISR();
     bool UnlockFromISR();
 
-private:
+   private:
     SemaphoreHandle_t rtSemaphoreHandle;
-
 };
-
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_MUTEX_H */

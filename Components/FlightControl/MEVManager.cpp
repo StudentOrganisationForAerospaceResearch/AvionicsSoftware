@@ -1,6 +1,6 @@
 #include "MEVManager.hpp"
-#include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
+#include "PBBRxProtocolTask.hpp"
 
 MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
 
@@ -11,7 +11,8 @@ void MEVManager::OpenMEV() {
 
 void MEVManager::CloseMEV() {
     shouldMevBeOpen = CLOSE;
-    PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+    PBBRxProtocolTask::SendPBBCommand(
+        Proto::PBBCommand::Command::PBB_CLOSE_MEV);
 }
 
 void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {

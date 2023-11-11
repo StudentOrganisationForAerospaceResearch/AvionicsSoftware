@@ -33,16 +33,15 @@ SOFTWARE.
 
 #include <stdint.h>
 
-namespace etl
-{
-  /// Allow alternative type for message id.
+namespace etl {
+/// Allow alternative type for message id.
 #if !defined(ETL_MESSAGE_ID_TYPE)
-  typedef uint_least8_t message_id_t;
+typedef uint_least8_t message_id_t;
 #else
-  typedef ETL_MESSAGE_ID_TYPE message_id_t;
+typedef ETL_MESSAGE_ID_TYPE message_id_t;
 #endif
 
-  typedef uint_least8_t message_router_id_t;
-}
+typedef uint_least8_t message_router_id_t;
+}  // namespace etl
 
 #endif

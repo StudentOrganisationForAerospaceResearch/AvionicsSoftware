@@ -36,12 +36,11 @@ SOFTWARE.
 #include <stddef.h>
 
 #if ETL_CPP11_NOT_SUPPORTED
-  // Use the old style C++ NULL definition.
-  #define ETL_NULLPTR 0
+// Use the old style C++ NULL definition.
+#define ETL_NULLPTR 0
 #else
-  // Use the new style nullptr.
-  #define ETL_NULLPTR nullptr
+// Use the new style nullptr.
+#define ETL_NULLPTR nullptr
 #endif
 
 #endif
-

@@ -33,45 +33,31 @@ SOFTWARE.
 
 #include <cmsis_os2.h>
 
-namespace etl
-{
-  //***************************************************************************
-  ///\ingroup mutex
-  ///\brief This mutex class is implemented using CMSIS's RTOS2 mutexes
-  //***************************************************************************
-  class mutex
-  {
-  public:
-
-    mutex()
-      : id(0)
-    {
-      osMutexAttr_t attr = { "ETL", osMutexRecursive | osMutexPrioInherit | osMutexRobust, 0, 0 };
-      id = osMutexNew(&attr);
+namespace etl {
+//***************************************************************************
+///\ingroup mutex
+///\brief This mutex class is implemented using CMSIS's RTOS2 mutexes
+//***************************************************************************
+class mutex {
+   public:
+    mutex() : id(0) {
+        osMutexAttr_t attr = {
+            "ETL", osMutexRecursive | osMutexPrioInherit | osMutexRobust, 0, 0};
+        id = osMutexNew(&attr);
     }
 
-    void lock()
-    {
-      osMutexAcquire(id, osWaitForever);
-    }
+    void lock() { osMutexAcquire(id, osWaitForever); }
 
-    bool try_lock()
-    {
-      return osMutexAcquire(id, 0) == osOK;
-    }
+    bool try_lock() { return osMutexAcquire(id, 0) == osOK; }
 
-    void unlock()
-    {
-      osMutexRelease(id);
-    }
+    void unlock() { osMutexRelease(id); }
 
-  private:
-
+   private:
     mutex(const mutex&) ETL_DELETE;
     mutex& operator=(const mutex&) ETL_DELETE;
 
     osMutexId_t id;
-  };
-}
+};
+}  // namespace etl
 
 #endif

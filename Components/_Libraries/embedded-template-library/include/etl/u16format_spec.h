@@ -33,13 +33,12 @@ SOFTWARE.
 
 ///\ingroup string
 
-#include "platform.h"
 #include "basic_format_spec.h"
+#include "platform.h"
 #include "u16string.h"
 
-namespace etl
-{
-  typedef etl::basic_format_spec<etl::iu16string> u16format_spec;
+namespace etl {
+typedef etl::basic_format_spec<etl::iu16string> u16format_spec;
 }
 
 #endif

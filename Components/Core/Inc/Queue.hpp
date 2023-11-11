@@ -13,13 +13,14 @@
 #ifndef AVIONICS_INCLUDE_SOAR_CORE_QUEUE_H
 #define AVIONICS_INCLUDE_SOAR_CORE_QUEUE_H
 /* Includes ------------------------------------------------------------------*/
-#include "cmsis_os.h"
 #include "Command.hpp"
 #include "FreeRTOS.h"
 #include "Utils.hpp"
+#include "cmsis_os.h"
 
 /* Macros --------------------------------------------------------------------*/
-#define DEFAULT_QUEUE_SEND_WAIT_TICKS (MS_TO_TICKS(15))    // We wait a max of 15ms to send to a queue
+#define DEFAULT_QUEUE_SEND_WAIT_TICKS \
+    (MS_TO_TICKS(15))  // We wait a max of 15ms to send to a queue
 
 /* Constants -----------------------------------------------------------------*/
 //constexpr uint16_t MAX_TICKS_TO_WAIT_SEND = MS_TO_TICKS(1000);
@@ -27,7 +28,7 @@
 /* Class -----------------------------------------------------------------*/
 
 class Queue {
-public:
+   public:
     //Constructors
     Queue(void);
     Queue(uint16_t depth);
@@ -39,18 +40,20 @@ public:
     bool SendToFront(Command& command);
 
     bool Receive(Command& cm, uint32_t timeout_ms = 0);
-    bool ReceiveWait(Command& cm); //Blocks until a command is received
+    bool ReceiveWait(Command& cm);  //Blocks until a command is received
 
     //Getters
-    uint16_t GetQueueMessageCount() const { return uxQueueMessagesWaiting(rtQueueHandle); }
+    uint16_t GetQueueMessageCount() const {
+        return uxQueueMessagesWaiting(rtQueueHandle);
+    }
     uint16_t GetQueueDepth() const { return queueDepth; }
 
-protected:
+   protected:
     //RTOS
-    QueueHandle_t rtQueueHandle;    // RTOS Event Queue Handle
-    
+    QueueHandle_t rtQueueHandle;  // RTOS Event Queue Handle
+
     //Data
-    uint16_t queueDepth;            // Max queue depth
+    uint16_t queueDepth;  // Max queue depth
 };
 
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_QUEUE_H */

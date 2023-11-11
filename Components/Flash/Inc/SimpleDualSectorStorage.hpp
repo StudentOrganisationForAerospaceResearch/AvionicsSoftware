@@ -12,7 +12,6 @@
 
 // Macros/Constexprs ---------------------------------------------------------------------
 
-
 // Class ----------------------------------------------------------------------------------
 /**
  * @brief Simple Dual Sector Storage Class
@@ -25,9 +24,9 @@
  *
  * @tparam T Type of data to store
  */
-template<typename T>
+template <typename T>
 class SimpleDualSectorStorage {
-public:
+   public:
     SimpleDualSectorStorage(Flash* flashDriver, uint32_t startAddr);
 
     bool Read(T& data);
@@ -37,27 +36,27 @@ public:
 
     void Erase();
 
-protected:
+   protected:
     struct Data {
         uint16_t seqN;
         T data;
     };
 
     enum CurrentValidSector {
-        SECTOR_1,   // Sector 1 is valid
-        SECTOR_2,   // Sector 2 is valid
+        SECTOR_1,  // Sector 1 is valid
+        SECTOR_2,  // Sector 2 is valid
 
-        UNKNOWN, // Initial state
-        INVALID  // Both sectors are invalid
+        UNKNOWN,  // Initial state
+        INVALID   // Both sectors are invalid
     };
 
     enum PendingOperation {
-        NONE,   // No pending operations
+        NONE,  // No pending operations
 
-        ERASE_SECTOR_1, // Erase sector 1
-        ERASE_SECTOR_2, // Erase sector 2
+        ERASE_SECTOR_1,  // Erase sector 1
+        ERASE_SECTOR_2,  // Erase sector 2
     };
-    
+
     CurrentValidSector validSector_;
     PendingOperation pendingOp_;
 
@@ -74,13 +73,14 @@ protected:
  *
  * @tparam T type of data to store
  */
-template<typename T>
-SimpleDualSectorStorage<T>::SimpleDualSectorStorage(Flash* flashDriver, uint32_t startAddr) :
-    sector1_(flashDriver, startAddr),
-    sector2_(flashDriver, startAddr + flashDriver->GetSectorSize())
-{
+template <typename T>
+SimpleDualSectorStorage<T>::SimpleDualSectorStorage(Flash* flashDriver,
+                                                    uint32_t startAddr)
+    : sector1_(flashDriver, startAddr),
+      sector2_(flashDriver, startAddr + flashDriver->GetSectorSize()) {
     // The startAddr must align with a sector boundary
-    SOAR_ASSERT(startAddr % flashDriver->GetSectorSize() == 0, "Error-SDSS: Invalid startAddr");
+    SOAR_ASSERT(startAddr % flashDriver->GetSectorSize() == 0,
+                "Error-SDSS: Invalid startAddr");
 
     // Init variables
     validSector_ = UNKNOWN;
@@ -97,7 +97,7 @@ SimpleDualSectorStorage<T>::SimpleDualSectorStorage(Flash* flashDriver, uint32_t
  *
  * @tparam T type of data to read
  */
-template<typename T>
+template <typename T>
 bool SimpleDualSectorStorage<T>::Read(T& data) {
     bool readSuccess = true;
 
@@ -111,45 +111,37 @@ bool SimpleDualSectorStorage<T>::Read(T& data) {
         if (s1Valid && !s2Valid) {
             data = s1Data.data;
             validSector_ = SECTOR_1;
-        }
-        else if (!s1Valid && s2Valid) {
+        } else if (!s1Valid && s2Valid) {
             data = s2Data.data;
             validSector_ = SECTOR_2;
-        }
-        else if (s1Valid && s2Valid) {
+        } else if (s1Valid && s2Valid) {
             if (s1Data.seqN > s2Data.seqN) {
                 data = s1Data.data;
                 validSector_ = SECTOR_1;
                 pendingOp_ = ERASE_SECTOR_2;
-            }
-            else if (s1Data.seqN < s2Data.seqN) {
+            } else if (s1Data.seqN < s2Data.seqN) {
                 data = s2Data.data;
                 validSector_ = SECTOR_2;
                 pendingOp_ = ERASE_SECTOR_1;
-            }
-            else {
+            } else {
                 // Same seqN on both, take the one which appears first in the flash memory (ie, sector 1)
                 data = s1Data.data;
                 validSector_ = SECTOR_1;
                 pendingOp_ = ERASE_SECTOR_2;
             }
-        }
-        else {
+        } else {
             validSector_ = INVALID;
             readSuccess = false;
         }
-    }
-    else if (validSector_ == SECTOR_1) {
+    } else if (validSector_ == SECTOR_1) {
         Data readData;
         readSuccess = sector1_.Read(readData);
         data = readData.data;
-    }
-    else if (validSector_ == SECTOR_2) {
+    } else if (validSector_ == SECTOR_2) {
         Data readData;
         readSuccess = sector2_.Read(readData);
         data = readData.data;
-    }
-    else {
+    } else {
         readSuccess = false;
     }
 
@@ -162,17 +154,16 @@ bool SimpleDualSectorStorage<T>::Read(T& data) {
  *
  * @tparam T type of data to store
  */
-template<typename T>
+template <typename T>
 void SimpleDualSectorStorage<T>::Maintain() {
     // If no pending operation, do nothing
     if (pendingOp_ == NONE)
         return;
 
     // Erase sector operations
-    if(pendingOp_ == ERASE_SECTOR_1) {
+    if (pendingOp_ == ERASE_SECTOR_1) {
         sector1_.Erase();
-    }
-    else if (pendingOp_ == ERASE_SECTOR_2) {
+    } else if (pendingOp_ == ERASE_SECTOR_2) {
         sector2_.Erase();
     }
 
@@ -191,7 +182,7 @@ void SimpleDualSectorStorage<T>::Maintain() {
  *
  * @tparam T type of data to write
  */
-template<typename T>
+template <typename T>
 bool SimpleDualSectorStorage<T>::Write(T& data) {
     // First read the current valid data
     Data currentData;
@@ -219,7 +210,7 @@ bool SimpleDualSectorStorage<T>::Write(T& data) {
     bool writeSuccess = true;
 
     // Write to the other sector
-    if(validSector_ == SECTOR_1) {
+    if (validSector_ == SECTOR_1) {
         // Write to sector 2
         writeSuccess = sector2_.Write(currentData, true);
 
@@ -227,8 +218,7 @@ bool SimpleDualSectorStorage<T>::Write(T& data) {
         sector1_.Invalidate();
         validSector_ = SECTOR_2;
         pendingOp_ = ERASE_SECTOR_1;
-    }
-    else if (validSector_ == SECTOR_2) {
+    } else if (validSector_ == SECTOR_2) {
         // Write to sector 1
         writeSuccess = sector1_.Write(currentData, true);
 
@@ -236,8 +226,7 @@ bool SimpleDualSectorStorage<T>::Write(T& data) {
         sector2_.Invalidate();
         validSector_ = SECTOR_1;
         pendingOp_ = ERASE_SECTOR_2;
-    }
-    else {
+    } else {
         writeSuccess = false;
     }
 
@@ -248,13 +237,12 @@ bool SimpleDualSectorStorage<T>::Write(T& data) {
  * @brief Erases both sectors, should only be used on system startup or when
  *        completely resetting the storage. Blocks until both sectors are erased.
  */
-template<typename T>
-void SimpleDualSectorStorage<T>::Erase()
-{
+template <typename T>
+void SimpleDualSectorStorage<T>::Erase() {
     sector1_.Erase();
     sector2_.Erase();
     validSector_ = INVALID;
     pendingOp_ = NONE;
 }
 
-#endif // SOAR_SIMPLE_DUAL_SECTOR_STORAGE_HPP
+#endif  // SOAR_SIMPLE_DUAL_SECTOR_STORAGE_HPP

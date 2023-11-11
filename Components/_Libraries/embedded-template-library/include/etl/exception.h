@@ -37,38 +37,29 @@ SOFTWARE.
 /// The base class for all ETL exceptions.
 ///\ingroup utilities
 
-namespace etl
-{
-  //***************************************************************************
-  ///\ingroup exception
-  /// A low overhead exception base class.
-  //***************************************************************************
-  class exception
-  {
-  public:
-
+namespace etl {
+//***************************************************************************
+///\ingroup exception
+/// A low overhead exception base class.
+//***************************************************************************
+class exception {
+   public:
     typedef const char* string_type;
-    typedef int         numeric_type;
+    typedef int numeric_type;
 
 #if defined(ETL_VERBOSE_ERRORS)
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
     exception(string_type reason_, string_type file_, numeric_type line_)
-      : reason_text(reason_),
-        file_text(file_),
-        line(line_)
-    {
-    }
+        : reason_text(reason_), file_text(file_), line(line_) {}
 #else
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
     exception(string_type reason_, string_type file_, numeric_type line_)
-      : reason_text(reason_),
-        line(line_)
-    {
-    (void)file_;
+        : reason_text(reason_), line(line_) {
+        (void)file_;
     }
 #endif
 
@@ -76,22 +67,19 @@ namespace etl
     /// Gets the reason for the exception.
     /// \return const char* to the reason.
     //***************************************************************************
-    string_type what() const
-    {
-      return reason_text;
+    string_type what() const {
+        return reason_text;
     }
-
 
     //***************************************************************************
     /// Gets the file for the exception.
     /// \return const char* to the file.
     //***************************************************************************
-    string_type file_name() const
-    {
+    string_type file_name() const {
 #if defined(ETL_VERBOSE_ERRORS)
-      return file_text;
+        return file_text;
 #else
-      return "";
+        return "";
 #endif
     }
 
@@ -99,19 +87,17 @@ namespace etl
     /// Gets the line for the exception.
     /// \return const char* to the line.
     //***************************************************************************
-    numeric_type line_number() const
-    {
-      return line;
+    numeric_type line_number() const {
+        return line;
     }
 
-  private:
-
-    string_type  reason_text; ///< The reason for the exception.
+   private:
+    string_type reason_text;  ///< The reason for the exception.
 #if defined(ETL_VERBOSE_ERRORS)
-    string_type  file_text;   ///< The file for the exception.
+    string_type file_text;  ///< The file for the exception.
 #endif
-    numeric_type line;   ///< The line for the exception.
-  };
-}
+    numeric_type line;  ///< The line for the exception.
+};
+}  // namespace etl
 
 #endif
