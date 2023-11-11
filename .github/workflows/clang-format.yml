@@ -14,7 +14,8 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y clang-format
 
     - name: Run Clang Format
-      run: find ./Components -path './Components/libraries' -prune -o -regex '.*\.\(cpp\|hpp\|c\|h\)' -exec clang-format -i {} \;
+      run: |
+        find ./Components -regex '.*\.\(cpp\|hpp\|c\|h\)' | grep -v './Components/libraries' | xargs clang-format -i
 
     - name: Commit changes
       run: |
