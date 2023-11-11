@@ -14,7 +14,12 @@
 /* Macros/Enums ------------------------------------------------------------*/
 constexpr uint32_t IGINITION_TIMER_PERIOD_MS = 20000;
 //constexpr uint32_t IR_IGINITION_TIMER_PERIOD = 8000;
-constexpr uint32_t RECOVERY_TIMER_PERIOD_MS = 30000;
+
+constexpr uint32_t BURN_TIMER_PERIOD_MS = 2 * 1000;         // LAUNCH -> BURN Timer is      2 seconds (LAUNCH for 2 seconds after confirmation)
+constexpr uint32_t COAST_TIMER_PERIOD_MS = 5 * 1000;        // BURN -> COAST Timer is       5 seconds (BURN for 5 seconds)
+constexpr uint32_t DESCENT_TIMER_PERIOD_MS = 2 * 60 * 1000; // COAST -> DESCENT Timer is    2 minutes (COAST for 2 minutes) -- Shorter, but since vents open in DESCENT this is longer for safety
+constexpr uint32_t RECOVERY_TIMER_PERIOD_MS = 10 * 1000;    // DESCENT -> RECOVERY Timer is 10 seconds(DESCENT for 10 seconds) -- Vents Open
+
 
 class TimerTransitions
 {

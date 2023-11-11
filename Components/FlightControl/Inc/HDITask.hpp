@@ -15,6 +15,13 @@ struct HDIConfig{
     uint16_t delayMs;
 };
 
+enum HDITaskCommands : uint8_t {
+    INVALID = 0,
+
+    MUTE = 0x11,
+    UNMUTE = 0x22,
+};
+
 class HDITask : public Task
 {
 public:
@@ -39,6 +46,8 @@ private:
     HDITask(const HDITask&);                        // Prevent copy-construction
     HDITask& operator=(const HDITask&);            // Prevent assignment
     HDIConfig currentConfig;
+
+    bool buzzerMuted_;
 
 };
 

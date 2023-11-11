@@ -19,6 +19,8 @@
 #include "DebugTask.hpp"
 #include "Task.hpp"
 #include "DMBProtocolTask.hpp"
+#include "FlashTask.hpp"
+#include <string.h>
 
 
 /* Macros --------------------------------------------------------------------*/
@@ -108,13 +110,16 @@ void IMUTask::InitTask()
  */
 void IMUTask::Run(void* pvParams)
 {
+    //Delay before IMU init
+    osDelay(100);
+
     //Setup the IMU
     SetupIMU();
 
     //Task run loop
     while (1) {
         Command cm;
-
+        
         //Wait forever for a command
         qEvtQueue->ReceiveWait(cm);
 
@@ -136,6 +141,7 @@ void IMUTask::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
         HandleRequestCommand(cm.GetTaskCommand());
+        break;
     }
     case TASK_SPECIFIC_COMMAND: {
         break;
@@ -162,6 +168,10 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case IMU_REQUEST_TRANSMIT:
         TransmitProtocolData();
+        LogDataToFlash();
+        break;
+    case IMU_REQUEST_FLASH_LOG:
+        LogDataToFlash();
         break;
     case IMU_REQUEST_DEBUG:
         SOAR_PRINT("\t-- IMU Data --\n");
@@ -170,7 +180,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         SOAR_PRINT(" Mag (x,y,z)   : (%d, %d, %d) milli-gauss\n", data->magnetoX_, data->magnetoY_, data->magnetoZ_);
         break;
     default:
-        SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+        SOAR_PRINT("IMUTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
         break;
     }
 }
@@ -181,7 +191,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
 void IMUTask::TransmitProtocolData()
 {
     // Transmits protocol data
-    SOAR_PRINT("IMU Task Transmit...\n");
+    //SOAR_PRINT("IMU Task Transmit...\n");
 
     Proto::TelemetryMessage msg;
     msg.set_source(Proto::Node::NODE_DMB);
@@ -189,14 +199,14 @@ void IMUTask::TransmitProtocolData()
     msg.set_message_id((uint32_t)Proto::MessageID::MSG_TELEMETRY);
     Proto::IMU imuData;
     imuData.set_accelx(data->accelX_);
-	imuData.set_accely(data->accelY_);
-	imuData.set_accelz(data->accelZ_);
-	imuData.set_gyrox(data->gyroX_);
+    imuData.set_accely(data->accelY_);
+    imuData.set_accelz(data->accelZ_);
+    imuData.set_gyrox(data->gyroX_);
     imuData.set_gyroy(data->gyroY_);
     imuData.set_gyroz(data->gyroZ_);
     imuData.set_magx(data->magnetoX_);
     imuData.set_magy(data->magnetoY_);
-	imuData.set_magz(data->magnetoZ_);
+    imuData.set_magz(data->magnetoZ_);
     msg.set_imu(imuData);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
@@ -204,6 +214,16 @@ void IMUTask::TransmitProtocolData()
 
     // Send the barometer data
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+}
+
+/**
+ * @brief Logs the IMU data to flash
+ */
+void IMUTask::LogDataToFlash()
+{
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    flashCommand.CopyDataToCommand((uint8_t*)data, sizeof(AccelGyroMagnetismData));
+    FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }
 
 /**
@@ -216,6 +236,8 @@ void IMUTask::SampleIMU()
     int16_t accelX, accelY, accelZ;
     int16_t gyroX, gyroY, gyroZ;
     int16_t magnetoX, magnetoY, magnetoZ;
+
+    data->time = TICKS_TO_MS(xTaskGetTickCount()); // ms
 
     //READ------------------------------------------------------
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
@@ -261,7 +283,7 @@ void IMUTask::SampleIMU()
 uint8_t IMUTask::SetupIMU()
 {
     /* Setup the Accel / Gyro */
-	HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_SET);
 

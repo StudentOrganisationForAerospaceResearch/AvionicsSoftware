@@ -23,6 +23,10 @@
 #include "WatchdogTask.hpp"
 #include "TimerTransitions.hpp"
 #include "PressureTransducerTask.hpp"
+#include "BatteryTask.hpp"
+#include "GPSTask.hpp"
+#include "FlashTask.hpp"
+#include "HDITask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -43,19 +47,15 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
  */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-    if (huart->Instance == SystemHandles::UART_Debug->Instance)
-        DebugTask::Inst().InterruptRxData();
-    else if (huart->Instance == SystemHandles::UART_Protocol->Instance)
-        DMBProtocolTask::Inst().InterruptRxData();
-    else if (huart->Instance == SystemHandles::UART_PBB->Instance)
-        PBBRxProtocolTask::Inst().InterruptRxData();
+    if (huart->Instance == SystemHandles::UART_GPS->Instance)
+        GPSTask::Inst().HandleGPSRxComplete();
 }
 
 /* Functions -----------------------------------------------------------------*/
 /**
  * @brief Constructor, sets all member variables
  */
-DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS)
+DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::Debug)
 {
     memset(debugBuffer, 0, sizeof(debugBuffer));
     debugMsgIdx = 0;
@@ -173,14 +173,28 @@ void DebugTask::HandleDebugMessage(const char* msg)
         Command cmd2(REQUEST_COMMAND, IMU_REQUEST_DEBUG);
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     }
+    else if (strcmp(msg, "bat") == 0) {
+ 		SOAR_PRINT("Debug 'Battery Voltage' Sample and Output Received\n");
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+ 		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
+ 	}
+    else if (strcmp(msg, "flashdump") == 0) {
+        // Send a request to the flash task to dump the flash data
+        SOAR_PRINT("Dump of sensor data in flash requested\n");
+        Command cmd((uint16_t)DUMP_FLASH_DATA);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
+    else if (strcmp(msg, "flasherase") == 0) 
+    {
+        SOAR_PRINT("erase chip in flash requested\n");
+        Command cmd((uint16_t)ERASE_ALL_FLASH);
+        FlashTask::Inst().GetEventQueue()->Send(cmd);
+    }
     else if (strcmp(msg, "radiohb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     }
     else if (strcmp(msg, "disablehb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
-    }
-    else if (strcmp(msg, "manualLaunch") == 0) {
-    	TimerTransitions::Inst().ManualLaunch();
     }
     else if (strcmp(msg, "mev enable") == 0) {
     	GPIO::MEV_EN::On();
@@ -196,12 +210,57 @@ void DebugTask::HandleDebugMessage(const char* msg)
     	PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_OPEN_MEV);
     }
     else if (strcmp(msg, "ptc") == 0) {
-		// Print message
 		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
 	}
-	else {
+    else if (strcmp(msg, "gps") == 0) {
+    	GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
+    }
+    else if (strcmp(msg, "gpstransmit") == 0) {
+		GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
+	}
+    else if (strcmp(msg, "vent open") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Vent::Open();
+    }
+    else if (strcmp(msg, "vent close") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Vent::Close();
+    }
+    else if (strcmp(msg, "drain open") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Drain::Open();
+    }
+    else if (strcmp(msg, "drain close") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        GPIO::Drain::Close();
+    }
+    else if (strcmp(msg, "vent state") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        if(GPIO::Vent::IsOpen() == 1) {
+            SOAR_PRINT("Vent State : OPEN \n");
+        }
+        else if (GPIO::Vent::IsOpen() == 0) {
+            SOAR_PRINT("Vent State : CLOSED \n");
+        }
+    }
+    else if (strcmp(msg, "drain state") == 0) {
+        //TODO: Remember to remove / make sure not enabled in final code
+        if(GPIO::Drain::IsOpen() == 1) {
+            SOAR_PRINT("Drain State : OPEN \n");
+        }
+        else if (GPIO::Drain::IsOpen() == 0) {
+            SOAR_PRINT("Drain State : CLOSED \n");
+        }
+    }
+    else if(strcmp(msg, "mute") == 0) {
+        HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::MUTE));
+    }
+    else if(strcmp(msg, "unmute") == 0) {
+        HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::UNMUTE));
+    }
+    else {
         // Single character command, or unknown command
         switch (msg[0]) {
         default:
@@ -220,15 +279,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
  */
 bool DebugTask::ReceiveData()
 {
-    HAL_UART_Receive_IT(SystemHandles::UART_Debug, &debugRxChar, 1);
-    return true;
+    return kUart_->ReceiveIT(&debugRxChar, this);
 }
 
 /**
  * @brief Receive data to the buffer
  * @return Whether the debugBuffer is ready or not
  */
-void DebugTask::InterruptRxData()
+void DebugTask::InterruptRxData(uint8_t errors)
 {
     // If we already have an unprocessed debug message, ignore this byte
     if (!isDebugMsgReady) {

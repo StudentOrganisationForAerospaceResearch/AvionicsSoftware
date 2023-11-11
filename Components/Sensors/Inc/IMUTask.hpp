@@ -16,8 +16,9 @@
 enum IMU_TASK_COMMANDS {
     IMU_NONE = 0,
     IMU_REQUEST_NEW_SAMPLE,// Get a new IMU sample, task will be blocked for polling time
-    IMU_REQUEST_TRANSMIT,    // Send the current IMU data over the Radio
-    IMU_REQUEST_DEBUG        // Send the current IMU data over the Debug UART
+    IMU_REQUEST_TRANSMIT,    // Send the current IMU data over the Radio and Logs to Flash
+    IMU_REQUEST_DEBUG,        // Send the current IMU data over the Debug UART
+    IMU_REQUEST_FLASH_LOG,
 };
 
 /* Class ------------------------------------------------------------------*/
@@ -39,7 +40,9 @@ protected:
     void HandleCommand(Command& cm);
     void HandleRequestCommand(uint16_t taskCommand);
 
+    // Transmit/Log Functions
     void TransmitProtocolData();
+    void LogDataToFlash();
 
     // Sampling
     void SampleIMU();

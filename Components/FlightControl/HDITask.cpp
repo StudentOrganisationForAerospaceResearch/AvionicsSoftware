@@ -15,7 +15,7 @@
 
 
 extern TIM_HandleTypeDef htim2;
-constexpr uint16_t BUZZER_DEFAULT_DUTY_CYCLE = 200;
+constexpr uint16_t BUZZER_DEFAULT_DUTY_CYCLE = 190;
 
 
 /* One cycle is defined as a certain amount of beeps for that state.
@@ -52,7 +52,7 @@ etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConf
 /**
 * @brief Constructor for HDITask
 */
-HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS)
+HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(false)
 {
 }
 
@@ -117,6 +117,12 @@ void HDITask::HandleCommand(Command& cm)
         break;
     }
     case TASK_SPECIFIC_COMMAND: {
+        if(HDITaskCommands::MUTE == cm.GetTaskCommand()) {
+            buzzerMuted_ = true;
+        }
+        else if(HDITaskCommands::UNMUTE == cm.GetTaskCommand()) {
+            buzzerMuted_ = false;
+        }
         break;
     }
     default:
@@ -151,14 +157,18 @@ void HDITask::BuzzBlinkSequence(HDIConfig blinkSequence)
     for (uint8_t i = 0; i < blinkSequence.numBlinks; i++)
     {
         // Start the buzzer
-    	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+        if(!buzzerMuted_) {
+            HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+        }
 
         // Turn on the LED and play the beep
         GPIO::LED1::On();
         osDelay(blinkSequence.delayMs); // a beep lasts this long
 
         // Stop the buzzer and turn off the LED
-        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        if(!buzzerMuted_) {
+            HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        }
         GPIO::LED1::Off();
 
         // Wait for the silence duration between beeps

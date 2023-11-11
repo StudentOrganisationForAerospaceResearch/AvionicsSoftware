@@ -15,41 +15,47 @@ TimerTransitions::TimerTransitions() {
 }
 
 void TimerTransitions::Setup() {
-	ignitionCountdown = new Timer(IngnitionToLaunchCallback);
-	ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD_MS);
+	// Ignition timer unused
+	//ignitionCountdown = new Timer(IngnitionToLaunchCallback);
+	//ignitionCountdown->ChangePeriodMs(IGINITION_TIMER_PERIOD_MS);
 	burnCountdown = new Timer(LaunchToBurnCallback);
-	burnCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
+	burnCountdown->ChangePeriodMs(BURN_TIMER_PERIOD_MS);
 	coastCountdown = new Timer(BurnToCoastCallback);
-	coastCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
+	coastCountdown->ChangePeriodMs(COAST_TIMER_PERIOD_MS);
 	descentCountdown = new Timer(CoastToDescentCallback);
-	descentCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
+	descentCountdown->ChangePeriodMs(DESCENT_TIMER_PERIOD_MS);
 	recoveryCountdown = new Timer(DescentToRecoveryCallback);
 	recoveryCountdown->ChangePeriodMs(RECOVERY_TIMER_PERIOD_MS);
 }
 
-void TimerTransitions::IgnitionSequence() {
-//    SOAR_PRINT("Entering IGNITION state...\n");
-    ignitionCountdown->Start();
-    return;
-}
+// Ignition sequence unused
+//void TimerTransitions::IgnitionSequence() {
+////    SOAR_PRINT("Entering IGNITION state...\n");
+//    ignitionCountdown->Start();
+//    return;
+//}
 
 void TimerTransitions::BurnSequence() {
-	burnCountdown->Start();
+	if (!burnCountdown->Start())
+		burnCountdown->ResetTimerAndStart();
     return;
 }
 
 void TimerTransitions::CoastSequence() {
-	coastCountdown->Start();
+	if(!coastCountdown->Start())
+		coastCountdown->ResetTimerAndStart();
     return;
 }
 
 void TimerTransitions::DescentSequence() {
-	descentCountdown->Start();
+	if(!descentCountdown->Start())
+		descentCountdown->ResetTimerAndStart();
     return;
 }
 
 void TimerTransitions::RecoverySequence() {
-	recoveryCountdown->Start();
+	if(!recoveryCountdown->Start())
+		recoveryCountdown->ResetTimerAndStart();
     return;
 }
 
@@ -59,23 +65,24 @@ void TimerTransitions::RecoverySequence() {
 //    return;
 //}
 
-void TimerTransitions::ManualLaunch() {
-	ignitionConformation = true;
-	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
-}
+//void TimerTransitions::ManualLaunch() {
+//	ignitionConformation = true;
+//	FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
+//}
 
-void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {
-//    SOAR_PRINT("Changing State to LAUNCH....\n");
-
-    if ((Inst().ignitionConformation == true)) {
-//        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
-        Timer::DefaultCallback(rtTimerHandle);
-    }
-    else {
-    	Inst().ignitionCountdown->ResetTimer();
-        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_GOTO_ARM));
-    }
-
-    return;
-}
+// Ignition sequence unused
+//void TimerTransitions::IngnitionToLaunchCallback(TimerHandle_t rtTimerHandle) {
+////    SOAR_PRINT("Changing State to LAUNCH....\n");
+//
+//    if ((Inst().ignitionConformation == true)) {
+////        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_IGNITION_TO_LAUNCH));
+//        Timer::DefaultCallback(rtTimerHandle);
+//    }
+//    else {
+//    	Inst().ignitionCountdown->ResetTimer();
+//        FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_GOTO_ARM));
+//    }
+//
+//    return;
+//}
 

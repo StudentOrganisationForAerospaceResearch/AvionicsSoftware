@@ -19,10 +19,10 @@
 #include "Data.h"
 #include "DebugTask.hpp"
 #include "Task.hpp"
-
 #include "DMBProtocolTask.hpp"
 #include "TelemetryMessage.hpp"
-
+#include "FlashTask.hpp"
+#include <string.h>
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -94,7 +94,7 @@ void BarometerTask::Run(void * pvParams)
 
         //Wait forever for a command
         qEvtQueue->ReceiveWait(cm);
-
+        
         //Process the command
         HandleCommand(cm);
     }
@@ -139,7 +139,11 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case BARO_REQUEST_TRANSMIT:
         TransmitProtocolBaroData();
+        LogDataToFlash();
         break;
+    case BARO_REQUEST_FLASH_LOG:
+        LogDataToFlash();
+		break;
     case BARO_REQUEST_DEBUG:
         SOAR_PRINT("\t-- Barometer Data --\n");
         SOAR_PRINT(" Temp (C)       : %d.%d\n", data->temperature_ / 100, data->temperature_ % 100);
@@ -157,7 +161,7 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
  */
 void BarometerTask::TransmitProtocolBaroData()
 {
-    SOAR_PRINT("Barometer Task Transmit...\n");
+    //SOAR_PRINT("Barometer Task Transmit...\n");
 
     Proto::TelemetryMessage msg;
     msg.set_source(Proto::Node::NODE_DMB);
@@ -173,6 +177,16 @@ void BarometerTask::TransmitProtocolBaroData()
 
     // Send the barometer data
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+}
+
+/**
+ * @brief Logs barometer data sample to flash
+ */
+void BarometerTask::LogDataToFlash()
+{
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    flashCommand.CopyDataToCommand((uint8_t*)data, sizeof(BarometerData));
+    FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }
 
 /**
@@ -224,6 +238,8 @@ void BarometerTask::SampleBarometer()
     uint16_t c4Tco = ReadCalibrationCoefficients(PROM_READ_TCO_CMD);
     uint16_t c5Tref = ReadCalibrationCoefficients(PROM_READ_TREF_CMD);
     uint16_t c6Tempsens = ReadCalibrationCoefficients(PROM_READ_TEMPSENS_CMD);
+
+    data->time = TICKS_TO_MS(xTaskGetTickCount()); // ms
 
     /**
      * Repeatedly read digital pressure and temperature.

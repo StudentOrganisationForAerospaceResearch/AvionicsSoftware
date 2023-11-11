@@ -10,6 +10,8 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
+constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5; // N cycles of telemetry sends for each flash log
+
 class TelemetryTask : public Task
 {
 public:
@@ -27,6 +29,11 @@ protected:
 
     void HandleCommand(Command& cm);
     void RunLogSequence();
+
+    void RequestSample();
+    void RequestTransmit();
+    void RequestLogToFlash();
+
     void SendVentDrainStatus();
 
 
@@ -38,6 +45,8 @@ private:
 
     // Private Variables
     uint32_t loggingDelayMs;
+
+    uint8_t numNonFlashLogs_;
 };
 
 #endif    // SOAR_TELEMETRYTASK_HPP_
