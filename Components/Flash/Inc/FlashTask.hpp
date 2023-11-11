@@ -11,11 +11,12 @@
 #include "SystemStorage.hpp"
 #include "SPIFlash.hpp"
 #include "Timer.hpp"
+#include "Data.h"
 
 /* Macros/Enums ------------------------------------------------------------*/
 constexpr uint16_t MAX_FLASH_TASK_WAIT_TIME_MS = 5000; // The max time to wait for a command before maintenance is checked
 constexpr uint8_t FLASH_OFFSET_WRITES_UPDATE_THRESHOLD = 50; // The number of writes to flash before offsets are updated in flash
-constexpr size_t FLASH_HEAP_BUF_SIZE = 256; // The size in bytes of each buffer for holding sensor data
+constexpr size_t FLASH_HEAP_BUF_SIZE = 256; // The size in bytes of each buffer for holding incoming sensor data
 
 enum FLASH_COMMANDS {
     WRITE_STATE_TO_FLASH = 0,
@@ -26,7 +27,9 @@ enum FLASH_COMMANDS {
 	FLASH_DUMP_AT = 0x80,
 	FLASH_DEBUGWRITE = 0x90,
 	GET_LOGS_PAST_SECOND = 0x99,
-	GET_PAGE_OFFSET = 0xa1
+	GET_PAGE_OFFSET = 0xa1,
+	FLASH_READ_FIRST_LOGS = 0xba,
+	TOG_BUFLOGS = 0xbb
 };
 
 
@@ -52,6 +55,9 @@ protected:
     void WriteLogDataToFlashPageAligned(uint8_t* data, uint16_t size,uint32_t pageAddr);
     bool ReadLogDataFromFlash();
     void AddLog(const uint8_t* datain, uint32_t size);
+    bool DebugReadLogs(uint32_t numOfLogs);
+
+    bool writebuftimemsg = true;
 
 
     static void benchmarkcallback(TimerHandle_t x) {
@@ -94,6 +100,12 @@ private:
     Timer* benchmarktimer;
 
     uint16_t logsInLastSecond;
+
+    BarometerData lastBaroData;
+    AccelGyroMagnetismData lastIMUData;
+//    GPSDataFlashLog lastGPSFlashData;
+
+
 
 
 

@@ -14,6 +14,7 @@
 #include "FlightTask.hpp"
 #include "GPIO.hpp"
 #include "stm32f4xx_hal.h"
+#include "TelemetryTask.hpp"
 
 // External Tasks (to send debug commands to)
 #include "BarometerTask.hpp"
@@ -139,6 +140,9 @@ void DebugTask::HandleDebugMessage(const char* msg)
         SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
         SOAR_PRINT("Lowest Ever Heap Size\t: %d Bytes\n", xPortGetMinimumEverFreeHeapSize());
         SOAR_PRINT("Debug Task Runtime  \t: %d ms\n\n", TICKS_TO_MS(xTaskGetTickCount()));
+    } else if (strncmp(msg, "logms " ,6) == 0) {
+    	int32_t newperiod = ExtractIntParameter(msg, 6);
+    	TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, newperiod));
     }
     else if (strcmp(msg, "blinkled") == 0) {
         // Print message
@@ -212,6 +216,14 @@ void DebugTask::HandleDebugMessage(const char* msg)
 
     } else if (strcmp(msg, "flogtest") == 0) {
     	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)FLASH_DEBUGWRITE);
+    	FlashTask::Inst().GetEventQueue()->Send(cmd);
+    } else if (strncmp(msg, "dumpfirst ", 10) == 0) {
+    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)FLASH_READ_FIRST_LOGS);
+    	int32_t firstn = ExtractIntParameter(msg, 10);
+    	cmd.CopyDataToCommand((uint8_t*)&firstn,sizeof(firstn));
+    	FlashTask::Inst().GetEventQueue()->Send(cmd);
+    } else if (strcmp(msg,"togwritebufmsg") == 0) {
+    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)TOG_BUFLOGS);
     	FlashTask::Inst().GetEventQueue()->Send(cmd);
     }
     else if (strcmp(msg, "flasherase") == 0) 

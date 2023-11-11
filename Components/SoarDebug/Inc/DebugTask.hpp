@@ -54,6 +54,8 @@ protected:
     uint8_t debugMsgIdx;
     bool isDebugMsgReady;
 
+
+
     uint8_t debugRxChar; // Character received from UART Interrupt
 
     UARTDriver* const kUart_; // UART Driver
