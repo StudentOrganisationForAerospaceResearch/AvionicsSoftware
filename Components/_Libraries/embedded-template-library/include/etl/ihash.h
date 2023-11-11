@@ -48,8 +48,7 @@ namespace etl {
 //***************************************************************************
 class hash_exception : public exception {
    public:
-    hash_exception(string_type reason_, string_type file_name_,
-                   numeric_type line_number_)
+    hash_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -60,9 +59,7 @@ class hash_exception : public exception {
 class hash_finalised : public hash_exception {
    public:
     hash_finalised(string_type file_name_, numeric_type line_number_)
-        : hash_exception(
-              ETL_ERROR_TEXT("ihash:finalised", ETL_IHASH_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : hash_exception(ETL_ERROR_TEXT("ihash:finalised", ETL_IHASH_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 /// For the Americans

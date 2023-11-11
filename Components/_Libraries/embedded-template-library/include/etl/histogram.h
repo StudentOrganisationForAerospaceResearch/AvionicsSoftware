@@ -48,13 +48,11 @@ namespace private_histogram {
 template <typename TCount, size_t Max_Size_>
 class histogram_common {
    public:
-    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value,
-                      "Only integral count allowed");
+    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value, "Only integral count allowed");
 
     static ETL_CONSTANT size_t Max_Size = Max_Size_;
 
-    typedef
-        typename etl::array<TCount, Max_Size>::const_iterator const_iterator;
+    typedef typename etl::array<TCount, Max_Size>::const_iterator const_iterator;
 
     //*********************************
     /// Beginning of the histogram.
@@ -94,10 +92,7 @@ class histogram_common {
     //*********************************
     /// Count of items in the histogram.
     //*********************************
-    size_t count() const {
-        return etl::accumulate(accumulator.begin(), accumulator.end(),
-                               size_t(0));
-    }
+    size_t count() const { return etl::accumulate(accumulator.begin(), accumulator.end(), size_t(0)); }
 
    protected:
     etl::array<TCount, Max_Size> accumulator;
@@ -107,16 +102,12 @@ class histogram_common {
 //***************************************************************************
 /// Histogram with a compile time start index.
 //***************************************************************************
-template <typename TKey, typename TCount, size_t Max_Size,
-          int32_t Start_Index = etl::integral_limits<int32_t>::max>
-class histogram
-    : public etl::private_histogram::histogram_common<TCount, Max_Size>,
-      public etl::unary_function<TKey, void> {
+template <typename TKey, typename TCount, size_t Max_Size, int32_t Start_Index = etl::integral_limits<int32_t>::max>
+class histogram : public etl::private_histogram::histogram_common<TCount, Max_Size>,
+                  public etl::unary_function<TKey, void> {
    public:
-    ETL_STATIC_ASSERT(etl::is_integral<TKey>::value,
-                      "Only integral keys allowed");
-    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value,
-                      "Only integral count allowed");
+    ETL_STATIC_ASSERT(etl::is_integral<TKey>::value, "Only integral keys allowed");
+    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value, "Only integral count allowed");
 
     typedef TKey key_type;
     typedef TCount count_type;
@@ -216,13 +207,10 @@ class histogram
 //***************************************************************************
 template <typename TKey, typename TCount, size_t Max_Size>
 class histogram<TKey, TCount, Max_Size, etl::integral_limits<int32_t>::max>
-    : public etl::private_histogram::histogram_common<TCount, Max_Size>,
-      public etl::unary_function<TKey, void> {
+    : public etl::private_histogram::histogram_common<TCount, Max_Size>, public etl::unary_function<TKey, void> {
    public:
-    ETL_STATIC_ASSERT(etl::is_integral<TKey>::value,
-                      "Only integral keys allowed");
-    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value,
-                      "Only integral count allowed");
+    ETL_STATIC_ASSERT(etl::is_integral<TKey>::value, "Only integral keys allowed");
+    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value, "Only integral count allowed");
 
     typedef TKey key_type;
     typedef TCount count_type;
@@ -231,16 +219,13 @@ class histogram<TKey, TCount, Max_Size, etl::integral_limits<int32_t>::max>
     //*********************************
     /// Constructor
     //*********************************
-    explicit histogram(key_type start_index_) : start_index(start_index_) {
-        this->accumulator.fill(count_type(0));
-    }
+    explicit histogram(key_type start_index_) : start_index(start_index_) { this->accumulator.fill(count_type(0)); }
 
     //*********************************
     /// Constructor
     //*********************************
     template <typename TIterator>
-    histogram(key_type start_index_, TIterator first, TIterator last)
-        : start_index(start_index_) {
+    histogram(key_type start_index_, TIterator first, TIterator last) : start_index(start_index_) {
         this->accumulator.fill(count_type(0));
         add(first, last);
     }
@@ -332,8 +317,7 @@ class sparse_histogram : public etl::unary_function<TKey, void> {
     typedef etl::flat_map<TKey, TCount, Max_Size_> accumulator_type;
 
    public:
-    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value,
-                      "Only integral count allowed");
+    ETL_STATIC_ASSERT(etl::is_integral<TCount>::value, "Only integral count allowed");
 
     static ETL_CONSTANT size_t Max_Size = Max_Size_;
 
@@ -359,9 +343,7 @@ class sparse_histogram : public etl::unary_function<TKey, void> {
     //*********************************
     /// Copy constructor
     //*********************************
-    sparse_histogram(const sparse_histogram& other) {
-        this->accumulator = other.accumulator;
-    }
+    sparse_histogram(const sparse_histogram& other) { this->accumulator = other.accumulator; }
 
 #if ETL_USING_CPP11
     //*********************************

@@ -27,13 +27,11 @@ void FlashTask::InitTask() {
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize flash task twice");
 
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)FlashTask::RunTask, (const char*)"FlashTask",
-        (uint16_t)FLASH_TASK_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)FLASH_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)FlashTask::RunTask, (const char*)"FlashTask",
+                                     (uint16_t)FLASH_TASK_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)FLASH_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
-    SOAR_ASSERT(rtValue == pdPASS,
-                "FlashTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "FlashTask::InitTask() - xTaskCreate() failed");
 
     SOAR_PRINT("Flash Task initialized");
 }
@@ -48,8 +46,7 @@ void FlashTask::Run(void* pvParams) {
         osDelay(1);
 
     // Initialize the offsets storage
-    offsetsStorage_ = new SimpleDualSectorStorage<Offsets>(
-        &SPIFlash::Inst(), SPI_FLASH_OFFSETS_SDSS_START_ADDR);
+    offsetsStorage_ = new SimpleDualSectorStorage<Offsets>(&SPIFlash::Inst(), SPI_FLASH_OFFSETS_SDSS_START_ADDR);
     offsetsStorage_->Read(currentOffsets_);
 
     while (1) {
@@ -93,16 +90,14 @@ void FlashTask ::HandleCommand(Command& cm) {
                 W25qxx_EraseChip();
                 currentOffsets_.writeDataOffset = 0;
             } else {
-                SOAR_PRINT("FlashTask Received Unsupported Task Command: %d\n",
-                           cm.GetTaskCommand());
+                SOAR_PRINT("FlashTask Received Unsupported Task Command: %d\n", cm.GetTaskCommand());
             }
             break;
         }
         case DATA_COMMAND: {
             // If the command is not a WRITE_DATA_TO_FLASH command do nothing
             if (cm.GetTaskCommand() != WRITE_DATA_TO_FLASH) {
-                SOAR_PRINT("FlashTask Received Unsupported Data Command: %d\n",
-                           cm.GetTaskCommand());
+                SOAR_PRINT("FlashTask Received Unsupported Data Command: %d\n", cm.GetTaskCommand());
                 break;
             }
 
@@ -110,8 +105,7 @@ void FlashTask ::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("FlashTask Received Unsupported Command: %d\n",
-                       cm.GetCommand());
+            SOAR_PRINT("FlashTask Received Unsupported Command: %d\n", cm.GetCommand());
             break;
     }
 
@@ -127,9 +121,7 @@ void FlashTask::WriteLogDataToFlash(uint8_t* data, uint16_t size) {
     buff[0] = (uint8_t)(size & 0xff);
     memcpy(buff + 1, data, size);
 
-    SPIFlash::Inst().Write(
-        SPI_FLASH_LOGGING_STORAGE_START_ADDR + currentOffsets_.writeDataOffset,
-        buff, size + 1);
+    SPIFlash::Inst().Write(SPI_FLASH_LOGGING_STORAGE_START_ADDR + currentOffsets_.writeDataOffset, buff, size + 1);
     currentOffsets_.writeDataOffset += size + 1;
 
     //TODO: Consider adding a readback to check if it was successful
@@ -149,32 +141,23 @@ bool FlashTask::ReadLogDataFromFlash() {
 
     uint8_t length;
 
-    for (unsigned int i = 0; i < currentOffsets_.writeDataOffset +
-                                     SPI_FLASH_LOGGING_STORAGE_START_ADDR;
-         i++) {
+    for (unsigned int i = 0; i < currentOffsets_.writeDataOffset + SPI_FLASH_LOGGING_STORAGE_START_ADDR; i++) {
         W25qxx_ReadByte(&length, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i);
 
         if (length == sizeof(AccelGyroMagnetismData)) {
             uint8_t dataRead[sizeof(AccelGyroMagnetismData)];
-            W25qxx_ReadBytes(dataRead,
-                             SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1,
-                             sizeof(AccelGyroMagnetismData));
+            W25qxx_ReadBytes(dataRead, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1, sizeof(AccelGyroMagnetismData));
             AccelGyroMagnetismData* IMURead = (AccelGyroMagnetismData*)dataRead;
             SOAR_PRINT(
                 "%03d %08d   %04d   %04d   %04d   %04d   %04d   %04d   %04d   "
                 "%04d   %04d\n",
-                length, IMURead->time, IMURead->accelX_, IMURead->accelY_,
-                IMURead->accelZ_, IMURead->gyroX_, IMURead->gyroY_,
-                IMURead->gyroZ_, IMURead->magnetoX_, IMURead->magnetoY_,
-                IMURead->magnetoZ_);
+                length, IMURead->time, IMURead->accelX_, IMURead->accelY_, IMURead->accelZ_, IMURead->gyroX_,
+                IMURead->gyroY_, IMURead->gyroZ_, IMURead->magnetoX_, IMURead->magnetoY_, IMURead->magnetoZ_);
         } else if (length == sizeof(BarometerData)) {
             uint8_t dataRead[sizeof(BarometerData)];
-            W25qxx_ReadBytes(dataRead,
-                             SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1,
-                             sizeof(BarometerData));
+            W25qxx_ReadBytes(dataRead, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1, sizeof(BarometerData));
             BarometerData* baroRead = (BarometerData*)dataRead;
-            SOAR_PRINT("%3d %08d   %04d   %04d\n", length, baroRead->time,
-                       baroRead->pressure_, baroRead->temperature_);
+            SOAR_PRINT("%3d %08d   %04d   %04d\n", length, baroRead->time, baroRead->pressure_, baroRead->temperature_);
         } else {
             SOAR_PRINT("Unknown length, readback brokedown: %d\n", length);
         }

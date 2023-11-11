@@ -76,19 +76,13 @@ struct standard_deviation_type {
 //***************************************************************************
 /// Standard Deviation.
 //***************************************************************************
-template <bool Standard_Deviation_Type, typename TInput,
-          typename TCalc = TInput>
-class standard_deviation
-    : public private_standard_deviation::standard_deviation_traits<TInput,
-                                                                   TCalc>,
-      public etl::binary_function<TInput, TInput, void> {
+template <bool Standard_Deviation_Type, typename TInput, typename TCalc = TInput>
+class standard_deviation : public private_standard_deviation::standard_deviation_traits<TInput, TCalc>,
+                           public etl::binary_function<TInput, TInput, void> {
    private:
-    static ETL_CONSTANT int Adjustment =
-        (Standard_Deviation_Type == standard_deviation_type::Population) ? 0
-                                                                         : 1;
+    static ETL_CONSTANT int Adjustment = (Standard_Deviation_Type == standard_deviation_type::Population) ? 0 : 1;
 
-    typedef typename private_standard_deviation::standard_deviation_traits<
-        TInput, TCalc>::calc_t calc_t;
+    typedef typename private_standard_deviation::standard_deviation_traits<TInput, TCalc>::calc_t calc_t;
 
    public:
     //*********************************
@@ -196,8 +190,7 @@ class standard_deviation
 
                 double square_of_sum = (sum * sum);
 
-                variance_value =
-                    ((n * sum_of_squares) - square_of_sum) * adjustment;
+                variance_value = ((n * sum_of_squares) - square_of_sum) * adjustment;
 
                 if (variance_value > 0) {
                     standard_deviation_value = sqrt(variance_value);

@@ -130,8 +130,7 @@ struct call_if_impl<TDelegate, void, TParam> {
 //***************************************************************************
 class delegate_exception : public etl::exception {
    public:
-    delegate_exception(string_type reason_, string_type file_name_,
-                       numeric_type line_number_)
+    delegate_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -141,9 +140,8 @@ class delegate_exception : public etl::exception {
 class delegate_uninitialised : public delegate_exception {
    public:
     delegate_uninitialised(string_type file_name_, numeric_type line_number_)
-        : delegate_exception(ETL_ERROR_TEXT("delegate:uninitialised",
-                                            ETL_DELEGATE_FILE_ID "A"),
-                             file_name_, line_number_) {}
+        : delegate_exception(ETL_ERROR_TEXT("delegate:uninitialised", ETL_DELEGATE_FILE_ID "A"), file_name_,
+                             line_number_) {}
 };
 
 //*************************************************************************
@@ -153,12 +151,9 @@ template <typename T>
 class delegate;
 
 template <typename TReturn, typename TParam>
-class delegate<TReturn(TParam)>
-    : public private_delegate::call_if_impl<delegate<TReturn(TParam)>, TReturn,
-                                            TParam> {
+class delegate<TReturn(TParam)> : public private_delegate::call_if_impl<delegate<TReturn(TParam)>, TReturn, TParam> {
    public:
-    using private_delegate::call_if_impl<delegate<TReturn(TParam)>, TReturn,
-                                         TParam>::call_if;
+    using private_delegate::call_if_impl<delegate<TReturn(TParam)>, TReturn, TParam>::call_if;
 
     //*************************************************************************
     /// Default constructor.
@@ -190,9 +185,7 @@ class delegate<TReturn(TParam)>
     /// Create from a Functor.
     //*************************************************************************
     template <typename TFunctor>
-    static
-        typename etl::enable_if<etl::is_class<TFunctor>::value, delegate>::type
-        create(const TFunctor& instance) {
+    static typename etl::enable_if<etl::is_class<TFunctor>::value, delegate>::type create(const TFunctor& instance) {
         return delegate((void*)(&instance), functor_stub<TFunctor>);
     }
 
@@ -240,8 +233,7 @@ class delegate<TReturn(TParam)>
     /// Set from Lambda or Functor.
     //*************************************************************************
     template <typename TFunctor>
-    typename etl::enable_if<etl::is_class<TFunctor>::value, void>::type set(
-        const TFunctor& instance) {
+    typename etl::enable_if<etl::is_class<TFunctor>::value, void>::type set(const TFunctor& instance) {
         assign((void*)(&instance), functor_stub<TFunctor>);
     }
 
@@ -335,8 +327,7 @@ class delegate<TReturn(TParam)>
     /// Create from Lambda or Functor.
     //*************************************************************************
     template <typename TFunctor>
-    typename etl::enable_if<etl::is_class<TFunctor>::value, delegate&>::type
-    operator=(const TFunctor& instance) {
+    typename etl::enable_if<etl::is_class<TFunctor>::value, delegate&>::type operator=(const TFunctor& instance) {
         assign((void*)(&instance), functor_stub<TFunctor>);
         return *this;
     }
@@ -379,18 +370,13 @@ class delegate<TReturn(TParam)>
         invocation_element() : object(ETL_NULLPTR), stub(ETL_NULLPTR) {}
 
         //***********************************************************************
-        invocation_element(void* object_, stub_type stub_)
-            : object(object_), stub(stub_) {}
+        invocation_element(void* object_, stub_type stub_) : object(object_), stub(stub_) {}
 
         //***********************************************************************
-        bool operator==(const invocation_element& rhs) const {
-            return (rhs.stub == stub) && (rhs.object == object);
-        }
+        bool operator==(const invocation_element& rhs) const { return (rhs.stub == stub) && (rhs.object == object); }
 
         //***********************************************************************
-        bool operator!=(const invocation_element& rhs) const {
-            return (rhs.stub != stub) || (rhs.object != object);
-        }
+        bool operator!=(const invocation_element& rhs) const { return (rhs.stub != stub) || (rhs.object != object); }
 
         //***********************************************************************
         void* object;
@@ -486,12 +472,9 @@ class delegate<TReturn(TParam)>
 /// Specialisation for void parameter.
 //*************************************************************************
 template <typename TReturn>
-class delegate<TReturn(void)>
-    : public private_delegate::call_if_impl<delegate<TReturn(void)>, TReturn,
-                                            void> {
+class delegate<TReturn(void)> : public private_delegate::call_if_impl<delegate<TReturn(void)>, TReturn, void> {
    public:
-    using private_delegate::call_if_impl<delegate<TReturn(void)>, TReturn,
-                                         void>::call_if;
+    using private_delegate::call_if_impl<delegate<TReturn(void)>, TReturn, void>::call_if;
 
     //*************************************************************************
     /// Default constructor.
@@ -523,9 +506,7 @@ class delegate<TReturn(void)>
     /// Create from Lambda or Functor.
     //*************************************************************************
     template <typename TFunctor>
-    static
-        typename etl::enable_if<etl::is_class<TFunctor>::value, delegate>::type
-        create(const TFunctor& instance) {
+    static typename etl::enable_if<etl::is_class<TFunctor>::value, delegate>::type create(const TFunctor& instance) {
         return delegate((void*)(&instance), functor_stub<TFunctor>);
     }
 
@@ -573,8 +554,7 @@ class delegate<TReturn(void)>
     /// Set from Lambda or Functor.
     //*************************************************************************
     template <typename TFunctor>
-    typename etl::enable_if<etl::is_class<TFunctor>::value, void>::type set(
-        const TFunctor& instance) {
+    typename etl::enable_if<etl::is_class<TFunctor>::value, void>::type set(const TFunctor& instance) {
         assign((void*)(&instance), functor_stub<TFunctor>);
     }
 
@@ -668,8 +648,7 @@ class delegate<TReturn(void)>
     /// Create from Lambda or Functor.
     //*************************************************************************
     template <typename TFunctor>
-    typename etl::enable_if<etl::is_class<TFunctor>::value, delegate&>::type
-    operator=(const TFunctor& instance) {
+    typename etl::enable_if<etl::is_class<TFunctor>::value, delegate&>::type operator=(const TFunctor& instance) {
         assign((void*)(&instance), functor_stub<TFunctor>);
         return *this;
     }
@@ -712,18 +691,13 @@ class delegate<TReturn(void)>
         invocation_element() : object(ETL_NULLPTR), stub(ETL_NULLPTR) {}
 
         //***********************************************************************
-        invocation_element(void* object_, stub_type stub_)
-            : object(object_), stub(stub_) {}
+        invocation_element(void* object_, stub_type stub_) : object(object_), stub(stub_) {}
 
         //***********************************************************************
-        bool operator==(const invocation_element& rhs) const {
-            return (rhs.stub == stub) && (rhs.object == object);
-        }
+        bool operator==(const invocation_element& rhs) const { return (rhs.stub == stub) && (rhs.object == object); }
 
         //***********************************************************************
-        bool operator!=(const invocation_element& rhs) const {
-            return (rhs.stub != stub) || (rhs.object != object);
-        }
+        bool operator!=(const invocation_element& rhs) const { return (rhs.stub != stub) || (rhs.object != object); }
 
         //***********************************************************************
         void* object;

@@ -56,8 +56,7 @@ struct multi_array_t<T, TD1> {
 }  // namespace private_multi_array
 
 template <typename T, const size_t... TDx>
-using multi_array =
-    typename private_multi_array::multi_array_t<T, TDx...>::type;
+using multi_array = typename private_multi_array::multi_array_t<T, TDx...>::type;
 
 #endif
 }  // namespace etl

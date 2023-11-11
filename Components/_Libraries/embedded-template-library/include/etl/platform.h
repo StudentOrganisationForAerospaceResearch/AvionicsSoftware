@@ -342,13 +342,11 @@ typedef int32_t char32_t;
 
 //*************************************
 // Determine if the ETL should support atomics.
-#if defined(ETL_NO_ATOMICS) || defined(ETL_TARGET_DEVICE_ARM_CORTEX_M0) || \
-    defined(ETL_TARGET_DEVICE_ARM_CORTEX_M0_PLUS)
+#if defined(ETL_NO_ATOMICS) || defined(ETL_TARGET_DEVICE_ARM_CORTEX_M0) || defined(ETL_TARGET_DEVICE_ARM_CORTEX_M0_PLUS)
 #define ETL_HAS_ATOMIC 0
 #else
-#if ((ETL_USING_CPP11 && (ETL_USING_STL || defined(ETL_IN_UNIT_TEST))) || \
-     defined(ETL_COMPILER_ARM5) || defined(ETL_COMPILER_ARM6) ||          \
-     defined(ETL_COMPILER_GCC) || defined(ETL_COMPILER_CLANG))
+#if ((ETL_USING_CPP11 && (ETL_USING_STL || defined(ETL_IN_UNIT_TEST))) || defined(ETL_COMPILER_ARM5) || \
+     defined(ETL_COMPILER_ARM6) || defined(ETL_COMPILER_GCC) || defined(ETL_COMPILER_CLANG))
 #define ETL_HAS_ATOMIC 1
 #else
 #define ETL_HAS_ATOMIC 0
@@ -357,22 +355,19 @@ typedef int32_t char32_t;
 
 //*************************************
 // Determine if the ETL should use std::initializer_list.
-#if (defined(ETL_FORCE_ETL_INITIALIZER_LIST) && \
-     defined(ETL_FORCE_STD_INITIALIZER_LIST))
+#if (defined(ETL_FORCE_ETL_INITIALIZER_LIST) && defined(ETL_FORCE_STD_INITIALIZER_LIST))
 #error ETL_FORCE_ETL_INITIALIZER_LIST and ETL_FORCE_STD_INITIALIZER_LIST both been defined. Choose one or neither.
 #endif
 
 #if (ETL_USING_CPP11 && !defined(ETL_NO_INITIALIZER_LIST))
 // Use the compiler's std::initializer_list?
-#if (ETL_USING_STL && ETL_NOT_USING_STLPORT &&    \
-     !defined(ETL_FORCE_ETL_INITIALIZER_LIST)) || \
+#if (ETL_USING_STL && ETL_NOT_USING_STLPORT && !defined(ETL_FORCE_ETL_INITIALIZER_LIST)) || \
     defined(ETL_IN_UNIT_TEST) || defined(ETL_FORCE_STD_INITIALIZER_LIST)
 #define ETL_HAS_INITIALIZER_LIST 1
 #else
 // Use the ETL's compatible version?
-#if defined(ETL_COMPILER_MICROSOFT) || defined(ETL_COMPILER_GCC) || \
-    defined(ETL_COMPILER_CLANG) || defined(ETL_COMPILER_ARM6) ||    \
-    defined(ETL_COMPILER_ARM7) || defined(ETL_COMPILER_IAR) ||      \
+#if defined(ETL_COMPILER_MICROSOFT) || defined(ETL_COMPILER_GCC) || defined(ETL_COMPILER_CLANG) || \
+    defined(ETL_COMPILER_ARM6) || defined(ETL_COMPILER_ARM7) || defined(ETL_COMPILER_IAR) ||       \
     defined(ETL_COMPILER_TEXAS_INSTRUMENTS) || defined(ETL_COMPILER_INTEL)
 #define ETL_HAS_INITIALIZER_LIST 1
 #else
@@ -419,20 +414,16 @@ static ETL_CONSTANT bool using_cpp17 = (ETL_USING_CPP17 == 1);
 static ETL_CONSTANT bool using_cpp20 = (ETL_USING_CPP20 == 1);
 static ETL_CONSTANT bool using_cpp23 = (ETL_USING_CPP23 == 1);
 static ETL_CONSTANT bool using_gcc_compiler = (ETL_USING_GCC_COMPILER == 1);
-static ETL_CONSTANT bool using_microsoft_compiler =
-    (ETL_USING_MICROSOFT_COMPILER == 1);
+static ETL_CONSTANT bool using_microsoft_compiler = (ETL_USING_MICROSOFT_COMPILER == 1);
 static ETL_CONSTANT bool using_arm5_compiler = (ETL_USING_ARM5_COMPILER == 1);
 static ETL_CONSTANT bool using_arm6_compiler = (ETL_USING_ARM6_COMPILER == 1);
 static ETL_CONSTANT bool using_arm7_compiler = (ETL_USING_ARM7_COMPILER == 1);
 static ETL_CONSTANT bool using_clang_compiler = (ETL_USING_CLANG_COMPILER == 1);
-static ETL_CONSTANT bool using_green_hills_compiler =
-    (ETL_USING_GREEN_HILLS_COMPILER == 1);
+static ETL_CONSTANT bool using_green_hills_compiler = (ETL_USING_GREEN_HILLS_COMPILER == 1);
 static ETL_CONSTANT bool using_iar_compiler = (ETL_USING_IAR_COMPILER == 1);
 static ETL_CONSTANT bool using_intel_compiler = (ETL_USING_INTEL_COMPILER == 1);
-static ETL_CONSTANT bool using_texas_instruments_compiler =
-    (ETL_USING_TEXAS_INSTRUMENTS_COMPILER == 1);
-static ETL_CONSTANT bool using_generic_compiler =
-    (ETL_USING_GENERIC_COMPILER == 1);
+static ETL_CONSTANT bool using_texas_instruments_compiler = (ETL_USING_TEXAS_INSTRUMENTS_COMPILER == 1);
+static ETL_CONSTANT bool using_generic_compiler = (ETL_USING_GENERIC_COMPILER == 1);
 static ETL_CONSTANT bool using_legacy_bitset = (ETL_USING_LEGACY_BITSET == 1);
 static ETL_CONSTANT bool using_exceptions = (ETL_USING_EXCEPTIONS == 1);
 
@@ -446,16 +437,12 @@ static ETL_CONSTANT bool has_char8_t = (ETL_HAS_CHAR8_T == 1);
 static ETL_CONSTANT bool has_native_char8_t = (ETL_HAS_NATIVE_CHAR8_T == 1);
 static ETL_CONSTANT bool has_native_char16_t = (ETL_HAS_NATIVE_CHAR16_T == 1);
 static ETL_CONSTANT bool has_native_char32_t = (ETL_HAS_NATIVE_CHAR32_T == 1);
-static ETL_CONSTANT bool has_string_truncation_checks =
-    (ETL_HAS_STRING_TRUNCATION_CHECKS == 1);
-static ETL_CONSTANT bool has_error_on_string_truncation =
-    (ETL_HAS_ERROR_ON_STRING_TRUNCATION == 1);
-static ETL_CONSTANT bool has_string_clear_after_use =
-    (ETL_HAS_STRING_CLEAR_AFTER_USE == 1);
+static ETL_CONSTANT bool has_string_truncation_checks = (ETL_HAS_STRING_TRUNCATION_CHECKS == 1);
+static ETL_CONSTANT bool has_error_on_string_truncation = (ETL_HAS_ERROR_ON_STRING_TRUNCATION == 1);
+static ETL_CONSTANT bool has_string_clear_after_use = (ETL_HAS_STRING_CLEAR_AFTER_USE == 1);
 static ETL_CONSTANT bool has_istring_repair = (ETL_HAS_ISTRING_REPAIR == 1);
 static ETL_CONSTANT bool has_ivector_repair = (ETL_HAS_IVECTOR_REPAIR == 1);
-static ETL_CONSTANT bool has_mutable_array_view =
-    (ETL_HAS_MUTABLE_ARRAY_VIEW == 1);
+static ETL_CONSTANT bool has_mutable_array_view = (ETL_HAS_MUTABLE_ARRAY_VIEW == 1);
 static ETL_CONSTANT bool has_ideque_repair = (ETL_HAS_IDEQUE_REPAIR == 1);
 
 // Is...

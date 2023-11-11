@@ -12,10 +12,7 @@
 #include "UARTDriver.hpp"
 
 /* Enums ------------------------------------------------------------------*/
-enum DEBUG_TASK_COMMANDS {
-    DEBUG_TASK_COMMAND_NONE = 0,
-    EVENT_DEBUG_RX_COMPLETE
-};
+enum DEBUG_TASK_COMMANDS { DEBUG_TASK_COMMAND_NONE = 0, EVENT_DEBUG_RX_COMPLETE };
 
 /* Macros ------------------------------------------------------------------*/
 constexpr uint16_t DEBUG_RX_BUFFER_SZ_BYTES = 16;

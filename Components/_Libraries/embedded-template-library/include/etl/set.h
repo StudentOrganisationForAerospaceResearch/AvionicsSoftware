@@ -66,8 +66,7 @@ namespace etl {
 //***************************************************************************
 class set_exception : public etl::exception {
    public:
-    set_exception(string_type reason_, string_type file_name_,
-                  numeric_type line_number_)
+    set_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
@@ -78,8 +77,7 @@ class set_exception : public etl::exception {
 class set_full : public etl::set_exception {
    public:
     set_full(string_type file_name_, numeric_type line_number_)
-        : etl::set_exception(ETL_ERROR_TEXT("set:full", ETL_SET_FILE_ID "A"),
-                             file_name_, line_number_) {}
+        : etl::set_exception(ETL_ERROR_TEXT("set:full", ETL_SET_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -89,8 +87,7 @@ class set_full : public etl::set_exception {
 class set_out_of_bounds : public etl::set_exception {
    public:
     set_out_of_bounds(string_type file_name_, numeric_type line_number_)
-        : etl::set_exception(ETL_ERROR_TEXT("set:bounds", ETL_SET_FILE_ID "B"),
-                             file_name_, line_number_) {}
+        : etl::set_exception(ETL_ERROR_TEXT("set:bounds", ETL_SET_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -100,9 +97,7 @@ class set_out_of_bounds : public etl::set_exception {
 class set_iterator : public etl::set_exception {
    public:
     set_iterator(string_type file_name_, numeric_type line_number_)
-        : etl::set_exception(
-              ETL_ERROR_TEXT("set:iterator problem", ETL_SET_FILE_ID "C"),
-              file_name_, line_number_) {}
+        : etl::set_exception(ETL_ERROR_TEXT("set:iterator problem", ETL_SET_FILE_ID "C"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -111,8 +106,7 @@ class set_iterator : public etl::set_exception {
 //***************************************************************************
 class set_base {
    public:
-    typedef size_t
-        size_type;  ///< The type used for determining the size of set.
+    typedef size_t size_type;  ///< The type used for determining the size of set.
 
     //*************************************************************************
     /// Gets the size of the set.
@@ -266,17 +260,14 @@ class set_base {
         else {
             // If critical node matches child node direction then perform a two
             // node rotate in the direction of the critical node
-            if (critical_node->weight ==
-                critical_node->children[critical_node->dir]->dir) {
+            if (critical_node->weight == critical_node->children[critical_node->dir]->dir) {
                 rotate_2node(critical_node, critical_node->dir);
             }
             // Otherwise perform a three node rotation in the direction of the
             // critical node
             else {
                 rotate_3node(critical_node, critical_node->dir,
-                             critical_node->children[critical_node->dir]
-                                 ->children[1 - critical_node->dir]
-                                 ->dir);
+                             critical_node->children[critical_node->dir]->children[1 - critical_node->dir]->dir);
             }
         }
     }
@@ -360,18 +351,14 @@ class set_base {
         Node* new_root = position->children[dir]->children[1 - dir];
         // Set weight factor for B or C based on F or G existing and being a different than dir
         position->children[dir]->weight =
-            third != uint_least8_t(kNeither) && third != dir
-                ? dir
-                : uint_least8_t(kNeither);
+            third != uint_least8_t(kNeither) && third != dir ? dir : uint_least8_t(kNeither);
 
         // Detach new root from its tree (replace with new roots child)
         position->children[dir]->children[1 - dir] = new_root->children[dir];
         // Attach current left tree to new root
         new_root->children[dir] = position->children[dir];
         // Set weight factor for A based on F or G
-        position->weight = third != uint_least8_t(kNeither) && third == dir
-                               ? 1 - dir
-                               : uint_least8_t(kNeither);
+        position->weight = third != uint_least8_t(kNeither) && third == dir ? 1 - dir : uint_least8_t(kNeither);
 
         // Move new root's right tree to current roots left tree
         position->children[dir] = new_root->children[1 - dir];
@@ -440,14 +427,12 @@ class iset : public etl::set_base {
     }
 
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const Data_Node& node, const K& key) const {
         return compare(node.value, key);
     }
 
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const K& key, const Data_Node& node) const
 
     {
@@ -493,9 +478,7 @@ class iset : public etl::set_base {
     //*************************************************************************
     /// iterator.
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               value_type> {
+    class iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, value_type> {
        public:
         friend class iset;
         friend class const_iterator;
@@ -506,8 +489,7 @@ class iset : public etl::set_base {
 
         iterator(iset& set, Node* node) : p_set(&set), p_node(node) {}
 
-        iterator(const iterator& other)
-            : p_set(other.p_set), p_node(other.p_node) {}
+        iterator(const iterator& other) : p_set(other.p_set), p_node(other.p_node) {}
 
         ~iterator() {}
 
@@ -549,9 +531,7 @@ class iset : public etl::set_base {
             return lhs.p_set == rhs.p_set && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Pointer to set associated with this iterator
@@ -565,9 +545,7 @@ class iset : public etl::set_base {
     //*************************************************************************
     /// const_iterator
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               const value_type> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, const value_type> {
        public:
         friend class iset;
 
@@ -575,14 +553,11 @@ class iset : public etl::set_base {
 
         const_iterator(const iset& set) : p_set(&set), p_node(ETL_NULLPTR) {}
 
-        const_iterator(const iset& set, const Node* node)
-            : p_set(&set), p_node(node) {}
+        const_iterator(const iset& set, const Node* node) : p_set(&set), p_node(node) {}
 
-        const_iterator(const typename iset::iterator& other)
-            : p_set(other.p_set), p_node(other.p_node) {}
+        const_iterator(const typename iset::iterator& other) : p_set(other.p_set), p_node(other.p_node) {}
 
-        const_iterator(const const_iterator& other)
-            : p_set(other.p_set), p_node(other.p_node) {}
+        const_iterator(const const_iterator& other) : p_set(other.p_set), p_node(other.p_node) {}
 
         ~const_iterator() {}
 
@@ -614,33 +589,22 @@ class iset : public etl::set_base {
             return *this;
         }
 
-        const_reference operator*() const {
-            return iset::data_cast(p_node)->value;
-        }
+        const_reference operator*() const { return iset::data_cast(p_node)->value; }
 
-        const_pointer operator&() const {
-            return iset::data_cast(p_node)->value;
-        }
+        const_pointer operator&() const { return iset::data_cast(p_node)->value; }
 
-        const_pointer operator->() const {
-            return &(iset::data_cast(p_node)->value);
-        }
+        const_pointer operator->() const { return &(iset::data_cast(p_node)->value); }
 
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.p_set == rhs.p_set && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Convert to an iterator.
         iset::iterator to_iterator() const {
-            return iset::iterator(const_cast<iset&>(*p_set),
-                                  const_cast<Node*>(p_node));
+            return iset::iterator(const_cast<iset&>(*p_set), const_cast<Node*>(p_node));
         }
 
         // Pointer to set associated with this iterator
@@ -651,8 +615,7 @@ class iset : public etl::set_base {
     };
     friend class const_iterator;
 
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -751,16 +714,14 @@ class iset : public etl::set_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     reverse_iterator rend() {
-        return reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator rend() const {
-        return const_reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
@@ -774,8 +735,7 @@ class iset : public etl::set_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator crend() const {
-        return const_reverse_iterator(
-            const_iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(const_iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*********************************************************************
@@ -809,8 +769,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type count(const K& key) const {
         return find_node(root_node, key) ? 1 : 0;
     }
@@ -821,19 +780,16 @@ class iset : public etl::set_base {
     /// value provided
     //*************************************************************************
     ETL_OR_STD::pair<iterator, iterator> equal_range(key_parameter_t key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     ETL_OR_STD::pair<iterator, iterator> equal_range(const K& key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 #endif
 
@@ -841,8 +797,7 @@ class iset : public etl::set_base {
     /// Returns two const iterators with bounding (lower bound, upper bound)
     /// the value provided.
     //*************************************************************************
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -850,10 +805,8 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        const K& key) const {
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(const K& key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -892,8 +845,7 @@ class iset : public etl::set_base {
 
     //*************************************************************************
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type erase(K&& key_value) {
         // Return 1 if key value was found and removed
         return remove_node(root_node, etl::forward<K>(key_value)) ? 1 : 0;
@@ -922,8 +874,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator find(const K& k) {
         return iterator(*this, find_node(root_node, k));
     }
@@ -940,8 +891,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator find(const K& key_value) const {
         return const_iterator(*this, find_node(root_node, key_value));
     }
@@ -1068,8 +1018,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator lower_bound(const K& key) {
         return iterator(*this, find_lower_node(root_node, key));
     }
@@ -1087,8 +1036,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator lower_bound(const K& key) const {
         return const_iterator(*this, find_lower_node(root_node, key));
     }
@@ -1106,8 +1054,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator upper_bound(const K& key) {
         return iterator(*this, find_upper_node(root_node, key));
     }
@@ -1125,8 +1072,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator upper_bound(const K& key) const {
         return const_iterator(*this, find_upper_node(root_node, key));
     }
@@ -1155,8 +1101,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool contains(const K& k) const {
         return find(k) != end();
     }
@@ -1166,8 +1111,7 @@ class iset : public etl::set_base {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    iset(etl::ipool& node_pool, size_t max_size_)
-        : etl::set_base(max_size_), p_node_pool(&node_pool) {}
+    iset(etl::ipool& node_pool, size_t max_size_) : etl::set_base(max_size_), p_node_pool(&node_pool) {}
 
     //*************************************************************************
     /// Initialise the set.
@@ -1248,8 +1192,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_node(Node* position, const K& key) {
         Node* found = position;
         while (found) {
@@ -1302,8 +1245,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const Node* find_node(const Node* position, const K& key) const {
         const Node* found = position;
         while (found) {
@@ -1373,8 +1315,7 @@ class iset : public etl::set_base {
         if (position && node && position != node) {
             while (position) {
                 // Is this position not the parent of the node we are looking for?
-                if (position->children[kLeft] != node &&
-                    position->children[kRight] != node) {
+                if (position->children[kLeft] != node && position->children[kRight] != node) {
                     // Downcast node and position to Data_Node references for key comparisons
                     const Data_Node& node_data_node = iset::data_cast(*node);
                     Data_Node& position_data_node = iset::data_cast(*position);
@@ -1412,12 +1353,10 @@ class iset : public etl::set_base {
         if (position && node && position != node) {
             while (position) {
                 // Is this position not the parent of the node we are looking for?
-                if (position->children[kLeft] != node &&
-                    position->children[kRight] != node) {
+                if (position->children[kLeft] != node && position->children[kRight] != node) {
                     // Downcast node and position to Data_Node references for key comparisons
                     const Data_Node& node_data_node = iset::data_cast(*node);
-                    const Data_Node& position_data_node =
-                        iset::data_cast(*position);
+                    const Data_Node& position_data_node = iset::data_cast(*position);
                     // Compare the node value to the current position value
                     if (node_comp(node_data_node, position_data_node)) {
                         // Keep looking for parent on the left
@@ -1473,8 +1412,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_lower_node(Node* position, const K& key) const {
         // Something at this position? keep going
         Node* lower_node = ETL_NULLPTR;
@@ -1535,8 +1473,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_upper_node(Node* position, const K& key) const {
         // Keep track of parent of last upper node
         Node* upper_node = ETL_NULLPTR;
@@ -1634,16 +1571,13 @@ class iset : public etl::set_base {
 
             // Was a critical node found that should be checked for balance?
             if (critical_node) {
-                if (critical_parent_node == ETL_NULLPTR &&
-                    critical_node == root_node) {
+                if (critical_parent_node == ETL_NULLPTR && critical_node == root_node) {
                     balance_node(root_node);
-                } else if (critical_parent_node == ETL_NULLPTR &&
-                           critical_node == position) {
+                } else if (critical_parent_node == ETL_NULLPTR && critical_node == position) {
                     balance_node(position);
                 } else {
                     if (critical_parent_node != ETL_NULLPTR) {
-                        balance_node(critical_parent_node
-                                         ->children[critical_parent_node->dir]);
+                        balance_node(critical_parent_node->children[critical_parent_node->dir]);
                     }
                 }
             }
@@ -1824,8 +1758,7 @@ class iset : public etl::set_base {
             // balanced then we need to update the balance node to match this
             // replacement node but all our ancestors will not require rebalancing
             if ((replace->weight == kNeither) ||
-                (replace->weight == (1 - replace->dir) &&
-                 replace->children[1 - replace->dir]->weight == kNeither)) {
+                (replace->weight == (1 - replace->dir) && replace->children[1 - replace->dir]->weight == kNeither)) {
                 // Update balance node (and its parent) to replacement node
                 balance_parent = replace_parent;
                 balance = replace;
@@ -1855,16 +1788,10 @@ class iset : public etl::set_base {
                         // Is the root node being rebalanced (no parent)
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_3node(root_node, 1 - balance->dir,
-                                         balance->children[1 - balance->dir]
-                                             ->children[balance->dir]
-                                             ->weight);
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         } else {
-                            rotate_3node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir,
-                                balance->children[1 - balance->dir]
-                                    ->children[balance->dir]
-                                    ->weight);
+                            rotate_3node(balance_parent->children[balance_parent->dir], 1 - balance->dir,
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         }
                     }
                     // Already balanced, rebalance and make it heavy in opposite
@@ -1875,11 +1802,8 @@ class iset : public etl::set_base {
                             rotate_2node(root_node, 1 - balance->dir);
                             root_node->weight = balance->dir;
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
-                            balance_parent->children[balance_parent->dir]
-                                ->weight = balance->dir;
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
+                            balance_parent->children[balance_parent->dir]->weight = balance->dir;
                         }
                         // Update balance node weight in opposite direction of node removed
                         balance->weight = 1 - balance->dir;
@@ -1890,9 +1814,7 @@ class iset : public etl::set_base {
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_2node(root_node, 1 - balance->dir);
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
                         }
                     }
 
@@ -1900,17 +1822,12 @@ class iset : public etl::set_base {
                     // its parent after the rotation performed above
                     if (balance == found) {
                         if (balance_parent) {
-                            found_parent =
-                                balance_parent->children[balance_parent->dir];
+                            found_parent = balance_parent->children[balance_parent->dir];
                             // Update dir since it is likely stale
-                            found_parent->dir =
-                                found_parent->children[kLeft] == found ? kLeft
-                                                                       : kRight;
+                            found_parent->dir = found_parent->children[kLeft] == found ? kLeft : kRight;
                         } else {
                             found_parent = root_node;
-                            root_node->dir = root_node->children[kLeft] == found
-                                                 ? kLeft
-                                                 : kRight;
+                            root_node->dir = root_node->children[kLeft] == found ? kLeft : kRight;
                         }
                     }
                 }
@@ -1923,15 +1840,13 @@ class iset : public etl::set_base {
             // Step 3: Swap found node with replacement node
             if (found_parent) {
                 // Handle traditional case
-                detach_node(found_parent->children[found_parent->dir],
-                            replace_parent->children[replace_parent->dir]);
+                detach_node(found_parent->children[found_parent->dir], replace_parent->children[replace_parent->dir]);
             }
             // Handle root node removal
             else {
                 // Valid replacement node for root node being removed?
                 if (replace_parent) {
-                    detach_node(root_node,
-                                replace_parent->children[replace_parent->dir]);
+                    detach_node(root_node, replace_parent->children[replace_parent->dir]);
                 } else {
                     // Target node and replacement node are both root node
                     detach_node(root_node, root_node);
@@ -1954,8 +1869,7 @@ class iset : public etl::set_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* remove_node(Node*& position, const K& key) {
         // Step 1: Find the target node that matches the key provided, the
         // replacement node (might be the same as target node), and the critical
@@ -1997,8 +1911,7 @@ class iset : public etl::set_base {
             // balanced then we need to update the balance node to match this
             // replacement node but all our ancestors will not require rebalancing
             if ((replace->weight == kNeither) ||
-                (replace->weight == (1 - replace->dir) &&
-                 replace->children[1 - replace->dir]->weight == kNeither)) {
+                (replace->weight == (1 - replace->dir) && replace->children[1 - replace->dir]->weight == kNeither)) {
                 // Update balance node (and its parent) to replacement node
                 balance_parent = replace_parent;
                 balance = replace;
@@ -2028,16 +1941,10 @@ class iset : public etl::set_base {
                         // Is the root node being rebalanced (no parent)
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_3node(root_node, 1 - balance->dir,
-                                         balance->children[1 - balance->dir]
-                                             ->children[balance->dir]
-                                             ->weight);
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         } else {
-                            rotate_3node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir,
-                                balance->children[1 - balance->dir]
-                                    ->children[balance->dir]
-                                    ->weight);
+                            rotate_3node(balance_parent->children[balance_parent->dir], 1 - balance->dir,
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         }
                     }
                     // Already balanced, rebalance and make it heavy in opposite
@@ -2048,11 +1955,8 @@ class iset : public etl::set_base {
                             rotate_2node(root_node, 1 - balance->dir);
                             root_node->weight = balance->dir;
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
-                            balance_parent->children[balance_parent->dir]
-                                ->weight = balance->dir;
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
+                            balance_parent->children[balance_parent->dir]->weight = balance->dir;
                         }
                         // Update balance node weight in opposite direction of node removed
                         balance->weight = 1 - balance->dir;
@@ -2063,9 +1967,7 @@ class iset : public etl::set_base {
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_2node(root_node, 1 - balance->dir);
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
                         }
                     }
 
@@ -2073,17 +1975,12 @@ class iset : public etl::set_base {
                     // its parent after the rotation performed above
                     if (balance == found) {
                         if (balance_parent) {
-                            found_parent =
-                                balance_parent->children[balance_parent->dir];
+                            found_parent = balance_parent->children[balance_parent->dir];
                             // Update dir since it is likely stale
-                            found_parent->dir =
-                                found_parent->children[kLeft] == found ? kLeft
-                                                                       : kRight;
+                            found_parent->dir = found_parent->children[kLeft] == found ? kLeft : kRight;
                         } else {
                             found_parent = root_node;
-                            root_node->dir = root_node->children[kLeft] == found
-                                                 ? kLeft
-                                                 : kRight;
+                            root_node->dir = root_node->children[kLeft] == found ? kLeft : kRight;
                         }
                     }
                 }
@@ -2096,15 +1993,13 @@ class iset : public etl::set_base {
             // Step 3: Swap found node with replacement node
             if (found_parent) {
                 // Handle traditional case
-                detach_node(found_parent->children[found_parent->dir],
-                            replace_parent->children[replace_parent->dir]);
+                detach_node(found_parent->children[found_parent->dir], replace_parent->children[replace_parent->dir]);
             }
             // Handle root node removal
             else {
                 // Valid replacement node for root node being removed?
                 if (replace_parent) {
-                    detach_node(root_node,
-                                replace_parent->children[replace_parent->dir]);
+                    detach_node(root_node, replace_parent->children[replace_parent->dir]);
                 } else {
                     // Target node and replacement node are both root node
                     detach_node(root_node, root_node);
@@ -2144,8 +2039,7 @@ class iset : public etl::set_base {
 //*************************************************************************
 /// A templated set implementation that uses a fixed size buffer.
 //*************************************************************************
-template <typename TKey, const size_t MAX_SIZE_,
-          typename TCompare = etl::less<TKey>>
+template <typename TKey, const size_t MAX_SIZE_, typename TCompare = etl::less<TKey>>
 class set : public etl::iset<TKey, TCompare> {
    public:
     static ETL_CONSTANT size_t MAX_SIZE = MAX_SIZE_;
@@ -2153,9 +2047,7 @@ class set : public etl::iset<TKey, TCompare> {
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    set() : etl::iset<TKey, TCompare>(node_pool, MAX_SIZE) {
-        this->initialise();
-    }
+    set() : etl::iset<TKey, TCompare>(node_pool, MAX_SIZE) { this->initialise(); }
 
     //*************************************************************************
     /// Copy constructor.
@@ -2192,8 +2084,7 @@ class set : public etl::iset<TKey, TCompare> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    set(TIterator first, TIterator last)
-        : etl::iset<TKey, TCompare>(node_pool, MAX_SIZE) {
+    set(TIterator first, TIterator last) : etl::iset<TKey, TCompare>(node_pool, MAX_SIZE) {
         this->assign(first, last);
     }
 
@@ -2201,8 +2092,7 @@ class set : public etl::iset<TKey, TCompare> {
     //*************************************************************************
     /// Constructor, from an initializer_list.
     //*************************************************************************
-    set(std::initializer_list<typename etl::iset<TKey, TCompare>::value_type>
-            init)
+    set(std::initializer_list<typename etl::iset<TKey, TCompare>::value_type> init)
         : etl::iset<TKey, TCompare>(node_pool, MAX_SIZE) {
         this->assign(init.begin(), init.end());
     }
@@ -2251,8 +2141,7 @@ class set : public etl::iset<TKey, TCompare> {
 
    private:
     /// The pool of data nodes used for the set.
-    etl::pool<typename etl::iset<TKey, TCompare>::Data_Node, MAX_SIZE>
-        node_pool;
+    etl::pool<typename etl::iset<TKey, TCompare>::Data_Node, MAX_SIZE> node_pool;
 };
 
 //*************************************************************************
@@ -2281,10 +2170,8 @@ constexpr auto make_set(T&&... keys) -> etl::set<TKey, sizeof...(T), TCompare> {
 ///\ingroup lookup
 //***************************************************************************
 template <typename TKey, typename TCompare>
-bool operator==(const etl::iset<TKey, TCompare>& lhs,
-                const etl::iset<TKey, TCompare>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const etl::iset<TKey, TCompare>& lhs, const etl::iset<TKey, TCompare>& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -2295,8 +2182,7 @@ bool operator==(const etl::iset<TKey, TCompare>& lhs,
 ///\ingroup lookup
 //***************************************************************************
 template <typename TKey, typename TCompare>
-bool operator!=(const etl::iset<TKey, TCompare>& lhs,
-                const etl::iset<TKey, TCompare>& rhs) {
+bool operator!=(const etl::iset<TKey, TCompare>& lhs, const etl::iset<TKey, TCompare>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -2308,10 +2194,8 @@ bool operator!=(const etl::iset<TKey, TCompare>& lhs,
 /// second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator<(const etl::iset<TKey, TCompare>& lhs,
-               const etl::iset<TKey, TCompare>& rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                        rhs.end());
+bool operator<(const etl::iset<TKey, TCompare>& lhs, const etl::iset<TKey, TCompare>& rhs) {
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //*************************************************************************
@@ -2322,8 +2206,7 @@ bool operator<(const etl::iset<TKey, TCompare>& lhs,
 /// second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator>(const etl::iset<TKey, TCompare>& lhs,
-               const etl::iset<TKey, TCompare>& rhs) {
+bool operator>(const etl::iset<TKey, TCompare>& lhs, const etl::iset<TKey, TCompare>& rhs) {
     return (rhs < lhs);
 }
 
@@ -2335,8 +2218,7 @@ bool operator>(const etl::iset<TKey, TCompare>& lhs,
 /// to the second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator<=(const etl::iset<TKey, TCompare>& lhs,
-                const etl::iset<TKey, TCompare>& rhs) {
+bool operator<=(const etl::iset<TKey, TCompare>& lhs, const etl::iset<TKey, TCompare>& rhs) {
     return !(lhs > rhs);
 }
 
@@ -2348,8 +2230,7 @@ bool operator<=(const etl::iset<TKey, TCompare>& lhs,
 /// equal to the second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator>=(const etl::iset<TKey, TCompare>& lhs,
-                const etl::iset<TKey, TCompare>& rhs) {
+bool operator>=(const etl::iset<TKey, TCompare>& lhs, const etl::iset<TKey, TCompare>& rhs) {
     return !(lhs < rhs);
 }
 }  // namespace etl

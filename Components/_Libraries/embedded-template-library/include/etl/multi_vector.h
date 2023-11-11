@@ -56,8 +56,7 @@ struct multi_vector_t<T, TD1> {
 }  // namespace private_multi_vector
 
 template <typename T, const size_t... TDn>
-using multi_vector =
-    typename private_multi_vector::multi_vector_t<T, TDn...>::type;
+using multi_vector = typename private_multi_vector::multi_vector_t<T, TDn...>::type;
 }  // namespace etl
 
 #endif

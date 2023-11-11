@@ -50,13 +50,11 @@ SOFTWARE.
 #undef ETL_CALLBACK_TIMER_USE_ATOMIC_LOCK
 #undef ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK
 #else
-#if !defined(ETL_CALLBACK_TIMER_USE_ATOMIC_LOCK) && \
-    !defined(ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK)
+#if !defined(ETL_CALLBACK_TIMER_USE_ATOMIC_LOCK) && !defined(ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK)
 #error ETL_CALLBACK_TIMER_USE_ATOMIC_LOCK or ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK not defined
 #endif
 
-#if defined(ETL_CALLBACK_TIMER_USE_ATOMIC_LOCK) && \
-    defined(ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK)
+#if defined(ETL_CALLBACK_TIMER_USE_ATOMIC_LOCK) && defined(ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK)
 #error Only define one of ETL_CALLBACK_TIMER_USE_ATOMIC_LOCK or ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK
 #endif
 
@@ -68,8 +66,7 @@ SOFTWARE.
 #endif
 
 #if defined(ETL_CALLBACK_TIMER_USE_INTERRUPT_LOCK)
-#if !defined(ETL_CALLBACK_TIMER_DISABLE_INTERRUPTS) || \
-    !defined(ETL_CALLBACK_TIMER_ENABLE_INTERRUPTS)
+#if !defined(ETL_CALLBACK_TIMER_DISABLE_INTERRUPTS) || !defined(ETL_CALLBACK_TIMER_ENABLE_INTERRUPTS)
 #error ETL_CALLBACK_TIMER_DISABLE_INTERRUPTS and/or ETL_CALLBACK_TIMER_ENABLE_INTERRUPTS not defined
 #endif
 
@@ -100,8 +97,7 @@ struct callback_timer_data {
     //*******************************************
     /// C function callback
     //*******************************************
-    callback_timer_data(etl::timer::id::type id_, void (*p_callback_)(),
-                        uint32_t period_, bool repeating_)
+    callback_timer_data(etl::timer::id::type id_, void (*p_callback_)(), uint32_t period_, bool repeating_)
         : p_callback(reinterpret_cast<void*>(p_callback_)),
           period(period_),
           delta(etl::timer::state::INACTIVE),
@@ -114,9 +110,7 @@ struct callback_timer_data {
     //*******************************************
     /// ETL function callback
     //*******************************************
-    callback_timer_data(etl::timer::id::type id_,
-                        etl::ifunction<void>& callback_, uint32_t period_,
-                        bool repeating_)
+    callback_timer_data(etl::timer::id::type id_, etl::ifunction<void>& callback_, uint32_t period_, bool repeating_)
         : p_callback(reinterpret_cast<void*>(&callback_)),
           period(period_),
           delta(etl::timer::state::INACTIVE),
@@ -130,8 +124,7 @@ struct callback_timer_data {
     //*******************************************
     /// ETL delegate callback
     //*******************************************
-    callback_timer_data(etl::timer::id::type id_, callback_type& callback_,
-                        uint32_t period_, bool repeating_)
+    callback_timer_data(etl::timer::id::type id_, callback_type& callback_, uint32_t period_, bool repeating_)
         : p_callback(reinterpret_cast<void*>(&callback_)),
           period(period_),
           delta(etl::timer::state::INACTIVE),
@@ -325,8 +318,7 @@ class icallback_timer {
     //*******************************************
     /// Register a timer.
     //*******************************************
-    etl::timer::id::type register_timer(void (*p_callback_)(), uint32_t period_,
-                                        bool repeating_) {
+    etl::timer::id::type register_timer(void (*p_callback_)(), uint32_t period_, bool repeating_) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (registered_timers < MAX_TIMERS);
@@ -338,8 +330,7 @@ class icallback_timer {
 
                 if (timer.id == etl::timer::id::NO_TIMER) {
                     // Create in-place.
-                    new (&timer) callback_timer_data(i, p_callback_, period_,
-                                                     repeating_);
+                    new (&timer) callback_timer_data(i, p_callback_, period_, repeating_);
                     ++registered_timers;
                     id = i;
                     break;
@@ -353,8 +344,7 @@ class icallback_timer {
     //*******************************************
     /// Register a timer.
     //*******************************************
-    etl::timer::id::type register_timer(etl::ifunction<void>& callback_,
-                                        uint32_t period_, bool repeating_) {
+    etl::timer::id::type register_timer(etl::ifunction<void>& callback_, uint32_t period_, bool repeating_) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (registered_timers < MAX_TIMERS);
@@ -366,8 +356,7 @@ class icallback_timer {
 
                 if (timer.id == etl::timer::id::NO_TIMER) {
                     // Create in-place.
-                    new (&timer)
-                        callback_timer_data(i, callback_, period_, repeating_);
+                    new (&timer) callback_timer_data(i, callback_, period_, repeating_);
                     ++registered_timers;
                     id = i;
                     break;
@@ -382,8 +371,7 @@ class icallback_timer {
     /// Register a timer.
     //*******************************************
 #if ETL_USING_CPP11
-    etl::timer::id::type register_timer(callback_type& callback_,
-                                        uint32_t period_, bool repeating_) {
+    etl::timer::id::type register_timer(callback_type& callback_, uint32_t period_, bool repeating_) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (registered_timers < MAX_TIMERS);
@@ -395,8 +383,7 @@ class icallback_timer {
 
                 if (timer.id == etl::timer::id::NO_TIMER) {
                     // Create in-place.
-                    new (&timer)
-                        callback_timer_data(i, callback_, period_, repeating_);
+                    new (&timer) callback_timer_data(i, callback_, period_, repeating_);
                     ++registered_timers;
                     id = i;
                     break;
@@ -491,23 +478,17 @@ class icallback_timer {
                         }
 
                         if (timer.p_callback != ETL_NULLPTR) {
-                            if (timer.cbk_type ==
-                                callback_timer_data::C_CALLBACK) {
+                            if (timer.cbk_type == callback_timer_data::C_CALLBACK) {
                                 // Call the C callback.
-                                reinterpret_cast<void (*)()>(
-                                    timer.p_callback)();
-                            } else if (timer.cbk_type ==
-                                       callback_timer_data::IFUNCTION) {
+                                reinterpret_cast<void (*)()>(timer.p_callback)();
+                            } else if (timer.cbk_type == callback_timer_data::IFUNCTION) {
                                 // Call the function wrapper callback.
-                                (*reinterpret_cast<etl::ifunction<void>*>(
-                                    timer.p_callback))();
+                                (*reinterpret_cast<etl::ifunction<void>*>(timer.p_callback))();
                             }
 #if ETL_USING_CPP11
-                            else if (timer.cbk_type ==
-                                     callback_timer_data::DELEGATE) {
+                            else if (timer.cbk_type == callback_timer_data::DELEGATE) {
                                 // Call the delegate callback.
-                                (*reinterpret_cast<callback_type*>(
-                                    timer.p_callback))();
+                                (*reinterpret_cast<callback_type*>(timer.p_callback))();
                             }
 #endif
                         }
@@ -612,8 +593,7 @@ class icallback_timer {
     //*******************************************
     /// Constructor.
     //*******************************************
-    icallback_timer(callback_timer_data* const timer_array_,
-                    const uint_least8_t MAX_TIMERS_)
+    icallback_timer(callback_timer_data* const timer_array_, const uint_least8_t MAX_TIMERS_)
         : timer_array(timer_array_),
           active_list(timer_array_),
           enabled(false),
@@ -658,8 +638,7 @@ class icallback_timer {
 template <const uint_least8_t MAX_TIMERS_>
 class callback_timer : public etl::icallback_timer {
    public:
-    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254,
-                      "No more than 254 timers are allowed");
+    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254, "No more than 254 timers are allowed");
 
     //*******************************************
     /// Constructor.

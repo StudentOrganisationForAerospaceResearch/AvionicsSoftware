@@ -27,13 +27,11 @@ void FlightTask::InitTask() {
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize flight task twice");
 
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)FlightTask::RunTask, (const char*)"FlightTask",
-        (uint16_t)FLIGHT_TASK_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)FLIGHT_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)FlightTask::RunTask, (const char*)"FlightTask",
+                                     (uint16_t)FLIGHT_TASK_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)FLIGHT_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
-    SOAR_ASSERT(rtValue == pdPASS,
-                "FlightTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "FlightTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -55,8 +53,7 @@ void FlightTask::Run(void* pvParams) {
         // Succeded to read state, initialize the rocket state machine
 
         // Make sure we start in a valid state, if the state is invalid then ABORT
-        if (sysState.rocketState >= RS_NONE ||
-            sysState.rocketState < RS_PRELAUNCH) {
+        if (sysState.rocketState >= RS_NONE || sysState.rocketState < RS_PRELAUNCH) {
             sysState.rocketState = RS_ABORT;
         }
 
@@ -134,8 +131,7 @@ void FlightTask::Run(void* pvParams) {
  */
 void FlightTask::HandleCommand(Command& cm) {
     // If this is a request command, we handle it in the task (rocket state command must always be control actions)
-    if (cm.GetCommand() == REQUEST_COMMAND &&
-        cm.GetTaskCommand() == FT_REQUEST_TRANSMIT_STATE)
+    if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == FT_REQUEST_TRANSMIT_STATE)
         SendRocketState();
     else
         rsm_->HandleCommand(cm);
@@ -158,11 +154,9 @@ void FlightTask::SendRocketState() {
     stateMsg.set_rocket_state(rsm_->GetRocketStateAsProto());
     msg.set_sys_state(stateMsg);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
     // Send the control message
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_CONTROL);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }

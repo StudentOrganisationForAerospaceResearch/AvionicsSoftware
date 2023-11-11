@@ -46,18 +46,12 @@ using atomic = std::atomic<T>;
 
 using memory_order = std::memory_order;
 
-static ETL_CONSTANT etl::memory_order memory_order_relaxed =
-    std::memory_order_relaxed;
-static ETL_CONSTANT etl::memory_order memory_order_consume =
-    std::memory_order_consume;
-static ETL_CONSTANT etl::memory_order memory_order_acquire =
-    std::memory_order_acquire;
-static ETL_CONSTANT etl::memory_order memory_order_release =
-    std::memory_order_release;
-static ETL_CONSTANT etl::memory_order memory_order_acq_rel =
-    std::memory_order_acq_rel;
-static ETL_CONSTANT etl::memory_order memory_order_seq_cst =
-    std::memory_order_seq_cst;
+static ETL_CONSTANT etl::memory_order memory_order_relaxed = std::memory_order_relaxed;
+static ETL_CONSTANT etl::memory_order memory_order_consume = std::memory_order_consume;
+static ETL_CONSTANT etl::memory_order memory_order_acquire = std::memory_order_acquire;
+static ETL_CONSTANT etl::memory_order memory_order_release = std::memory_order_release;
+static ETL_CONSTANT etl::memory_order memory_order_acq_rel = std::memory_order_acq_rel;
+static ETL_CONSTANT etl::memory_order memory_order_seq_cst = std::memory_order_seq_cst;
 
 using atomic_bool = std::atomic<bool>;
 using atomic_char = std::atomic<char>;

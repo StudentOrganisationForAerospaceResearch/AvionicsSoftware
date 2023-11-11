@@ -46,8 +46,7 @@ namespace etl {
 //***************************************************************************
 class scheduler_exception : public etl::exception {
    public:
-    scheduler_exception(string_type reason_, string_type file_name_,
-                        numeric_type line_number_)
+    scheduler_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
@@ -56,11 +55,9 @@ class scheduler_exception : public etl::exception {
 //***************************************************************************
 class scheduler_no_tasks_exception : public etl::scheduler_exception {
    public:
-    scheduler_no_tasks_exception(string_type file_name_,
-                                 numeric_type line_number_)
-        : etl::scheduler_exception(
-              ETL_ERROR_TEXT("scheduler:no tasks", ETL_SCHEDULER_FILE_ID "A"),
-              file_name_, line_number_) {}
+    scheduler_no_tasks_exception(string_type file_name_, numeric_type line_number_)
+        : etl::scheduler_exception(ETL_ERROR_TEXT("scheduler:no tasks", ETL_SCHEDULER_FILE_ID "A"), file_name_,
+                                   line_number_) {}
 };
 
 //***************************************************************************
@@ -68,11 +65,9 @@ class scheduler_no_tasks_exception : public etl::scheduler_exception {
 //***************************************************************************
 class scheduler_null_task_exception : public etl::scheduler_exception {
    public:
-    scheduler_null_task_exception(string_type file_name_,
-                                  numeric_type line_number_)
-        : etl::scheduler_exception(
-              ETL_ERROR_TEXT("scheduler:null task", ETL_SCHEDULER_FILE_ID "B"),
-              file_name_, line_number_) {}
+    scheduler_null_task_exception(string_type file_name_, numeric_type line_number_)
+        : etl::scheduler_exception(ETL_ERROR_TEXT("scheduler:null task", ETL_SCHEDULER_FILE_ID "B"), file_name_,
+                                   line_number_) {}
 };
 
 //***************************************************************************
@@ -80,11 +75,9 @@ class scheduler_null_task_exception : public etl::scheduler_exception {
 //***************************************************************************
 class scheduler_too_many_tasks_exception : public etl::scheduler_exception {
    public:
-    scheduler_too_many_tasks_exception(string_type file_name_,
-                                       numeric_type line_number_)
-        : etl::scheduler_exception(ETL_ERROR_TEXT("scheduler:too many tasks",
-                                                  ETL_SCHEDULER_FILE_ID "C"),
-                                   file_name_, line_number_) {}
+    scheduler_too_many_tasks_exception(string_type file_name_, numeric_type line_number_)
+        : etl::scheduler_exception(ETL_ERROR_TEXT("scheduler:too many tasks", ETL_SCHEDULER_FILE_ID "C"), file_name_,
+                                   line_number_) {}
 };
 
 //***************************************************************************
@@ -136,8 +129,7 @@ struct scheduler_policy_sequential_multiple {
 };
 
 /// Typedef for backwards compatibility with miss-spelt struct name.
-ETL_DEPRECATED typedef scheduler_policy_sequential_multiple
-    scheduler_policy_sequencial_multiple;
+ETL_DEPRECATED typedef scheduler_policy_sequential_multiple scheduler_policy_sequencial_multiple;
 
 //***************************************************************************
 /// Highest Priority.
@@ -213,23 +205,17 @@ class ischeduler {
     //*******************************************
     /// Set the idle callback.
     //*******************************************
-    void set_idle_callback(etl::ifunction<void>& callback) {
-        p_idle_callback = &callback;
-    }
+    void set_idle_callback(etl::ifunction<void>& callback) { p_idle_callback = &callback; }
 
     //*******************************************
     /// Set the watchdog callback.
     //*******************************************
-    void set_watchdog_callback(etl::ifunction<void>& callback) {
-        p_watchdog_callback = &callback;
-    }
+    void set_watchdog_callback(etl::ifunction<void>& callback) { p_watchdog_callback = &callback; }
 
     //*******************************************
     /// Set the running state for the scheduler.
     //*******************************************
-    void set_scheduler_running(bool scheduler_running_) {
-        scheduler_running = scheduler_running_;
-    }
+    void set_scheduler_running(bool scheduler_running_) { scheduler_running = scheduler_running_; }
 
     //*******************************************
     /// Get the running state for the scheduler.
@@ -246,13 +232,11 @@ class ischeduler {
     /// Add to the task list in priority order.
     //*******************************************
     void add_task(etl::task& task) {
-        ETL_ASSERT(!task_list.full(),
-                   ETL_ERROR(etl::scheduler_too_many_tasks_exception));
+        ETL_ASSERT(!task_list.full(), ETL_ERROR(etl::scheduler_too_many_tasks_exception));
 
         if (!task_list.full()) {
             typename task_list_t::iterator itask =
-                etl::upper_bound(task_list.begin(), task_list.end(),
-                                 task.get_task_priority(), compare_priority());
+                etl::upper_bound(task_list.begin(), task_list.end(), task.get_task_priority(), compare_priority());
 
             task_list.insert(itask, &task);
 
@@ -268,8 +252,7 @@ class ischeduler {
     template <typename TSize>
     void add_task_list(etl::task** p_tasks, TSize size) {
         for (TSize i = 0; i < size; ++i) {
-            ETL_ASSERT((p_tasks[i] != ETL_NULLPTR),
-                       ETL_ERROR(etl::scheduler_null_task_exception));
+            ETL_ASSERT((p_tasks[i] != ETL_NULLPTR), ETL_ERROR(etl::scheduler_null_task_exception));
             add_task(*(p_tasks[i]));
             p_tasks[i]->on_task_added();
         }
@@ -321,8 +304,7 @@ class scheduler : public etl::ischeduler, protected TSchedulerPolicy {
     /// Start the scheduler.
     //*******************************************
     void start() {
-        ETL_ASSERT(task_list.size() > 0,
-                   ETL_ERROR(etl::scheduler_no_tasks_exception));
+        ETL_ASSERT(task_list.size() > 0, ETL_ERROR(etl::scheduler_no_tasks_exception));
 
         scheduler_running = true;
 

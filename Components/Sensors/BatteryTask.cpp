@@ -17,8 +17,7 @@
 
 /* Macros --------------------------------------------------------------------*/
 constexpr double ADC_CONVERSION_FACTOR = 3.3 / 4095;
-constexpr int VOLTAGE_DIVIDER_SCALE =
-    4;  // Value to scale voltage back to original value
+constexpr int VOLTAGE_DIVIDER_SCALE = 4;  // Value to scale voltage back to original value
 constexpr int BATTERY_VOLTAGE_ADC_POLL_TIMEOUT = 50;
 /* Structs -------------------------------------------------------------------*/
 
@@ -41,18 +40,15 @@ BatteryTask::BatteryTask() : Task(BATTERY_TASK_QUEUE_DEPTH_OBJS) {
  */
 void BatteryTask::InitTask() {
     // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr,
-                "Cannot initialize battery task twice");
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize battery task twice");
 
     // Start the task
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)BatteryTask::RunTask, (const char*)"BatTask",
-        (uint16_t)BATTERY_TASK_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)BATTERY_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)BatteryTask::RunTask, (const char*)"BatTask",
+                                     (uint16_t)BATTERY_TASK_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)BATTERY_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS,
-                "BatteryTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "BatteryTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -85,8 +81,7 @@ void BatteryTask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("BatteryTask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("BatteryTask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -115,9 +110,7 @@ void BatteryTask::HandleRequestCommand(uint16_t taskCommand) {
             SOAR_PRINT("Power State: %d, \r\n", GetPowerState());
             break;
         default:
-            SOAR_PRINT(
-                "BATTERYTask - Received Unsupported REQUEST_COMMAND {%d}\n",
-                taskCommand);
+            SOAR_PRINT("BATTERYTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
             break;
     }
 }
@@ -131,19 +124,16 @@ void BatteryTask::SampleBatteryVoltage() {
     double batteryVoltageValue = 0;
     double vi = 0;
 
-    HAL_ADC_Start(
-        &hadc2);  // Enables ADC and starts conversion of regular channels
+    HAL_ADC_Start(&hadc2);  // Enables ADC and starts conversion of regular channels
     if (HAL_ADC_PollForConversion(&hadc2, BATTERY_VOLTAGE_ADC_POLL_TIMEOUT) ==
-        HAL_OK) {  //Check if conversion is completed
+        HAL_OK) {                              //Check if conversion is completed
         adcVal[0] = HAL_ADC_GetValue(&hadc2);  // Get ADC Value
         HAL_ADC_Stop(&hadc2);
     }
 
-    vi = (ADC_CONVERSION_FACTOR *
-          (adcVal[0]));  // Converts 12 bit ADC value into voltage
-    batteryVoltageValue = (vi * VOLTAGE_DIVIDER_SCALE) *
-                          1000;  // Multiply by 1000 to keep decimal places
-    data->voltage_ = (uint32_t)batteryVoltageValue;  // Battery Voltage in volts
+    vi = (ADC_CONVERSION_FACTOR * (adcVal[0]));                 // Converts 12 bit ADC value into voltage
+    batteryVoltageValue = (vi * VOLTAGE_DIVIDER_SCALE) * 1000;  // Multiply by 1000 to keep decimal places
+    data->voltage_ = (uint32_t)batteryVoltageValue;             // Battery Voltage in volts
 
     timestampPT = HAL_GetTick();
 }
@@ -170,11 +160,9 @@ void BatteryTask::TransmitProtocolBatteryData() {
     bat.set_p_source(GetPowerState());
     msg.set_bat(bat);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
     // Send the battery voltage data
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }

@@ -62,8 +62,7 @@ namespace etl {
 //***************************************************************************
 class queue_exception : public exception {
    public:
-    queue_exception(string_type reason_, string_type file_name_,
-                    numeric_type line_number_)
+    queue_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -74,8 +73,7 @@ class queue_exception : public exception {
 class queue_full : public queue_exception {
    public:
     queue_full(string_type file_name_, numeric_type line_number_)
-        : queue_exception(ETL_ERROR_TEXT("queue:full", ETL_QUEUE_FILE_ID "A"),
-                          file_name_, line_number_) {}
+        : queue_exception(ETL_ERROR_TEXT("queue:full", ETL_QUEUE_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -85,8 +83,7 @@ class queue_full : public queue_exception {
 class queue_empty : public queue_exception {
    public:
     queue_empty(string_type file_name_, numeric_type line_number_)
-        : queue_exception(ETL_ERROR_TEXT("queue:empty", ETL_QUEUE_FILE_ID "B"),
-                          file_name_, line_number_) {}
+        : queue_exception(ETL_ERROR_TEXT("queue:empty", ETL_QUEUE_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -136,8 +133,7 @@ class queue_base {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    queue_base(size_type max_size_)
-        : in(0), out(0), current_size(0), CAPACITY(max_size_) {}
+    queue_base(size_type max_size_) : in(0), out(0), current_size(0), CAPACITY(max_size_) {}
 
     //*************************************************************************
     /// Destructor.
@@ -197,26 +193,21 @@ class queue_base {
 /// \warning This queue cannot be used for concurrent access from multiple threads.
 /// \tparam T The type of value that the queue holds.
 //***************************************************************************
-template <typename T,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class iqueue : public etl::queue_base<MEMORY_MODEL> {
    private:
     typedef typename etl::queue_base<MEMORY_MODEL> base_t;
 
    public:
-    typedef T value_type;  ///< The type stored in the queue.
-    typedef T& reference;  ///< A reference to the type used in the queue.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the queue.
+    typedef T value_type;              ///< The type stored in the queue.
+    typedef T& reference;              ///< A reference to the type used in the queue.
+    typedef const T& const_reference;  ///< A const reference to the type used in the queue.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue reference to the type used in the queue.
+    typedef T&& rvalue_reference;  ///< An rvalue reference to the type used in the queue.
 #endif
-    typedef T* pointer;  ///< A pointer to the type used in the queue.
-    typedef const T*
-        const_pointer;  ///< A const pointer to the type used in the queue.
-    typedef typename base_t::size_type
-        size_type;  ///< The type used for determining the size of the queue.
+    typedef T* pointer;                            ///< A pointer to the type used in the queue.
+    typedef const T* const_pointer;                ///< A const pointer to the type used in the queue.
+    typedef typename base_t::size_type size_type;  ///< The type used for determining the size of the queue.
 
     using base_t::add_in;
     using base_t::CAPACITY;
@@ -287,8 +278,7 @@ class iqueue : public etl::queue_base<MEMORY_MODEL> {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
@@ -351,8 +341,7 @@ class iqueue : public etl::queue_base<MEMORY_MODEL> {
     ///\param value The value to use to construct the item to push to the queue.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    void emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    void emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
 #if defined(ETL_CHECK_PUSH_POP)
         ETL_ASSERT(!full(), ETL_ERROR(queue_full));
 #endif
@@ -472,8 +461,7 @@ class iqueue : public etl::queue_base<MEMORY_MODEL> {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    iqueue(T* p_buffer_, size_type max_size_)
-        : base_t(max_size_), p_buffer(p_buffer_) {}
+    iqueue(T* p_buffer_, size_type max_size_) : base_t(max_size_), p_buffer(p_buffer_) {}
 
    private:
     // Disable copy construction.
@@ -501,19 +489,16 @@ class iqueue : public etl::queue_base<MEMORY_MODEL> {
 /// \tparam SIZE         The maximum capacity of the queue.
 /// \tparam MEMORY_MODEL The memory model for the queue. Determines the type of the internal counter variables.
 //***************************************************************************
-template <typename T, const size_t SIZE,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, const size_t SIZE, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class queue : public etl::iqueue<T, MEMORY_MODEL> {
    private:
     typedef etl::iqueue<T, MEMORY_MODEL> base_t;
 
    public:
     typedef typename base_t::size_type size_type;
-    typedef typename etl::aligned_storage<
-        sizeof(T), etl::alignment_of<T>::value>::type container_type;
+    typedef typename etl::aligned_storage<sizeof(T), etl::alignment_of<T>::value>::type container_type;
 
-    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max),
-                      "Size too large for memory model");
+    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max), "Size too large for memory model");
 
     static ETL_CONSTANT size_type MAX_SIZE = size_type(SIZE);
 
@@ -525,9 +510,7 @@ class queue : public etl::iqueue<T, MEMORY_MODEL> {
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    queue(const queue& rhs) : base_t(reinterpret_cast<T*>(&buffer[0]), SIZE) {
-        base_t::clone(rhs);
-    }
+    queue(const queue& rhs) : base_t(reinterpret_cast<T*>(&buffer[0]), SIZE) { base_t::clone(rhs); }
 
 #if ETL_USING_CPP11
     //*************************************************************************

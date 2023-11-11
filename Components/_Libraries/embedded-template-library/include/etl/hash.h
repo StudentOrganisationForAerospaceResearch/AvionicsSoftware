@@ -53,8 +53,7 @@ namespace private_hash {
 /// T is always expected to be size_t.
 //*************************************************************************
 template <typename T>
-typename enable_if<sizeof(T) == sizeof(uint16_t), size_t>::type generic_hash(
-    const uint8_t* begin, const uint8_t* end) {
+typename enable_if<sizeof(T) == sizeof(uint16_t), size_t>::type generic_hash(const uint8_t* begin, const uint8_t* end) {
     uint32_t h = fnv_1a_32(begin, end);
 
     return static_cast<size_t>(h ^ (h >> 16U));
@@ -65,8 +64,7 @@ typename enable_if<sizeof(T) == sizeof(uint16_t), size_t>::type generic_hash(
 /// T is always expected to be size_t.
 //*************************************************************************
 template <typename T>
-typename enable_if<sizeof(T) == sizeof(uint32_t), size_t>::type generic_hash(
-    const uint8_t* begin, const uint8_t* end) {
+typename enable_if<sizeof(T) == sizeof(uint32_t), size_t>::type generic_hash(const uint8_t* begin, const uint8_t* end) {
     return fnv_1a_32(begin, end);
 }
 
@@ -76,8 +74,7 @@ typename enable_if<sizeof(T) == sizeof(uint32_t), size_t>::type generic_hash(
 /// T is always expected to be size_t.
 //*************************************************************************
 template <typename T>
-typename enable_if<sizeof(T) == sizeof(uint64_t), size_t>::type generic_hash(
-    const uint8_t* begin, const uint8_t* end) {
+typename enable_if<sizeof(T) == sizeof(uint64_t), size_t>::type generic_hash(const uint8_t* begin, const uint8_t* end) {
     return fnv_1a_64(begin, end);
 }
 #endif
@@ -123,8 +120,7 @@ struct hash;
 //***************************************************************************
 template <>
 struct hash<bool> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(bool),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(bool), "size_t smaller than type");
 
     size_t operator()(bool v) const { return static_cast<size_t>(v); }
 };
@@ -135,8 +131,7 @@ struct hash<bool> {
 //***************************************************************************
 template <>
 struct hash<char> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(char),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(char), "size_t smaller than type");
 
     size_t operator()(char v) const { return static_cast<size_t>(v); }
 };
@@ -147,8 +142,7 @@ struct hash<char> {
 //***************************************************************************
 template <>
 struct hash<signed char> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(signed char),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(signed char), "size_t smaller than type");
 
     size_t operator()(signed char v) const { return static_cast<size_t>(v); }
 };
@@ -159,8 +153,7 @@ struct hash<signed char> {
 //***************************************************************************
 template <>
 struct hash<unsigned char> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(unsigned char),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(unsigned char), "size_t smaller than type");
 
     size_t operator()(unsigned char v) const { return static_cast<size_t>(v); }
 };
@@ -171,8 +164,7 @@ struct hash<unsigned char> {
 //***************************************************************************
 template <>
 struct hash<wchar_t> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(wchar_t),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(wchar_t), "size_t smaller than type");
 
     size_t operator()(wchar_t v) const { return static_cast<size_t>(v); }
 };
@@ -183,8 +175,7 @@ struct hash<wchar_t> {
 //***************************************************************************
 template <>
 struct hash<short> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(short),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(short), "size_t smaller than type");
 
     size_t operator()(short v) const { return static_cast<size_t>(v); }
 };
@@ -195,8 +186,7 @@ struct hash<short> {
 //***************************************************************************
 template <>
 struct hash<unsigned short> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(unsigned short),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(unsigned short), "size_t smaller than type");
 
     size_t operator()(unsigned short v) const { return static_cast<size_t>(v); }
 };
@@ -207,8 +197,7 @@ struct hash<unsigned short> {
 //***************************************************************************
 template <>
 struct hash<int> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(int),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(int), "size_t smaller than type");
 
     size_t operator()(int v) const { return static_cast<size_t>(v); }
 };
@@ -219,8 +208,7 @@ struct hash<int> {
 //***************************************************************************
 template <>
 struct hash<unsigned int> {
-    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(unsigned int),
-                      "size_t smaller than type");
+    ETL_STATIC_ASSERT(sizeof(size_t) >= sizeof(unsigned int), "size_t smaller than type");
 
     size_t operator()(unsigned int v) const { return static_cast<size_t>(v); }
 };
@@ -399,8 +387,7 @@ struct hash_base<T, true> {
         if (sizeof(size_t) >= sizeof(T)) {
             return static_cast<size_t>(v);
         } else {
-            return ::etl::hash<unsigned long long>()(
-                static_cast<unsigned long long>(v));
+            return ::etl::hash<unsigned long long>()(static_cast<unsigned long long>(v));
         }
     }
 };

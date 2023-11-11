@@ -46,8 +46,7 @@ namespace etl {
 /// The delegate ids must range between Offset and Offset + Range - 1.
 //***************************************************************************
 #if ETL_USING_CPP11 && !defined(ETL_DELEGATE_FORCE_CPP03_IMPLEMENTATION)
-template <const size_t Range, const size_t Offset = 0U,
-          const etl::delegate<void(size_t)>* Delegates = nullptr>
+template <const size_t Range, const size_t Offset = 0U, const etl::delegate<void(size_t)>* Delegates = nullptr>
 class delegate_service {
    public:
     typedef etl::delegate<void(size_t)> delegate_type;
@@ -103,9 +102,7 @@ class delegate_service
     //*************************************************************************
     delegate_service() {
         delegate_type default_delegate =
-            delegate_type::create<delegate_service<Range, Offset>,
-                                  &delegate_service<Range, Offset>::unhandled>(
-                *this);
+            delegate_type::create<delegate_service<Range, Offset>, &delegate_service<Range, Offset>::unhandled>(*this);
 
         lookup.fill(default_delegate);
     }

@@ -94,11 +94,8 @@ struct integral_limits<unsigned char> {
 #endif
 template <>
 struct integral_limits<char> {
-    static ETL_CONSTANT char min =
-        (etl::is_signed<char>::value) ? SCHAR_MIN : 0;
-    static ETL_CONSTANT char max = (etl::is_signed<char>::value)
-                                       ? SCHAR_MAX
-                                       : static_cast<char>(UCHAR_MAX);
+    static ETL_CONSTANT char min = (etl::is_signed<char>::value) ? SCHAR_MIN : 0;
+    static ETL_CONSTANT char max = (etl::is_signed<char>::value) ? SCHAR_MAX : static_cast<char>(UCHAR_MAX);
     static ETL_CONSTANT int bits = CHAR_BIT;
     static ETL_CONSTANT bool is_signed = etl::is_signed<char>::value;
 };
@@ -124,8 +121,7 @@ template <>
 struct integral_limits<unsigned short> {
     static ETL_CONSTANT unsigned short min = 0;
     static ETL_CONSTANT unsigned short max = USHRT_MAX;
-    static ETL_CONSTANT int bits =
-        CHAR_BIT * (sizeof(unsigned short) / sizeof(char));
+    static ETL_CONSTANT int bits = CHAR_BIT * (sizeof(unsigned short) / sizeof(char));
     static ETL_CONSTANT bool is_signed = etl::is_signed<unsigned short>::value;
 };
 
@@ -147,8 +143,7 @@ template <>
 struct integral_limits<unsigned int> {
     static ETL_CONSTANT unsigned int min = 0;
     static ETL_CONSTANT unsigned int max = UINT_MAX;
-    static ETL_CONSTANT int bits =
-        CHAR_BIT * (sizeof(unsigned int) / sizeof(char));
+    static ETL_CONSTANT int bits = CHAR_BIT * (sizeof(unsigned int) / sizeof(char));
     static ETL_CONSTANT bool is_signed = etl::is_signed<unsigned int>::value;
 };
 
@@ -170,8 +165,7 @@ template <>
 struct integral_limits<unsigned long> {
     static ETL_CONSTANT unsigned long min = 0;
     static ETL_CONSTANT unsigned long max = ULONG_MAX;
-    static ETL_CONSTANT int bits =
-        CHAR_BIT * (sizeof(unsigned long) / sizeof(char));
+    static ETL_CONSTANT int bits = CHAR_BIT * (sizeof(unsigned long) / sizeof(char));
     static ETL_CONSTANT bool is_signed = etl::is_signed<unsigned long>::value;
 };
 
@@ -194,8 +188,7 @@ template <>
 struct integral_limits<long long> {
     static ETL_CONSTANT long long min = LLONG_MIN;
     static ETL_CONSTANT long long max = LLONG_MAX;
-    static ETL_CONSTANT int bits =
-        CHAR_BIT * (sizeof(long long) / sizeof(char));
+    static ETL_CONSTANT int bits = CHAR_BIT * (sizeof(long long) / sizeof(char));
     static ETL_CONSTANT bool is_signed = etl::is_signed<long long>::value;
 };
 
@@ -206,10 +199,8 @@ template <>
 struct integral_limits<unsigned long long> {
     static ETL_CONSTANT unsigned long long min = 0;
     static ETL_CONSTANT unsigned long long max = ULLONG_MAX;
-    static ETL_CONSTANT int bits =
-        CHAR_BIT * (sizeof(unsigned long long) / sizeof(char));
-    static ETL_CONSTANT bool is_signed =
-        etl::is_signed<unsigned long long>::value;
+    static ETL_CONSTANT int bits = CHAR_BIT * (sizeof(unsigned long long) / sizeof(char));
+    static ETL_CONSTANT bool is_signed = etl::is_signed<unsigned long long>::value;
 };
 }  // namespace etl
 

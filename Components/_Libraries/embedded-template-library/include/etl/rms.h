@@ -69,8 +69,7 @@ struct rms_traits<double, TCalc> {
 /// Standard Deviation.
 //***************************************************************************
 template <typename TInput, typename TCalc = TInput>
-class rms : public private_rms::rms_traits<TInput, TCalc>,
-            public etl::binary_function<TInput, TInput, void> {
+class rms : public private_rms::rms_traits<TInput, TCalc>, public etl::binary_function<TInput, TInput, void> {
    private:
     typedef typename private_rms::rms_traits<TInput, TCalc>::calc_t calc_t;
 

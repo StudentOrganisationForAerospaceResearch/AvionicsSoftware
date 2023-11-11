@@ -65,8 +65,7 @@ struct fill_spec {
 
 //*********************************
 struct precision_spec {
-    ETL_CONSTEXPR precision_spec(uint_least8_t precision_)
-        : precision(precision_) {}
+    ETL_CONSTEXPR precision_spec(uint_least8_t precision_) : precision(precision_) {}
 
     const uint_least8_t precision;
 };
@@ -102,27 +101,23 @@ struct right_spec {};
 //***************************************************************************
 // Stream formatting manipulators.
 //***************************************************************************
-static ETL_CONSTEXPR private_basic_format_spec::base_spec setbase(
-    uint32_t base) {
+static ETL_CONSTEXPR private_basic_format_spec::base_spec setbase(uint32_t base) {
     return private_basic_format_spec::base_spec(base);
 }
 
 //*********************************
-static ETL_CONSTEXPR private_basic_format_spec::width_spec setw(
-    uint32_t width) {
+static ETL_CONSTEXPR private_basic_format_spec::width_spec setw(uint32_t width) {
     return private_basic_format_spec::width_spec(width);
 }
 
 //*********************************
 template <typename TChar>
-static ETL_CONSTEXPR private_basic_format_spec::fill_spec<TChar> setfill(
-    TChar fill) {
+static ETL_CONSTEXPR private_basic_format_spec::fill_spec<TChar> setfill(TChar fill) {
     return private_basic_format_spec::fill_spec<TChar>(fill);
 }
 
 //*********************************
-static ETL_CONSTEXPR private_basic_format_spec::precision_spec setprecision(
-    uint32_t precision) {
+static ETL_CONSTEXPR private_basic_format_spec::precision_spec setprecision(uint32_t precision) {
     return private_basic_format_spec::precision_spec(precision);
 }
 
@@ -148,15 +143,13 @@ static ETL_CONSTANT private_basic_format_spec::right_spec right;
 static ETL_CONSTANT private_basic_format_spec::boolalpha_spec boolalpha(true);
 
 //*********************************
-static ETL_CONSTANT private_basic_format_spec::boolalpha_spec noboolalpha(
-    false);
+static ETL_CONSTANT private_basic_format_spec::boolalpha_spec noboolalpha(false);
 
 //*********************************
 static ETL_CONSTANT private_basic_format_spec::uppercase_spec uppercase(true);
 
 //*********************************
-static ETL_CONSTANT private_basic_format_spec::uppercase_spec nouppercase(
-    false);
+static ETL_CONSTANT private_basic_format_spec::uppercase_spec nouppercase(false);
 
 //*********************************
 static ETL_CONSTANT private_basic_format_spec::showbase_spec showbase(true);
@@ -186,10 +179,8 @@ class basic_format_spec {
     //***************************************************************************
     /// Constructor.
     //***************************************************************************
-    ETL_CONSTEXPR basic_format_spec(uint_least8_t base__, uint_least8_t width__,
-                                    uint_least8_t precision__,
-                                    bool upper_case__, bool left_justified__,
-                                    bool boolalpha__, bool show_base__,
+    ETL_CONSTEXPR basic_format_spec(uint_least8_t base__, uint_least8_t width__, uint_least8_t precision__,
+                                    bool upper_case__, bool left_justified__, bool boolalpha__, bool show_base__,
                                     typename TString::value_type fill__)
         : base_(base__),
           width_(width__),
@@ -332,9 +323,7 @@ class basic_format_spec {
     //***************************************************************************
     /// Gets the fill character.
     //***************************************************************************
-    ETL_CONSTEXPR typename TString::value_type get_fill() const {
-        return fill_;
-    }
+    ETL_CONSTEXPR typename TString::value_type get_fill() const { return fill_; }
 
     //***************************************************************************
     /// Sets the left justify flag.
@@ -381,21 +370,16 @@ class basic_format_spec {
     //***************************************************************************
     /// Equality operator.
     //***************************************************************************
-    ETL_CONSTEXPR friend bool operator==(const basic_format_spec& lhs,
-                                         const basic_format_spec& rhs) {
-        return (lhs.base_ == rhs.base_) && (lhs.width_ == rhs.width_) &&
-               (lhs.precision_ == rhs.precision_) &&
-               (lhs.upper_case_ == rhs.upper_case_) &&
-               (lhs.left_justified_ == rhs.left_justified_) &&
-               (lhs.boolalpha_ == rhs.boolalpha_) &&
-               (lhs.show_base_ == rhs.show_base_) && (lhs.fill_ == rhs.fill_);
+    ETL_CONSTEXPR friend bool operator==(const basic_format_spec& lhs, const basic_format_spec& rhs) {
+        return (lhs.base_ == rhs.base_) && (lhs.width_ == rhs.width_) && (lhs.precision_ == rhs.precision_) &&
+               (lhs.upper_case_ == rhs.upper_case_) && (lhs.left_justified_ == rhs.left_justified_) &&
+               (lhs.boolalpha_ == rhs.boolalpha_) && (lhs.show_base_ == rhs.show_base_) && (lhs.fill_ == rhs.fill_);
     }
 
     //***************************************************************************
     /// Inequality operator.
     //***************************************************************************
-    ETL_CONSTEXPR friend bool operator!=(const basic_format_spec& lhs,
-                                         const basic_format_spec& rhs) {
+    ETL_CONSTEXPR friend bool operator!=(const basic_format_spec& lhs, const basic_format_spec& rhs) {
         return !(lhs == rhs);
     }
 

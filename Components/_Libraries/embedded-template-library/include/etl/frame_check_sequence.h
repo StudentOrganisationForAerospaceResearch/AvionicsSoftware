@@ -35,9 +35,7 @@ SOFTWARE.
 
 #include <stdint.h>
 
-ETL_STATIC_ASSERT(
-    ETL_USING_8BIT_TYPES,
-    "This file does not currently support targets with no 8bit type");
+ETL_STATIC_ASSERT(ETL_USING_8BIT_TYPES, "This file does not currently support targets with no 8bit type");
 
 ///\defgroup frame_check_sequence Frame check sequence calculation
 ///\ingroup maths
@@ -49,9 +47,7 @@ namespace private_frame_check_sequence {
 /// An output iterator used to add new values.
 //***************************************************
 template <typename TFCS>
-class add_insert_iterator
-    : public etl::iterator<ETL_OR_STD::output_iterator_tag, void, void, void,
-                           void> {
+class add_insert_iterator : public etl::iterator<ETL_OR_STD::output_iterator_tag, void, void, void, void> {
    public:
     //***********************************
     explicit add_insert_iterator(TFCS& fcs) ETL_NOEXCEPT : p_fcs(&fcs) {}
@@ -86,12 +82,9 @@ class frame_check_sequence {
    public:
     typedef TPolicy policy_type;
     typedef typename policy_type::value_type value_type;
-    typedef private_frame_check_sequence::add_insert_iterator<
-        frame_check_sequence<TPolicy>>
-        add_insert_iterator;
+    typedef private_frame_check_sequence::add_insert_iterator<frame_check_sequence<TPolicy>> add_insert_iterator;
 
-    ETL_STATIC_ASSERT(etl::is_unsigned<value_type>::value,
-                      "Signed frame check type not supported");
+    ETL_STATIC_ASSERT(etl::is_unsigned<value_type>::value, "Signed frame check type not supported");
 
     //*************************************************************************
     /// Default constructor.
@@ -105,9 +98,7 @@ class frame_check_sequence {
     //*************************************************************************
     template <typename TIterator>
     frame_check_sequence(TIterator begin, const TIterator end) {
-        ETL_STATIC_ASSERT(
-            sizeof(typename etl::iterator_traits<TIterator>::value_type) == 1,
-            "Type not supported");
+        ETL_STATIC_ASSERT(sizeof(typename etl::iterator_traits<TIterator>::value_type) == 1, "Type not supported");
 
         reset();
         add(begin, end);
@@ -125,9 +116,7 @@ class frame_check_sequence {
     //*************************************************************************
     template <typename TIterator>
     void add(TIterator begin, const TIterator end) {
-        ETL_STATIC_ASSERT(
-            sizeof(typename etl::iterator_traits<TIterator>::value_type) == 1,
-            "Type not supported");
+        ETL_STATIC_ASSERT(sizeof(typename etl::iterator_traits<TIterator>::value_type) == 1, "Type not supported");
 
         while (begin != end) {
             frame_check = policy.add(frame_check, *begin);

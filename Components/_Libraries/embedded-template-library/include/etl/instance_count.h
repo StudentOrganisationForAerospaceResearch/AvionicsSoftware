@@ -72,9 +72,7 @@ class instance_count {
     //*************************************************************************
     /// Get how many instances we have.
     //*************************************************************************
-    static const counter_type& get_instance_count() {
-        return current_instance_count();
-    }
+    static const counter_type& get_instance_count() { return current_instance_count(); }
 
     //*************************************************************************
     /// Get how many instances we have.

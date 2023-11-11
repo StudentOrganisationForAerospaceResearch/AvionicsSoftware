@@ -40,12 +40,10 @@ SOFTWARE.
 namespace etl {
 #if ETL_USING_CPP11
 template <size_t Table_Size>
-using crc32_c_t =
-    etl::crc_type<etl::private_crc::crc32_c_parameters, Table_Size>;
+using crc32_c_t = etl::crc_type<etl::private_crc::crc32_c_parameters, Table_Size>;
 #else
 template <size_t Table_Size>
-class crc32_c_t
-    : public etl::crc_type<etl::private_crc::crc32_c_parameters, Table_Size> {
+class crc32_c_t : public etl::crc_type<etl::private_crc::crc32_c_parameters, Table_Size> {
    public:
     //*************************************************************************
     /// Default constructor.

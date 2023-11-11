@@ -13,15 +13,14 @@
 enum RocketState {
     //-- GROUND --
     // Manual venting allowed at all times
-    RS_PRELAUNCH =
-        0,    // Idle state, waiting for command to proceeding sequences
+    RS_PRELAUNCH = 0,  // Idle state, waiting for command to proceeding sequences
     RS_FILL,  // N2 Prefill/Purge/Leak-check/Load-cell Tare check sub-sequences, full control of valves (except MEV) allowed
     RS_ARM,  // We don't allow fill etc. 1-2 minutes before launch : Cannot fill rocket with N2 etc. unless you return to FILL
     // Power Transition, Fill-Arm Disconnect Sub-sequences (you should be able to revert the power transition)
 
     //-- IGNITION -- Manual venting NOT ALLOWED
     RS_IGNITION,  // Ignition of the ignitors
-    RS_LAUNCH,  // Launch triggered by confirmation of ignition (from ignitor) is nominal : MEV Open Sequence
+    RS_LAUNCH,    // Launch triggered by confirmation of ignition (from ignitor) is nominal : MEV Open Sequence
 
     //-- BURN --
     // Vents should stay closed, manual venting NOT ALLOWED
@@ -37,13 +36,13 @@ enum RocketState {
 
     //-- DESCENT / POSTAPOGEE --
     // Automatic Venting AND Vent Control ALLOWED
-    RS_DESCENT,  // Vents open (well into the descent)
+    RS_DESCENT,   // Vents open (well into the descent)
     RS_RECOVERY,  // Vents open, MEV closed, transmit all data over radio and accept vent commands
     // Supports general commands (e.g. venting) and logs/transmits slowly (maybe stop logging after close to full memory?)
 
     //-- RECOVERY / TECHNICAL --
     RS_ABORT,  // Abort sequence, vents open, MEV closed, ignitors off
-    RS_TEST,  // Test, between ABORT and PRE-LAUNCH, has full control of all GPIOs
+    RS_TEST,   // Test, between ABORT and PRE-LAUNCH, has full control of all GPIOs
 
     RS_NONE  // Invalid state, must be last
 };
@@ -62,15 +61,15 @@ enum RocketControlCommands {
     RSC_CLOSE_VENT,    // Close the vent valve
     RSC_OPEN_DRAIN,    // Open the drain valve
     RSC_CLOSE_DRAIN,   // Close the drain valve
-    RSC_MEV_CLOSE,  // Forces MEV to close - ONLY supported in states where it is safe to close the MEV
+    RSC_MEV_CLOSE,     // Forces MEV to close - ONLY supported in states where it is safe to close the MEV
 
     //-- PRELAUNCH --
     RSC_GOTO_FILL,  // Transition to the FILL state
 
     //-- FILL --
-    RSC_ARM_CONFIRM_1,  // Enable first ARM confirmation flag
-    RSC_ARM_CONFIRM_2,  // Enable second ARM confirmation flag
-    RSC_GOTO_ARM,  // Transition to the ARM state (not allowed without the confirm flags set)
+    RSC_ARM_CONFIRM_1,   // Enable first ARM confirmation flag
+    RSC_ARM_CONFIRM_2,   // Enable second ARM confirmation flag
+    RSC_GOTO_ARM,        // Transition to the ARM state (not allowed without the confirm flags set)
     RSC_GOTO_PRELAUNCH,  // Transition to the PRELAUNCH state from FILL
 
     //-- ARM/IGNITION/LAUNCH/BURN --
@@ -124,10 +123,9 @@ enum RocketControlCommands {
  */
 class BaseRocketState {
    public:
-    virtual RocketState HandleCommand(
-        Command& cm) = 0;  //Handle a command based on the current state
-    virtual RocketState OnEnter() = 0;  //Returns the state we're entering
-    virtual RocketState OnExit() = 0;   //Returns the state we're exiting
+    virtual RocketState HandleCommand(Command& cm) = 0;  //Handle a command based on the current state
+    virtual RocketState OnEnter() = 0;                   //Returns the state we're entering
+    virtual RocketState OnExit() = 0;                    //Returns the state we're exiting
 
     virtual RocketState GetStateID() { return rsStateID; }
 
@@ -170,8 +168,7 @@ class PreLaunch : public BaseRocketState {
     RocketState OnExit() override;
 
     // Non-ignition
-    static RocketState HandleNonIgnitionCommands(RocketControlCommands rcAction,
-                                                 RocketState currentState);
+    static RocketState HandleNonIgnitionCommands(RocketControlCommands rcAction, RocketState currentState);
 };
 
 /**

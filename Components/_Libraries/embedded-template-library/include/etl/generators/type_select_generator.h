@@ -65,9 +65,8 @@ struct type_select {
     //***********************************
     template <size_t ID, size_t N, typename T1, typename... TRest>
     struct type_select_helper {
-        using type = typename etl::conditional<
-            ID == N, T1,
-            typename type_select_helper<ID, N + 1, TRest...>::type>::type;
+        using type =
+            typename etl::conditional<ID == N, T1, typename type_select_helper<ID, N + 1, TRest...>::type>::type;
     };
 
     //***********************************
@@ -79,8 +78,7 @@ struct type_select {
    public:
     template <size_t ID>
     struct select {
-        static_assert(ID < sizeof...(TTypes),
-                      "Illegal type_select::select index");
+        static_assert(ID < sizeof...(TTypes), "Illegal type_select::select index");
 
         using type = typename type_select_helper<ID, 0, TTypes...>::type;
     };
@@ -93,8 +91,7 @@ struct type_select {
 // Select type alias
 //***************************************************************************
 template <size_t N, typename... TTypes>
-using type_select_t =
-    typename etl::type_select<TTypes...>::template select_t<N>;
+using type_select_t = typename etl::type_select<TTypes...>::template select_t<N>;
 
 #else
 

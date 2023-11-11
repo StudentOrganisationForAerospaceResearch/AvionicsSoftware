@@ -62,16 +62,13 @@ class string : public istring {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    string() : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
-        this->initialise();
-    }
+    string() : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) { this->initialise(); }
 
     //*************************************************************************
     /// Copy constructor.
     ///\param other The other string.
     //*************************************************************************
-    string(const etl::string<MAX_SIZE_>& other)
-        : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    string(const etl::string<MAX_SIZE_>& other) : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(other);
     }
 
@@ -79,8 +76,7 @@ class string : public istring {
     /// From other istring.
     ///\param other The other istring.
     //*************************************************************************
-    string(const etl::istring& other)
-        : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    string(const etl::istring& other) : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(other);
     }
 
@@ -111,8 +107,7 @@ class string : public istring {
     ///\param text  The initial text of the string.
     ///\param count The number of characters to copy.
     //*************************************************************************
-    string(const value_type* text, size_t count)
-        : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    string(const value_type* text, size_t count) : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(text, text + count);
     }
 
@@ -121,8 +116,7 @@ class string : public istring {
     ///\param initialSize  The initial size of the string.
     ///\param value        The value to fill the string with.
     //*************************************************************************
-    string(size_type count, value_type c)
-        : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    string(size_type count, value_type c) : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->initialise();
         this->resize(count, c);
     }
@@ -134,9 +128,7 @@ class string : public istring {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    string(TIterator first, TIterator last,
-           typename etl::enable_if<!etl::is_integral<TIterator>::value,
-                                   int>::type = 0)
+    string(TIterator first, TIterator last, typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0)
         : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(first, last);
     }
@@ -145,8 +137,7 @@ class string : public istring {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    string(std::initializer_list<value_type> init)
-        : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    string(std::initializer_list<value_type> init) : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(init.begin(), init.end());
     }
 #endif
@@ -155,8 +146,7 @@ class string : public istring {
     /// From string_view.
     ///\param view The string_view.
     //*************************************************************************
-    explicit string(const etl::string_view& view)
-        : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    explicit string(const etl::string_view& view) : istring(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(view.begin(), view.end());
     }
 
@@ -165,13 +155,11 @@ class string : public istring {
     ///\param position The position of the first character.  Default = 0.
     ///\param length   The number of characters. Default = npos.
     //*************************************************************************
-    etl::string<MAX_SIZE_> substr(size_type position = 0,
-                                  size_type length_ = npos) const {
+    etl::string<MAX_SIZE_> substr(size_type position = 0, size_type length_ = npos) const {
         etl::string<MAX_SIZE_> new_string;
 
         if (position != this->size()) {
-            ETL_ASSERT(position < this->size(),
-                       ETL_ERROR(string_out_of_bounds));
+            ETL_ASSERT(position < this->size(), ETL_ERROR(string_out_of_bounds));
 
             length_ = etl::min(length_, this->size() - position);
 
@@ -242,17 +230,13 @@ class string_ext : public istring {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    string_ext(value_type* buffer, size_type buffer_size)
-        : istring(buffer, buffer_size - 1U) {
-        this->initialise();
-    }
+    string_ext(value_type* buffer, size_type buffer_size) : istring(buffer, buffer_size - 1U) { this->initialise(); }
 
     //*************************************************************************
     /// Copy constructor.
     ///\param other The other string_ext.
     //*************************************************************************
-    string_ext(const etl::string_ext& other, value_type* buffer,
-               size_type buffer_size)
+    string_ext(const etl::string_ext& other, value_type* buffer, size_type buffer_size)
         : istring(buffer, buffer_size - 1U) {
         this->assign(other);
     }
@@ -261,8 +245,7 @@ class string_ext : public istring {
     /// From other istring.
     ///\param other The other istring.
     //*************************************************************************
-    string_ext(const etl::istring& other, value_type* buffer,
-               size_type buffer_size)
+    string_ext(const etl::istring& other, value_type* buffer, size_type buffer_size)
         : istring(buffer, buffer_size - 1U) {
         this->assign(other);
     }
@@ -273,8 +256,7 @@ class string_ext : public istring {
     ///\param position The position of the first character.
     ///\param length   The number of characters. Default = npos.
     //*************************************************************************
-    string_ext(const etl::istring& other, value_type* buffer,
-               size_type buffer_size, size_type position,
+    string_ext(const etl::istring& other, value_type* buffer, size_type buffer_size, size_type position,
                size_type length = npos)
         : istring(buffer, buffer_size - 1U) {
         ETL_ASSERT(position < other.size(), ETL_ERROR(string_out_of_bounds));
@@ -286,8 +268,7 @@ class string_ext : public istring {
     /// Constructor, from null terminated text.
     ///\param text The initial text of the string_ext.
     //*************************************************************************
-    string_ext(const char* text, char* buffer, size_type buffer_size)
-        : istring(buffer, buffer_size - 1U) {
+    string_ext(const char* text, char* buffer, size_type buffer_size) : istring(buffer, buffer_size - 1U) {
         // Is the initial text at the same address as the buffer?
         if (text == buffer) {
             this->current_size = etl::strlen(buffer);
@@ -301,8 +282,7 @@ class string_ext : public istring {
     ///\param text  The initial text of the string_ext.
     ///\param count The number of characters to copy.
     //*************************************************************************
-    string_ext(const value_type* text, size_type count, value_type* buffer,
-               size_type buffer_size)
+    string_ext(const value_type* text, size_type count, value_type* buffer, size_type buffer_size)
         : istring(buffer, buffer_size - 1U) {
         this->assign(text, text + count);
     }
@@ -312,8 +292,7 @@ class string_ext : public istring {
     ///\param initialSize  The initial size of the string_ext.
     ///\param value        The value to fill the string_ext with.
     //*************************************************************************
-    string_ext(size_type count, value_type c, value_type* buffer,
-               size_type buffer_size)
+    string_ext(size_type count, value_type c, value_type* buffer, size_type buffer_size)
         : istring(buffer, buffer_size - 1U) {
         this->initialise();
         this->resize(count, c);
@@ -326,10 +305,8 @@ class string_ext : public istring {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    string_ext(TIterator first, TIterator last, value_type* buffer,
-               size_type buffer_size,
-               typename etl::enable_if<!etl::is_integral<TIterator>::value,
-                                       int>::type = 0)
+    string_ext(TIterator first, TIterator last, value_type* buffer, size_type buffer_size,
+               typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0)
         : istring(buffer, buffer_size - 1U) {
         this->assign(first, last);
     }
@@ -338,8 +315,7 @@ class string_ext : public istring {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    string_ext(std::initializer_list<value_type> init, value_type* buffer,
-               size_type buffer_size)
+    string_ext(std::initializer_list<value_type> init, value_type* buffer, size_type buffer_size)
         : istring(buffer, buffer_size - 1U) {
         this->assign(init.begin(), init.end());
     }
@@ -349,8 +325,7 @@ class string_ext : public istring {
     /// From string_view.
     ///\param view The string_view.
     //*************************************************************************
-    explicit string_ext(const etl::string_view& view, value_type* buffer,
-                        size_type buffer_size)
+    explicit string_ext(const etl::string_view& view, value_type* buffer, size_type buffer_size)
         : istring(buffer, buffer_size - 1U) {
         this->assign(view.begin(), view.end());
     }
@@ -410,27 +385,24 @@ class string_ext : public istring {
 template <>
 struct hash<etl::istring> {
     size_t operator()(const etl::istring& text) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&text[0]),
-            reinterpret_cast<const uint8_t*>(&text[text.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&text[0]),
+                                                       reinterpret_cast<const uint8_t*>(&text[text.size()]));
     }
 };
 
 template <const size_t SIZE>
 struct hash<etl::string<SIZE>> {
     size_t operator()(const etl::string<SIZE>& text) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&text[0]),
-            reinterpret_cast<const uint8_t*>(&text[text.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&text[0]),
+                                                       reinterpret_cast<const uint8_t*>(&text[text.size()]));
     }
 };
 
 template <>
 struct hash<etl::string_ext> {
     size_t operator()(const etl::string_ext& text) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&text[0]),
-            reinterpret_cast<const uint8_t*>(&text[text.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&text[0]),
+                                                       reinterpret_cast<const uint8_t*>(&text[text.size()]));
     }
 };
 #endif

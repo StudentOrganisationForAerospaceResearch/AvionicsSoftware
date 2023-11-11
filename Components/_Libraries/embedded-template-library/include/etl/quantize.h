@@ -48,8 +48,8 @@ class quantize : public etl::unary_function<TInput, TInput> {
     //*****************************************************************
     // Constructor.
     //*****************************************************************
-    quantize(const TInput* p_thresholds_, const TInput* p_quantizations_,
-             size_t n_quantizations_, TCompare compare_ = TCompare())
+    quantize(const TInput* p_thresholds_, const TInput* p_quantizations_, size_t n_quantizations_,
+             TCompare compare_ = TCompare())
         : p_thresholds(p_thresholds_),
           p_quantizations(p_quantizations_),
           n_levels(n_quantizations_ - 1U),

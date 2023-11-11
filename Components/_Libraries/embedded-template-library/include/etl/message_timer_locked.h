@@ -57,10 +57,8 @@ class imessage_timer_locked {
     /// Register a timer.
     //*******************************************
     etl::timer::id::type register_timer(
-        const etl::imessage& message_, etl::imessage_router& router_,
-        uint32_t period_, bool repeating_,
-        etl::message_router_id_t destination_router_id_ =
-            etl::imessage_router::ALL_MESSAGE_ROUTERS) {
+        const etl::imessage& message_, etl::imessage_router& router_, uint32_t period_, bool repeating_,
+        etl::message_router_id_t destination_router_id_ = etl::imessage_router::ALL_MESSAGE_ROUTERS) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (number_of_registered_timers < MAX_TIMERS);
@@ -74,9 +72,7 @@ class imessage_timer_locked {
 
                     if (timer.id == etl::timer::id::NO_TIMER) {
                         // Create in-place.
-                        new (&timer)
-                            timer_data(i, message_, router_, period_,
-                                       repeating_, destination_router_id_);
+                        new (&timer) timer_data(i, message_, router_, period_, repeating_, destination_router_id_);
                         ++number_of_registered_timers;
                         id = i;
                         break;
@@ -161,8 +157,7 @@ class imessage_timer_locked {
                         active_list.remove(timer.id, true);
 
                         if (timer.p_router != ETL_NULLPTR) {
-                            timer.p_router->receive(timer.destination_router_id,
-                                                    *(timer.p_message));
+                            timer.p_router->receive(timer.destination_router_id, *(timer.p_message));
                         }
 
                         if (timer.repeating) {
@@ -271,8 +266,7 @@ class imessage_timer_locked {
     //*******************************************
     /// Sets the lock and unlock delegates.
     //*******************************************
-    void set_locks(try_lock_type try_lock_, lock_type lock_,
-                   unlock_type unlock_) {
+    void set_locks(try_lock_type try_lock_, lock_type lock_, unlock_type unlock_) {
         try_lock = try_lock_;
         lock = lock_;
         unlock = unlock_;
@@ -295,11 +289,9 @@ class imessage_timer_locked {
               repeating(true) {}
 
         //*******************************************
-        timer_data(etl::timer::id::type id_, const etl::imessage& message_,
-                   etl::imessage_router& irouter_, uint32_t period_,
-                   bool repeating_,
-                   etl::message_router_id_t destination_router_id_ =
-                       etl::imessage_bus::ALL_MESSAGE_ROUTERS)
+        timer_data(etl::timer::id::type id_, const etl::imessage& message_, etl::imessage_router& irouter_,
+                   uint32_t period_, bool repeating_,
+                   etl::message_router_id_t destination_router_id_ = etl::imessage_bus::ALL_MESSAGE_ROUTERS)
             : p_message(&message_),
               p_router(&irouter_),
               period(period_),
@@ -339,8 +331,7 @@ class imessage_timer_locked {
     //*******************************************
     /// Constructor.
     //*******************************************
-    imessage_timer_locked(timer_data* const timer_array_,
-                          const uint_least8_t MAX_TIMERS_)
+    imessage_timer_locked(timer_data* const timer_array_, const uint_least8_t MAX_TIMERS_)
         : timer_array(timer_array_),
           active_list(timer_array_),
           enabled(false),
@@ -519,8 +510,7 @@ class imessage_timer_locked {
 template <uint_least8_t MAX_TIMERS_>
 class message_timer_locked : public etl::imessage_timer_locked {
    public:
-    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254,
-                      "No more than 254 timers are allowed");
+    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254, "No more than 254 timers are allowed");
 
     typedef imessage_timer_locked::callback_type callback_type;
     typedef imessage_timer_locked::try_lock_type try_lock_type;
@@ -535,8 +525,7 @@ class message_timer_locked : public etl::imessage_timer_locked {
     //*******************************************
     /// Constructor.
     //*******************************************
-    message_timer_locked(try_lock_type try_lock_, lock_type lock_,
-                         unlock_type unlock_)
+    message_timer_locked(try_lock_type try_lock_, lock_type lock_, unlock_type unlock_)
         : imessage_timer_locked(timer_array, MAX_TIMERS_) {
         this->set_locks(try_lock_, lock_, unlock_);
     }

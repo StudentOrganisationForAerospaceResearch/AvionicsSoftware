@@ -57,8 +57,7 @@ typedef uint64_t type;
 //***************************************************************************
 template <const size_t NV, const size_t POWER>
 struct power {
-    static ETL_CONSTANT private_power::type value =
-        NV * power<NV, POWER - 1>::value;
+    static ETL_CONSTANT private_power::type value = NV * power<NV, POWER - 1>::value;
 };
 
 //***************************************************************************
@@ -141,8 +140,7 @@ struct power_of_2_round_down<2> {
 
 #if ETL_USING_CPP17
 template <size_t NV>
-inline constexpr size_t power_of_2_round_down_v =
-    power_of_2_round_down<NV>::value;
+inline constexpr size_t power_of_2_round_down_v = power_of_2_round_down<NV>::value;
 #endif
 
 //***************************************************************************

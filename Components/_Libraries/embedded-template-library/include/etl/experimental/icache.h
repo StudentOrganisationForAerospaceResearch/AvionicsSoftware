@@ -66,32 +66,23 @@ class icache {
     ///************************************************************************
     /// Sets the function that reads from the store.
     ///************************************************************************
-    void set_read_function(etl::delegate<key_value_t&(void)> reader_) {
-        read_store = reader;
-    }
+    void set_read_function(etl::delegate<key_value_t&(void)> reader_) { read_store = reader; }
 
     ///************************************************************************
     /// Sets the function that writes to the store.
     ///************************************************************************
-    void set_write_function(etl::delegate<void(const key_value_t&)> writer_) {
-        write_store = writer;
-    }
+    void set_write_function(etl::delegate<void(const key_value_t&)> writer_) { write_store = writer; }
 
     ///************************************************************************
     /// Sets the 'write through'' flag.
     ///************************************************************************
-    void set_write_through(bool write_through_) {
-        write_through = write_through_;
-    }
+    void set_write_through(bool write_through_) { write_through = write_through_; }
 
-    virtual const T& read(const TKey& key)
-        const = 0;  ///< Reads from the cache. May read from the store using read_store.
-    virtual void write(
-        const TKey& key,
-        const TValue&
-            value) = 0;  ///< Writes to the cache. May write to the store using write_store.
-    virtual void
-    flush() = 0;  ///< The overridden function should write all changed values to the store.
+    virtual const T& read(
+        const TKey& key) const = 0;  ///< Reads from the cache. May read from the store using read_store.
+    virtual void write(const TKey& key,
+                       const TValue& value) = 0;  ///< Writes to the cache. May write to the store using write_store.
+    virtual void flush() = 0;  ///< The overridden function should write all changed values to the store.
 
    protected:
     typedef ETL_OR_STD::pair<TKey, TValue> key_value_t;

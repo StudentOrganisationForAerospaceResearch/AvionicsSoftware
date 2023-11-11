@@ -11,8 +11,7 @@ void MEVManager::OpenMEV() {
 
 void MEVManager::CloseMEV() {
     shouldMevBeOpen = CLOSE;
-    PBBRxProtocolTask::SendPBBCommand(
-        Proto::PBBCommand::Command::PBB_CLOSE_MEV);
+    PBBRxProtocolTask::SendPBBCommand(Proto::PBBCommand::Command::PBB_CLOSE_MEV);
 }
 
 void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {

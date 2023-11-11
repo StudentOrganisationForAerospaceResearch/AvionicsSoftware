@@ -16,14 +16,14 @@
 
 /* Enums -----------------------------------------------------------------*/
 enum GLOBAL_COMMANDS : uint8_t {
-    COMMAND_NONE = 0,       // No command, packet can probably be ignored
-    TASK_SPECIFIC_COMMAND,  // Runs a task specific command when given this object
-    DATA_COMMAND,  // Data command, used to send data to a task. Target is stored in taskCommand
-    CONTROL_ACTION,  // Control actions, used in Rocket State Machine, direct translation to RCU<->DMB Protocol
-    REQUEST_COMMAND,    // Request command
-    HEARTBEAT_COMMAND,  // Control actions for heartbeat commands
-    RADIOHB_CHANGE_PERIOD,  // Change Radio HB Period to Provided TaskCommand Period in Seconds
-    PROTOCOL_COMMAND,  // Protocol command, used for commands to the Protocol Task
+    COMMAND_NONE = 0,         // No command, packet can probably be ignored
+    TASK_SPECIFIC_COMMAND,    // Runs a task specific command when given this object
+    DATA_COMMAND,             // Data command, used to send data to a task. Target is stored in taskCommand
+    CONTROL_ACTION,           // Control actions, used in Rocket State Machine, direct translation to RCU<->DMB Protocol
+    REQUEST_COMMAND,          // Request command
+    HEARTBEAT_COMMAND,        // Control actions for heartbeat commands
+    RADIOHB_CHANGE_PERIOD,    // Change Radio HB Period to Provided TaskCommand Period in Seconds
+    PROTOCOL_COMMAND,         // Protocol command, used for commands to the Protocol Task
     TELEMETRY_CHANGE_PERIOD,  // Change Telemetry Period to Provided TaskCommand Period in Milliseconds
 };
 
@@ -46,12 +46,9 @@ class Command {
     //~Command();    // We can't handle memory like this, since the object would be 'destroyed' after copying to the RTOS queue
 
     // Functions
-    uint8_t* AllocateData(
-        uint16_t dataSize);  // Dynamically allocates data for the command
-    bool CopyDataToCommand(
-        uint8_t* dataSrc,
-        uint16_t
-            size);  // Copies the data into the command, into newly allocated memory
+    uint8_t* AllocateData(uint16_t dataSize);  // Dynamically allocates data for the command
+    bool CopyDataToCommand(uint8_t* dataSrc,
+                           uint16_t size);  // Copies the data into the command, into newly allocated memory
     bool SetCommandToStaticExternalBuffer(
         uint8_t* existingPtr,
         uint16_t
@@ -67,17 +64,14 @@ class Command {
     uint16_t GetTaskCommand() const { return taskCommand; }
 
     // Setters
-    void SetTaskCommand(uint16_t taskCommand) {
-        this->taskCommand = taskCommand;
-    }
+    void SetTaskCommand(uint16_t taskCommand) { this->taskCommand = taskCommand; }
     void SetDataSize(uint16_t size) { dataSize = size; }
 
    protected:
     // Data -- note each insertion and removal from a queue will do a full copy of this object, so this data should be as small as possible
     GLOBAL_COMMANDS
-        command;  // General GLOBAL command, each task must be able to handle these types of commands
-    uint16_t
-        taskCommand;  // Task specific command, the task this command event is sent to needs to handle this
+    command;               // General GLOBAL command, each task must be able to handle these types of commands
+    uint16_t taskCommand;  // Task specific command, the task this command event is sent to needs to handle this
 
     uint8_t* data;      // Pointer to optional data
     uint16_t dataSize;  // Size of optional data
@@ -86,8 +80,7 @@ class Command {
     bool
         bShouldFreeData;  // Should the Command handle freeing the data pointer (necessary to enable Command object to handle static memory ptrs)
 
-    static std::atomic<uint16_t>
-        statAllocationCounter;  // Static allocation counter shared by all command objects
+    static std::atomic<uint16_t> statAllocationCounter;  // Static allocation counter shared by all command objects
 
     Command(const Command&);  // Prevent copy-construction
 };

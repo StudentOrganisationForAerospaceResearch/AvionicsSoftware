@@ -38,9 +38,7 @@ enum class byte : unsigned char {};
 /// To integer.
 //*************************************************************************
 template <typename TInteger>
-constexpr
-    typename etl::enable_if<etl::is_integral<TInteger>::value, TInteger>::type
-    to_integer(etl::byte b) noexcept {
+constexpr typename etl::enable_if<etl::is_integral<TInteger>::value, TInteger>::type to_integer(etl::byte b) noexcept {
     return TInteger(b);
 }
 
@@ -48,9 +46,8 @@ constexpr
 /// Shift left.
 //*************************************************************************
 template <typename TInteger>
-constexpr
-    typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type
-    operator<<(etl::byte b, TInteger shift) noexcept {
+constexpr typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type operator<<(
+    etl::byte b, TInteger shift) noexcept {
     return etl::byte(static_cast<unsigned int>(b) << shift);
 }
 
@@ -58,9 +55,8 @@ constexpr
 /// Shift right
 //*************************************************************************
 template <typename TInteger>
-constexpr
-    typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type
-    operator>>(etl::byte b, TInteger shift) noexcept {
+constexpr typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type operator>>(
+    etl::byte b, TInteger shift) noexcept {
     return etl::byte(static_cast<unsigned int>(b) >> shift);
 }
 
@@ -68,9 +64,8 @@ constexpr
 /// Shift left equals.
 //*************************************************************************
 template <typename TInteger>
-constexpr
-    typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type
-    operator<<=(etl::byte& b, TInteger shift) noexcept {
+constexpr typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type operator<<=(
+    etl::byte& b, TInteger shift) noexcept {
     return b = b << shift;
     ;
 }
@@ -79,9 +74,8 @@ constexpr
 /// Shift right equals.
 //*************************************************************************
 template <typename TInteger>
-constexpr
-    typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type
-    operator>>=(etl::byte& b, TInteger shift) noexcept {
+constexpr typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type operator>>=(
+    etl::byte& b, TInteger shift) noexcept {
     return b = b >> shift;
 }
 
@@ -89,24 +83,21 @@ constexpr
 /// Or.
 //*************************************************************************
 constexpr etl::byte operator|(etl::byte lhs, etl::byte rhs) noexcept {
-    return etl::byte(static_cast<unsigned int>(lhs) |
-                     static_cast<unsigned int>(rhs));
+    return etl::byte(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
 }
 
 //*************************************************************************
 /// And.
 //*************************************************************************
 constexpr etl::byte operator&(etl::byte lhs, etl::byte rhs) noexcept {
-    return etl::byte(static_cast<unsigned int>(lhs) &
-                     static_cast<unsigned int>(rhs));
+    return etl::byte(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
 }
 
 //*************************************************************************
 /// Exclusive Or.
 //*************************************************************************
 constexpr etl::byte operator^(etl::byte lhs, etl::byte rhs) noexcept {
-    return etl::byte(static_cast<unsigned int>(lhs) ^
-                     static_cast<unsigned int>(rhs));
+    return etl::byte(static_cast<unsigned int>(lhs) ^ static_cast<unsigned int>(rhs));
 }
 
 //*************************************************************************
@@ -146,9 +137,7 @@ class byte {
    public:
     // Friend functions
     template <typename TInteger>
-    friend typename etl::enable_if<etl::is_integral<TInteger>::value,
-                                   TInteger>::type
-    to_integer(etl::byte b);
+    friend typename etl::enable_if<etl::is_integral<TInteger>::value, TInteger>::type to_integer(etl::byte b);
 
     friend bool operator==(etl::byte lhs, etl::byte rhs);
 
@@ -188,8 +177,7 @@ bool operator!=(etl::byte lhs, etl::byte rhs) {
 /// To integer.
 //*************************************************************************
 template <typename TInteger>
-typename etl::enable_if<etl::is_integral<TInteger>::value, TInteger>::type
-to_integer(etl::byte b) {
+typename etl::enable_if<etl::is_integral<TInteger>::value, TInteger>::type to_integer(etl::byte b) {
     return TInteger(b);
 }
 
@@ -197,8 +185,7 @@ to_integer(etl::byte b) {
 /// Shift left.
 //*************************************************************************
 template <typename TInteger>
-typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type
-operator<<(etl::byte b, TInteger shift) {
+typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type operator<<(etl::byte b, TInteger shift) {
     return etl::byte(to_integer<unsigned int>(b) << shift);
 }
 
@@ -206,8 +193,7 @@ operator<<(etl::byte b, TInteger shift) {
 /// Shift right
 //*************************************************************************
 template <typename TInteger>
-typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type
-operator>>(etl::byte b, TInteger shift) {
+typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte>::type operator>>(etl::byte b, TInteger shift) {
     return etl::byte(to_integer<unsigned int>(b) >> shift);
 }
 
@@ -215,8 +201,7 @@ operator>>(etl::byte b, TInteger shift) {
 /// Shift left equals.
 //*************************************************************************
 template <typename TInteger>
-typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type
-operator<<=(etl::byte& b, TInteger shift) {
+typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type operator<<=(etl::byte& b, TInteger shift) {
     b = b << shift;
 
     return b;
@@ -226,8 +211,7 @@ operator<<=(etl::byte& b, TInteger shift) {
 /// Shift right equals.
 //*************************************************************************
 template <typename TInteger>
-typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type
-operator>>=(etl::byte& b, TInteger shift) {
+typename etl::enable_if<etl::is_integral<TInteger>::value, etl::byte&>::type operator>>=(etl::byte& b, TInteger shift) {
     b = b >> shift;
 
     return b;
@@ -237,24 +221,21 @@ operator>>=(etl::byte& b, TInteger shift) {
 /// Or.
 //*************************************************************************
 etl::byte operator|(etl::byte lhs, etl::byte rhs) {
-    return etl::byte(to_integer<unsigned int>(lhs) |
-                     to_integer<unsigned int>(rhs));
+    return etl::byte(to_integer<unsigned int>(lhs) | to_integer<unsigned int>(rhs));
 }
 
 //*************************************************************************
 /// And.
 //*************************************************************************
 etl::byte operator&(etl::byte lhs, etl::byte rhs) {
-    return etl::byte(to_integer<unsigned int>(lhs) &
-                     to_integer<unsigned int>(rhs));
+    return etl::byte(to_integer<unsigned int>(lhs) & to_integer<unsigned int>(rhs));
 }
 
 //*************************************************************************
 /// Exclusive Or.
 //*************************************************************************
 etl::byte operator^(etl::byte lhs, etl::byte rhs) {
-    return etl::byte(to_integer<unsigned int>(lhs) ^
-                     to_integer<unsigned int>(rhs));
+    return etl::byte(to_integer<unsigned int>(lhs) ^ to_integer<unsigned int>(rhs));
 }
 
 //*************************************************************************

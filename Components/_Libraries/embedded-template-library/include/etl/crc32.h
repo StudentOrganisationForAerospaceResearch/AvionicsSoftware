@@ -43,8 +43,7 @@ template <size_t Table_Size>
 using crc32_t = etl::crc_type<etl::private_crc::crc32_parameters, Table_Size>;
 #else
 template <size_t Table_Size>
-class crc32_t
-    : public etl::crc_type<etl::private_crc::crc32_parameters, Table_Size> {
+class crc32_t : public etl::crc_type<etl::private_crc::crc32_parameters, Table_Size> {
    public:
     //*************************************************************************
     /// Default constructor.

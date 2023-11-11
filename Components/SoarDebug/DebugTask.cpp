@@ -55,8 +55,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
 /**
  * @brief Constructor, sets all member variables
  */
-DebugTask::DebugTask()
-    : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::Debug) {
+DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::Debug) {
     memset(debugBuffer, 0, sizeof(debugBuffer));
     debugMsgIdx = 0;
     isDebugMsgReady = false;
@@ -70,14 +69,12 @@ void DebugTask::InitTask() {
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Debug task twice");
 
     // Start the task
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)DebugTask::RunTask, (const char*)"DebugTask",
-        (uint16_t)TASK_DEBUG_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)TASK_DEBUG_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)DebugTask::RunTask, (const char*)"DebugTask",
+                                     (uint16_t)TASK_DEBUG_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)TASK_DEBUG_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS,
-                "DebugTask::InitTask - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "DebugTask::InitTask - xTaskCreate() failed");
 }
 
 // TODO: Only run thread when appropriate GPIO pin pulled HIGH (or by define)
@@ -95,8 +92,7 @@ void DebugTask::Run(void* pvParams) {
         qEvtQueue->ReceiveWait(cm);
 
         //Process the command
-        if (cm.GetCommand() == DATA_COMMAND &&
-            cm.GetTaskCommand() == EVENT_DEBUG_RX_COMPLETE) {
+        if (cm.GetCommand() == DATA_COMMAND && cm.GetTaskCommand() == EVENT_DEBUG_RX_COMPLETE) {
             HandleDebugMessage((const char*)debugBuffer);
         }
 
@@ -119,8 +115,7 @@ void DebugTask::HandleDebugMessage(const char* msg) {
         // Send the heartbeat set to the watchdog task, where val is seconds
         int32_t val = ExtractIntParameter(msg, 11);
         if (val != ERRVAL)
-            WatchdogTask::Inst().SendCommand(
-                Command(RADIOHB_CHANGE_PERIOD, val));
+            WatchdogTask::Inst().SendCommand(Command(RADIOHB_CHANGE_PERIOD, val));
     }
 
     //-- SYSTEM / CHAR COMMANDS -- (Must be last)
@@ -130,12 +125,9 @@ void DebugTask::HandleDebugMessage(const char* msg) {
     } else if (strcmp(msg, "sysinfo") == 0) {
         // Print message
         SOAR_PRINT("\n\t-- SOAR System Info --\n");
-        SOAR_PRINT("Current System Heap Use: %d Bytes\n",
-                   xPortGetFreeHeapSize());
-        SOAR_PRINT("Lowest Ever Heap Size\t: %d Bytes\n",
-                   xPortGetMinimumEverFreeHeapSize());
-        SOAR_PRINT("Debug Task Runtime  \t: %d ms\n\n",
-                   TICKS_TO_MS(xTaskGetTickCount()));
+        SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
+        SOAR_PRINT("Lowest Ever Heap Size\t: %d Bytes\n", xPortGetMinimumEverFreeHeapSize());
+        SOAR_PRINT("Debug Task Runtime  \t: %d ms\n\n", TICKS_TO_MS(xTaskGetTickCount()));
     } else if (strcmp(msg, "blinkled") == 0) {
         // Print message
         SOAR_PRINT("Debug 'LED blink' command requested\n");
@@ -167,10 +159,8 @@ void DebugTask::HandleDebugMessage(const char* msg) {
         IMUTask::Inst().GetEventQueue()->Send(cmd2);
     } else if (strcmp(msg, "bat") == 0) {
         SOAR_PRINT("Debug 'Battery Voltage' Sample and Output Received\n");
-        BatteryTask::Inst().SendCommand(
-            Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
-        BatteryTask::Inst().SendCommand(
-            Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
+        BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+        BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
     } else if (strcmp(msg, "flashdump") == 0) {
         // Send a request to the flash task to dump the flash data
         SOAR_PRINT("Dump of sensor data in flash requested\n");
@@ -181,11 +171,9 @@ void DebugTask::HandleDebugMessage(const char* msg) {
         Command cmd((uint16_t)ERASE_ALL_FLASH);
         FlashTask::Inst().GetEventQueue()->Send(cmd);
     } else if (strcmp(msg, "radiohb") == 0) {
-        WatchdogTask::Inst().SendCommand(
-            Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
+        WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     } else if (strcmp(msg, "disablehb") == 0) {
-        WatchdogTask::Inst().SendCommand(
-            Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
+        WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     } else if (strcmp(msg, "mev enable") == 0) {
         GPIO::MEV_EN::On();
     } else if (strcmp(msg, "mev disable") == 0) {
@@ -197,16 +185,12 @@ void DebugTask::HandleDebugMessage(const char* msg) {
         MEVManager::OpenMEV();
     } else if (strcmp(msg, "ptc") == 0) {
         SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
-        PressureTransducerTask::Inst().SendCommand(
-            Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
-        PressureTransducerTask::Inst().SendCommand(
-            Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
+        PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+        PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
     } else if (strcmp(msg, "gps") == 0) {
-        GPSTask::Inst().SendCommand(
-            Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
+        GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_DEBUG));
     } else if (strcmp(msg, "gpstransmit") == 0) {
-        GPSTask::Inst().SendCommand(
-            Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
+        GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, GPS_REQUEST_TRANSMIT));
     } else if (strcmp(msg, "vent open") == 0) {
         //TODO: Remember to remove / make sure not enabled in final code
         GPIO::Vent::Open();
@@ -234,11 +218,9 @@ void DebugTask::HandleDebugMessage(const char* msg) {
             SOAR_PRINT("Drain State : CLOSED \n");
         }
     } else if (strcmp(msg, "mute") == 0) {
-        HDITask::Inst().SendCommand(
-            Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::MUTE));
+        HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::MUTE));
     } else if (strcmp(msg, "unmute") == 0) {
-        HDITask::Inst().SendCommand(
-            Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::UNMUTE));
+        HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::UNMUTE));
     } else {
         // Single character command, or unknown command
         switch (msg[0]) {
@@ -298,8 +280,7 @@ void DebugTask::InterruptRxData(uint8_t errors) {
  * @brief identifierLen Length of the identifier eg. 'rsc ' (Including the space) is 4
  * @return ERRVAL on failure, otherwise the extracted value
  */
-int32_t DebugTask::ExtractIntParameter(const char* msg,
-                                       uint16_t identifierLen) {
+int32_t DebugTask::ExtractIntParameter(const char* msg, uint16_t identifierLen) {
     // Handle a command with an int parameter at the end
     if (static_cast<uint16_t>(strlen(msg)) < identifierLen + 1) {
         SOAR_PRINT("Int parameter command insufficient length\r\n");

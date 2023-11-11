@@ -53,10 +53,8 @@ namespace etl {
 //***************************************************************************
 class indirect_vector_buffer_missmatch : public vector_exception {
    public:
-    indirect_vector_buffer_missmatch(string_type file_name_,
-                                     numeric_type line_number_)
-        : vector_exception(ETL_ERROR_TEXT("indirect_vector:buffer_missmatch",
-                                          ETL_INDIRECT_VECTOR_FILE_ID "A"),
+    indirect_vector_buffer_missmatch(string_type file_name_, numeric_type line_number_)
+        : vector_exception(ETL_ERROR_TEXT("indirect_vector:buffer_missmatch", ETL_INDIRECT_VECTOR_FILE_ID "A"),
                            file_name_, line_number_) {}
 };
 
@@ -89,12 +87,9 @@ class iindirect_vector {
     template <typename TUnaryFunction, typename TReturnType = void>
     class unary_function_adaptor {
        public:
-        unary_function_adaptor(TUnaryFunction unary_function_)
-            : unary_function(unary_function_) {}
+        unary_function_adaptor(TUnaryFunction unary_function_) : unary_function(unary_function_) {}
 
-        TReturnType operator()(const_pointer indirect_itr) {
-            return unary_function(*indirect_itr);
-        }
+        TReturnType operator()(const_pointer indirect_itr) { return unary_function(*indirect_itr); }
 
         TUnaryFunction unary_function;
     };
@@ -103,12 +98,9 @@ class iindirect_vector {
     template <typename TUnaryFunction>
     class unary_function_adaptor<TUnaryFunction, void> {
        public:
-        unary_function_adaptor(TUnaryFunction unary_function_)
-            : unary_function(unary_function_) {}
+        unary_function_adaptor(TUnaryFunction unary_function_) : unary_function(unary_function_) {}
 
-        void operator()(const_pointer indirect_itr) {
-            unary_function(*indirect_itr);
-        }
+        void operator()(const_pointer indirect_itr) { unary_function(*indirect_itr); }
 
         TUnaryFunction unary_function;
     };
@@ -119,11 +111,9 @@ class iindirect_vector {
     template <typename TBinaryFunction, typename TReturnType = void>
     class binary_function_adaptor {
        public:
-        binary_function_adaptor(TBinaryFunction binary_function_)
-            : binary_function(binary_function_) {}
+        binary_function_adaptor(TBinaryFunction binary_function_) : binary_function(binary_function_) {}
 
-        TReturnType operator()(const_pointer indirect_itr_lhs,
-                               const_pointer indirect_itr_rhs) {
+        TReturnType operator()(const_pointer indirect_itr_lhs, const_pointer indirect_itr_rhs) {
             return binary_function(*indirect_itr_lhs, *indirect_itr_rhs);
         }
 
@@ -134,11 +124,9 @@ class iindirect_vector {
     template <typename TBinaryFunction>
     class binary_function_adaptor<TBinaryFunction, void> {
        public:
-        binary_function_adaptor(TBinaryFunction binary_function_)
-            : binary_function(binary_function_) {}
+        binary_function_adaptor(TBinaryFunction binary_function_) : binary_function(binary_function_) {}
 
-        void operator()(const_pointer indirect_itr_lhs,
-                        const_pointer indirect_itr_rhs) {
+        void operator()(const_pointer indirect_itr_lhs, const_pointer indirect_itr_rhs) {
             binary_function(*indirect_itr_lhs, *indirect_itr_rhs);
         }
 
@@ -148,8 +136,7 @@ class iindirect_vector {
     //*************************************************************************
     /// iterator.
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, T> {
+    class iterator : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, T> {
        public:
         friend class iindirect_vector;
         friend class const_iterator;
@@ -217,22 +204,15 @@ class iindirect_vector {
 
         indirect_const_iterator indirection() const { return lookup_itr; }
 
-        friend difference_type operator-(const iterator& lhs,
-                                         const iterator& rhs) {
+        friend difference_type operator-(const iterator& lhs, const iterator& rhs) {
             return lhs.lookup_itr - rhs.lookup_itr;
         }
 
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return lhs.lookup_itr == rhs.lookup_itr;
-        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.lookup_itr == rhs.lookup_itr; }
 
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
-        friend bool operator<(const iterator& lhs, const iterator& rhs) {
-            return lhs.lookup_itr < rhs.lookup_itr;
-        }
+        friend bool operator<(const iterator& lhs, const iterator& rhs) { return lhs.lookup_itr < rhs.lookup_itr; }
 
        private:
         iterator(indirect_iterator itr_) : lookup_itr(itr_) {}
@@ -243,19 +223,15 @@ class iindirect_vector {
     //*************************************************************************
     /// const_iterator.
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::random_access_iterator_tag,
-                               const T> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, const T> {
        public:
         friend class iindirect_vector;
 
         const_iterator() {}
 
-        const_iterator(const const_iterator& other)
-            : lookup_itr(other.lookup_itr) {}
+        const_iterator(const const_iterator& other) : lookup_itr(other.lookup_itr) {}
 
-        const_iterator(const typename iindirect_vector::iterator& other)
-            : lookup_itr(other.lookup_itr) {}
+        const_iterator(const typename iindirect_vector::iterator& other) : lookup_itr(other.lookup_itr) {}
 
         const_iterator& operator++() {
             ++lookup_itr;
@@ -302,37 +278,29 @@ class iindirect_vector {
 
         indirect_const_iterator indirection() const { return lookup_itr; }
 
-        friend const_iterator operator+(const const_iterator& lhs,
-                                        difference_type offset) {
+        friend const_iterator operator+(const const_iterator& lhs, difference_type offset) {
             const_iterator result(lhs);
             result += offset;
             return result;
         }
 
-        friend const_iterator operator-(const const_iterator& lhs,
-                                        difference_type offset) {
+        friend const_iterator operator-(const const_iterator& lhs, difference_type offset) {
             const_iterator result(lhs);
             result -= offset;
             return result;
         }
 
-        friend difference_type operator-(const const_iterator& lhs,
-                                         const const_iterator& rhs) {
+        friend difference_type operator-(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.lookup_itr - rhs.lookup_itr;
         }
 
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.lookup_itr == rhs.lookup_itr;
         }
 
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
-        friend bool operator<(const const_iterator& lhs,
-                              const const_iterator& rhs) {
+        friend bool operator<(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.lookup_itr < rhs.lookup_itr;
         }
 
@@ -572,14 +540,12 @@ class iindirect_vector {
     void assign(TIterator first, TIterator last) {
         ETL_STATIC_ASSERT(
             (etl::is_same<typename etl::remove_cv<T>::type,
-                          typename etl::remove_cv<typename etl::iterator_traits<
-                              TIterator>::value_type>::type>::value),
+                          typename etl::remove_cv<typename etl::iterator_traits<TIterator>::value_type>::type>::value),
             "Iterator type does not match container type");
 
 #if ETL_IS_DEBUG_BUILD
         difference_type d = etl::distance(first, last);
-        ETL_ASSERT(static_cast<size_t>(d) <= capacity(),
-                   ETL_ERROR(vector_full));
+        ETL_ASSERT(static_cast<size_t>(d) <= capacity(), ETL_ERROR(vector_full));
 #endif
 
         initialise();
@@ -650,8 +616,7 @@ class iindirect_vector {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_VECTOR_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_VECTOR_FORCE_CPP03_IMPLEMENTATION)
     //*********************************************************************
     /// Constructs a value at the end of the indirect_vector.
     /// If asserts or exceptions are enabled, emits vector_full if the indirect_vector is already full.
@@ -702,8 +667,7 @@ class iindirect_vector {
     ///\param value The value to add.
     //*********************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    void emplace_back(const T1& value1, const T2& value2, const T3& value3,
-                      const T4& value4) {
+    void emplace_back(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         T* p = storage.create<T>(T(value1, value2, value3, value4));
         lookup.push_back(p);
     }
@@ -787,8 +751,7 @@ class iindirect_vector {
     }
 
     template <typename T1, typename T2, typename T3>
-    iterator emplace(iterator position, const T1& value1, const T2& value2,
-                     const T3& value3) {
+    iterator emplace(iterator position, const T1& value1, const T2& value2, const T3& value3) {
         ETL_ASSERT(!full(), ETL_ERROR(vector_full));
 
         T* p = storage.create<T>(T(value1, value2, value3));
@@ -798,8 +761,7 @@ class iindirect_vector {
     }
 
     template <typename T1, typename T2, typename T3, typename T4>
-    iterator emplace(iterator position, const T1& value1, const T2& value2,
-                     const T3& value3, const T4& value4) {
+    iterator emplace(iterator position, const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         ETL_ASSERT(!full(), ETL_ERROR(vector_full));
 
         T* p = storage.create<T>(T(value1, value2, value3, value4));
@@ -847,8 +809,7 @@ class iindirect_vector {
         ETL_ASSERT((size() + count) <= capacity(), ETL_ERROR(vector_full));
 
         // Make space for the new lookup pointers.
-        typename etl::ivector<T*>::iterator lookup_itr =
-            to_iterator(position).lookup_itr;
+        typename etl::ivector<T*>::iterator lookup_itr = to_iterator(position).lookup_itr;
         lookup.insert(lookup_itr, count, ETL_NULLPTR);
 
         while (first != last) {
@@ -986,8 +947,7 @@ class iindirect_vector {
     //*********************************************************************
     /// Constructor.
     //*********************************************************************
-    iindirect_vector(etl::ivector<T*>& lookup_, etl::ipool& storage_)
-        : lookup(lookup_), storage(storage_) {}
+    iindirect_vector(etl::ivector<T*>& lookup_, etl::ipool& storage_) : lookup(lookup_), storage(storage_) {}
 
     //*********************************************************************
     /// Initialise the indirect_vector.
@@ -1033,8 +993,7 @@ class iindirect_vector {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_INDIRECT_VECTOR) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_INDIRECT_VECTOR) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual
 #else
@@ -1060,10 +1019,8 @@ class iindirect_vector {
 ///\ingroup indirect_vector
 //***************************************************************************
 template <typename T>
-bool operator==(const etl::iindirect_vector<T>& lhs,
-                const etl::iindirect_vector<T>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const etl::iindirect_vector<T>& lhs, const etl::iindirect_vector<T>& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -1074,8 +1031,7 @@ bool operator==(const etl::iindirect_vector<T>& lhs,
 ///\ingroup indirect_vector
 //***************************************************************************
 template <typename T>
-bool operator!=(const etl::iindirect_vector<T>& lhs,
-                const etl::iindirect_vector<T>& rhs) {
+bool operator!=(const etl::iindirect_vector<T>& lhs, const etl::iindirect_vector<T>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -1087,10 +1043,8 @@ bool operator!=(const etl::iindirect_vector<T>& lhs,
 ///\ingroup indirect_vector
 //***************************************************************************
 template <typename T>
-bool operator<(const etl::iindirect_vector<T>& lhs,
-               const etl::iindirect_vector<T>& rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                        rhs.end());
+bool operator<(const etl::iindirect_vector<T>& lhs, const etl::iindirect_vector<T>& rhs) {
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //***************************************************************************
@@ -1101,8 +1055,7 @@ bool operator<(const etl::iindirect_vector<T>& lhs,
 ///\ingroup indirect_vector
 //***************************************************************************
 template <typename T>
-bool operator>(const etl::iindirect_vector<T>& lhs,
-               const etl::iindirect_vector<T>& rhs) {
+bool operator>(const etl::iindirect_vector<T>& lhs, const etl::iindirect_vector<T>& rhs) {
     return (rhs < lhs);
 }
 
@@ -1114,8 +1067,7 @@ bool operator>(const etl::iindirect_vector<T>& lhs,
 ///\ingroup indirect_vector
 //***************************************************************************
 template <typename T>
-bool operator<=(const etl::iindirect_vector<T>& lhs,
-                const etl::iindirect_vector<T>& rhs) {
+bool operator<=(const etl::iindirect_vector<T>& lhs, const etl::iindirect_vector<T>& rhs) {
     return !(lhs > rhs);
 }
 
@@ -1127,8 +1079,7 @@ bool operator<=(const etl::iindirect_vector<T>& lhs,
 ///\ingroup indirect_vector
 //***************************************************************************
 template <typename T>
-bool operator>=(const etl::iindirect_vector<T>& lhs,
-                const etl::iindirect_vector<T>& rhs) {
+bool operator>=(const etl::iindirect_vector<T>& lhs, const etl::iindirect_vector<T>& rhs) {
     return !(lhs < rhs);
 }
 
@@ -1141,8 +1092,7 @@ bool operator>=(const etl::iindirect_vector<T>& lhs,
 template <typename T, const size_t MAX_SIZE_>
 class indirect_vector : public etl::iindirect_vector<T> {
    public:
-    ETL_STATIC_ASSERT((MAX_SIZE_ > 0U),
-                      "Zero capacity etl::indirect_vector is not valid");
+    ETL_STATIC_ASSERT((MAX_SIZE_ > 0U), "Zero capacity etl::indirect_vector is not valid");
 
     static ETL_CONSTANT size_t MAX_SIZE = MAX_SIZE_;
 
@@ -1155,8 +1105,7 @@ class indirect_vector : public etl::iindirect_vector<T> {
     /// Constructor, with size.
     ///\param initial_size The initial size of the indirect_vector.
     //*************************************************************************
-    explicit indirect_vector(size_t initial_size)
-        : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
+    explicit indirect_vector(size_t initial_size) : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
         this->resize(initial_size);
     }
 
@@ -1165,8 +1114,7 @@ class indirect_vector : public etl::iindirect_vector<T> {
     ///\param initial_size  The initial size of the indirect_vector.
     ///\param value        The value to fill the indirect_vector with.
     //*************************************************************************
-    indirect_vector(size_t initial_size,
-                    typename etl::iindirect_vector<T>::parameter_t value)
+    indirect_vector(size_t initial_size, typename etl::iindirect_vector<T>::parameter_t value)
         : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
         this->resize(initial_size, value);
     }
@@ -1178,8 +1126,7 @@ class indirect_vector : public etl::iindirect_vector<T> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    indirect_vector(TIterator first, TIterator last)
-        : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
+    indirect_vector(TIterator first, TIterator last) : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
         this->assign(first, last);
     }
 
@@ -1187,8 +1134,7 @@ class indirect_vector : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Constructor, from an initializer_list.
     //*************************************************************************
-    indirect_vector(std::initializer_list<T> init)
-        : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
+    indirect_vector(std::initializer_list<T> init) : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
         this->assign(init.begin(), init.end());
     }
 #endif
@@ -1196,8 +1142,7 @@ class indirect_vector : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
-    indirect_vector(const indirect_vector& other)
-        : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
+    indirect_vector(const indirect_vector& other) : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
         this->assign(other.begin(), other.end());
     }
 
@@ -1216,8 +1161,7 @@ class indirect_vector : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Move constructor.
     //*************************************************************************
-    indirect_vector(indirect_vector&& other)
-        : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
+    indirect_vector(indirect_vector&& other) : etl::iindirect_vector<T>(lookup_vector, storage_pool) {
         this->move_container(etl::move(other));
     }
 
@@ -1248,9 +1192,7 @@ class indirect_vector : public etl::iindirect_vector<T> {
 //*************************************************************************
 #if ETL_USING_CPP17 && ETL_HAS_INITIALIZER_LIST
 template <typename T, typename... Ts>
-indirect_vector(T, Ts...)
-    -> indirect_vector<etl::enable_if_t<(etl::is_same_v<T, Ts> && ...), T>,
-                       1U + sizeof...(Ts)>;
+indirect_vector(T, Ts...) -> indirect_vector<etl::enable_if_t<(etl::is_same_v<T, Ts> && ...), T>, 1U + sizeof...(Ts)>;
 #endif
 
 //*************************************************************************
@@ -1258,8 +1200,7 @@ indirect_vector(T, Ts...)
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
 template <typename... T>
-constexpr auto make_indirect_vector(T... t)
-    -> etl::indirect_vector<typename etl::common_type_t<T...>, sizeof...(T)> {
+constexpr auto make_indirect_vector(T... t) -> etl::indirect_vector<typename etl::common_type_t<T...>, sizeof...(T)> {
     return {{etl::forward<T>(t)...}};
 }
 #endif
@@ -1276,21 +1217,17 @@ class indirect_vector_ext : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    indirect_vector_ext(etl::ivector<T*>& lookup_, etl::ipool& pool_)
-        : etl::iindirect_vector<T>(lookup_, pool_) {
-        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(),
-                   ETL_ERROR(indirect_vector_buffer_missmatch));
+    indirect_vector_ext(etl::ivector<T*>& lookup_, etl::ipool& pool_) : etl::iindirect_vector<T>(lookup_, pool_) {
+        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(), ETL_ERROR(indirect_vector_buffer_missmatch));
     }
 
     //*************************************************************************
     /// Constructor, with size.
     ///\param initial_size The initial size of the indirect_vector_ext.
     //*************************************************************************
-    explicit indirect_vector_ext(size_t initial_size, etl::ivector<T*>& lookup_,
-                                 etl::ipool& pool_)
+    explicit indirect_vector_ext(size_t initial_size, etl::ivector<T*>& lookup_, etl::ipool& pool_)
         : etl::iindirect_vector<T>(lookup_, pool_) {
-        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(),
-                   ETL_ERROR(indirect_vector_buffer_missmatch));
+        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(), ETL_ERROR(indirect_vector_buffer_missmatch));
         this->resize(initial_size);
     }
 
@@ -1299,12 +1236,10 @@ class indirect_vector_ext : public etl::iindirect_vector<T> {
     ///\param initial_size  The initial size of the indirect_vector_ext.
     ///\param value        The value to fill the indirect_vector_ext with.
     //*************************************************************************
-    indirect_vector_ext(size_t initial_size,
-                        typename etl::iindirect_vector<T>::parameter_t value,
+    indirect_vector_ext(size_t initial_size, typename etl::iindirect_vector<T>::parameter_t value,
                         etl::ivector<T*>& lookup_, etl::ipool& pool_)
         : etl::iindirect_vector<T>(lookup_, pool_) {
-        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(),
-                   ETL_ERROR(indirect_vector_buffer_missmatch));
+        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(), ETL_ERROR(indirect_vector_buffer_missmatch));
         this->resize(initial_size, value);
     }
 
@@ -1315,11 +1250,9 @@ class indirect_vector_ext : public etl::iindirect_vector<T> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    indirect_vector_ext(TIterator first, TIterator last,
-                        etl::ivector<T*>& lookup_, etl::ipool& pool_)
+    indirect_vector_ext(TIterator first, TIterator last, etl::ivector<T*>& lookup_, etl::ipool& pool_)
         : etl::iindirect_vector<T>(lookup_, pool_) {
-        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(),
-                   ETL_ERROR(indirect_vector_buffer_missmatch));
+        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(), ETL_ERROR(indirect_vector_buffer_missmatch));
         this->assign(first, last);
     }
 
@@ -1327,11 +1260,9 @@ class indirect_vector_ext : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Constructor, from an initializer_list.
     //*************************************************************************
-    indirect_vector_ext(std::initializer_list<T> init,
-                        etl::ivector<T*>& lookup_, etl::ipool& pool_)
+    indirect_vector_ext(std::initializer_list<T> init, etl::ivector<T*>& lookup_, etl::ipool& pool_)
         : etl::iindirect_vector<T>(lookup_, pool_) {
-        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(),
-                   ETL_ERROR(indirect_vector_buffer_missmatch));
+        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(), ETL_ERROR(indirect_vector_buffer_missmatch));
         this->assign(init.begin(), init.end());
     }
 #endif
@@ -1339,11 +1270,9 @@ class indirect_vector_ext : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Construct a copy.
     //*************************************************************************
-    indirect_vector_ext(const indirect_vector_ext& other,
-                        etl::ivector<T*>& lookup_, etl::ipool& pool_)
+    indirect_vector_ext(const indirect_vector_ext& other, etl::ivector<T*>& lookup_, etl::ipool& pool_)
         : etl::iindirect_vector<T>(lookup_, pool_) {
-        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(),
-                   ETL_ERROR(indirect_vector_buffer_missmatch));
+        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(), ETL_ERROR(indirect_vector_buffer_missmatch));
         this->assign(other.begin(), other.end());
     }
 
@@ -1367,11 +1296,9 @@ class indirect_vector_ext : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Move construct.
     //*************************************************************************
-    indirect_vector_ext(indirect_vector_ext&& other, etl::ivector<T*>& lookup_,
-                        etl::ipool& pool_)
+    indirect_vector_ext(indirect_vector_ext&& other, etl::ivector<T*>& lookup_, etl::ipool& pool_)
         : etl::iindirect_vector<T>(lookup_, pool_) {
-        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(),
-                   ETL_ERROR(indirect_vector_buffer_missmatch));
+        ETL_ASSERT(lookup_.capacity() <= pool_.capacity(), ETL_ERROR(indirect_vector_buffer_missmatch));
         this->move_container(etl::move(other));
     }
 

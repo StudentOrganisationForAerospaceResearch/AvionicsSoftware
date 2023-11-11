@@ -80,8 +80,7 @@ uint8_t W25qxx_ReadStatusRegister(uint8_t SelectStatusRegister_1_2_3) {
     return status;
 }
 //###################################################################################################################
-void W25qxx_WriteStatusRegister(uint8_t SelectStatusRegister_1_2_3,
-                                uint8_t Data) {
+void W25qxx_WriteStatusRegister(uint8_t SelectStatusRegister_1_2_3, uint8_t Data) {
     HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_RESET);
     if (SelectStatusRegister_1_2_3 == 1) {
         W25qxx_Spi(0x01);
@@ -204,8 +203,7 @@ bool W25qxx_Init(void) {
     w25qxx.PageSize = 256;
     w25qxx.SectorSize = 0x1000;
     w25qxx.SectorCount = w25qxx.BlockCount * 16;
-    w25qxx.PageCount =
-        (w25qxx.SectorCount * w25qxx.SectorSize) / w25qxx.PageSize;
+    w25qxx.PageCount = (w25qxx.SectorCount * w25qxx.SectorSize) / w25qxx.PageSize;
     w25qxx.BlockSize = w25qxx.SectorSize * 16;
     w25qxx.CapacityInKiloByte = (w25qxx.SectorCount * w25qxx.SectorSize) / 1024;
     W25qxx_ReadUniqID();
@@ -240,8 +238,7 @@ void W25qxx_EraseChip(void) {
     HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
     W25qxx_WaitForWriteEnd();
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx EraseBlock done after %d ms!\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx EraseBlock done after %d ms!\r\n", HAL_GetTick() - StartTime);
 #endif
     W25qxx_Delay(10);
     w25qxx.Lock = 0;
@@ -271,8 +268,7 @@ void W25qxx_EraseSector(uint32_t SectorAddr) {
     HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
     W25qxx_WaitForWriteEnd();
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx EraseSector done after %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx EraseSector done after %d ms\r\n", HAL_GetTick() - StartTime);
 #endif
     W25qxx_Delay(1);
     w25qxx.Lock = 0;
@@ -303,8 +299,7 @@ void W25qxx_EraseBlock(uint32_t BlockAddr) {
     HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
     W25qxx_WaitForWriteEnd();
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx EraseBlock done after %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx EraseBlock done after %d ms\r\n", HAL_GetTick() - StartTime);
     W25qxx_Delay(100);
 #endif
     W25qxx_Delay(1);
@@ -331,17 +326,15 @@ uint32_t W25qxx_BlockToPage(uint32_t BlockAddress) {
     return (BlockAddress * w25qxx.BlockSize) / w25qxx.PageSize;
 }
 //###################################################################################################################
-bool W25qxx_IsEmptyPage(uint32_t Page_Address, uint32_t OffsetInByte,
-                        uint32_t NumByteToCheck_up_to_PageSize) {
+bool W25qxx_IsEmptyPage(uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToCheck_up_to_PageSize) {
     while (w25qxx.Lock == 1)
         W25qxx_Delay(1);
     w25qxx.Lock = 1;
-    if (((NumByteToCheck_up_to_PageSize + OffsetInByte) > w25qxx.PageSize) ||
-        (NumByteToCheck_up_to_PageSize == 0))
+    if (((NumByteToCheck_up_to_PageSize + OffsetInByte) > w25qxx.PageSize) || (NumByteToCheck_up_to_PageSize == 0))
         NumByteToCheck_up_to_PageSize = w25qxx.PageSize - OffsetInByte;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckPage:%d, Offset:%d, Bytes:%d begin...\r\n",
-               Page_Address, OffsetInByte, NumByteToCheck_up_to_PageSize);
+    SOAR_PRINT("w25qxx CheckPage:%d, Offset:%d, Bytes:%d begin...\r\n", Page_Address, OffsetInByte,
+               NumByteToCheck_up_to_PageSize);
     W25qxx_Delay(100);
     uint32_t StartTime = HAL_GetTick();
 #endif
@@ -391,33 +384,29 @@ bool W25qxx_IsEmptyPage(uint32_t Page_Address, uint32_t OffsetInByte,
         }
     }
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckPage is Empty in %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx CheckPage is Empty in %d ms\r\n", HAL_GetTick() - StartTime);
     W25qxx_Delay(100);
 #endif
     w25qxx.Lock = 0;
     return true;
 NOT_EMPTY:
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckPage is Not Empty in %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx CheckPage is Not Empty in %d ms\r\n", HAL_GetTick() - StartTime);
     W25qxx_Delay(100);
 #endif
     w25qxx.Lock = 0;
     return false;
 }
 //###################################################################################################################
-bool W25qxx_IsEmptySector(uint32_t Sector_Address, uint32_t OffsetInByte,
-                          uint32_t NumByteToCheck_up_to_SectorSize) {
+bool W25qxx_IsEmptySector(uint32_t Sector_Address, uint32_t OffsetInByte, uint32_t NumByteToCheck_up_to_SectorSize) {
     while (w25qxx.Lock == 1)
         W25qxx_Delay(1);
     w25qxx.Lock = 1;
-    if ((NumByteToCheck_up_to_SectorSize > w25qxx.SectorSize) ||
-        (NumByteToCheck_up_to_SectorSize == 0))
+    if ((NumByteToCheck_up_to_SectorSize > w25qxx.SectorSize) || (NumByteToCheck_up_to_SectorSize == 0))
         NumByteToCheck_up_to_SectorSize = w25qxx.SectorSize;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckSector:%d, Offset:%d, Bytes:%d begin...\r\n",
-               Sector_Address, OffsetInByte, NumByteToCheck_up_to_SectorSize);
+    SOAR_PRINT("w25qxx CheckSector:%d, Offset:%d, Bytes:%d begin...\r\n", Sector_Address, OffsetInByte,
+               NumByteToCheck_up_to_SectorSize);
     W25qxx_Delay(100);
     uint32_t StartTime = HAL_GetTick();
 #endif
@@ -466,33 +455,29 @@ bool W25qxx_IsEmptySector(uint32_t Sector_Address, uint32_t OffsetInByte,
         }
     }
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckSector is Empty in %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx CheckSector is Empty in %d ms\r\n", HAL_GetTick() - StartTime);
     W25qxx_Delay(100);
 #endif
     w25qxx.Lock = 0;
     return true;
 NOT_EMPTY:
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckSector is Not Empty in %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx CheckSector is Not Empty in %d ms\r\n", HAL_GetTick() - StartTime);
     W25qxx_Delay(100);
 #endif
     w25qxx.Lock = 0;
     return false;
 }
 //###################################################################################################################
-bool W25qxx_IsEmptyBlock(uint32_t Block_Address, uint32_t OffsetInByte,
-                         uint32_t NumByteToCheck_up_to_BlockSize) {
+bool W25qxx_IsEmptyBlock(uint32_t Block_Address, uint32_t OffsetInByte, uint32_t NumByteToCheck_up_to_BlockSize) {
     while (w25qxx.Lock == 1)
         W25qxx_Delay(1);
     w25qxx.Lock = 1;
-    if ((NumByteToCheck_up_to_BlockSize > w25qxx.BlockSize) ||
-        (NumByteToCheck_up_to_BlockSize == 0))
+    if ((NumByteToCheck_up_to_BlockSize > w25qxx.BlockSize) || (NumByteToCheck_up_to_BlockSize == 0))
         NumByteToCheck_up_to_BlockSize = w25qxx.BlockSize;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckBlock:%d, Offset:%d, Bytes:%d begin...\r\n",
-               Block_Address, OffsetInByte, NumByteToCheck_up_to_BlockSize);
+    SOAR_PRINT("w25qxx CheckBlock:%d, Offset:%d, Bytes:%d begin...\r\n", Block_Address, OffsetInByte,
+               NumByteToCheck_up_to_BlockSize);
     W25qxx_Delay(100);
     uint32_t StartTime = HAL_GetTick();
 #endif
@@ -543,16 +528,14 @@ bool W25qxx_IsEmptyBlock(uint32_t Block_Address, uint32_t OffsetInByte,
         }
     }
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckBlock is Empty in %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx CheckBlock is Empty in %d ms\r\n", HAL_GetTick() - StartTime);
     W25qxx_Delay(100);
 #endif
     w25qxx.Lock = 0;
     return true;
 NOT_EMPTY:
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx CheckBlock is Not Empty in %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx CheckBlock is Not Empty in %d ms\r\n", HAL_GetTick() - StartTime);
     W25qxx_Delay(100);
 #endif
     w25qxx.Lock = 0;
@@ -565,8 +548,7 @@ void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes) {
     w25qxx.Lock = 1;
 #if (_W25QXX_DEBUG == 1)
     uint32_t StartTime = HAL_GetTick();
-    SOAR_PRINT("w25qxx WriteByte 0x%02X at address %d begin...", pBuffer,
-               WriteAddr_inBytes);
+    SOAR_PRINT("w25qxx WriteByte 0x%02X at address %d begin...", pBuffer, WriteAddr_inBytes);
 #endif
     W25qxx_WaitForWriteEnd();
     W25qxx_WriteEnable();
@@ -585,26 +567,23 @@ void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes) {
     HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
     W25qxx_WaitForWriteEnd();
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx WriteByte done after %d ms\r\n",
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx WriteByte done after %d ms\r\n", HAL_GetTick() - StartTime);
 #endif
     w25qxx.Lock = 0;
 }
 //###################################################################################################################
-void W25qxx_WritePage(uint8_t* pBuffer, uint32_t Page_Address,
-                      uint32_t OffsetInByte,
+void W25qxx_WritePage(uint8_t* pBuffer, uint32_t Page_Address, uint32_t OffsetInByte,
                       uint32_t NumByteToWrite_up_to_PageSize) {
     while (w25qxx.Lock == 1)
         W25qxx_Delay(1);
     w25qxx.Lock = 1;
-    if (((NumByteToWrite_up_to_PageSize + OffsetInByte) > w25qxx.PageSize) ||
-        (NumByteToWrite_up_to_PageSize == 0))
+    if (((NumByteToWrite_up_to_PageSize + OffsetInByte) > w25qxx.PageSize) || (NumByteToWrite_up_to_PageSize == 0))
         NumByteToWrite_up_to_PageSize = w25qxx.PageSize - OffsetInByte;
     if ((OffsetInByte + NumByteToWrite_up_to_PageSize) > w25qxx.PageSize)
         NumByteToWrite_up_to_PageSize = w25qxx.PageSize - OffsetInByte;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx WritePage:%d, Offset:%d ,Writes %d Bytes, begin...\r\n",
-               Page_Address, OffsetInByte, NumByteToWrite_up_to_PageSize);
+    SOAR_PRINT("w25qxx WritePage:%d, Offset:%d ,Writes %d Bytes, begin...\r\n", Page_Address, OffsetInByte,
+               NumByteToWrite_up_to_PageSize);
     W25qxx_Delay(100);
     uint32_t StartTime = HAL_GetTick();
 #endif
@@ -641,16 +620,13 @@ void W25qxx_WritePage(uint8_t* pBuffer, uint32_t Page_Address,
     w25qxx.Lock = 0;
 }
 //###################################################################################################################
-void W25qxx_WriteSector(uint8_t* pBuffer, uint32_t Sector_Address,
-                        uint32_t OffsetInByte,
+void W25qxx_WriteSector(uint8_t* pBuffer, uint32_t Sector_Address, uint32_t OffsetInByte,
                         uint32_t NumByteToWrite_up_to_SectorSize) {
-    if ((NumByteToWrite_up_to_SectorSize > w25qxx.SectorSize) ||
-        (NumByteToWrite_up_to_SectorSize == 0))
+    if ((NumByteToWrite_up_to_SectorSize > w25qxx.SectorSize) || (NumByteToWrite_up_to_SectorSize == 0))
         NumByteToWrite_up_to_SectorSize = w25qxx.SectorSize;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT(
-        "+++w25qxx WriteSector:%d, Offset:%d ,Write %d Bytes, begin...\r\n",
-        Sector_Address, OffsetInByte, NumByteToWrite_up_to_SectorSize);
+    SOAR_PRINT("+++w25qxx WriteSector:%d, Offset:%d ,Write %d Bytes, begin...\r\n", Sector_Address, OffsetInByte,
+               NumByteToWrite_up_to_SectorSize);
     W25qxx_Delay(100);
 #endif
     if (OffsetInByte >= w25qxx.SectorSize) {
@@ -667,8 +643,7 @@ void W25qxx_WriteSector(uint8_t* pBuffer, uint32_t Sector_Address,
         BytesToWrite = w25qxx.SectorSize - OffsetInByte;
     else
         BytesToWrite = NumByteToWrite_up_to_SectorSize;
-    StartPage =
-        W25qxx_SectorToPage(Sector_Address) + (OffsetInByte / w25qxx.PageSize);
+    StartPage = W25qxx_SectorToPage(Sector_Address) + (OffsetInByte / w25qxx.PageSize);
     LocalOffset = OffsetInByte % w25qxx.PageSize;
     do {
         W25qxx_WritePage(pBuffer, StartPage, LocalOffset, BytesToWrite);
@@ -683,16 +658,13 @@ void W25qxx_WriteSector(uint8_t* pBuffer, uint32_t Sector_Address,
 #endif
 }
 //###################################################################################################################
-void W25qxx_WriteBlock(uint8_t* pBuffer, uint32_t Block_Address,
-                       uint32_t OffsetInByte,
+void W25qxx_WriteBlock(uint8_t* pBuffer, uint32_t Block_Address, uint32_t OffsetInByte,
                        uint32_t NumByteToWrite_up_to_BlockSize) {
-    if ((NumByteToWrite_up_to_BlockSize > w25qxx.BlockSize) ||
-        (NumByteToWrite_up_to_BlockSize == 0))
+    if ((NumByteToWrite_up_to_BlockSize > w25qxx.BlockSize) || (NumByteToWrite_up_to_BlockSize == 0))
         NumByteToWrite_up_to_BlockSize = w25qxx.BlockSize;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT(
-        "+++w25qxx WriteBlock:%d, Offset:%d ,Write %d Bytes, begin...\r\n",
-        Block_Address, OffsetInByte, NumByteToWrite_up_to_BlockSize);
+    SOAR_PRINT("+++w25qxx WriteBlock:%d, Offset:%d ,Write %d Bytes, begin...\r\n", Block_Address, OffsetInByte,
+               NumByteToWrite_up_to_BlockSize);
     W25qxx_Delay(100);
 #endif
     if (OffsetInByte >= w25qxx.BlockSize) {
@@ -709,8 +681,7 @@ void W25qxx_WriteBlock(uint8_t* pBuffer, uint32_t Block_Address,
         BytesToWrite = w25qxx.BlockSize - OffsetInByte;
     else
         BytesToWrite = NumByteToWrite_up_to_BlockSize;
-    StartPage =
-        W25qxx_BlockToPage(Block_Address) + (OffsetInByte / w25qxx.PageSize);
+    StartPage = W25qxx_BlockToPage(Block_Address) + (OffsetInByte / w25qxx.PageSize);
     LocalOffset = OffsetInByte % w25qxx.PageSize;
     do {
         W25qxx_WritePage(pBuffer, StartPage, LocalOffset, BytesToWrite);
@@ -748,21 +719,18 @@ void W25qxx_ReadByte(uint8_t* pBuffer, uint32_t Bytes_Address) {
     *pBuffer = W25qxx_Spi(W25QXX_DUMMY_BYTE);
     HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx ReadByte 0x%02X done after %d ms\r\n", *pBuffer,
-               HAL_GetTick() - StartTime);
+    SOAR_PRINT("w25qxx ReadByte 0x%02X done after %d ms\r\n", *pBuffer, HAL_GetTick() - StartTime);
 #endif
     w25qxx.Lock = 0;
 }
 //###################################################################################################################
-void W25qxx_ReadBytes(uint8_t* pBuffer, uint32_t ReadAddr,
-                      uint32_t NumByteToRead) {
+void W25qxx_ReadBytes(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead) {
     while (w25qxx.Lock == 1)
         W25qxx_Delay(1);
     w25qxx.Lock = 1;
 #if (_W25QXX_DEBUG == 1)
     uint32_t StartTime = HAL_GetTick();
-    SOAR_PRINT("w25qxx ReadBytes at Address:%d, %d Bytes  begin...\r\n",
-               ReadAddr, NumByteToRead);
+    SOAR_PRINT("w25qxx ReadBytes at Address:%d, %d Bytes  begin...\r\n", ReadAddr, NumByteToRead);
 #endif
     HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_RESET);
 
@@ -795,20 +763,18 @@ void W25qxx_ReadBytes(uint8_t* pBuffer, uint32_t ReadAddr,
     w25qxx.Lock = 0;
 }
 //###################################################################################################################
-void W25qxx_ReadPage(uint8_t* pBuffer, uint32_t Page_Address,
-                     uint32_t OffsetInByte,
+void W25qxx_ReadPage(uint8_t* pBuffer, uint32_t Page_Address, uint32_t OffsetInByte,
                      uint32_t NumByteToRead_up_to_PageSize) {
     while (w25qxx.Lock == 1)
         W25qxx_Delay(1);
     w25qxx.Lock = 1;
-    if ((NumByteToRead_up_to_PageSize > w25qxx.PageSize) ||
-        (NumByteToRead_up_to_PageSize == 0))
+    if ((NumByteToRead_up_to_PageSize > w25qxx.PageSize) || (NumByteToRead_up_to_PageSize == 0))
         NumByteToRead_up_to_PageSize = w25qxx.PageSize;
     if ((OffsetInByte + NumByteToRead_up_to_PageSize) > w25qxx.PageSize)
         NumByteToRead_up_to_PageSize = w25qxx.PageSize - OffsetInByte;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("w25qxx ReadPage:%d, Offset:%d ,Read %d Bytes, begin...\r\n",
-               Page_Address, OffsetInByte, NumByteToRead_up_to_PageSize);
+    SOAR_PRINT("w25qxx ReadPage:%d, Offset:%d ,Read %d Bytes, begin...\r\n", Page_Address, OffsetInByte,
+               NumByteToRead_up_to_PageSize);
     W25qxx_Delay(100);
     uint32_t StartTime = HAL_GetTick();
 #endif
@@ -843,16 +809,13 @@ void W25qxx_ReadPage(uint8_t* pBuffer, uint32_t Page_Address,
     w25qxx.Lock = 0;
 }
 //###################################################################################################################
-void W25qxx_ReadSector(uint8_t* pBuffer, uint32_t Sector_Address,
-                       uint32_t OffsetInByte,
+void W25qxx_ReadSector(uint8_t* pBuffer, uint32_t Sector_Address, uint32_t OffsetInByte,
                        uint32_t NumByteToRead_up_to_SectorSize) {
-    if ((NumByteToRead_up_to_SectorSize > w25qxx.SectorSize) ||
-        (NumByteToRead_up_to_SectorSize == 0))
+    if ((NumByteToRead_up_to_SectorSize > w25qxx.SectorSize) || (NumByteToRead_up_to_SectorSize == 0))
         NumByteToRead_up_to_SectorSize = w25qxx.SectorSize;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT(
-        "+++w25qxx ReadSector:%d, Offset:%d ,Read %d Bytes, begin...\r\n",
-        Sector_Address, OffsetInByte, NumByteToRead_up_to_SectorSize);
+    SOAR_PRINT("+++w25qxx ReadSector:%d, Offset:%d ,Read %d Bytes, begin...\r\n", Sector_Address, OffsetInByte,
+               NumByteToRead_up_to_SectorSize);
     W25qxx_Delay(100);
 #endif
     if (OffsetInByte >= w25qxx.SectorSize) {
@@ -869,8 +832,7 @@ void W25qxx_ReadSector(uint8_t* pBuffer, uint32_t Sector_Address,
         BytesToRead = w25qxx.SectorSize - OffsetInByte;
     else
         BytesToRead = NumByteToRead_up_to_SectorSize;
-    StartPage =
-        W25qxx_SectorToPage(Sector_Address) + (OffsetInByte / w25qxx.PageSize);
+    StartPage = W25qxx_SectorToPage(Sector_Address) + (OffsetInByte / w25qxx.PageSize);
     LocalOffset = OffsetInByte % w25qxx.PageSize;
     do {
         W25qxx_ReadPage(pBuffer, StartPage, LocalOffset, BytesToRead);
@@ -885,15 +847,13 @@ void W25qxx_ReadSector(uint8_t* pBuffer, uint32_t Sector_Address,
 #endif
 }
 //###################################################################################################################
-void W25qxx_ReadBlock(uint8_t* pBuffer, uint32_t Block_Address,
-                      uint32_t OffsetInByte,
+void W25qxx_ReadBlock(uint8_t* pBuffer, uint32_t Block_Address, uint32_t OffsetInByte,
                       uint32_t NumByteToRead_up_to_BlockSize) {
-    if ((NumByteToRead_up_to_BlockSize > w25qxx.BlockSize) ||
-        (NumByteToRead_up_to_BlockSize == 0))
+    if ((NumByteToRead_up_to_BlockSize > w25qxx.BlockSize) || (NumByteToRead_up_to_BlockSize == 0))
         NumByteToRead_up_to_BlockSize = w25qxx.BlockSize;
 #if (_W25QXX_DEBUG == 1)
-    SOAR_PRINT("+++w25qxx ReadBlock:%d, Offset:%d ,Read %d Bytes, begin...\r\n",
-               Block_Address, OffsetInByte, NumByteToRead_up_to_BlockSize);
+    SOAR_PRINT("+++w25qxx ReadBlock:%d, Offset:%d ,Read %d Bytes, begin...\r\n", Block_Address, OffsetInByte,
+               NumByteToRead_up_to_BlockSize);
     W25qxx_Delay(100);
 #endif
     if (OffsetInByte >= w25qxx.BlockSize) {
@@ -910,8 +870,7 @@ void W25qxx_ReadBlock(uint8_t* pBuffer, uint32_t Block_Address,
         BytesToRead = w25qxx.BlockSize - OffsetInByte;
     else
         BytesToRead = NumByteToRead_up_to_BlockSize;
-    StartPage =
-        W25qxx_BlockToPage(Block_Address) + (OffsetInByte / w25qxx.PageSize);
+    StartPage = W25qxx_BlockToPage(Block_Address) + (OffsetInByte / w25qxx.PageSize);
     LocalOffset = OffsetInByte % w25qxx.PageSize;
     do {
         W25qxx_ReadPage(pBuffer, StartPage, LocalOffset, BytesToRead);

@@ -16,8 +16,8 @@
 enum BATTERY_TASK_COMMANDS {
     BATTERY_NONE = 0,
     BATTERY_REQUEST_NEW_SAMPLE,  // Get a new battery voltage sample, task will be blocked for polling time
-    BATTERY_REQUEST_TRANSMIT,  // Send the current battery voltage data over the Radio
-    BATTERY_REQUEST_DEBUG,  // Send the current battery voltage data over the Debug UART
+    BATTERY_REQUEST_TRANSMIT,    // Send the current battery voltage data over the Radio
+    BATTERY_REQUEST_DEBUG,       // Send the current battery voltage data over the Debug UART
 };
 
 /* Class ------------------------------------------------------------------*/

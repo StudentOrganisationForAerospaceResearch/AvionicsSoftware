@@ -31,13 +31,11 @@ void GPSTask::InitTask() {
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize GPS task twice");
 
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)GPSTask::RunTask, (const char*)"GPSTask",
-        (uint16_t)TASK_GPS_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)TASK_GPS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue =
+        xTaskCreate((TaskFunction_t)GPSTask::RunTask, (const char*)"GPSTask", (uint16_t)TASK_GPS_STACK_DEPTH_WORDS,
+                    (void*)this, (UBaseType_t)TASK_GPS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
-    SOAR_ASSERT(rtValue == pdPASS,
-                "GPSTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "GPSTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -53,12 +51,9 @@ void GPSTask::HandleGPSRxComplete() {
     for (int i = 0; i < NMEA_MAX_LENGTH + 1; i++) {
         char rx = gpsTaskRxBuffer[i];  // Read 1 character
 
-        if ((rx == '\r') ||
-            (rx == '\n'))  // End of line character has been reached
+        if ((rx == '\r') || (rx == '\n'))  // End of line character has been reached
         {
-            if (rx_index != 0 &&
-                rx_buffer[0] ==
-                    '$')  // Check that buffer has content and that the message is valid
+            if (rx_index != 0 && rx_buffer[0] == '$')  // Check that buffer has content and that the message is valid
             {
                 rx_buffer[rx_index++] = 0;
 
@@ -79,24 +74,18 @@ void GPSTask::HandleGPSRxComplete() {
             }
         } else {
             if ((rx == '$') ||
-                (rx_index ==
-                 NMEA_MAX_LENGTH))  // If start character received or end of rx buffer reached
+                (rx_index == NMEA_MAX_LENGTH))  // If start character received or end of rx buffer reached
             {
                 // Reset back to initial values
                 rx_index = 0;
                 gpggaDetected = 0;
                 rx_buffer[rx_index++] = rx;
             } else if (gpggaDetected == 0) {
-                if (rx_index >=
-                    6)  // If the first 6 characters follow $GPGGA, set gpggaDetected to 1
+                if (rx_index >= 6)  // If the first 6 characters follow $GPGGA, set gpggaDetected to 1
                 {
                     gpggaDetected = 1;
-                    rx_buffer[rx_index++] =
-                        rx;  // Contents of the rx_buffer will be $GPGGA at this point
-                } else if (
-                    rx ==
-                    message
-                        [rx_index])  // Check if the first 6 characters follow $GPGGA
+                    rx_buffer[rx_index++] = rx;      // Contents of the rx_buffer will be $GPGGA at this point
+                } else if (rx == message[rx_index])  // Check if the first 6 characters follow $GPGGA
                 {
                     rx_buffer[rx_index++] = rx;
                 } else {
@@ -105,8 +94,7 @@ void GPSTask::HandleGPSRxComplete() {
                     gpggaDetected = 0;
                 }
             } else {
-                rx_buffer[rx_index++] =
-                    rx;  // Copy received characters to rx_buffer
+                rx_buffer[rx_index++] = rx;  // Copy received characters to rx_buffer
             }
         }
     }
@@ -153,8 +141,7 @@ void GPSTask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("GPSTask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("GPSTask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -180,23 +167,17 @@ void GPSTask::HandleRequestCommand(uint16_t taskCommand) {
         case GPS_REQUEST_DEBUG:
             SOAR_PRINT("\t-- GPS Data --\n");
             SOAR_PRINT(" Time : %d\n", data->time_);
-            SOAR_PRINT(" Latitude  (deg, min) : (%d, %d)\n",
-                       data->latitude_.degrees_, data->latitude_.minutes_);
-            SOAR_PRINT(" Longitude (deg, min) : (%d, %d)\n",
-                       data->longitude_.degrees_, data->longitude_.minutes_);
-            SOAR_PRINT(" Altitude   (N, unit) : (%d, %c)\n",
-                       data->antennaAltitude_.altitude_,
+            SOAR_PRINT(" Latitude  (deg, min) : (%d, %d)\n", data->latitude_.degrees_, data->latitude_.minutes_);
+            SOAR_PRINT(" Longitude (deg, min) : (%d, %d)\n", data->longitude_.degrees_, data->longitude_.minutes_);
+            SOAR_PRINT(" Altitude   (N, unit) : (%d, %c)\n", data->antennaAltitude_.altitude_,
                        data->antennaAltitude_.unit_);
-            SOAR_PRINT(" Altitude   (N, unit) : (%d, %c)\n",
-                       data->geoidAltitude_.altitude_,
+            SOAR_PRINT(" Altitude   (N, unit) : (%d, %c)\n", data->geoidAltitude_.altitude_,
                        data->geoidAltitude_.unit_);
-            SOAR_PRINT(" Altitude   (N, unit) : (%d, %c)\n",
-                       data->totalAltitude_.altitude_,
+            SOAR_PRINT(" Altitude   (N, unit) : (%d, %c)\n", data->totalAltitude_.altitude_,
                        data->totalAltitude_.unit_);
             break;
         default:
-            SOAR_PRINT("GPSTask - Received Unsupported REQUEST_COMMAND {%d}\n",
-                       taskCommand);
+            SOAR_PRINT("GPSTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
             break;
     }
 }
@@ -206,8 +187,7 @@ void GPSTask::HandleRequestCommand(uint16_t taskCommand) {
  * @return Status flag
  */
 bool GPSTask::ReceiveData() {
-    HAL_UART_Receive_DMA(SystemHandles::UART_GPS, (uint8_t*)&gpsTaskRxBuffer,
-                         GPS_TASK_RX_BUFFER_SIZE);
+    HAL_UART_Receive_DMA(SystemHandles::UART_GPS, (uint8_t*)&gpsTaskRxBuffer, GPS_TASK_RX_BUFFER_SIZE);
     return true;
 }
 
@@ -250,13 +230,11 @@ void GPSTask::TransmitProtocolData() {
     coord.set_time(data->time_);
     msg.set_coord(coord);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
     // Send the barometer data
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
 
 /**
@@ -273,8 +251,7 @@ void GPSTask::LogDataToFlash() {
     flashLogData.totalAltitude_ = data->totalAltitude_;
 
     Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
-    flashCommand.CopyDataToCommand((uint8_t*)&flashLogData,
-                                   sizeof(GPSDataFlashLog));
+    flashCommand.CopyDataToCommand((uint8_t*)&flashLogData, sizeof(GPSDataFlashLog));
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }
 
@@ -313,20 +290,15 @@ void GPSTask::ParseGpsData() {
             switch (counter) {
                     // case 0 is when gps_item is "$GPGGA"
                 case 1: {
-                    data->time_ =
-                        (uint32_t)(atof(gps_item) *
-                                   100);  // HHMMSS.SS format. Time is multiplied by 100.
+                    data->time_ = (uint32_t)(atof(gps_item) * 100);  // HHMMSS.SS format. Time is multiplied by 100.
                     break;
                 }
 
                 case 2: {
-                    double latitude = (atof(gps_item));  // DDMM.MMMMMM
-                    data->latitude_.degrees_ =
-                        (int32_t)latitude /
-                        100;  // First 2 numbers are the latitude degrees
-                    data->latitude_.minutes_ =
-                        (int32_t)((latitude - data->latitude_.degrees_ * 100) *
-                                  100000);  // Latitude minutes is multplied by 100000
+                    double latitude = (atof(gps_item));                  // DDMM.MMMMMM
+                    data->latitude_.degrees_ = (int32_t)latitude / 100;  // First 2 numbers are the latitude degrees
+                    data->latitude_.minutes_ = (int32_t)((latitude - data->latitude_.degrees_ * 100) *
+                                                         100000);  // Latitude minutes is multplied by 100000
                     break;
                 }
 
@@ -345,14 +317,10 @@ void GPSTask::ParseGpsData() {
                 }
 
                 case 4: {
-                    double longitude = (atof(gps_item));  // DDMM.MMMMMM
-                    data->longitude_.degrees_ =
-                        (int32_t)longitude /
-                        100;  // First 2 numbers are the longitude degrees
-                    data->longitude_.minutes_ =
-                        (int32_t)((longitude -
-                                   data->longitude_.degrees_ * 100) *
-                                  100000);  // Longitude minutes is multplied by 100000
+                    double longitude = (atof(gps_item));                   // DDMM.MMMMMM
+                    data->longitude_.degrees_ = (int32_t)longitude / 100;  // First 2 numbers are the longitude degrees
+                    data->longitude_.minutes_ = (int32_t)((longitude - data->longitude_.degrees_ * 100) *
+                                                          100000);  // Longitude minutes is multplied by 100000
                     break;
                 }
 
@@ -372,8 +340,7 @@ void GPSTask::ParseGpsData() {
 
                 case 9: {
                     data->antennaAltitude_.altitude_ =
-                        (int32_t)(atof(gps_item) *
-                                  10);  // Antenna altitude is multiplied by 10
+                        (int32_t)(atof(gps_item) * 10);  // Antenna altitude is multiplied by 10
                     break;
                 }
 
@@ -385,8 +352,7 @@ void GPSTask::ParseGpsData() {
 
                 case 11: {
                     data->geoidAltitude_.altitude_ =
-                        (int32_t)(atof(gps_item) *
-                                  10);  // Geoid altitude is multiplied by 10
+                        (int32_t)(atof(gps_item) * 10);  // Geoid altitude is multiplied by 10
                     break;
                 }
 
@@ -406,8 +372,7 @@ void GPSTask::ParseGpsData() {
     } while (done == 0);
 
     // Subtract geoid altitude from antenna altitude to get Height Above Ellipsoid (HAE)
-    data->totalAltitude_.altitude_ =
-        data->antennaAltitude_.altitude_ - data->geoidAltitude_.altitude_;
+    data->totalAltitude_.altitude_ = data->antennaAltitude_.altitude_ - data->geoidAltitude_.altitude_;
     data->totalAltitude_.unit_ = data->antennaAltitude_.unit_;
 
     memset(gpsTaskRxBuffer, 0, GPS_TASK_RX_BUFFER_SIZE);

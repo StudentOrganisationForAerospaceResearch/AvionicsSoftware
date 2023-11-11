@@ -51,12 +51,9 @@ class shared_message {
     //*************************************************************************
     template <typename TPool, typename TMessage>
     shared_message(TPool& owner, const TMessage& message) {
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<etl::ireference_counted_message_pool,
-                             TPool>::value),
-            "TPool not derived from etl::ireference_counted_message_pool");
-        ETL_STATIC_ASSERT((etl::is_base_of<etl::imessage, TMessage>::value),
-                          "TMessage not derived from etl::imessage");
+        ETL_STATIC_ASSERT((etl::is_base_of<etl::ireference_counted_message_pool, TPool>::value),
+                          "TPool not derived from etl::ireference_counted_message_pool");
+        ETL_STATIC_ASSERT((etl::is_base_of<etl::imessage, TMessage>::value), "TMessage not derived from etl::imessage");
 
         p_rcmessage = owner.allocate(message);
 
@@ -77,8 +74,7 @@ class shared_message {
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    shared_message(const etl::shared_message& other)
-        : p_rcmessage(other.p_rcmessage) {
+    shared_message(const etl::shared_message& other) : p_rcmessage(other.p_rcmessage) {
         p_rcmessage->get_reference_counter().increment_reference_count();
     }
 
@@ -86,8 +82,7 @@ class shared_message {
     //*************************************************************************
     /// Move constructor
     //*************************************************************************
-    shared_message(etl::shared_message&& other)
-        : p_rcmessage(etl::move(other.p_rcmessage)) {
+    shared_message(etl::shared_message&& other) : p_rcmessage(etl::move(other.p_rcmessage)) {
         other.p_rcmessage = ETL_NULLPTR;
     }
 #endif
@@ -98,8 +93,7 @@ class shared_message {
     shared_message& operator=(const etl::shared_message& other) {
         if (&other != this) {
             // Deal with the current message.
-            if (p_rcmessage->get_reference_counter()
-                    .decrement_reference_count() == 0U) {
+            if (p_rcmessage->get_reference_counter().decrement_reference_count() == 0U) {
                 p_rcmessage->release();
             }
 
@@ -118,8 +112,7 @@ class shared_message {
     shared_message& operator=(etl::shared_message&& other) {
         if (&other != this) {
             // Deal with the current message.
-            if (p_rcmessage->get_reference_counter()
-                    .decrement_reference_count() == 0U) {
+            if (p_rcmessage->get_reference_counter().decrement_reference_count() == 0U) {
                 p_rcmessage->release();
             }
 
@@ -137,9 +130,7 @@ class shared_message {
     /// Returns the message back to the pool it it is the last copy.
     //*************************************************************************
     ~shared_message() {
-        if ((p_rcmessage != ETL_NULLPTR) &&
-            (p_rcmessage->get_reference_counter().decrement_reference_count() ==
-             0U)) {
+        if ((p_rcmessage != ETL_NULLPTR) && (p_rcmessage->get_reference_counter().decrement_reference_count() == 0U)) {
             p_rcmessage->release();
         }
     }
@@ -175,8 +166,7 @@ class shared_message {
    private:
     shared_message() ETL_DELETE;
 
-    etl::ireference_counted_message*
-        p_rcmessage;  ///< A pointer to the reference  counted message.
+    etl::ireference_counted_message* p_rcmessage;  ///< A pointer to the reference  counted message.
 };
 }  // namespace etl
 

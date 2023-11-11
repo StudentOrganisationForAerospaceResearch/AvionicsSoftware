@@ -74,13 +74,10 @@ class SimpleDualSectorStorage {
  * @tparam T type of data to store
  */
 template <typename T>
-SimpleDualSectorStorage<T>::SimpleDualSectorStorage(Flash* flashDriver,
-                                                    uint32_t startAddr)
-    : sector1_(flashDriver, startAddr),
-      sector2_(flashDriver, startAddr + flashDriver->GetSectorSize()) {
+SimpleDualSectorStorage<T>::SimpleDualSectorStorage(Flash* flashDriver, uint32_t startAddr)
+    : sector1_(flashDriver, startAddr), sector2_(flashDriver, startAddr + flashDriver->GetSectorSize()) {
     // The startAddr must align with a sector boundary
-    SOAR_ASSERT(startAddr % flashDriver->GetSectorSize() == 0,
-                "Error-SDSS: Invalid startAddr");
+    SOAR_ASSERT(startAddr % flashDriver->GetSectorSize() == 0, "Error-SDSS: Invalid startAddr");
 
     // Init variables
     validSector_ = UNKNOWN;

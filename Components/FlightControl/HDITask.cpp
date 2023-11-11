@@ -32,14 +32,10 @@ constexpr uint16_t BUZZER_DEFAULT_DUTY_CYCLE = 190;
  *
  * */
 
-etl::map<RocketState, HDIConfig, 11> stateBlinks =
-    etl::map<RocketState, HDIConfig, 11>{
-        {RS_TEST, {1, 500}},     {RS_PRELAUNCH, {2, 500}},
-        {RS_FILL, {3, 500}},     {RS_ARM, {4, 500}},
-        {RS_IGNITION, {1, 300}}, {RS_LAUNCH, {2, 300}},
-        {RS_BURN, {3, 300}},     {RS_COAST, {4, 300}},
-        {RS_DESCENT, {5, 180}},  {RS_RECOVERY, {6, 180}},
-        {RS_ABORT, {7, 100}}};
+etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConfig, 11>{
+    {RS_TEST, {1, 500}},     {RS_PRELAUNCH, {2, 500}}, {RS_FILL, {3, 500}}, {RS_ARM, {4, 500}},
+    {RS_IGNITION, {1, 300}}, {RS_LAUNCH, {2, 300}},    {RS_BURN, {3, 300}}, {RS_COAST, {4, 300}},
+    {RS_DESCENT, {5, 180}},  {RS_RECOVERY, {6, 180}},  {RS_ABORT, {7, 100}}};
 
 /**
 * @brief Constructor for HDITask
@@ -53,13 +49,11 @@ void HDITask::InitTask() {
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize HDI task twice");
 
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)HDITask::RunTask, (const char*)"HDITask",
-        (uint16_t)HDI_TASK_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)HDI_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue =
+        xTaskCreate((TaskFunction_t)HDITask::RunTask, (const char*)"HDITask", (uint16_t)HDI_TASK_STACK_DEPTH_WORDS,
+                    (void*)this, (UBaseType_t)HDI_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
-    SOAR_ASSERT(rtValue == pdPASS,
-                "HDITask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "HDITask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -108,8 +102,7 @@ void HDITask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("HDITask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("HDITask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -122,8 +115,7 @@ void HDITask::HandleCommand(Command& cm) {
 */
 void HDITask::HandleRequestCommand(uint16_t taskCommand) {
     //Switch for task specific command within DATA_COMMAND
-    if ((RocketState)taskCommand >= RS_PRELAUNCH &&
-        (RocketState)taskCommand < RS_NONE) {
+    if ((RocketState)taskCommand >= RS_PRELAUNCH && (RocketState)taskCommand < RS_NONE) {
         auto it = stateBlinks.find((RocketState)taskCommand);
         if (it != stateBlinks.end()) {
             currentConfig = it->second;

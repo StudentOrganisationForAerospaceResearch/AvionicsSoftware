@@ -65,8 +65,7 @@ namespace etl {
 //***************************************************************************
 class observer_exception : public exception {
    public:
-    observer_exception(string_type reason_, string_type file_name_,
-                       numeric_type line_number_)
+    observer_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -77,9 +76,7 @@ class observer_exception : public exception {
 class observer_list_full : public observer_exception {
    public:
     observer_list_full(string_type file_name_, numeric_type line_number_)
-        : observer_exception(
-              ETL_ERROR_TEXT("observer:full", ETL_OBSERVER_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : observer_exception(ETL_ERROR_TEXT("observer:full", ETL_OBSERVER_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //*********************************************************************
@@ -95,8 +92,7 @@ class observable {
     // Item stored in the observer list.
     //***********************************
     struct observer_item {
-        observer_item(TObserver& observer_)
-            : p_observer(&observer_), enabled(true) {}
+        observer_item(TObserver& observer_) : p_observer(&observer_), enabled(true) {}
 
         TObserver* p_observer;
         bool enabled;
@@ -108,9 +104,7 @@ class observable {
     struct compare_observers {
         compare_observers(TObserver& observer_) : p_observer(&observer_) {}
 
-        bool operator()(const observer_item& item) const {
-            return p_observer == item.p_observer;
-        }
+        bool operator()(const observer_item& item) const { return p_observer == item.p_observer; }
 
         TObserver* p_observer;
     };
@@ -128,14 +122,12 @@ class observable {
     //*****************************************************************
     void add_observer(TObserver& observer) {
         // See if we already have it in our list.
-        typename Observer_List::iterator i_observer_item =
-            find_observer(observer);
+        typename Observer_List::iterator i_observer_item = find_observer(observer);
 
         // Not there?
         if (i_observer_item == observer_list.end()) {
             // Is there enough room?
-            ETL_ASSERT_AND_RETURN(!observer_list.full(),
-                                  ETL_ERROR(etl::observer_list_full));
+            ETL_ASSERT_AND_RETURN(!observer_list.full(), ETL_ERROR(etl::observer_list_full));
 
             // Add it.
             observer_list.push_back(observer_item(observer));
@@ -149,8 +141,7 @@ class observable {
     //*****************************************************************
     bool remove_observer(TObserver& observer) {
         // See if we have it in our list.
-        typename Observer_List::iterator i_observer_item =
-            find_observer(observer);
+        typename Observer_List::iterator i_observer_item = find_observer(observer);
 
         // Found it?
         if (i_observer_item != observer_list.end()) {
@@ -169,8 +160,7 @@ class observable {
     //*****************************************************************
     void enable_observer(TObserver& observer, bool state = true) {
         // See if we have it in our list.
-        typename Observer_List::iterator i_observer_item =
-            find_observer(observer);
+        typename Observer_List::iterator i_observer_item = find_observer(observer);
 
         // Found it?
         if (i_observer_item != observer_list.end()) {
@@ -183,8 +173,7 @@ class observable {
     //*****************************************************************
     void disable_observer(TObserver& observer) {
         // See if we have it in our list.
-        typename Observer_List::iterator i_observer_item =
-            find_observer(observer);
+        typename Observer_List::iterator i_observer_item = find_observer(observer);
 
         // Found it?
         if (i_observer_item != observer_list.end()) {
@@ -209,8 +198,7 @@ class observable {
     //*****************************************************************
     template <typename TNotification>
     void notify_observers(TNotification n) {
-        typename Observer_List::iterator i_observer_item =
-            observer_list.begin();
+        typename Observer_List::iterator i_observer_item = observer_list.begin();
 
         while (i_observer_item != observer_list.end()) {
             if (i_observer_item->enabled) {
@@ -230,8 +218,7 @@ class observable {
     /// Returns the end of the list if not found.
     //*****************************************************************
     typename Observer_List::iterator find_observer(TObserver& observer_) {
-        return etl::find_if(observer_list.begin(), observer_list.end(),
-                            compare_observers(observer_));
+        return etl::find_if(observer_list.begin(), observer_list.end(), compare_observers(observer_));
     }
 
     /// The list of observers.
@@ -269,9 +256,8 @@ class observer<T1> {
 /// The observer interface for eight notification types.
 ///\ingroup observer
 //*********************************************************************
-template <typename T1, typename T2 = void, typename T3 = void,
-          typename T4 = void, typename T5 = void, typename T6 = void,
-          typename T7 = void, typename T8 = void>
+template <typename T1, typename T2 = void, typename T3 = void, typename T4 = void, typename T5 = void,
+          typename T6 = void, typename T7 = void, typename T8 = void>
 class observer {
    public:
     virtual ~observer() {}
@@ -289,8 +275,7 @@ class observer {
 /// The observer interface for seven notification types.
 ///\ingroup observer
 //*********************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 class observer<T1, T2, T3, T4, T5, T6, T7> {
    public:
     virtual ~observer() {}
@@ -307,8 +292,7 @@ class observer<T1, T2, T3, T4, T5, T6, T7> {
 /// The observer interface for six notification types.
 ///\ingroup observer
 //*********************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 class observer<T1, T2, T3, T4, T5, T6> {
    public:
     virtual ~observer() {}

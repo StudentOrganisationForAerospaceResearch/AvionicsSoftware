@@ -23,16 +23,13 @@ WatchdogTask::WatchdogTask() : Task(WATCHDOG_TASK_QUEUE_DEPTH_OBJS) {}
  */
 void WatchdogTask::InitTask() {
     // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr,
-                "Cannot initialize watchdog task twice");
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize watchdog task twice");
 
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)WatchdogTask::RunTask, (const char*)"WatchdogTask",
-        (uint16_t)WATCHDOG_TASK_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)WATCHDOG_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)WatchdogTask::RunTask, (const char*)"WatchdogTask",
+                                     (uint16_t)WATCHDOG_TASK_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)WATCHDOG_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
-    SOAR_ASSERT(rtValue == pdPASS,
-                "WatchdogTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "WatchdogTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -58,12 +55,10 @@ void WatchdogTask::HandleCommand(Command& cm) {
         }
         case RADIOHB_CHANGE_PERIOD:
             SOAR_PRINT("HB Period Changed to %d s\n", (cm.GetTaskCommand()));
-            heartbeatTimer->ChangePeriodMsAndStart(
-                (cm.GetTaskCommand() * 1000));
+            heartbeatTimer->ChangePeriodMsAndStart((cm.GetTaskCommand() * 1000));
             break;
         default:
-            SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -83,9 +78,7 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand) {
             heartbeatTimer->Stop();
             break;
         default:
-            SOAR_PRINT(
-                "WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n",
-                taskCommand);
+            SOAR_PRINT("WatchdogTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
             break;
     }
 }

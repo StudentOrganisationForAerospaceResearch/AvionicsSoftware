@@ -43,8 +43,7 @@ namespace etl {
 //***************************************************************************
 class multi_range_exception : public etl::exception {
    public:
-    multi_range_exception(string_type reason_, string_type file_name_,
-                          numeric_type line_number_)
+    multi_range_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -53,12 +52,9 @@ class multi_range_exception : public etl::exception {
 //***************************************************************************
 class multi_range_circular_reference : public etl::multi_range_exception {
    public:
-    multi_range_circular_reference(string_type file_name_,
-                                   numeric_type line_number_)
-        : etl::multi_range_exception(
-              ETL_ERROR_TEXT("multi_range:circular reference",
-                             ETL_MULTI_LOOP_FILE_ID "A"),
-              file_name_, line_number_) {}
+    multi_range_circular_reference(string_type file_name_, numeric_type line_number_)
+        : etl::multi_range_exception(ETL_ERROR_TEXT("multi_range:circular reference", ETL_MULTI_LOOP_FILE_ID "A"),
+                                     file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -70,8 +66,7 @@ class imulti_range {
     /// Insert after this range.
     //***************************************************************************
     imulti_range& insert(imulti_range& inner_range) {
-        ETL_ASSERT(is_valid(inner_range),
-                   ETL_ERROR(multi_range_circular_reference));
+        ETL_ASSERT(is_valid(inner_range), ETL_ERROR(multi_range_circular_reference));
 
         // Remember what the next range was.
         imulti_range* next = inner;
@@ -89,8 +84,7 @@ class imulti_range {
     /// Append to the most inner range.
     //***************************************************************************
     imulti_range& append(imulti_range& inner_range) {
-        ETL_ASSERT(is_valid(inner_range),
-                   ETL_ERROR(multi_range_circular_reference));
+        ETL_ASSERT(is_valid(inner_range), ETL_ERROR(multi_range_circular_reference));
 
         if (inner != ETL_NULLPTR) {
             inner->append(inner_range);
@@ -232,8 +226,7 @@ class multi_range : public imulti_range {
     struct forward_step_by : public step_type {
         typedef T value_type;
 
-        explicit forward_step_by(const value_type& step_value_)
-            : step_value(step_value_) {}
+        explicit forward_step_by(const value_type& step_value_) : step_value(step_value_) {}
 
         virtual void operator()(value_type& value) { value += step_value; }
 
@@ -255,8 +248,7 @@ class multi_range : public imulti_range {
     struct reverse_step_by : public step_type {
         typedef T value_type;
 
-        explicit reverse_step_by(const value_type& step_value_)
-            : step_value(step_value_) {}
+        explicit reverse_step_by(const value_type& step_value_) : step_value(step_value_) {}
 
         virtual void operator()(value_type& value) { value -= step_value; }
 
@@ -269,8 +261,7 @@ class multi_range : public imulti_range {
     struct compare_type {
         typedef T value_type;
 
-        virtual bool operator()(const value_type& current,
-                                const value_type& last) const = 0;
+        virtual bool operator()(const value_type& current, const value_type& last) const = 0;
     };
 
     //***************************************************************************
@@ -279,8 +270,7 @@ class multi_range : public imulti_range {
     struct not_equal_compare : public compare_type {
         typedef T value_type;
 
-        virtual bool operator()(const value_type& current,
-                                const value_type& last) const ETL_OVERRIDE {
+        virtual bool operator()(const value_type& current, const value_type& last) const ETL_OVERRIDE {
             return etl::not_equal_to<value_type>()(current, last);
         }
     };
@@ -291,8 +281,7 @@ class multi_range : public imulti_range {
     struct less_than_compare : public compare_type {
         typedef T value_type;
 
-        virtual bool operator()(const value_type& current,
-                                const value_type& last) const ETL_OVERRIDE {
+        virtual bool operator()(const value_type& current, const value_type& last) const ETL_OVERRIDE {
             return etl::less<value_type>()(current, last);
         }
     };
@@ -303,8 +292,7 @@ class multi_range : public imulti_range {
     struct greater_than_compare : public compare_type {
         typedef T value_type;
 
-        virtual bool operator()(const value_type& current,
-                                const value_type& last) const ETL_OVERRIDE {
+        virtual bool operator()(const value_type& current, const value_type& last) const ETL_OVERRIDE {
             return etl::greater<value_type>()(current, last);
         }
     };
@@ -315,11 +303,7 @@ class multi_range : public imulti_range {
     /// \param last  The terminating value of the range. Equal to the last required value + 1.
     //***************************************************************************
     multi_range(value_type first_, value_type last_)
-        : first(first_),
-          last(last_),
-          current(first_),
-          p_stepper(&default_stepper),
-          p_compare(&default_compare) {}
+        : first(first_), last(last_), current(first_), p_stepper(&default_stepper), p_compare(&default_compare) {}
 
     //***************************************************************************
     /// Constructor
@@ -327,11 +311,7 @@ class multi_range : public imulti_range {
     /// \param last  The terminating value of the range. Equal to the last required value + 1.
     //***************************************************************************
     multi_range(value_type first_, value_type last_, step_type& stepper_)
-        : first(first_),
-          last(last_),
-          current(first_),
-          p_stepper(&stepper_),
-          p_compare(&default_compare) {}
+        : first(first_), last(last_), current(first_), p_stepper(&stepper_), p_compare(&default_compare) {}
 
     //***************************************************************************
     /// Constructor
@@ -339,24 +319,15 @@ class multi_range : public imulti_range {
     /// \param last  The terminating value of the range.
     //***************************************************************************
     multi_range(value_type first_, value_type last_, compare_type& compare_)
-        : first(first_),
-          last(last_),
-          current(first_),
-          p_stepper(&default_stepper),
-          p_compare(&compare_) {}
+        : first(first_), last(last_), current(first_), p_stepper(&default_stepper), p_compare(&compare_) {}
 
     //***************************************************************************
     /// Constructor
     /// \param first The starting value of the range.
     /// \param last  The terminating value of the range. Equal to the last required value + 1.
     //***************************************************************************
-    multi_range(value_type first_, value_type last_, step_type& stepper_,
-                compare_type& compare_)
-        : first(first_),
-          last(last_),
-          current(first_),
-          p_stepper(&stepper_),
-          p_compare(&compare_) {}
+    multi_range(value_type first_, value_type last_, step_type& stepper_, compare_type& compare_)
+        : first(first_), last(last_), current(first_), p_stepper(&stepper_), p_compare(&compare_) {}
 
     //***************************************************************************
     /// Get a const reference to the starting value of the range.

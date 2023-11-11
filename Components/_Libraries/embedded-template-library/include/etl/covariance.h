@@ -80,12 +80,9 @@ template <bool Covariance_Type, typename TInput, typename TCalc = TInput>
 class covariance : public private_covariance::covariance_traits<TInput, TCalc>,
                    public etl::binary_function<TInput, TInput, void> {
    private:
-    static ETL_CONSTANT int Adjustment =
-        (Covariance_Type == covariance_type::Population) ? 0 : 1;
+    static ETL_CONSTANT int Adjustment = (Covariance_Type == covariance_type::Population) ? 0 : 1;
 
-    typedef
-        typename private_covariance::covariance_traits<TInput, TCalc>::calc_t
-            calc_t;
+    typedef typename private_covariance::covariance_traits<TInput, TCalc>::calc_t calc_t;
 
    public:
     //*********************************
@@ -151,8 +148,7 @@ class covariance : public private_covariance::covariance_traits<TInput, TCalc>,
                 double n = double(counter);
                 double adjustment = 1.0 / (n * (n - Adjustment));
 
-                covariance_value =
-                    ((n * inner_product) - (sum1 * sum2)) * adjustment;
+                covariance_value = ((n * inner_product) - (sum1 * sum2)) * adjustment;
 
                 recalculate = false;
             }

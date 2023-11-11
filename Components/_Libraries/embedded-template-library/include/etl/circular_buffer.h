@@ -48,8 +48,7 @@ namespace etl {
 //***************************************************************************
 class circular_buffer_exception : public etl::exception {
    public:
-    circular_buffer_exception(string_type reason_, string_type file_name_,
-                              numeric_type line_number_)
+    circular_buffer_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -59,10 +58,8 @@ class circular_buffer_exception : public etl::exception {
 class circular_buffer_empty : public etl::circular_buffer_exception {
    public:
     circular_buffer_empty(string_type file_name_, numeric_type line_number_)
-        : etl::circular_buffer_exception(
-              ETL_ERROR_TEXT("circular_buffer:empty",
-                             ETL_CIRCULAR_BUFFER_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : etl::circular_buffer_exception(ETL_ERROR_TEXT("circular_buffer:empty", ETL_CIRCULAR_BUFFER_FILE_ID "A"),
+                                         file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -74,9 +71,7 @@ class circular_buffer_base {
     typedef size_t size_type;
 
     //*************************************************************************
-    size_type size() const {
-        return (in >= out) ? in - out : buffer_size - (out - in);
-    }
+    size_type size() const { return (in >= out) ? in - out : buffer_size - (out - in); }
 
     //*************************************************************************
     bool empty() const { return in == out; }
@@ -105,8 +100,7 @@ class circular_buffer_base {
 
    protected:
     //*************************************************************************
-    circular_buffer_base(size_type buffer_size_)
-        : buffer_size(buffer_size_), in(0U), out(0U) {}
+    circular_buffer_base(size_type buffer_size_) : buffer_size(buffer_size_), in(0U), out(0U) {}
 
     //*************************************************************************
     void increment_in() {
@@ -147,14 +141,12 @@ class icircular_buffer : public circular_buffer_base {
     typedef T* pointer;
     typedef const T* const_pointer;
 
-    typedef
-        typename etl::iterator_traits<pointer>::difference_type difference_type;
+    typedef typename etl::iterator_traits<pointer>::difference_type difference_type;
 
     //*************************************************************************
     /// Iterator iterating through the circular buffer.
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, T> {
+    class iterator : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, T> {
        public:
         friend class icircular_buffer;
 
@@ -166,8 +158,7 @@ class icircular_buffer : public circular_buffer_base {
         //*************************************************************************
         /// Copy Constructor
         //*************************************************************************
-        iterator(const iterator& other)
-            : picb(other.picb), current(other.current) {}
+        iterator(const iterator& other) : picb(other.picb), current(other.current) {}
 
         //*************************************************************************
         /// Assignment operator.
@@ -279,51 +270,36 @@ class icircular_buffer : public circular_buffer_base {
         //*************************************************************************
         /// Equality operator
         //*************************************************************************
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return (lhs.current == rhs.current);
-        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) { return (lhs.current == rhs.current); }
 
         //*************************************************************************
         /// Inequality operator
         //*************************************************************************
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
         //***************************************************
         friend bool operator<(const iterator& lhs, const iterator& rhs) {
             const difference_type lhs_index = lhs.get_index();
             const difference_type rhs_index = rhs.get_index();
-            const difference_type reference_index =
-                lhs.container().begin().get_index();
+            const difference_type reference_index = lhs.container().begin().get_index();
             const size_t buffer_size = lhs.container().max_size() + 1UL;
 
             const difference_type lhs_distance =
-                (lhs_index < reference_index)
-                    ? buffer_size + lhs_index - reference_index
-                    : lhs_index - reference_index;
+                (lhs_index < reference_index) ? buffer_size + lhs_index - reference_index : lhs_index - reference_index;
             const difference_type rhs_distance =
-                (rhs_index < reference_index)
-                    ? buffer_size + rhs_index - reference_index
-                    : rhs_index - reference_index;
+                (rhs_index < reference_index) ? buffer_size + rhs_index - reference_index : rhs_index - reference_index;
 
             return lhs_distance < rhs_distance;
         }
 
         //***************************************************
-        friend bool operator<=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs > rhs);
-        }
+        friend bool operator<=(const iterator& lhs, const iterator& rhs) { return !(lhs > rhs); }
 
         //***************************************************
-        friend bool operator>(const iterator& lhs, const iterator& rhs) {
-            return (rhs < lhs);
-        }
+        friend bool operator>(const iterator& lhs, const iterator& rhs) { return (rhs < lhs); }
 
         //***************************************************
-        friend bool operator>=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs < rhs);
-        }
+        friend bool operator>=(const iterator& lhs, const iterator& rhs) { return !(lhs < rhs); }
 
         //***************************************************
         difference_type get_index() const { return current; }
@@ -336,8 +312,7 @@ class icircular_buffer : public circular_buffer_base {
 
        protected:
         //***************************************************
-        difference_type distance(difference_type firstIndex,
-                                 difference_type index) const {
+        difference_type distance(difference_type firstIndex, difference_type index) const {
             if (index < firstIndex) {
                 return picb->buffer_size + current - firstIndex;
             } else {
@@ -348,8 +323,7 @@ class icircular_buffer : public circular_buffer_base {
         //*************************************************************************
         /// Protected constructor. Only icircular_buffer can create one.
         //*************************************************************************
-        iterator(const icircular_buffer<T>* picb_, size_type current_)
-            : picb(picb_), current(current_) {}
+        iterator(const icircular_buffer<T>* picb_, size_type current_) : picb(picb_), current(current_) {}
 
        private:
         const icircular_buffer<T>* picb;
@@ -359,9 +333,7 @@ class icircular_buffer : public circular_buffer_base {
     //*************************************************************************
     /// Iterator iterating through the circular buffer.
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::random_access_iterator_tag,
-                               const T> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, const T> {
        public:
         friend class icircular_buffer;
 
@@ -373,20 +345,17 @@ class icircular_buffer : public circular_buffer_base {
         //*************************************************************************
         /// Copy Constructor from iterator
         //*************************************************************************
-        const_iterator(const typename icircular_buffer::iterator& other)
-            : picb(other.picb), current(other.current) {}
+        const_iterator(const typename icircular_buffer::iterator& other) : picb(other.picb), current(other.current) {}
 
         //*************************************************************************
         /// Copy Constructor from const iterator
         //*************************************************************************
-        const_iterator(const const_iterator& other)
-            : picb(other.picb), current(other.current) {}
+        const_iterator(const const_iterator& other) : picb(other.picb), current(other.current) {}
 
         //*************************************************************************
         /// Assignment operator.
         //*************************************************************************
-        const_iterator& operator=(
-            const typename icircular_buffer::iterator& other) {
+        const_iterator& operator=(const typename icircular_buffer::iterator& other) {
             picb = other.picb;
             current = other.current;
 
@@ -503,57 +472,38 @@ class icircular_buffer : public circular_buffer_base {
         //*************************************************************************
         /// Equality operator
         //*************************************************************************
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return (lhs.current == rhs.current);
         }
 
         //*************************************************************************
         /// Inequality operator
         //*************************************************************************
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
         //***************************************************
-        friend bool operator<(const const_iterator& lhs,
-                              const const_iterator& rhs) {
+        friend bool operator<(const const_iterator& lhs, const const_iterator& rhs) {
             const difference_type lhs_index = lhs.get_index();
             const difference_type rhs_index = rhs.get_index();
-            const difference_type reference_index =
-                lhs.container().begin().get_index();
+            const difference_type reference_index = lhs.container().begin().get_index();
             const size_t buffer_size = lhs.container().max_size() + 1UL;
 
             const difference_type lhs_distance =
-                (lhs_index < reference_index)
-                    ? buffer_size + lhs_index - reference_index
-                    : lhs_index - reference_index;
+                (lhs_index < reference_index) ? buffer_size + lhs_index - reference_index : lhs_index - reference_index;
             const difference_type rhs_distance =
-                (rhs_index < reference_index)
-                    ? buffer_size + rhs_index - reference_index
-                    : rhs_index - reference_index;
+                (rhs_index < reference_index) ? buffer_size + rhs_index - reference_index : rhs_index - reference_index;
 
             return lhs_distance < rhs_distance;
         }
 
         //***************************************************
-        friend bool operator<=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs > rhs);
-        }
+        friend bool operator<=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs > rhs); }
 
         //***************************************************
-        friend bool operator>(const const_iterator& lhs,
-                              const const_iterator& rhs) {
-            return (rhs < lhs);
-        }
+        friend bool operator>(const const_iterator& lhs, const const_iterator& rhs) { return (rhs < lhs); }
 
         //***************************************************
-        friend bool operator>=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs < rhs);
-        }
+        friend bool operator>=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs < rhs); }
 
         //***************************************************
         difference_type get_index() const { return current; }
@@ -568,8 +518,7 @@ class icircular_buffer : public circular_buffer_base {
         //*************************************************************************
         /// Protected constructor. Only icircular_buffer can create one.
         //*************************************************************************
-        const_iterator(const icircular_buffer<T>* picb_, size_type current_)
-            : picb(picb_), current(current_) {}
+        const_iterator(const icircular_buffer<T>* picb_, size_type current_) : picb(picb_), current(current_) {}
 
        private:
         const icircular_buffer<T>* picb;
@@ -823,24 +772,21 @@ class icircular_buffer : public circular_buffer_base {
     //*************************************************************************
     /// - operator for const_iterator
     //*************************************************************************
-    friend difference_type operator-(const const_iterator& lhs,
-                                     const const_iterator& rhs) {
+    friend difference_type operator-(const const_iterator& lhs, const const_iterator& rhs) {
         return distance(rhs, lhs);
     }
 
     //*************************************************************************
     /// - operator for reverse_iterator
     //*************************************************************************
-    friend difference_type operator-(const reverse_iterator& lhs,
-                                     const reverse_iterator& rhs) {
+    friend difference_type operator-(const reverse_iterator& lhs, const reverse_iterator& rhs) {
         return distance(lhs.base(), rhs.base());
     }
 
     //*************************************************************************
     /// - operator for const_reverse_iterator
     //*************************************************************************
-    friend difference_type operator-(const const_reverse_iterator& lhs,
-                                     const const_reverse_iterator& rhs) {
+    friend difference_type operator-(const const_reverse_iterator& lhs, const const_reverse_iterator& rhs) {
         return distance(lhs.base(), rhs.base());
     }
 
@@ -855,8 +801,7 @@ class icircular_buffer : public circular_buffer_base {
     /// Measures the distance between two iterators.
     //*************************************************************************
     template <typename TIterator1, typename TIterator2>
-    static difference_type distance(const TIterator1& range_begin,
-                                    const TIterator2& range_end) {
+    static difference_type distance(const TIterator1& range_begin, const TIterator2& range_end) {
         difference_type distance1 = distance(range_begin);
         difference_type distance2 = distance(range_end);
 
@@ -885,8 +830,7 @@ class icircular_buffer : public circular_buffer_base {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_CIRCULAR_BUFFER) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_CIRCULAR_BUFFER) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual ~icircular_buffer() {}
 #else
@@ -902,8 +846,7 @@ class icircular_buffer : public circular_buffer_base {
 template <typename T, size_t MAX_SIZE_>
 class circular_buffer : public icircular_buffer<T> {
    public:
-    ETL_STATIC_ASSERT((MAX_SIZE_ > 0U),
-                      "Zero capacity etl::circular_buffer is not valid");
+    ETL_STATIC_ASSERT((MAX_SIZE_ > 0U), "Zero capacity etl::circular_buffer is not valid");
 
     static ETL_CONSTANT typename icircular_buffer<T>::size_type MAX_SIZE =
         typename icircular_buffer<T>::size_type(MAX_SIZE_);
@@ -911,8 +854,7 @@ class circular_buffer : public icircular_buffer<T> {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    circular_buffer()
-        : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {}
+    circular_buffer() : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {}
 
     //*************************************************************************
     /// Constructor.
@@ -920,8 +862,7 @@ class circular_buffer : public icircular_buffer<T> {
     //*************************************************************************
     template <typename TIterator>
     circular_buffer(TIterator first, const TIterator& last,
-                    typename etl::enable_if<!etl::is_integral<TIterator>::value,
-                                            int>::type = 0)
+                    typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0)
         : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {
         while (first != last) {
             this->push(*first);
@@ -933,8 +874,7 @@ class circular_buffer : public icircular_buffer<T> {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    circular_buffer(std::initializer_list<T> init)
-        : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {
+    circular_buffer(std::initializer_list<T> init) : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {
         this->push(init.begin(), init.end());
     }
 #endif
@@ -942,8 +882,7 @@ class circular_buffer : public icircular_buffer<T> {
     //*************************************************************************
     /// Copy Constructor.
     //*************************************************************************
-    circular_buffer(const circular_buffer& other)
-        : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {
+    circular_buffer(const circular_buffer& other) : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {
         if (this != &other) {
             this->push(other.begin(), other.end());
         }
@@ -965,8 +904,7 @@ class circular_buffer : public icircular_buffer<T> {
     //*************************************************************************
     /// Move Constructor.
     //*************************************************************************
-    circular_buffer(circular_buffer&& other)
-        : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {
+    circular_buffer(circular_buffer&& other) : icircular_buffer<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE) {
         if (this != &other) {
             typename etl::icircular_buffer<T>::iterator itr = other.begin();
             while (itr != other.end()) {
@@ -983,9 +921,7 @@ class circular_buffer : public icircular_buffer<T> {
         if (this != &other) {
             this->clear();
 
-            for (typename etl::icircular_buffer<T>::const_iterator itr =
-                     other.begin();
-                 itr != other.end(); ++itr) {
+            for (typename etl::icircular_buffer<T>::const_iterator itr = other.begin(); itr != other.end(); ++itr) {
                 this->push(etl::move(*itr));
             }
         }
@@ -1017,25 +953,21 @@ class circular_buffer_ext : public icircular_buffer<T> {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    circular_buffer_ext(void* buffer, size_t max_size)
-        : icircular_buffer<T>(reinterpret_cast<T*>(buffer), max_size) {}
+    circular_buffer_ext(void* buffer, size_t max_size) : icircular_buffer<T>(reinterpret_cast<T*>(buffer), max_size) {}
 
     //*************************************************************************
     /// Constructor.
     /// Null buffer.
     //*************************************************************************
-    circular_buffer_ext(size_t max_size)
-        : icircular_buffer<T>(ETL_NULLPTR, max_size) {}
+    circular_buffer_ext(size_t max_size) : icircular_buffer<T>(ETL_NULLPTR, max_size) {}
 
     //*************************************************************************
     /// Constructor.
     /// Constructs a buffer from an iterator range.
     //*************************************************************************
     template <typename TIterator>
-    circular_buffer_ext(TIterator first, const TIterator& last, void* buffer,
-                        size_t max_size,
-                        typename etl::enable_if<
-                            !etl::is_integral<TIterator>::value, int>::type = 0)
+    circular_buffer_ext(TIterator first, const TIterator& last, void* buffer, size_t max_size,
+                        typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0)
         : icircular_buffer<T>(reinterpret_cast<T*>(buffer), max_size) {
         while (first != last) {
             this->push(*first);
@@ -1047,8 +979,7 @@ class circular_buffer_ext : public icircular_buffer<T> {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    circular_buffer_ext(std::initializer_list<T> init, void* buffer,
-                        size_t max_size)
+    circular_buffer_ext(std::initializer_list<T> init, void* buffer, size_t max_size)
         : icircular_buffer<T>(reinterpret_cast<T*>(buffer), max_size) {
         this->push(init.begin(), init.end());
     }
@@ -1057,8 +988,7 @@ class circular_buffer_ext : public icircular_buffer<T> {
     //*************************************************************************
     /// Construct a copy.
     //*************************************************************************
-    circular_buffer_ext(const circular_buffer_ext& other, void* buffer,
-                        size_t max_size)
+    circular_buffer_ext(const circular_buffer_ext& other, void* buffer, size_t max_size)
         : icircular_buffer<T>(reinterpret_cast<T*>(buffer), max_size) {
         if (this != &other) {
             this->push(other.begin(), other.end());
@@ -1087,8 +1017,7 @@ class circular_buffer_ext : public icircular_buffer<T> {
     //*************************************************************************
     /// Move Constructor.
     //*************************************************************************
-    circular_buffer_ext(circular_buffer_ext&& other, void* buffer,
-                        size_t max_size)
+    circular_buffer_ext(circular_buffer_ext&& other, void* buffer, size_t max_size)
         : icircular_buffer<T>(reinterpret_cast<T*>(buffer), max_size) {
         if (this != &other) {
             typename etl::icircular_buffer<T>::iterator itr = other.begin();
@@ -1106,9 +1035,7 @@ class circular_buffer_ext : public icircular_buffer<T> {
         if (this != &other) {
             this->clear();
 
-            for (typename etl::icircular_buffer<T>::iterator itr =
-                     other.begin();
-                 itr != other.end(); ++itr) {
+            for (typename etl::icircular_buffer<T>::iterator itr = other.begin(); itr != other.end(); ++itr) {
                 this->push(etl::move(*itr));
             }
         }
@@ -1160,9 +1087,7 @@ class circular_buffer_ext : public icircular_buffer<T> {
 //*************************************************************************
 #if ETL_USING_CPP17 && ETL_HAS_INITIALIZER_LIST
 template <typename T, typename... Ts>
-circular_buffer(T, Ts...)
-    -> circular_buffer<etl::enable_if_t<(etl::is_same_v<T, Ts> && ...), T>,
-                       1U + sizeof...(Ts)>;
+circular_buffer(T, Ts...) -> circular_buffer<etl::enable_if_t<(etl::is_same_v<T, Ts> && ...), T>, 1U + sizeof...(Ts)>;
 #endif
 
 //*************************************************************************
@@ -1177,18 +1102,15 @@ void swap(etl::circular_buffer_ext<T>& lhs, etl::circular_buffer_ext<T>& rhs) {
 /// Equality operator
 //*************************************************************************
 template <typename T>
-bool operator==(const icircular_buffer<T>& lhs,
-                const icircular_buffer<T>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const icircular_buffer<T>& lhs, const icircular_buffer<T>& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //*************************************************************************
 /// Inequality operator
 //*************************************************************************
 template <typename T>
-bool operator!=(const icircular_buffer<T>& lhs,
-                const icircular_buffer<T>& rhs) {
+bool operator!=(const icircular_buffer<T>& lhs, const icircular_buffer<T>& rhs) {
     return !(lhs == rhs);
 }
 }  // namespace etl

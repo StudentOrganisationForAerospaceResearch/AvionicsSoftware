@@ -55,8 +55,7 @@ namespace etl {
 //***************************************************************************
 class factory_exception : public etl::exception {
    public:
-    factory_exception(string_type reason_, string_type file_name_,
-                      numeric_type line_number_)
+    factory_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -64,37 +63,25 @@ class factory_exception : public etl::exception {
 class factory_cannot_create : public etl::factory_exception {
    public:
     factory_cannot_create(string_type file_name_, numeric_type line_number_)
-        : factory_exception(
-              ETL_ERROR_TEXT("factory:cannot create", ETL_FILE "A"), file_name_,
-              line_number_) {}
+        : factory_exception(ETL_ERROR_TEXT("factory:cannot create", ETL_FILE "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
 class factory_did_not_create : public etl::factory_exception {
    public:
     factory_did_not_create(string_type file_name_, numeric_type line_number_)
-        : factory_exception(
-              ETL_ERROR_TEXT("factory:did not create", ETL_FILE "B"),
-              file_name_, line_number_) {}
+        : factory_exception(ETL_ERROR_TEXT("factory:did not create", ETL_FILE "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
-template <const size_t MAX_SIZE_, typename T1,
-          typename T2 = etl::type_id_pair<etl::null_type, -2>,
-          typename T3 = etl::type_id_pair<etl::null_type, -3>,
-          typename T4 = etl::type_id_pair<etl::null_type, -4>,
-          typename T5 = etl::type_id_pair<etl::null_type, -5>,
-          typename T6 = etl::type_id_pair<etl::null_type, -6>,
-          typename T7 = etl::type_id_pair<etl::null_type, -7>,
-          typename T8 = etl::type_id_pair<etl::null_type, -8>,
-          typename T9 = etl::type_id_pair<etl::null_type, -9>,
-          typename T10 = etl::type_id_pair<etl::null_type, -10>,
-          typename T11 = etl::type_id_pair<etl::null_type, -11>,
-          typename T12 = etl::type_id_pair<etl::null_type, -12>,
-          typename T13 = etl::type_id_pair<etl::null_type, -13>,
-          typename T14 = etl::type_id_pair<etl::null_type, -14>,
-          typename T15 = etl::type_id_pair<etl::null_type, -15>,
-          typename T16 = etl::type_id_pair<etl::null_type, -16>>
+template <const size_t MAX_SIZE_, typename T1, typename T2 = etl::type_id_pair<etl::null_type, -2>,
+          typename T3 = etl::type_id_pair<etl::null_type, -3>, typename T4 = etl::type_id_pair<etl::null_type, -4>,
+          typename T5 = etl::type_id_pair<etl::null_type, -5>, typename T6 = etl::type_id_pair<etl::null_type, -6>,
+          typename T7 = etl::type_id_pair<etl::null_type, -7>, typename T8 = etl::type_id_pair<etl::null_type, -8>,
+          typename T9 = etl::type_id_pair<etl::null_type, -9>, typename T10 = etl::type_id_pair<etl::null_type, -10>,
+          typename T11 = etl::type_id_pair<etl::null_type, -11>, typename T12 = etl::type_id_pair<etl::null_type, -12>,
+          typename T13 = etl::type_id_pair<etl::null_type, -13>, typename T14 = etl::type_id_pair<etl::null_type, -14>,
+          typename T15 = etl::type_id_pair<etl::null_type, -15>, typename T16 = etl::type_id_pair<etl::null_type, -16>>
 class factory {
    private:
     typedef typename T1::type TT1;
@@ -114,9 +101,7 @@ class factory {
     typedef typename T15::type TT15;
     typedef typename T16::type TT16;
 
-    typedef etl::type_id_lookup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13, T14, T15, T16>
-        lookup_t;
+    typedef etl::type_id_lookup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> lookup_t;
 
    public:
     static const size_t MAX_SIZE = MAX_SIZE_;
@@ -132,10 +117,9 @@ class factory {
     //*************************************************************************
     template <typename T>
     T* create_from_type() {
-        STATIC_ASSERT(
-            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9,
-                            TT10, TT11, TT12, TT13, TT14, TT15, TT16>::value),
-            "Unsupported type");
+        STATIC_ASSERT((etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14,
+                                      TT15, TT16>::value),
+                      "Unsupported type");
 
         T* p = nullptr;
 
@@ -157,10 +141,9 @@ class factory {
     //*************************************************************************
     template <typename T, typename TP1>
     T* create_from_type(const TP1& p1) {
-        STATIC_ASSERT(
-            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9,
-                            TT10, TT11, TT12, TT13, TT14, TT15, TT16>::value),
-            "Unsupported type");
+        STATIC_ASSERT((etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14,
+                                      TT15, TT16>::value),
+                      "Unsupported type");
 
         T* p = nullptr;
 
@@ -182,10 +165,9 @@ class factory {
     //*************************************************************************
     template <typename T, typename TP1, typename TP2>
     T* create_from_type(const TP1& p1, const TP2& p2) {
-        STATIC_ASSERT(
-            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9,
-                            TT10, TT11, TT12, TT13, TT14, TT15, TT16>::value),
-            "Unsupported type");
+        STATIC_ASSERT((etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14,
+                                      TT15, TT16>::value),
+                      "Unsupported type");
 
         T* p = nullptr;
 
@@ -207,10 +189,9 @@ class factory {
     //*************************************************************************
     template <typename T, typename TP1, typename TP2, typename TP3>
     T* create_from_type(const TP1& p1, const TP2& p2, const TP3& p3) {
-        STATIC_ASSERT(
-            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9,
-                            TT10, TT11, TT12, TT13, TT14, TT15, TT16>::value),
-            "Unsupported type");
+        STATIC_ASSERT((etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14,
+                                      TT15, TT16>::value),
+                      "Unsupported type");
 
         T* p = nullptr;
 
@@ -230,14 +211,11 @@ class factory {
     //*************************************************************************
     /// Creates the object. Four parameter constructor.
     //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3,
-              typename TP4>
-    T* create_from_type(const TP1& p1, const TP2& p2, const TP3& p3,
-                        const TP4& p4) {
-        STATIC_ASSERT(
-            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9,
-                            TT10, TT11, TT12, TT13, TT14, TT15, TT16>::value),
-            "Unsupported type");
+    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
+    T* create_from_type(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
+        STATIC_ASSERT((etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14,
+                                      TT15, TT16>::value),
+                      "Unsupported type");
 
         T* p = nullptr;
 
@@ -268,8 +246,7 @@ class factory {
     /// Creates the object from an index. One parameter constructor.
     //*************************************************************************
     template <size_t ID, typename TP1>
-    typename lookup_t::template type_from_id<ID>::type* create_from_id(
-        const TP1& p1) {
+    typename lookup_t::template type_from_id<ID>::type* create_from_id(const TP1& p1) {
         typedef typename lookup_t::template type_from_id<ID>::type type;
         STATIC_ASSERT((!etl::is_same<void, type>::value), "Invalid index");
         return create_from_type<type>(p1);
@@ -279,8 +256,7 @@ class factory {
     /// Creates the object from an index. Two parameter constructor.
     //*************************************************************************
     template <size_t ID, typename TP1, typename TP2>
-    typename lookup_t::template type_from_id<ID>::type* create_from_id(
-        const TP1& p1, const TP2& p2) {
+    typename lookup_t::template type_from_id<ID>::type* create_from_id(const TP1& p1, const TP2& p2) {
         typedef typename lookup_t::template type_from_id<ID>::type type;
         STATIC_ASSERT((!etl::is_same<void, type>::value), "Invalid index");
         return create_from_type<type>(p1, p2);
@@ -290,8 +266,7 @@ class factory {
     /// Creates the object from an index. Three parameter constructor.
     //*************************************************************************
     template <size_t ID, typename TP1, typename TP2, typename TP3>
-    typename lookup_t::template type_from_id<ID>::type* create_from_id(
-        const TP1& p1, const TP2& p2, const TP3& p3) {
+    typename lookup_t::template type_from_id<ID>::type* create_from_id(const TP1& p1, const TP2& p2, const TP3& p3) {
         typedef typename lookup_t::template type_from_id<ID>::type type;
         STATIC_ASSERT((!etl::is_same<void, type>::value), "Invalid index");
         return create_from_type<type>(p1, p2, p3);
@@ -301,8 +276,8 @@ class factory {
     /// Creates the object from an index. Three parameter constructor.
     //*************************************************************************
     template <size_t ID, typename TP1, typename TP2, typename TP3, typename TP4>
-    typename lookup_t::template type_from_id<ID>::type* create_from_id(
-        const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
+    typename lookup_t::template type_from_id<ID>::type* create_from_id(const TP1& p1, const TP2& p2, const TP3& p3,
+                                                                       const TP4& p4) {
         typedef typename lookup_t::template type_from_id<ID>::type type;
         STATIC_ASSERT((!etl::is_same<void, type>::value), "Invalid index");
         return create_from_type<type>(p1, p2, p3, p4);
@@ -313,10 +288,9 @@ class factory {
     //*************************************************************************
     template <typename T, typename... Args>
     T* create_from_type(Args&&... args) {
-        STATIC_ASSERT(
-            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9,
-                            TT10, TT11, TT12, TT13, TT14, TT15, TT16>::value),
-            "Unsupported type");
+        STATIC_ASSERT((etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14,
+                                      TT15, TT16>::value),
+                      "Unsupported type");
 
         T* p = nullptr;
 
@@ -337,8 +311,7 @@ class factory {
     /// Creates the object from an index. Variadic parameter constructor.
     //*************************************************************************
     template <size_t ID, typename... Args>
-    typename lookup_t::template type_from_id<ID>::type* create_from_id(
-        Args&&... args) {
+    typename lookup_t::template type_from_id<ID>::type* create_from_id(Args&&... args) {
         typedef typename lookup_t::template type_from_id<ID>::type type;
         STATIC_ASSERT((!etl::is_same<void, type>::value), "Invalid index");
         return create_from_type<type>(std::forward<Args>(args)...);
@@ -351,19 +324,13 @@ class factory {
     template <typename T>
     bool destroy(const T* const p) {
         STATIC_ASSERT(
-            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9,
-                            TT10, TT11, TT12, TT13, TT14, TT15, TT16>::value ||
-             etl::is_base_of<T, TT1>::value || etl::is_base_of<T, TT2>::value ||
-             etl::is_base_of<T, TT3>::value || etl::is_base_of<T, TT4>::value ||
-             etl::is_base_of<T, TT5>::value || etl::is_base_of<T, TT6>::value ||
-             etl::is_base_of<T, TT7>::value || etl::is_base_of<T, TT8>::value ||
-             etl::is_base_of<T, TT9>::value ||
-             etl::is_base_of<T, TT10>::value ||
-             etl::is_base_of<T, TT11>::value ||
-             etl::is_base_of<T, TT12>::value ||
-             etl::is_base_of<T, TT13>::value ||
-             etl::is_base_of<T, TT14>::value ||
-             etl::is_base_of<T, TT15>::value ||
+            (etl::is_one_of<T, TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14, TT15,
+                            TT16>::value ||
+             etl::is_base_of<T, TT1>::value || etl::is_base_of<T, TT2>::value || etl::is_base_of<T, TT3>::value ||
+             etl::is_base_of<T, TT4>::value || etl::is_base_of<T, TT5>::value || etl::is_base_of<T, TT6>::value ||
+             etl::is_base_of<T, TT7>::value || etl::is_base_of<T, TT8>::value || etl::is_base_of<T, TT9>::value ||
+             etl::is_base_of<T, TT10>::value || etl::is_base_of<T, TT11>::value || etl::is_base_of<T, TT12>::value ||
+             etl::is_base_of<T, TT13>::value || etl::is_base_of<T, TT14>::value || etl::is_base_of<T, TT15>::value ||
              etl::is_base_of<T, TT16>::value),
             "Invalid type");
 
@@ -423,10 +390,8 @@ class factory {
 
     // The pool.
     etl::generic_pool<
-        etl::largest<TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11,
-                     TT12, TT13, TT14, TT15, TT16>::size,
-        etl::largest<TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11,
-                     TT12, TT13, TT14, TT15, TT16>::alignment,
+        etl::largest<TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14, TT15, TT16>::size,
+        etl::largest<TT1, TT2, TT3, TT4, TT5, TT6, TT7, TT8, TT9, TT10, TT11, TT12, TT13, TT14, TT15, TT16>::alignment,
         MAX_SIZE>
         pool;
 };

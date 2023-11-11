@@ -45,8 +45,7 @@ namespace etl {
 //***************************************************************************
 class intrusive_queue_exception : public etl::exception {
    public:
-    intrusive_queue_exception(string_type reason_, string_type file_name_,
-                              numeric_type line_number_)
+    intrusive_queue_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -57,10 +56,8 @@ class intrusive_queue_exception : public etl::exception {
 class intrusive_queue_empty : public intrusive_queue_exception {
    public:
     intrusive_queue_empty(string_type file_name_, numeric_type line_number_)
-        : intrusive_queue_exception(
-              ETL_ERROR_TEXT("intrusive_queue:empty",
-                             ETL_INTRUSIVE_QUEUE_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : intrusive_queue_exception(ETL_ERROR_TEXT("intrusive_queue:empty", ETL_INTRUSIVE_QUEUE_FILE_ID "A"),
+                                    file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -153,8 +150,7 @@ class intrusive_queue_base {
     //*************************************************************************
     /// Constructor
     //*************************************************************************
-    intrusive_queue_base()
-        : p_front(ETL_NULLPTR), p_back(ETL_NULLPTR), current_size(0) {}
+    intrusive_queue_base() : p_front(ETL_NULLPTR), p_back(ETL_NULLPTR), current_size(0) {}
 
     //*************************************************************************
     /// Destructor
@@ -212,18 +208,14 @@ class intrusive_queue : public etl::intrusive_queue_base<TLink> {
     /// Undefined behaviour if the queue is empty.
     /// \return A const reference to the value at the front of the queue.
     //*************************************************************************
-    const_reference front() const {
-        return *static_cast<const TValue*>(this->p_front);
-    }
+    const_reference front() const { return *static_cast<const TValue*>(this->p_front); }
 
     //*************************************************************************
     /// Gets a reference to the value at the back of the queue.
     /// Undefined behaviour if the queue is empty.
     /// \return A reference to the value at the back of the queue.
     //*************************************************************************
-    const_reference back() const {
-        return *static_cast<const TValue*>(this->p_back);
-    }
+    const_reference back() const { return *static_cast<const TValue*>(this->p_back); }
 
    private:
     // Disable copy construction and assignment.

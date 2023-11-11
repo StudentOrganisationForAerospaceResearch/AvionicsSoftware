@@ -61,25 +61,18 @@ SOFTWARE.
 
 namespace etl {
 //***************************************************************************
-template <const size_t MAX_SIZE_, typename T1, typename T2 = void,
-          typename T3 = void, typename T4 = void, typename T5 = void,
-          typename T6 = void, typename T7 = void, typename T8 = void,
-          typename T9 = void, typename T10 = void, typename T11 = void,
-          typename T12 = void, typename T13 = void, typename T14 = void,
+template <const size_t MAX_SIZE_, typename T1, typename T2 = void, typename T3 = void, typename T4 = void,
+          typename T5 = void, typename T6 = void, typename T7 = void, typename T8 = void, typename T9 = void,
+          typename T10 = void, typename T11 = void, typename T12 = void, typename T13 = void, typename T14 = void,
           typename T15 = void, typename T16 = void>
-class variant_pool : public etl::generic_pool<
-                         etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                      T11, T12, T13, T14, T15, T16>::size,
-                         etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                      T11, T12, T13, T14, T15, T16>::alignment,
-                         MAX_SIZE_> {
+class variant_pool
+    : public etl::generic_pool<
+          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::size,
+          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::alignment, MAX_SIZE_> {
    public:
     typedef etl::generic_pool<
-        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                     T14, T15, T16>::size,
-        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                     T14, T15, T16>::alignment,
-        MAX_SIZE_>
+        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::size,
+        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::alignment, MAX_SIZE_>
         base_t;
 
     static const size_t MAX_SIZE = MAX_SIZE_;
@@ -96,8 +89,7 @@ class variant_pool : public etl::generic_pool<
     template <typename T>
     T* create() {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>();
@@ -109,8 +101,7 @@ class variant_pool : public etl::generic_pool<
     template <typename T, typename TP1>
     T* create(const TP1& p1) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1);
@@ -122,8 +113,7 @@ class variant_pool : public etl::generic_pool<
     template <typename T, typename TP1, typename TP2>
     T* create(const TP1& p1, const TP2& p2) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1, p2);
@@ -135,8 +125,7 @@ class variant_pool : public etl::generic_pool<
     template <typename T, typename TP1, typename TP2, typename TP3>
     T* create(const TP1& p1, const TP2& p2, const TP3& p3) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1, p2, p3);
@@ -145,12 +134,10 @@ class variant_pool : public etl::generic_pool<
     //*************************************************************************
     /// Creates the object. Four parameter constructor.
     //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3,
-              typename TP4>
+    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
     T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1, p2, p3, p4);
@@ -162,8 +149,7 @@ class variant_pool : public etl::generic_pool<
     template <typename T, typename... Args>
     T* create(Args&&... args) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(args...);
@@ -176,16 +162,13 @@ class variant_pool : public etl::generic_pool<
     template <typename T>
     void destroy(const T* const p) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value ||
-             etl::is_base_of<T, T1>::value || etl::is_base_of<T, T2>::value ||
-             etl::is_base_of<T, T3>::value || etl::is_base_of<T, T4>::value ||
-             etl::is_base_of<T, T5>::value || etl::is_base_of<T, T6>::value ||
-             etl::is_base_of<T, T7>::value || etl::is_base_of<T, T8>::value ||
-             etl::is_base_of<T, T9>::value || etl::is_base_of<T, T10>::value ||
-             etl::is_base_of<T, T11>::value || etl::is_base_of<T, T12>::value ||
-             etl::is_base_of<T, T13>::value || etl::is_base_of<T, T14>::value ||
-             etl::is_base_of<T, T15>::value || etl::is_base_of<T, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value ||
+             etl::is_base_of<T, T1>::value || etl::is_base_of<T, T2>::value || etl::is_base_of<T, T3>::value ||
+             etl::is_base_of<T, T4>::value || etl::is_base_of<T, T5>::value || etl::is_base_of<T, T6>::value ||
+             etl::is_base_of<T, T7>::value || etl::is_base_of<T, T8>::value || etl::is_base_of<T, T9>::value ||
+             etl::is_base_of<T, T10>::value || etl::is_base_of<T, T11>::value || etl::is_base_of<T, T12>::value ||
+             etl::is_base_of<T, T13>::value || etl::is_base_of<T, T14>::value || etl::is_base_of<T, T15>::value ||
+             etl::is_base_of<T, T16>::value),
             "Invalid type");
 
         base_t::destroy(p);
@@ -204,31 +187,24 @@ class variant_pool : public etl::generic_pool<
 };
 
 //***************************************************************************
-template <typename T1, typename T2 = void, typename T3 = void,
-          typename T4 = void, typename T5 = void, typename T6 = void,
-          typename T7 = void, typename T8 = void, typename T9 = void,
-          typename T10 = void, typename T11 = void, typename T12 = void,
-          typename T13 = void, typename T14 = void, typename T15 = void,
+template <typename T1, typename T2 = void, typename T3 = void, typename T4 = void, typename T5 = void,
+          typename T6 = void, typename T7 = void, typename T8 = void, typename T9 = void, typename T10 = void,
+          typename T11 = void, typename T12 = void, typename T13 = void, typename T14 = void, typename T15 = void,
           typename T16 = void>
 class variant_pool_ext
     : public etl::generic_pool_ext<
-          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                       T14, T15, T16>::size,
-          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                       T14, T15, T16>::alignment> {
+          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::size,
+          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::alignment> {
    public:
     typedef etl::generic_pool_ext<
-        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                     T14, T15, T16>::size,
-        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                     T14, T15, T16>::alignment>
+        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::size,
+        etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::alignment>
         base_t;
 
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    variant_pool_ext(typename base_t::element* buffer, size_t size)
-        : base_t(buffer, size) {}
+    variant_pool_ext(typename base_t::element* buffer, size_t size) : base_t(buffer, size) {}
 
 #if ETL_CPP11_NOT_SUPPORTED || ETL_USING_STLPORT
     //*************************************************************************
@@ -237,8 +213,7 @@ class variant_pool_ext
     template <typename T>
     T* create() {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>();
@@ -250,8 +225,7 @@ class variant_pool_ext
     template <typename T, typename TP1>
     T* create(const TP1& p1) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1);
@@ -263,8 +237,7 @@ class variant_pool_ext
     template <typename T, typename TP1, typename TP2>
     T* create(const TP1& p1, const TP2& p2) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1, p2);
@@ -276,8 +249,7 @@ class variant_pool_ext
     template <typename T, typename TP1, typename TP2, typename TP3>
     T* create(const TP1& p1, const TP2& p2, const TP3& p3) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1, p2, p3);
@@ -286,12 +258,10 @@ class variant_pool_ext
     //*************************************************************************
     /// Creates the object. Four parameter constructor.
     //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3,
-              typename TP4>
+    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
     T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(p1, p2, p3, p4);
@@ -303,8 +273,7 @@ class variant_pool_ext
     template <typename T, typename... Args>
     T* create(Args&&... args) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value),
             "Unsupported type");
 
         return base_t::template create<T>(args...);
@@ -317,16 +286,13 @@ class variant_pool_ext
     template <typename T>
     void destroy(const T* const p) {
         ETL_STATIC_ASSERT(
-            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12, T13, T14, T15, T16>::value ||
-             etl::is_base_of<T, T1>::value || etl::is_base_of<T, T2>::value ||
-             etl::is_base_of<T, T3>::value || etl::is_base_of<T, T4>::value ||
-             etl::is_base_of<T, T5>::value || etl::is_base_of<T, T6>::value ||
-             etl::is_base_of<T, T7>::value || etl::is_base_of<T, T8>::value ||
-             etl::is_base_of<T, T9>::value || etl::is_base_of<T, T10>::value ||
-             etl::is_base_of<T, T11>::value || etl::is_base_of<T, T12>::value ||
-             etl::is_base_of<T, T13>::value || etl::is_base_of<T, T14>::value ||
-             etl::is_base_of<T, T15>::value || etl::is_base_of<T, T16>::value),
+            (etl::is_one_of<T, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::value ||
+             etl::is_base_of<T, T1>::value || etl::is_base_of<T, T2>::value || etl::is_base_of<T, T3>::value ||
+             etl::is_base_of<T, T4>::value || etl::is_base_of<T, T5>::value || etl::is_base_of<T, T6>::value ||
+             etl::is_base_of<T, T7>::value || etl::is_base_of<T, T8>::value || etl::is_base_of<T, T9>::value ||
+             etl::is_base_of<T, T10>::value || etl::is_base_of<T, T11>::value || etl::is_base_of<T, T12>::value ||
+             etl::is_base_of<T, T13>::value || etl::is_base_of<T, T14>::value || etl::is_base_of<T, T15>::value ||
+             etl::is_base_of<T, T16>::value),
             "Invalid type");
 
         base_t::destroy(p);

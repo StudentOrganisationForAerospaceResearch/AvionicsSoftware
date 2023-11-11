@@ -18,8 +18,7 @@
 #include "SystemDefines.hpp"
 
 // Macros/Constexprs ---------------------------------------------------------------------
-constexpr uint32_t SYSTEM_STORAGE_START_SECTOR_ADDR =
-    SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR;
+constexpr uint32_t SYSTEM_STORAGE_START_SECTOR_ADDR = SPI_FLASH_SYSTEM_SDSS_STORAGE_START_ADDR;
 
 // System Info Struct ---------------------------------------------------------------------
 struct SystemState {
@@ -37,12 +36,11 @@ class SystemStorage : public SafeSimpleDualSectorStorage<SystemState> {
 
    private:
     SystemStorage();
-    SystemStorage(const SystemStorage&);  // Prevent copy-construction
+    SystemStorage(const SystemStorage&);             // Prevent copy-construction
     SystemStorage& operator=(const SystemStorage&);  // Prevent assignment
 };
 
 inline SystemStorage::SystemStorage()
-    : SafeSimpleDualSectorStorage<SystemState>(
-          &SPIFlash::Inst(), SYSTEM_STORAGE_START_SECTOR_ADDR) {}
+    : SafeSimpleDualSectorStorage<SystemState>(&SPIFlash::Inst(), SYSTEM_STORAGE_START_SECTOR_ADDR) {}
 
 #endif  // SOAR_SYSTEM_STATE_HPP

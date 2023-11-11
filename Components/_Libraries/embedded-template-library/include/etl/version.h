@@ -45,27 +45,21 @@ SOFTWARE.
 #define ETL_VERSION               \
     ETL_STRING(ETL_VERSION_MAJOR) \
     "." ETL_STRING(ETL_VERSION_MINOR) "." ETL_STRING(ETL_VERSION_PATCH)
-#define ETL_VERSION_W                                             \
-    ETL_WIDE_STRING(ETL_VERSION_MAJOR)                            \
-    L"." ETL_WIDE_STRING(ETL_VERSION_MINOR) L"." ETL_WIDE_STRING( \
-        ETL_VERSION_PATCH)
+#define ETL_VERSION_W                  \
+    ETL_WIDE_STRING(ETL_VERSION_MAJOR) \
+    L"." ETL_WIDE_STRING(ETL_VERSION_MINOR) L"." ETL_WIDE_STRING(ETL_VERSION_PATCH)
 #if ETL_HAS_CHAR8_T
-#define ETL_VERSION_U8                                          \
-    ETL_U8_STRING(ETL_VERSION_MAJOR)                            \
-    u8"." ETL_U8_STRING(ETL_VERSION_MINOR) u8"." ETL_U8_STRING( \
-        ETL_VERSION_PATCH)
+#define ETL_VERSION_U8               \
+    ETL_U8_STRING(ETL_VERSION_MAJOR) \
+    u8"." ETL_U8_STRING(ETL_VERSION_MINOR) u8"." ETL_U8_STRING(ETL_VERSION_PATCH)
 #endif
-#define ETL_VERSION_U16                                         \
-    ETL_U16_STRING(ETL_VERSION_MAJOR)                           \
-    u"." ETL_U16_STRING(ETL_VERSION_MINOR) u"." ETL_U16_STRING( \
-        ETL_VERSION_PATCH)
-#define ETL_VERSION_U32                                         \
-    ETL_U32_STRING(ETL_VERSION_MAJOR)                           \
-    U"." ETL_U32_STRING(ETL_VERSION_MINOR) U"." ETL_U32_STRING( \
-        ETL_VERSION_PATCH)
-#define ETL_VERSION_VALUE                                      \
-    ((ETL_VERSION_MAJOR * 10000) + (ETL_VERSION_MINOR * 100) + \
-     ETL_VERSION_PATCH)
+#define ETL_VERSION_U16               \
+    ETL_U16_STRING(ETL_VERSION_MAJOR) \
+    u"." ETL_U16_STRING(ETL_VERSION_MINOR) u"." ETL_U16_STRING(ETL_VERSION_PATCH)
+#define ETL_VERSION_U32               \
+    ETL_U32_STRING(ETL_VERSION_MAJOR) \
+    U"." ETL_U32_STRING(ETL_VERSION_MINOR) U"." ETL_U32_STRING(ETL_VERSION_PATCH)
+#define ETL_VERSION_VALUE ((ETL_VERSION_MAJOR * 10000) + (ETL_VERSION_MINOR * 100) + ETL_VERSION_PATCH)
 
 namespace etl {
 namespace traits {

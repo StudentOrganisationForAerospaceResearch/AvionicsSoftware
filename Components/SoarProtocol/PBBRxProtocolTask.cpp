@@ -16,47 +16,40 @@
  */
 void PBBRxProtocolTask::InitTask() {
     // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr,
-                "Cannot initialize Protocol task twice");
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Protocol task twice");
 
     // Start the task
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)PBBRxProtocolTask::RunTask, (const char*)"PbbProtocol",
-        (uint16_t)TASK_PROTOCOL_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)TASK_PROTOCOL_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)PBBRxProtocolTask::RunTask, (const char*)"PbbProtocol",
+                                     (uint16_t)TASK_PROTOCOL_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)TASK_PROTOCOL_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS,
-                "ProtocolTask::InitTask - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "ProtocolTask::InitTask - xTaskCreate() failed");
 }
 
 /**
  * @brief Default constructor
  */
 PBBRxProtocolTask::PBBRxProtocolTask()
-    : ProtocolTask(Proto::Node::NODE_DMB, UART::Conduit_PBB,
-                   UART_TASK_COMMAND_SEND_PBB) {}
+    : ProtocolTask(Proto::Node::NODE_DMB, UART::Conduit_PBB, UART_TASK_COMMAND_SEND_PBB) {}
 
 /**
  * @brief Handle a command message
  */
 void PBBRxProtocolTask::HandleProtobufCommandMessage(
-    EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>&
-        readBuffer) {}
+    EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer) {}
 
 /**
  * @brief Handle a control message
  */
 void PBBRxProtocolTask::HandleProtobufControlMesssage(
-    EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>&
-        readBuffer) {}
+    EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer) {}
 
 /**
  * @brief Handle a telemetry message
  */
 void PBBRxProtocolTask::HandleProtobufTelemetryMessage(
-    EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>&
-        readBuffer) {
+    EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer) {
     Proto::TelemetryMessage msg;
     msg.deserialize(readBuffer);
 
@@ -74,10 +67,8 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(
         MEVManager::HandleMEVTelemetry(msg);
     }
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }

@@ -53,8 +53,7 @@ class icallback_timer_atomic {
     //*******************************************
     /// Register a timer.
     //*******************************************
-    etl::timer::id::type register_timer(callback_type callback_,
-                                        uint32_t period_, bool repeating_) {
+    etl::timer::id::type register_timer(callback_type callback_, uint32_t period_, bool repeating_) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (number_of_registered_timers < MAX_TIMERS);
@@ -273,8 +272,7 @@ class icallback_timer_atomic {
         //*******************************************
         /// ETL delegate callback
         //*******************************************
-        timer_data(etl::timer::id::type id_, callback_type callback_,
-                   uint32_t period_, bool repeating_)
+        timer_data(etl::timer::id::type id_, callback_type callback_, uint32_t period_, bool repeating_)
             : callback(callback_),
               period(period_),
               delta(etl::timer::state::INACTIVE),
@@ -310,8 +308,7 @@ class icallback_timer_atomic {
     //*******************************************
     /// Constructor.
     //*******************************************
-    icallback_timer_atomic(timer_data* const timer_array_,
-                           const uint_least8_t MAX_TIMERS_)
+    icallback_timer_atomic(timer_data* const timer_array_, const uint_least8_t MAX_TIMERS_)
         : timer_array(timer_array_),
           active_list(timer_array_),
           enabled(false),
@@ -482,18 +479,15 @@ class icallback_timer_atomic {
 template <uint_least8_t MAX_TIMERS_, typename TSemaphore>
 class callback_timer_atomic : public etl::icallback_timer_atomic<TSemaphore> {
    public:
-    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254U,
-                      "No more than 254 timers are allowed");
+    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254U, "No more than 254 timers are allowed");
 
     //*******************************************
     /// Constructor.
     //*******************************************
-    callback_timer_atomic()
-        : icallback_timer_atomic<TSemaphore>(timer_array, MAX_TIMERS_) {}
+    callback_timer_atomic() : icallback_timer_atomic<TSemaphore>(timer_array, MAX_TIMERS_) {}
 
    private:
-    typename etl::icallback_timer_atomic<TSemaphore>::timer_data
-        timer_array[MAX_TIMERS_];
+    typename etl::icallback_timer_atomic<TSemaphore>::timer_data timer_array[MAX_TIMERS_];
 };
 }  // namespace etl
 

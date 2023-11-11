@@ -41,8 +41,7 @@ namespace etl {
 //***************************************************************************
 class task_exception : public etl::exception {
    public:
-    task_exception(string_type reason_, string_type file_name_,
-                   numeric_type line_number_)
+    task_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
@@ -56,8 +55,7 @@ class task {
     //*******************************************
     /// Constructor.
     //*******************************************
-    task(task_priority_t priority)
-        : task_running(true), task_priority(priority) {}
+    task(task_priority_t priority) : task_running(true), task_priority(priority) {}
 
     //*******************************************
     /// Destructor.

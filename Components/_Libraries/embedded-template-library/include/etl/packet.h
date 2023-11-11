@@ -62,11 +62,9 @@ class packet {
     explicit packet(T&& value) {
         typedef typename etl::types<T>::type type;
 
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value),
-                          "Unsupported type");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value), "Unsupported type");
         ETL_STATIC_ASSERT(sizeof(type) <= SIZE, "Unsupported size");
-        ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT,
-                          "Unsupported alignment");
+        ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT, "Unsupported alignment");
 
         ::new (static_cast<type*>(data)) type(etl::forward<T>(value));
     }
@@ -76,11 +74,9 @@ class packet {
     //***************************************************************************
     template <typename T>
     explicit packet(const T& value) {
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value),
-                          "Unsupported type");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value), "Unsupported type");
         ETL_STATIC_ASSERT(sizeof(T) <= SIZE, "Unsupported size");
-        ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT,
-                          "Unsupported alignment");
+        ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT, "Unsupported alignment");
 
         ::new (static_cast<T*>(data)) T(value);
     }
@@ -102,11 +98,9 @@ class packet {
     packet& operator=(T&& value) {
         typedef typename etl::types<T>::type type;
 
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value),
-                          "Unsupported type");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, type>::value), "Unsupported type");
         ETL_STATIC_ASSERT(sizeof(type) <= SIZE, "Unsupported size");
-        ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT,
-                          "Unsupported alignment");
+        ETL_STATIC_ASSERT(etl::alignment_of<type>::value <= ALIGNMENT, "Unsupported alignment");
 
         static_cast<TBase*>(data)->~TBase();
         ::new (static_cast<type*>(data)) type(etl::forward<T>(value));
@@ -120,11 +114,9 @@ class packet {
     //***************************************************************************
     template <typename T>
     packet& operator=(const T& value) {
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value),
-                          "Unsupported type");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, T>::value), "Unsupported type");
         ETL_STATIC_ASSERT(sizeof(T) <= SIZE, "Unsupported size");
-        ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT,
-                          "Unsupported alignment");
+        ETL_STATIC_ASSERT(etl::alignment_of<T>::value <= ALIGNMENT, "Unsupported alignment");
 
         static_cast<TBase*>(data)->~TBase();
         ::new (static_cast<T*>(data)) T(value);

@@ -52,11 +52,9 @@ void Utils::writeInt32ToArray(uint8_t* array, int startIndex, int32_t value) {
  * @param startIndex, where the data field starts in the array
  * @param value, pointer to the data field that should be updated
  */
-void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex,
-                                     int32_t* value) {
+void Utils::readUInt32FromUInt8Array(uint8_t* array, int startIndex, int32_t* value) {
     uint32_t temp = 0;
-    temp +=
-        (array[startIndex + 0] << 24);  // eeprom reads little or big endian?
+    temp += (array[startIndex + 0] << 24);  // eeprom reads little or big endian?
     temp += (array[startIndex + 1] << 16);
     temp += (array[startIndex + 2] << 8);
     temp += (array[startIndex + 3]);
@@ -89,8 +87,7 @@ uint32_t Utils::getCRC32Aligned(uint8_t* data, uint32_t size) {
     //SOAR_PRINT("Warning, HCRC is not tested!\n");
 
     // Calculate the CRC32
-    return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer,
-                             (size + pad) / 4);
+    return HAL_CRC_Calculate(SystemHandles::CRC_Handle, (uint32_t*)buffer, (size + pad) / 4);
 }
 
 /**

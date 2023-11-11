@@ -103,8 +103,7 @@ uint8_t* Command::AllocateData(uint16_t dataSize) {
  * @param size Size of the given data address
  * @return TRUE on success, FALSE on failure (mem already allocated)
 */
-bool Command::SetCommandToStaticExternalBuffer(uint8_t* existingPtr,
-                                               uint16_t size) {
+bool Command::SetCommandToStaticExternalBuffer(uint8_t* existingPtr, uint16_t size) {
     // If we don't have anything allocated, set it and return success
     if (this->data == nullptr) {
         this->data = existingPtr;

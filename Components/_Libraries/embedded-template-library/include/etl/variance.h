@@ -80,11 +80,9 @@ template <bool Variance_Type, typename TInput, typename TCalc = TInput>
 class variance : public private_variance::variance_traits<TInput, TCalc>,
                  public etl::binary_function<TInput, TInput, void> {
    private:
-    static ETL_CONSTANT int Adjustment =
-        (Variance_Type == variance_type::Population) ? 0 : 1;
+    static ETL_CONSTANT int Adjustment = (Variance_Type == variance_type::Population) ? 0 : 1;
 
-    typedef typename private_variance::variance_traits<TInput, TCalc>::calc_t
-        calc_t;
+    typedef typename private_variance::variance_traits<TInput, TCalc>::calc_t calc_t;
 
    public:
     //*********************************
@@ -150,8 +148,7 @@ class variance : public private_variance::variance_traits<TInput, TCalc>,
 
                 double square_of_sum = sum * sum;
 
-                variance_value =
-                    (n * sum_of_squares - square_of_sum) * adjustment;
+                variance_value = (n * sum_of_squares - square_of_sum) * adjustment;
             }
 
             recalculate = false;

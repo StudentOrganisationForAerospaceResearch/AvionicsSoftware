@@ -83,18 +83,14 @@ class message_packet {
    private:
     template <typename T>
     static constexpr bool IsMessagePacket =
-        etl::is_same_v<etl::remove_const_t<etl::remove_reference_t<T>>,
-                       etl::message_packet<TMessageTypes...>>;
+        etl::is_same_v<etl::remove_const_t<etl::remove_reference_t<T>>, etl::message_packet<TMessageTypes...>>;
 
     template <typename T>
     static constexpr bool IsInMessageList =
-        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<T>>,
-                         TMessageTypes...>;
+        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<T>>, TMessageTypes...>;
 
     template <typename T>
-    static constexpr bool IsIMessage =
-        etl::is_same_v<remove_const_t<etl::remove_reference_t<T>>,
-                       etl::imessage>;
+    static constexpr bool IsIMessage = etl::is_same_v<remove_const_t<etl::remove_reference_t<T>>, etl::imessage>;
 
    public:
     //********************************************
@@ -119,8 +115,7 @@ class message_packet {
         } else if constexpr (IsMessagePacket<T>) {
             copy(etl::forward<T>(msg));
         } else {
-            ETL_STATIC_ASSERT(IsInMessageList<T>,
-                              "Message not in packet type list");
+            ETL_STATIC_ASSERT(IsInMessageList<T>, "Message not in packet type list");
         }
     }
 
@@ -168,27 +163,19 @@ class message_packet {
     ~message_packet() { delete_current_message(); }
 
     //********************************************
-    etl::imessage& get() ETL_NOEXCEPT {
-        return *static_cast<etl::imessage*>(data);
-    }
+    etl::imessage& get() ETL_NOEXCEPT { return *static_cast<etl::imessage*>(data); }
 
     //********************************************
-    const etl::imessage& get() const ETL_NOEXCEPT {
-        return *static_cast<const etl::imessage*>(data);
-    }
+    const etl::imessage& get() const ETL_NOEXCEPT { return *static_cast<const etl::imessage*>(data); }
 
     //********************************************
     bool is_valid() const { return valid; }
 
     //**********************************************
-    static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return (accepts_message<TMessageTypes::ID>(id) || ...);
-    }
+    static ETL_CONSTEXPR bool accepts(etl::message_id_t id) { return (accepts_message<TMessageTypes::ID>(id) || ...); }
 
     //**********************************************
-    static ETL_CONSTEXPR bool accepts(const etl::imessage& msg) {
-        return accepts(msg.get_message_id());
-    }
+    static ETL_CONSTEXPR bool accepts(const etl::imessage& msg) { return accepts(msg.get_message_id()); }
 
     //**********************************************
     template <etl::message_id_t Id>
@@ -198,17 +185,12 @@ class message_packet {
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         return accepts<TMessage::ID>();
     }
 
-    enum {
-        SIZE = etl::largest<TMessageTypes...>::size,
-        ALIGNMENT = etl::largest<TMessageTypes...>::alignment
-    };
+    enum { SIZE = etl::largest<TMessageTypes...>::size, ALIGNMENT = etl::largest<TMessageTypes...>::alignment };
 
    private:
     //**********************************************
@@ -233,27 +215,19 @@ class message_packet {
     }
 
     //********************************************
-    void add_new_message(const etl::imessage& msg) {
-        (add_new_message_type<TMessageTypes>(msg) || ...);
-    }
+    void add_new_message(const etl::imessage& msg) { (add_new_message_type<TMessageTypes>(msg) || ...); }
 
     //********************************************
-    void add_new_message(etl::imessage&& msg) {
-        (add_new_message_type<TMessageTypes>(etl::move(msg)) || ...);
-    }
+    void add_new_message(etl::imessage&& msg) { (add_new_message_type<TMessageTypes>(etl::move(msg)) || ...); }
 
     //********************************************
     /// Only enabled for types that are in the typelist.
     //********************************************
     template <typename TMessage>
-    etl::enable_if_t<
-        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<TMessage>>,
-                         TMessageTypes...>,
-        void>
+    etl::enable_if_t<etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<TMessage>>, TMessageTypes...>, void>
     add_new_message_type(TMessage&& msg) {
         void* p = data;
-        new (p)
-            etl::remove_reference_t<TMessage>((etl::forward<TMessage>(msg)));
+        new (p) etl::remove_reference_t<TMessage>((etl::forward<TMessage>(msg)));
     }
 
     typename etl::aligned_storage<SIZE, ALIGNMENT>::type data;

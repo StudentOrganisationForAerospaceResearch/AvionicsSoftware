@@ -31,8 +31,7 @@ SOFTWARE.
 #ifndef ETL_DETERMINE_BUILTIN_SUPPORT_H_INCLUDED
 #define ETL_DETERMINE_BUILTIN_SUPPORT_H_INCLUDED
 
-#if defined( \
-    ETL_USE_TYPE_TRAITS_BUILTINS)  // Set all of them to be true if not already defined
+#if defined(ETL_USE_TYPE_TRAITS_BUILTINS)  // Set all of them to be true if not already defined
 #if !defined(ETL_USING_BUILTIN_IS_ASSIGNABLE)
 #define ETL_USING_BUILTIN_IS_ASSIGNABLE 1
 #endif
@@ -54,8 +53,7 @@ SOFTWARE.
 #endif
 #endif
 
-#if defined( \
-    __has_builtin)  // Use __has_builtin to check for existence of builtin functions?
+#if defined(__has_builtin)  // Use __has_builtin to check for existence of builtin functions?
 #if !defined(ETL_USING_BUILTIN_IS_ASSIGNABLE)
 #define ETL_USING_BUILTIN_IS_ASSIGNABLE __has_builtin(__is_assignable)
 #endif
@@ -66,20 +64,17 @@ SOFTWARE.
 
 #if !defined(ETL_USING_BUILTIN_IS_TRIVIALLY_CONSTRUCTIBLE)
 #define ETL_USING_BUILTIN_IS_TRIVIALLY_CONSTRUCTIBLE \
-    (__has_builtin(__has_trivial_constructor) ||     \
-     __has_builtin(__is_trivially_constructible))
+    (__has_builtin(__has_trivial_constructor) || __has_builtin(__is_trivially_constructible))
 #endif
 
 #if !defined(ETL_USING_BUILTIN_IS_TRIVIALLY_DESTRUCTIBLE)
 #define ETL_USING_BUILTIN_IS_TRIVIALLY_DESTRUCTIBLE \
-    (__has_builtin(__has_trivial_destructor) ||     \
-     __has_builtin(__is_trivially_destructible))
+    (__has_builtin(__has_trivial_destructor) || __has_builtin(__is_trivially_destructible))
 #endif
 
 #if !defined(ETL_USING_BUILTIN_IS_TRIVIALLY_COPYABLE)
 #define ETL_USING_BUILTIN_IS_TRIVIALLY_COPYABLE \
-    (__has_builtin(__has_trivial_copy) ||       \
-     __has_builtin(__is_trivially_copyable))
+    (__has_builtin(__has_trivial_copy) || __has_builtin(__is_trivially_copyable))
 #endif
 #endif
 
@@ -108,16 +103,11 @@ namespace etl {
 namespace traits {
 // Documentation: https://www.etlcpp.com/etl_traits.html
 
-static ETL_CONSTANT bool using_builtin_is_assignable =
-    (ETL_USING_BUILTIN_IS_ASSIGNABLE == 1);
-static ETL_CONSTANT bool using_builtin_is_constructible =
-    (ETL_USING_BUILTIN_IS_CONSTRUCTIBLE == 1);
-static ETL_CONSTANT bool using_builtin_is_trivially_constructible =
-    (ETL_USING_BUILTIN_IS_TRIVIALLY_CONSTRUCTIBLE == 1);
-static ETL_CONSTANT bool using_builtin_is_trivially_destructible =
-    (ETL_USING_BUILTIN_IS_TRIVIALLY_DESTRUCTIBLE == 1);
-static ETL_CONSTANT bool using_builtin_is_trivially_copyable =
-    (ETL_USING_BUILTIN_IS_TRIVIALLY_COPYABLE == 1);
+static ETL_CONSTANT bool using_builtin_is_assignable = (ETL_USING_BUILTIN_IS_ASSIGNABLE == 1);
+static ETL_CONSTANT bool using_builtin_is_constructible = (ETL_USING_BUILTIN_IS_CONSTRUCTIBLE == 1);
+static ETL_CONSTANT bool using_builtin_is_trivially_constructible = (ETL_USING_BUILTIN_IS_TRIVIALLY_CONSTRUCTIBLE == 1);
+static ETL_CONSTANT bool using_builtin_is_trivially_destructible = (ETL_USING_BUILTIN_IS_TRIVIALLY_DESTRUCTIBLE == 1);
+static ETL_CONSTANT bool using_builtin_is_trivially_copyable = (ETL_USING_BUILTIN_IS_TRIVIALLY_COPYABLE == 1);
 }  // namespace traits
 }  // namespace etl
 

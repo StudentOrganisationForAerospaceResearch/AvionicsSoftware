@@ -54,10 +54,8 @@ class imessage_timer_atomic {
     /// Register a timer.
     //*******************************************
     etl::timer::id::type register_timer(
-        const etl::imessage& message_, etl::imessage_router& router_,
-        uint32_t period_, bool repeating_,
-        etl::message_router_id_t destination_router_id_ =
-            etl::imessage_router::ALL_MESSAGE_ROUTERS) {
+        const etl::imessage& message_, etl::imessage_router& router_, uint32_t period_, bool repeating_,
+        etl::message_router_id_t destination_router_id_ = etl::imessage_router::ALL_MESSAGE_ROUTERS) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (registered_timers < MAX_TIMERS);
@@ -71,9 +69,7 @@ class imessage_timer_atomic {
 
                     if (timer.id == etl::timer::id::NO_TIMER) {
                         // Create in-place.
-                        new (&timer)
-                            timer_data(i, message_, router_, period_,
-                                       repeating_, destination_router_id_);
+                        new (&timer) timer_data(i, message_, router_, period_, repeating_, destination_router_id_);
                         ++registered_timers;
                         id = i;
                         break;
@@ -158,8 +154,7 @@ class imessage_timer_atomic {
                         active_list.remove(timer.id, true);
 
                         if (timer.p_router != ETL_NULLPTR) {
-                            timer.p_router->receive(timer.destination_router_id,
-                                                    *(timer.p_message));
+                            timer.p_router->receive(timer.destination_router_id, *(timer.p_message));
                         }
 
                         if (timer.repeating) {
@@ -280,11 +275,9 @@ class imessage_timer_atomic {
               repeating(true) {}
 
         //*******************************************
-        timer_data(etl::timer::id::type id_, const etl::imessage& message_,
-                   etl::imessage_router& irouter_, uint32_t period_,
-                   bool repeating_,
-                   etl::message_router_id_t destination_router_id_ =
-                       etl::imessage_bus::ALL_MESSAGE_ROUTERS)
+        timer_data(etl::timer::id::type id_, const etl::imessage& message_, etl::imessage_router& irouter_,
+                   uint32_t period_, bool repeating_,
+                   etl::message_router_id_t destination_router_id_ = etl::imessage_bus::ALL_MESSAGE_ROUTERS)
             : p_message(&message_),
               p_router(&irouter_),
               period(period_),
@@ -324,8 +317,7 @@ class imessage_timer_atomic {
     //*******************************************
     /// Constructor.
     //*******************************************
-    imessage_timer_atomic(timer_data* const timer_array_,
-                          const uint_least8_t MAX_TIMERS_)
+    imessage_timer_atomic(timer_data* const timer_array_, const uint_least8_t MAX_TIMERS_)
         : timer_array(timer_array_),
           active_list(timer_array_),
           enabled(false),
@@ -501,18 +493,15 @@ class imessage_timer_atomic {
 template <uint_least8_t MAX_TIMERS_, typename TSemaphore>
 class message_timer_atomic : public etl::imessage_timer_atomic<TSemaphore> {
    public:
-    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254,
-                      "No more than 254 timers are allowed");
+    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254, "No more than 254 timers are allowed");
 
     //*******************************************
     /// Constructor.
     //*******************************************
-    message_timer_atomic()
-        : imessage_timer_atomic<TSemaphore>(timer_array, MAX_TIMERS_) {}
+    message_timer_atomic() : imessage_timer_atomic<TSemaphore>(timer_array, MAX_TIMERS_) {}
 
    private:
-    typename etl::imessage_timer_atomic<TSemaphore>::timer_data
-        timer_array[MAX_TIMERS_];
+    typename etl::imessage_timer_atomic<TSemaphore>::timer_data timer_array[MAX_TIMERS_];
 };
 }  // namespace etl
 

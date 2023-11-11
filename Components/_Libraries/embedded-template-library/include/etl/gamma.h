@@ -48,16 +48,14 @@ class gamma_encode : public etl::unary_function<TInput, TInput> {
     //*********************************
     /// Constructor.
     //*********************************
-    gamma_encode(double gamma_, TInput maximum_)
-        : one_over_gamma(1.0 / gamma_), maximum(maximum_) {}
+    gamma_encode(double gamma_, TInput maximum_) : one_over_gamma(1.0 / gamma_), maximum(maximum_) {}
 
     //*********************************
     /// operator ()
     /// Get the gamma.
     //*********************************
     TInput operator()(TInput value) const {
-        return TInput(
-            TInput(maximum * pow(double(value) / maximum, one_over_gamma)));
+        return TInput(TInput(maximum * pow(double(value) / maximum, one_over_gamma)));
     }
 
    private:
@@ -74,16 +72,13 @@ class gamma_decode : public etl::unary_function<TInput, TInput> {
     //*********************************
     /// Constructor.
     //*********************************
-    gamma_decode(double gamma_, TInput maximum_)
-        : gamma(gamma_), maximum(maximum_) {}
+    gamma_decode(double gamma_, TInput maximum_) : gamma(gamma_), maximum(maximum_) {}
 
     //*********************************
     /// operator ()
     /// Get the gamma.
     //*********************************
-    TInput operator()(TInput value) const {
-        return TInput(TInput(maximum * pow(double(value) / maximum, gamma)));
-    }
+    TInput operator()(TInput value) const { return TInput(TInput(maximum * pow(double(value) / maximum, gamma))); }
 
    private:
     const double gamma;

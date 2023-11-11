@@ -46,8 +46,7 @@ namespace etl {
 //***************************************************************************
 /// Provides a value that cycles between two limits.
 //***************************************************************************
-template <typename T, T FIRST = 0, T LAST = 0,
-          bool EtlRuntimeSpecialisation = ((FIRST == 0) && (LAST == 0))>
+template <typename T, T FIRST = 0, T LAST = 0, bool EtlRuntimeSpecialisation = ((FIRST == 0) && (LAST == 0))>
 class cyclic_value;
 
 //***************************************************************************
@@ -70,8 +69,7 @@ class cyclic_value<T, FIRST, LAST, false> {
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
-    cyclic_value(const cyclic_value<T, FIRST, LAST>& other)
-        : value(other.value) {}
+    cyclic_value(const cyclic_value<T, FIRST, LAST>& other) : value(other.value) {}
 
     //*************************************************************************
     /// Assignment operator.
@@ -230,24 +228,19 @@ class cyclic_value<T, FIRST, LAST, false> {
     //*************************************************************************
     /// Swaps the values.
     //*************************************************************************
-    friend void swap(cyclic_value<T, FIRST, LAST>& lhs,
-                     cyclic_value<T, FIRST, LAST>& rhs) {
-        lhs.swap(rhs);
-    }
+    friend void swap(cyclic_value<T, FIRST, LAST>& lhs, cyclic_value<T, FIRST, LAST>& rhs) { lhs.swap(rhs); }
 
     //*************************************************************************
     /// Operator ==.
     //*************************************************************************
-    friend bool operator==(const cyclic_value<T, FIRST, LAST>& lhs,
-                           const cyclic_value<T, FIRST, LAST>& rhs) {
+    friend bool operator==(const cyclic_value<T, FIRST, LAST>& lhs, const cyclic_value<T, FIRST, LAST>& rhs) {
         return lhs.value == rhs.value;
     }
 
     //*************************************************************************
     /// Operator !=.
     //*************************************************************************
-    friend bool operator!=(const cyclic_value<T, FIRST, LAST>& lhs,
-                           const cyclic_value<T, FIRST, LAST>& rhs) {
+    friend bool operator!=(const cyclic_value<T, FIRST, LAST>& lhs, const cyclic_value<T, FIRST, LAST>& rhs) {
         return !(lhs == rhs);
     }
 
@@ -279,16 +272,13 @@ class cyclic_value<T, FIRST, LAST, true> {
     ///\param first The first value in the range.
     ///\param last  The last value in the range.
     //*************************************************************************
-    cyclic_value(T first_, T last_)
-        : value(first_), first_value(first_), last_value(last_) {}
+    cyclic_value(T first_, T last_) : value(first_), first_value(first_), last_value(last_) {}
 
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
     cyclic_value(const cyclic_value& other)
-        : value(other.value),
-          first_value(other.first_value),
-          last_value(other.last_value) {}
+        : value(other.value), first_value(other.first_value), last_value(other.last_value) {}
 
     //*************************************************************************
     /// Sets the range.
@@ -449,26 +439,19 @@ class cyclic_value<T, FIRST, LAST, true> {
     //*************************************************************************
     /// Swaps the values.
     //*************************************************************************
-    friend void swap(cyclic_value<T, FIRST, LAST>& lhs,
-                     cyclic_value<T, FIRST, LAST>& rhs) {
-        lhs.swap(rhs);
-    }
+    friend void swap(cyclic_value<T, FIRST, LAST>& lhs, cyclic_value<T, FIRST, LAST>& rhs) { lhs.swap(rhs); }
 
     //*************************************************************************
     /// Operator ==.
     //*************************************************************************
-    friend bool operator==(const cyclic_value<T, FIRST, LAST>& lhs,
-                           const cyclic_value<T, FIRST, LAST>& rhs) {
-        return (lhs.value == rhs.value) &&
-               (lhs.first_value == rhs.first_value) &&
-               (lhs.last_value == rhs.last_value);
+    friend bool operator==(const cyclic_value<T, FIRST, LAST>& lhs, const cyclic_value<T, FIRST, LAST>& rhs) {
+        return (lhs.value == rhs.value) && (lhs.first_value == rhs.first_value) && (lhs.last_value == rhs.last_value);
     }
 
     //*************************************************************************
     /// Operator !=.
     //*************************************************************************
-    friend bool operator!=(const cyclic_value<T, FIRST, LAST>& lhs,
-                           const cyclic_value<T, FIRST, LAST>& rhs) {
+    friend bool operator!=(const cyclic_value<T, FIRST, LAST>& lhs, const cyclic_value<T, FIRST, LAST>& rhs) {
         return !(lhs == rhs);
     }
 

@@ -36,8 +36,7 @@
 /**
  * @brief Default constructor, sets and sets up storage for member variables
  */
-PressureTransducerTask::PressureTransducerTask()
-    : Task(TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS) {
+PressureTransducerTask::PressureTransducerTask() : Task(TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS) {
     data = (PressureTransducerData*)soar_malloc(sizeof(PressureTransducerData));
 }
 
@@ -49,15 +48,12 @@ void PressureTransducerTask::InitTask() {
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize PT task twice");
 
     // Start the task
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)PressureTransducerTask::RunTask, (const char*)"PTTask",
-        (uint16_t)TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)TASK_PRESSURE_TRANSDUCER_PRIORITY,
-        (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)PressureTransducerTask::RunTask, (const char*)"PTTask",
+                                     (uint16_t)TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)TASK_PRESSURE_TRANSDUCER_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS,
-                "PressureTransducerTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "PressureTransducerTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -93,9 +89,7 @@ void PressureTransducerTask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT(
-                "PressureTransducerTASK - Received Unsupported Command {%d}\n",
-                cm.GetCommand());
+            SOAR_PRINT("PressureTransducerTASK - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -117,13 +111,11 @@ void PressureTransducerTask::HandleRequestCommand(uint16_t taskCommand) {
             TransmitProtocolPressureData();
             break;
         case PT_REQUEST_DEBUG:
-            SOAR_PRINT("|PT_TASK| Pressure (PSI): %d.%d, MCU Timestamp: %u\r\n",
-                       data->pressure_1 / 1000, data->pressure_1 % 1000,
-                       timestampPT);
+            SOAR_PRINT("|PT_TASK| Pressure (PSI): %d.%d, MCU Timestamp: %u\r\n", data->pressure_1 / 1000,
+                       data->pressure_1 % 1000, timestampPT);
             break;
         default:
-            SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n",
-                       taskCommand);
+            SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
             break;
     }
 }
@@ -146,26 +138,21 @@ void ADC_Select_CH9(void) {
  */
 void PressureTransducerTask::SamplePressureTransducer() {
     static const int PT_VOLTAGE_ADC_POLL_TIMEOUT = 50;
-    static const double PRESSURE_SCALE =
-        1.5220883534136546;  // Value to scale to original voltage value
+    static const double PRESSURE_SCALE = 1.5220883534136546;  // Value to scale to original voltage value
     double adcVal[1] = {};
     double pressureTransducerValue1 = 0;
     double vi = 0;
 
     /* Functions -----------------------------------------------------------------*/
     ADC_Select_CH9();
-    HAL_ADC_Start(
-        &hadc1);  // Enables ADC and starts conversion of regular channels
-    if (HAL_ADC_PollForConversion(&hadc1, PT_VOLTAGE_ADC_POLL_TIMEOUT) ==
-        HAL_OK) {  //Check if conversion is completed
-        adcVal[0] = HAL_ADC_GetValue(&hadc1);  // Get ADC Value
+    HAL_ADC_Start(&hadc1);  // Enables ADC and starts conversion of regular channels
+    if (HAL_ADC_PollForConversion(&hadc1, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK) {  //Check if conversion is completed
+        adcVal[0] = HAL_ADC_GetValue(&hadc1);                                        // Get ADC Value
         HAL_ADC_Stop(&hadc1);
     }
-    vi =
-        ((3.3 / 4095) * (adcVal[0]));  // Converts 12 bit ADC value into voltage
-    pressureTransducerValue1 = (250 * (vi * PRESSURE_SCALE) - 125) *
-                               1000;  // Multiply by 1000 to keep decimal places
-    data->pressure_1 = (int32_t)pressureTransducerValue1;  // Pressure in PSI
+    vi = ((3.3 / 4095) * (adcVal[0]));                                      // Converts 12 bit ADC value into voltage
+    pressureTransducerValue1 = (250 * (vi * PRESSURE_SCALE) - 125) * 1000;  // Multiply by 1000 to keep decimal places
+    data->pressure_1 = (int32_t)pressureTransducerValue1;                   // Pressure in PSI
     //	SOAR_PRINT("The pressure is : %d \n\n", (int32_t) pressureTransducerValue1);
 }
 
@@ -182,11 +169,9 @@ void PressureTransducerTask::TransmitProtocolPressureData() {
     pressData.set_upper_pv_pressure(data->pressure_1);
     msg.set_pressdmb(pressData);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
     // Send the barometer data
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }

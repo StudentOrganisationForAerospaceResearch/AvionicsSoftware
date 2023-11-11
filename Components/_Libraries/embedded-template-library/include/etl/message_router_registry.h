@@ -46,24 +46,19 @@ namespace etl {
 //***************************************************************************
 class message_router_registry_exception : public etl::exception {
    public:
-    message_router_registry_exception(string_type reason_,
-                                      string_type file_name_,
-                                      numeric_type line_number_)
+    message_router_registry_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
 //***************************************************************************
 /// The registry is full.
 //***************************************************************************
-class message_router_registry_full
-    : public etl::message_router_registry_exception {
+class message_router_registry_full : public etl::message_router_registry_exception {
    public:
-    message_router_registry_full(string_type file_name_,
-                                 numeric_type line_number_)
+    message_router_registry_full(string_type file_name_, numeric_type line_number_)
         : message_router_registry_exception(
-              ETL_ERROR_TEXT("message router registry:full",
-                             ETL_MESSAGE_ROUTER_REGISTRY_FILE_ID "A"),
-              file_name_, line_number_) {}
+              ETL_ERROR_TEXT("message router registry:full", ETL_MESSAGE_ROUTER_REGISTRY_FILE_ID "A"), file_name_,
+              line_number_) {}
 };
 
 //***************************************************************************
@@ -71,8 +66,7 @@ class message_router_registry_full
 //***************************************************************************
 class imessage_router_registry {
    private:
-    typedef etl::iflat_multimap<etl::message_router_id_t, etl::imessage_router*>
-        IRegistry;
+    typedef etl::iflat_multimap<etl::message_router_id_t, etl::imessage_router*> IRegistry;
 
    public:
     class const_iterator;
@@ -80,8 +74,7 @@ class imessage_router_registry {
     //********************************************
     /// Iterator
     //********************************************
-    class iterator : public etl::iterator<ETL_OR_STD::forward_iterator_tag,
-                                          etl::imessage_router*> {
+    class iterator : public etl::iterator<ETL_OR_STD::forward_iterator_tag, etl::imessage_router*> {
        public:
         friend class imessage_router_registry;
         friend class const_iterator;
@@ -124,14 +117,10 @@ class imessage_router_registry {
         }
 
         //********************************************
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return lhs.itr == rhs.itr;
-        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.itr == rhs.itr; }
 
         //********************************************
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         //********************************************
@@ -143,8 +132,7 @@ class imessage_router_registry {
     //********************************************
     /// Const Iterator
     //********************************************
-    class const_iterator : etl::iterator<ETL_OR_STD::forward_iterator_tag,
-                                         const etl::imessage_router*> {
+    class const_iterator : etl::iterator<ETL_OR_STD::forward_iterator_tag, const etl::imessage_router*> {
        public:
         friend class imessage_router_registry;
 
@@ -152,8 +140,7 @@ class imessage_router_registry {
         const_iterator() {}
 
         //********************************************
-        const_iterator(const imessage_router_registry::iterator& other)
-            : itr(other.itr) {}
+        const_iterator(const imessage_router_registry::iterator& other) : itr(other.itr) {}
 
         //********************************************
         const_iterator(const const_iterator& other) : itr(other.itr) {}
@@ -184,16 +171,10 @@ class imessage_router_registry {
         }
 
         //********************************************
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return lhs.itr == rhs.itr;
-        }
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) { return lhs.itr == rhs.itr; }
 
         //********************************************
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         //********************************************
@@ -246,25 +227,19 @@ class imessage_router_registry {
     //********************************************
     /// Get the lower bound in the registry with the specified ID.
     //********************************************
-    iterator lower_bound(etl::message_router_id_t id) {
-        return iterator(registry.lower_bound(id));
-    }
+    iterator lower_bound(etl::message_router_id_t id) { return iterator(registry.lower_bound(id)); }
 
     const_iterator lower_bound(etl::message_router_id_t id) const {
-        return const_iterator(
-            IRegistry::const_iterator(registry.lower_bound(id)));
+        return const_iterator(IRegistry::const_iterator(registry.lower_bound(id)));
     }
 
     //********************************************
     /// Get the upper bound in the registry with the specified ID.
     //********************************************
-    iterator upper_bound(etl::message_router_id_t id) {
-        return iterator(registry.upper_bound(id));
-    }
+    iterator upper_bound(etl::message_router_id_t id) { return iterator(registry.upper_bound(id)); }
 
     const_iterator upper_bound(etl::message_router_id_t id) const {
-        return const_iterator(
-            IRegistry::const_iterator(registry.upper_bound(id)));
+        return const_iterator(IRegistry::const_iterator(registry.upper_bound(id)));
     }
 
     //********************************************
@@ -273,8 +248,7 @@ class imessage_router_registry {
     //********************************************
     void add(etl::imessage_router& router) {
         if (!registry.full() && !contains(router)) {
-            IRegistry::value_type element(router.get_message_router_id(),
-                                          &router);
+            IRegistry::value_type element(router.get_message_router_id(), &router);
 
             registry.insert(element);
         } else {
@@ -328,8 +302,7 @@ class imessage_router_registry {
             return false;
         }
 
-        IRegistry::const_iterator irouter =
-            registry.find(p_router->get_message_router_id());
+        IRegistry::const_iterator irouter = registry.find(p_router->get_message_router_id());
 
         return (irouter != registry.cend()) && (irouter->second == p_router);
     }
@@ -339,8 +312,7 @@ class imessage_router_registry {
     /// Returns <b>false</b> if not found.
     //********************************************
     bool contains(const etl::imessage_router& router) const {
-        IRegistry::const_iterator irouter =
-            registry.find(router.get_message_router_id());
+        IRegistry::const_iterator irouter = registry.find(router.get_message_router_id());
 
         return (irouter != registry.cend()) && (irouter->second == &router);
     }
@@ -348,9 +320,7 @@ class imessage_router_registry {
     //********************************************
     /// Returns the number of routers with the specified ID.
     //********************************************
-    size_t count(const etl::message_router_id_t id) const {
-        return registry.count(id);
-    }
+    size_t count(const etl::message_router_id_t id) const { return registry.count(id); }
 
     //********************************************
     /// Returns <b>true</b> if the registry is empty, otherwise <b>false</b>.
@@ -403,8 +373,7 @@ class message_router_registry : public etl::imessage_router_registry {
     /// Constructs from an iterator range.
     //********************************************
     template <typename TIterator>
-    message_router_registry(TIterator first, const TIterator& last)
-        : imessage_router_registry(registry) {
+    message_router_registry(TIterator first, const TIterator& last) : imessage_router_registry(registry) {
         while (first != last) {
             this->add(*first);
             ++first;
@@ -415,10 +384,8 @@ class message_router_registry : public etl::imessage_router_registry {
     //********************************************
     // Initializer_list constructor.
     //********************************************
-    message_router_registry(std::initializer_list<etl::imessage_router*> init)
-        : imessage_router_registry(registry) {
-        std::initializer_list<etl::imessage_router*>::const_iterator itr =
-            init.begin();
+    message_router_registry(std::initializer_list<etl::imessage_router*> init) : imessage_router_registry(registry) {
+        std::initializer_list<etl::imessage_router*>::const_iterator itr = init.begin();
 
         while (itr != init.end()) {
             this->add(*itr);
@@ -430,8 +397,7 @@ class message_router_registry : public etl::imessage_router_registry {
     //********************************************
     // Copy constructor.
     //********************************************
-    message_router_registry(const message_router_registry& rhs)
-        : imessage_router_registry(registry) {
+    message_router_registry(const message_router_registry& rhs) : imessage_router_registry(registry) {
         registry = rhs.registry;
     }
 
@@ -445,9 +411,7 @@ class message_router_registry : public etl::imessage_router_registry {
     }
 
    private:
-    typedef etl::flat_multimap<etl::message_router_id_t, etl::imessage_router*,
-                               MaxRouters>
-        Registry;
+    typedef etl::flat_multimap<etl::message_router_id_t, etl::imessage_router*, MaxRouters> Registry;
     Registry registry;
 };
 }  // namespace etl

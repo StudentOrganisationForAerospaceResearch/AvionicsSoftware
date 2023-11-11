@@ -90,12 +90,10 @@ class largest_type {
    public:
     // Set 'type' to be the largest of the first parameter and any of the others.
     // This is recursive.
-    using type = typename etl::conditional<
-        (etl::size_of<T1>::value >
-         etl::size_of<largest_other>::value),  // Boolean
-        T1,                                    // TrueType
-        largest_other>                         // FalseType
-        ::type;                                // The largest type of the two.
+    using type = typename etl::conditional<(etl::size_of<T1>::value > etl::size_of<largest_other>::value),  // Boolean
+                                           T1,                                                              // TrueType
+                                           largest_other>                                                   // FalseType
+        ::type;  // The largest type of the two.
 
     // The size of the largest type.
     enum { size = etl::size_of<type>::value };
@@ -187,8 +185,7 @@ constexpr size_t largest_type_v = largest_type<T...>::size;
 /*[[[end]]]*/
 #endif
 
-#if ETL_USING_CPP11 && \
-    !defined(ETL_LARGEST_ALIGNMENT_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && !defined(ETL_LARGEST_ALIGNMENT_FORCE_CPP03_IMPLEMENTATION)
 //***************************************************************************
 /// Template to determine the largest alignment.
 /// Defines <b>value</b> which is the largest alignment of all the parameters.
@@ -201,12 +198,11 @@ struct largest_alignment {
 
     // Set 'type' to be the largest of the first parameter and any of the others.
     // This is recursive.
-    using type = typename etl::conditional<
-        (etl::alignment_of<T1>::value >
-         etl::alignment_of<largest_other>::value),  // Boolean
-        T1,                                         // TrueType
-        largest_other>                              // FalseType
-        ::type;  // The largest type of the two.
+    using type =
+        typename etl::conditional<(etl::alignment_of<T1>::value > etl::alignment_of<largest_other>::value),  // Boolean
+                                  T1,                                                                        // TrueType
+                                  largest_other>  // FalseType
+        ::type;                                   // The largest type of the two.
 
     // The largest alignment.
     enum { value = etl::alignment_of<type>::value };
@@ -300,9 +296,9 @@ template <typename T>
 struct larger_int_type {
     ETL_STATIC_ASSERT(etl::is_integral<T>::value, "Must be an integral type");
 
-    typedef typename etl::smallest_int_for_bits<
-        etl::integral_limits<typename etl::make_signed<T>::type>::bits +
-        1>::type type;
+    typedef
+        typename etl::smallest_int_for_bits<etl::integral_limits<typename etl::make_signed<T>::type>::bits + 1>::type
+            type;
 };
 
 #if ETL_USING_CPP11
@@ -319,9 +315,9 @@ template <typename T>
 struct larger_uint_type {
     ETL_STATIC_ASSERT(etl::is_integral<T>::value, "Must be an integral type");
 
-    typedef typename etl::smallest_uint_for_bits<
-        etl::integral_limits<typename etl::make_unsigned<T>::type>::bits +
-        1>::type type;
+    typedef
+        typename etl::smallest_uint_for_bits<etl::integral_limits<typename etl::make_unsigned<T>::type>::bits + 1>::type
+            type;
 };
 
 #if ETL_USING_CPP11
@@ -342,16 +338,14 @@ template <typename T>
 struct larger_type<T, false> {
     ETL_STATIC_ASSERT(etl::is_integral<T>::value, "Must be an integral type");
 
-    typedef typename etl::smallest_uint_for_bits<etl::integral_limits<T>::bits +
-                                                 1>::type type;
+    typedef typename etl::smallest_uint_for_bits<etl::integral_limits<T>::bits + 1>::type type;
 };
 
 template <typename T>
 struct larger_type<T, true> {
     ETL_STATIC_ASSERT(etl::is_integral<T>::value, "Must be an integral type");
 
-    typedef typename etl::smallest_int_for_bits<etl::integral_limits<T>::bits +
-                                                1>::type type;
+    typedef typename etl::smallest_int_for_bits<etl::integral_limits<T>::bits + 1>::type type;
 };
 
 #if ETL_USING_CPP11
@@ -369,10 +363,7 @@ template <typename... T>
 struct largest {
     using type = typename etl::largest_type<T...>::type;
 
-    enum {
-        size = etl::largest_type<T...>::size,
-        alignment = etl::largest_alignment<T...>::value
-    };
+    enum { size = etl::largest_type<T...>::size, alignment = etl::largest_alignment<T...>::value };
 };
 
 #if ETL_USING_CPP11

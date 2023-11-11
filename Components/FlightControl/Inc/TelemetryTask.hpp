@@ -10,8 +10,7 @@
 #include "SystemDefines.hpp"
 #include "Task.hpp"
 
-constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG =
-    3 * 5;  // N cycles of telemetry sends for each flash log
+constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5;  // N cycles of telemetry sends for each flash log
 
 class TelemetryTask : public Task {
    public:
@@ -40,8 +39,8 @@ class TelemetryTask : public Task {
 
    private:
     // Private Functions
-    TelemetryTask();                      // Private constructor
-    TelemetryTask(const TelemetryTask&);  // Prevent copy-construction
+    TelemetryTask();                                 // Private constructor
+    TelemetryTask(const TelemetryTask&);             // Prevent copy-construction
     TelemetryTask& operator=(const TelemetryTask&);  // Prevent assignment
 
     // Private Variables

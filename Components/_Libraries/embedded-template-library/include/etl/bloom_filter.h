@@ -65,13 +65,11 @@ struct null_hash {
 /// The hash classes must define <b>argument_type</b>.
 ///\ingroup bloom_filter
 //***************************************************************************
-template <const size_t DESIRED_WIDTH, typename THash1,
-          typename THash2 = private_bloom_filter::null_hash,
+template <const size_t DESIRED_WIDTH, typename THash1, typename THash2 = private_bloom_filter::null_hash,
           typename THash3 = private_bloom_filter::null_hash>
 class bloom_filter {
    private:
-    typedef typename etl::parameter_type<typename THash1::argument_type>::type
-        parameter_t;
+    typedef typename etl::parameter_type<typename THash1::argument_type>::type parameter_t;
     typedef private_bloom_filter::null_hash null_hash;
 
    public:

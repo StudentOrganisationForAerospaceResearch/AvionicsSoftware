@@ -77,16 +77,12 @@ struct correlation_type {
 /// Correlation.
 //***************************************************************************
 template <bool Correlation_Type, typename TInput, typename TCalc = TInput>
-class correlation
-    : public private_correlation::correlation_traits<TInput, TCalc>,
-      public etl::binary_function<TInput, TInput, void> {
+class correlation : public private_correlation::correlation_traits<TInput, TCalc>,
+                    public etl::binary_function<TInput, TInput, void> {
    private:
-    static ETL_CONSTANT int Adjustment =
-        (Correlation_Type == correlation_type::Population) ? 0 : 1;
+    static ETL_CONSTANT int Adjustment = (Correlation_Type == correlation_type::Population) ? 0 : 1;
 
-    typedef
-        typename private_correlation::correlation_traits<TInput, TCalc>::calc_t
-            calc_t;
+    typedef typename private_correlation::correlation_traits<TInput, TCalc>::calc_t calc_t;
 
    public:
     //*********************************
@@ -202,10 +198,8 @@ class correlation
                 double square_of_sum1 = (sum1 * sum1);
                 double square_of_sum2 = (sum2 * sum2);
 
-                double variance1 =
-                    ((n * sum_of_squares1) - square_of_sum1) * adjustment;
-                double variance2 =
-                    ((n * sum_of_squares2) - square_of_sum2) * adjustment;
+                double variance1 = ((n * sum_of_squares1) - square_of_sum1) * adjustment;
+                double variance2 = ((n * sum_of_squares2) - square_of_sum2) * adjustment;
 
                 double stddev1 = 0.0;
                 double stddev2 = 0.0;
@@ -218,8 +212,7 @@ class correlation
                     stddev2 = sqrt(variance2);
                 }
 
-                covariance_value =
-                    ((n * inner_product) - (sum1 * sum2)) * adjustment;
+                covariance_value = ((n * inner_product) - (sum1 * sum2)) * adjustment;
 
                 if ((stddev1 > 0.0) && (stddev2 > 0.0)) {
                     correlation_value = covariance_value / (stddev1 * stddev2);

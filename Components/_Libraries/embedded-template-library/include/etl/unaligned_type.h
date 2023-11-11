@@ -88,16 +88,12 @@ class unaligned_type_common {
     //*************************************************************************
     /// Const iterator to the beginning of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR const_iterator begin() const {
-        return const_iterator(storage);
-    }
+    ETL_CONSTEXPR const_iterator begin() const { return const_iterator(storage); }
 
     //*************************************************************************
     /// Const iterator to the beginning of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR const_iterator cbegin() const {
-        return const_iterator(storage);
-    }
+    ETL_CONSTEXPR const_iterator cbegin() const { return const_iterator(storage); }
 
     //*************************************************************************
     /// Reverse iterator to the beginning of the storage.
@@ -107,16 +103,12 @@ class unaligned_type_common {
     //*************************************************************************
     /// Const reverse iterator to the beginning of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR14 const_reverse_iterator rbegin() const {
-        return const_reverse_iterator(storage + Size);
-    }
+    ETL_CONSTEXPR14 const_reverse_iterator rbegin() const { return const_reverse_iterator(storage + Size); }
 
     //*************************************************************************
     /// Const reverse iterator to the beginning of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR14 const_reverse_iterator crbegin() const {
-        return const_reverse_iterator(storage + Size);
-    }
+    ETL_CONSTEXPR14 const_reverse_iterator crbegin() const { return const_reverse_iterator(storage + Size); }
 
     //*************************************************************************
     /// Iterator to the end of the storage.
@@ -126,16 +118,12 @@ class unaligned_type_common {
     //*************************************************************************
     /// Const iterator to the end of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR const_iterator end() const {
-        return const_iterator(storage + Size);
-    }
+    ETL_CONSTEXPR const_iterator end() const { return const_iterator(storage + Size); }
 
     //*************************************************************************
     /// Const iterator to the end of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR const_iterator cend() const {
-        return const_iterator(storage + Size);
-    }
+    ETL_CONSTEXPR const_iterator cend() const { return const_iterator(storage + Size); }
 
     //*************************************************************************
     /// Reverse iterator to the end of the storage.
@@ -145,16 +133,12 @@ class unaligned_type_common {
     //*************************************************************************
     /// Const reverse iterator to the end of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR14 const_reverse_iterator rend() const {
-        return const_reverse_iterator(storage);
-    }
+    ETL_CONSTEXPR14 const_reverse_iterator rend() const { return const_reverse_iterator(storage); }
 
     //*************************************************************************
     /// Const reverse iterator to the end of the storage.
     //*************************************************************************
-    ETL_CONSTEXPR14 const_reverse_iterator crend() const {
-        return const_reverse_iterator(storage);
-    }
+    ETL_CONSTEXPR14 const_reverse_iterator crend() const { return const_reverse_iterator(storage); }
 
     //*************************************************************************
     /// Index operator.
@@ -175,18 +159,15 @@ class unaligned_type_common {
 /// unaligned_type
 //*************************************************************************
 template <typename T, int Endian_>
-class unaligned_type
-    : public private_unaligned_type::unaligned_type_common<sizeof(T)> {
+class unaligned_type : public private_unaligned_type::unaligned_type_common<sizeof(T)> {
    public:
-    ETL_STATIC_ASSERT(etl::is_integral<T>::value ||
-                          etl::is_floating_point<T>::value,
+    ETL_STATIC_ASSERT(etl::is_integral<T>::value || etl::is_floating_point<T>::value,
                       "Unaligned type must be integral or floating point");
 
     typedef T value_type;
 
     static ETL_CONSTANT int Endian = Endian_;
-    static ETL_CONSTANT size_t Size =
-        private_unaligned_type::unaligned_type_common<sizeof(T)>::Size;
+    static ETL_CONSTANT size_t Size = private_unaligned_type::unaligned_type_common<sizeof(T)>::Size;
 
     //*************************************************************************
     /// Default constructor
@@ -196,16 +177,13 @@ class unaligned_type
     //*************************************************************************
     /// Construct from a value.
     //*************************************************************************
-    ETL_CONSTEXPR14 unaligned_type(T value) {
-        unaligned_copy<T>::copy(value, this->storage);
-    }
+    ETL_CONSTEXPR14 unaligned_type(T value) { unaligned_copy<T>::copy(value, this->storage); }
 
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
     template <int Endian_Other>
-    ETL_CONSTEXPR14 unaligned_type(
-        const unaligned_type<T, Endian_Other>& other) {
+    ETL_CONSTEXPR14 unaligned_type(const unaligned_type<T, Endian_Other>& other) {
         unaligned_copy<T>::copy(other.data(), Endian_Other, this->storage);
     }
 
@@ -222,8 +200,7 @@ class unaligned_type
     /// Assignment operator from other endianness.
     //*************************************************************************
     template <int Endian_Other>
-    ETL_CONSTEXPR14 unaligned_type& operator=(
-        const unaligned_type<T, Endian_Other>& other) {
+    ETL_CONSTEXPR14 unaligned_type& operator=(const unaligned_type<T, Endian_Other>& other) {
         unaligned_copy<T>::copy(other.data(), Endian_Other, this->storage);
 
         return *this;
@@ -232,8 +209,7 @@ class unaligned_type
     //*************************************************************************
     /// Equality operator
     //*************************************************************************
-    friend ETL_CONSTEXPR14 bool operator==(const unaligned_type& lhs,
-                                           const unaligned_type& rhs) {
+    friend ETL_CONSTEXPR14 bool operator==(const unaligned_type& lhs, const unaligned_type& rhs) {
         return etl::equal(lhs.data(), lhs.data() + lhs.Size, rhs.data());
     }
 
@@ -256,24 +232,19 @@ class unaligned_type
     //*************************************************************************
     /// Inequality operator
     //*************************************************************************
-    friend ETL_CONSTEXPR14 bool operator!=(const unaligned_type& lhs, T rhs) {
+    friend ETL_CONSTEXPR14 bool operator!=(const unaligned_type& lhs, T rhs) { return !(lhs == rhs); }
+
+    //*************************************************************************
+    /// Inequality operator
+    //*************************************************************************
+    friend ETL_CONSTEXPR14 bool operator!=(const unaligned_type& lhs, const unaligned_type& rhs) {
         return !(lhs == rhs);
     }
 
     //*************************************************************************
     /// Inequality operator
     //*************************************************************************
-    friend ETL_CONSTEXPR14 bool operator!=(const unaligned_type& lhs,
-                                           const unaligned_type& rhs) {
-        return !(lhs == rhs);
-    }
-
-    //*************************************************************************
-    /// Inequality operator
-    //*************************************************************************
-    friend ETL_CONSTEXPR14 bool operator!=(T lhs, const unaligned_type& rhs) {
-        return !(lhs == rhs);
-    }
+    friend ETL_CONSTEXPR14 bool operator!=(T lhs, const unaligned_type& rhs) { return !(lhs == rhs); }
 
     //*************************************************************************
     /// Conversion operator
@@ -309,20 +280,13 @@ class unaligned_type
     template <typename U>
     struct unaligned_copy<U, 1U> {
         //*******************************
-        static ETL_CONSTEXPR14 void copy(T value, char* store) {
-            store[0] = static_cast<char>(value);
-        }
+        static ETL_CONSTEXPR14 void copy(T value, char* store) { store[0] = static_cast<char>(value); }
 
         //*******************************
-        static ETL_CONSTEXPR14 void copy(const char* store, T& value) {
-            value = static_cast<T>(store[0]);
-        }
+        static ETL_CONSTEXPR14 void copy(const char* store, T& value) { value = static_cast<T>(store[0]); }
 
         //*******************************
-        static ETL_CONSTEXPR14 void copy(const char* src, int /*endian_src*/,
-                                         char* dst) {
-            dst[0] = src[0];
-        }
+        static ETL_CONSTEXPR14 void copy(const char* src, int /*endian_src*/, char* dst) { dst[0] = src[0]; }
     };
 
     //*******************************************
@@ -345,18 +309,15 @@ class unaligned_type
         static ETL_CONSTEXPR14 void copy(const char* store, T& value) {
             if (Endian == etl::endianness::value()) {
                 value = static_cast<T>(static_cast<unsigned char>(store[0]));
-                value |= static_cast<T>(static_cast<unsigned char>(store[1]))
-                         << (1U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[1])) << (1U * CHAR_BIT);
             } else {
                 value = static_cast<T>(static_cast<unsigned char>(store[1]));
-                value |= static_cast<T>(static_cast<unsigned char>(store[0]))
-                         << (1U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[0])) << (1U * CHAR_BIT);
             }
         }
 
         //*******************************
-        static ETL_CONSTEXPR14 void copy(const char* src, int endian_src,
-                                         char* dst) {
+        static ETL_CONSTEXPR14 void copy(const char* src, int endian_src, char* dst) {
             if (Endian == endian_src) {
                 dst[0] = src[0];
                 dst[1] = src[1];
@@ -390,26 +351,19 @@ class unaligned_type
         static ETL_CONSTEXPR14 void copy(const char* store, T& value) {
             if (Endian == etl::endianness::value()) {
                 value = static_cast<T>(static_cast<unsigned char>(store[0]));
-                value |= static_cast<T>(static_cast<unsigned char>(store[1]))
-                         << (1U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[2]))
-                         << (2U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[3]))
-                         << (3U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[1])) << (1U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[2])) << (2U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[3])) << (3U * CHAR_BIT);
             } else {
                 value = static_cast<T>(static_cast<unsigned char>(store[3]));
-                value |= static_cast<T>(static_cast<unsigned char>(store[2]))
-                         << (1U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[1]))
-                         << (2U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[0]))
-                         << (3U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[2])) << (1U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[1])) << (2U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[0])) << (3U * CHAR_BIT);
             }
         }
 
         //*******************************
-        static ETL_CONSTEXPR14 void copy(const char* src, int endian_src,
-                                         char* dst) {
+        static ETL_CONSTEXPR14 void copy(const char* src, int endian_src, char* dst) {
             if (Endian == endian_src) {
                 dst[0] = src[0];
                 dst[1] = src[1];
@@ -455,42 +409,27 @@ class unaligned_type
         static ETL_CONSTEXPR14 void copy(const char* store, T& value) {
             if (Endian == etl::endianness::value()) {
                 value = static_cast<T>(static_cast<unsigned char>(store[0]));
-                value |= static_cast<T>(static_cast<unsigned char>(store[1]))
-                         << (1U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[2]))
-                         << (2U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[3]))
-                         << (3U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[4]))
-                         << (4U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[5]))
-                         << (5U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[6]))
-                         << (6U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[7]))
-                         << (7U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[1])) << (1U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[2])) << (2U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[3])) << (3U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[4])) << (4U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[5])) << (5U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[6])) << (6U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[7])) << (7U * CHAR_BIT);
             } else {
                 value = static_cast<T>(static_cast<unsigned char>(store[7]));
-                value |= static_cast<T>(static_cast<unsigned char>(store[6]))
-                         << (1U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[5]))
-                         << (2U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[4]))
-                         << (3U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[3]))
-                         << (4U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[2]))
-                         << (5U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[1]))
-                         << (6U * CHAR_BIT);
-                value |= static_cast<T>(static_cast<unsigned char>(store[0]))
-                         << (7U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[6])) << (1U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[5])) << (2U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[4])) << (3U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[3])) << (4U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[2])) << (5U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[1])) << (6U * CHAR_BIT);
+                value |= static_cast<T>(static_cast<unsigned char>(store[0])) << (7U * CHAR_BIT);
             }
         }
 
         //*******************************
-        static ETL_CONSTEXPR14 void copy(const char* src, int endian_src,
-                                         char* dst) {
+        static ETL_CONSTEXPR14 void copy(const char* src, int endian_src, char* dst) {
             if (Endian == endian_src) {
                 dst[0] = src[0];
                 dst[1] = src[1];
@@ -526,8 +465,7 @@ typedef unaligned_type<unsigned int, etl::endianness::value()> host_uint_t;
 typedef unaligned_type<long, etl::endianness::value()> host_long_t;
 typedef unaligned_type<unsigned long, etl::endianness::value()> host_ulong_t;
 typedef unaligned_type<long long, etl::endianness::value()> host_long_long_t;
-typedef unaligned_type<unsigned long long, etl::endianness::value()>
-    host_ulong_long_t;
+typedef unaligned_type<unsigned long long, etl::endianness::value()> host_ulong_long_t;
 #if ETL_USING_8BIT_TYPES
 typedef unaligned_type<int8_t, etl::endianness::value()> host_int8_t;
 typedef unaligned_type<uint8_t, etl::endianness::value()> host_uint8_t;
@@ -542,8 +480,7 @@ typedef unaligned_type<uint64_t, etl::endianness::value()> host_uint64_t;
 #endif
 typedef unaligned_type<float, etl::endianness::value()> host_float_t;
 typedef unaligned_type<double, etl::endianness::value()> host_double_t;
-typedef unaligned_type<long double, etl::endianness::value()>
-    host_long_double_t;
+typedef unaligned_type<long double, etl::endianness::value()> host_long_double_t;
 #endif
 
 // Little Endian

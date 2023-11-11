@@ -131,17 +131,14 @@ struct endianness {
     static etl::endian get() {
         static const uint32_t i = 0xFFFF0000;
 
-        return (*reinterpret_cast<const unsigned char*>(&i) == 0)
-                   ? etl::endian::little
-                   : etl::endian::big;
+        return (*reinterpret_cast<const unsigned char*>(&i) == 0) ? etl::endian::little : etl::endian::big;
     }
 #endif
 };
 
 //***************************************************************************
 template <typename T>
-ETL_CONSTEXPR14 typename etl::enable_if<etl::is_integral<T>::value, T>::type
-ntoh(T value) {
+ETL_CONSTEXPR14 typename etl::enable_if<etl::is_integral<T>::value, T>::type ntoh(T value) {
     if (endianness::value() == endian::little) {
         return etl::reverse_bytes(value);
     } else {
@@ -151,8 +148,7 @@ ntoh(T value) {
 
 //***************************************************************************
 template <typename T>
-ETL_CONSTEXPR14 typename etl::enable_if<etl::is_integral<T>::value, T>::type
-hton(T value) {
+ETL_CONSTEXPR14 typename etl::enable_if<etl::is_integral<T>::value, T>::type hton(T value) {
     if (endianness::value() == endian::little) {
         return etl::reverse_bytes(value);
     } else {

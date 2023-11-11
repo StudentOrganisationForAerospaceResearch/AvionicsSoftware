@@ -19,8 +19,7 @@
 #include "cmsis_os.h"
 
 /* Macros --------------------------------------------------------------------*/
-#define DEFAULT_QUEUE_SEND_WAIT_TICKS \
-    (MS_TO_TICKS(15))  // We wait a max of 15ms to send to a queue
+#define DEFAULT_QUEUE_SEND_WAIT_TICKS (MS_TO_TICKS(15))  // We wait a max of 15ms to send to a queue
 
 /* Constants -----------------------------------------------------------------*/
 //constexpr uint16_t MAX_TICKS_TO_WAIT_SEND = MS_TO_TICKS(1000);
@@ -43,9 +42,7 @@ class Queue {
     bool ReceiveWait(Command& cm);  //Blocks until a command is received
 
     //Getters
-    uint16_t GetQueueMessageCount() const {
-        return uxQueueMessagesWaiting(rtQueueHandle);
-    }
+    uint16_t GetQueueMessageCount() const { return uxQueueMessagesWaiting(rtQueueHandle); }
     uint16_t GetQueueDepth() const { return queueDepth; }
 
    protected:

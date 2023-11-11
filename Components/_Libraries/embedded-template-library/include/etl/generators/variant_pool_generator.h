@@ -201,8 +201,7 @@ namespace etl {
     //*************************************************************************
     /// Creates the object. Four parameter constructor.
     //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3,
-              typename TP4>
+    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
     T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
         /*[[[cog
       import cog
@@ -315,8 +314,7 @@ namespace etl {
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    variant_pool_ext(typename base_t::element * buffer, size_t size)
-        : base_t(buffer, size) {}
+    variant_pool_ext(typename base_t::element * buffer, size_t size) : base_t(buffer, size) {}
 
 #if ETL_CPP11_NOT_SUPPORTED || ETL_USING_STLPORT
     //*************************************************************************
@@ -402,8 +400,7 @@ namespace etl {
     //*************************************************************************
     /// Creates the object. Four parameter constructor.
     //*************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3,
-              typename TP4>
+    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
     T* create(const TP1& p1, const TP2& p2, const TP3& p3, const TP4& p4) {
         /*[[[cog
       import cog

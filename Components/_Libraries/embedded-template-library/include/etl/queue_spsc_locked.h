@@ -53,9 +53,7 @@ class iqueue_spsc_locked_base {
     //*************************************************************************
     /// How much free space available in the queue.
     //*************************************************************************
-    size_type available_from_unlocked() const {
-        return available_implementation();
-    }
+    size_type available_from_unlocked() const { return available_implementation(); }
 
     //*************************************************************************
     /// Is the queue full?
@@ -109,9 +107,7 @@ class iqueue_spsc_locked_base {
     //*************************************************************************
     /// How much free space available in the queue.
     //*************************************************************************
-    size_type available_implementation() const {
-        return MAX_SIZE - current_size;
-    }
+    size_type available_implementation() const { return MAX_SIZE - current_size; }
 
     //*************************************************************************
     /// Is the queue full?
@@ -131,8 +127,7 @@ class iqueue_spsc_locked_base {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_SPSC_QUEUE_ISR) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_SPSC_QUEUE_ISR) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual ~iqueue_spsc_locked_base() {}
 #else
@@ -148,23 +143,19 @@ class iqueue_spsc_locked_base {
 /// This queue supports concurrent access by one producer and one consumer.
 /// \tparam T The type of value that the queue_spsc_locked holds.
 //***************************************************************************
-template <typename T,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
    private:
     typedef iqueue_spsc_locked_base<MEMORY_MODEL> base_t;
 
    public:
-    typedef T value_type;  ///< The type stored in the queue.
-    typedef T& reference;  ///< A reference to the type used in the queue.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the queue.
+    typedef T value_type;              ///< The type stored in the queue.
+    typedef T& reference;              ///< A reference to the type used in the queue.
+    typedef const T& const_reference;  ///< A const reference to the type used in the queue.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue reference to the type used in the queue.
+    typedef T&& rvalue_reference;  ///< An rvalue reference to the type used in the queue.
 #endif
-    typedef typename base_t::size_type
-        size_type;  ///< The type used for determining the size of the queue.
+    typedef typename base_t::size_type size_type;  ///< The type used for determining the size of the queue.
 
     //*************************************************************************
     /// Push a value to the queue.
@@ -186,8 +177,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
         return result;
     }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Push a value to the queue.
     /// Unlocked.
@@ -211,8 +201,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     /// Unlocked.
@@ -260,8 +249,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    bool emplace_from_unlocked(const T1& value1, const T2& value2,
-                               const T3& value3) {
+    bool emplace_from_unlocked(const T1& value1, const T2& value2, const T3& value3) {
         return emplace_implementation(value1, value2, value3);
     }
 
@@ -270,8 +258,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace_from_unlocked(const T1& value1, const T2& value2,
-                               const T3& value3, const T4& value4) {
+    bool emplace_from_unlocked(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         return emplace_implementation(value1, value2, value3, value4);
     }
 
@@ -325,8 +312,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    bool emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         lock();
 
         bool result = emplace_implementation(value1, value2, value3, value4);
@@ -500,13 +486,9 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    iqueue_spsc_locked(T* p_buffer_, size_type max_size_,
-                       const etl::ifunction<void>& lock_,
+    iqueue_spsc_locked(T* p_buffer_, size_type max_size_, const etl::ifunction<void>& lock_,
                        const etl::ifunction<void>& unlock_)
-        : base_t(max_size_),
-          p_buffer(p_buffer_),
-          lock(lock_),
-          unlock(unlock_) {}
+        : base_t(max_size_), p_buffer(p_buffer_), lock(lock_), unlock(unlock_) {}
 
    private:
     //*************************************************************************
@@ -516,8 +498,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
         if (this->current_size != this->MAX_SIZE) {
             ::new (&p_buffer[this->write_index]) T(value);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->MAX_SIZE);
+            this->write_index = this->get_next_index(this->write_index, this->MAX_SIZE);
 
             ++this->current_size;
 
@@ -528,8 +509,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
         return false;
     }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Push a value to the queue.
     /// Unlocked.
@@ -538,8 +518,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
         if (this->current_size != this->MAX_SIZE) {
             ::new (&p_buffer[this->write_index]) T(etl::move(value));
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->MAX_SIZE);
+            this->write_index = this->get_next_index(this->write_index, this->MAX_SIZE);
 
             ++this->current_size;
 
@@ -551,8 +530,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKED_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     /// Unlocked.
@@ -562,8 +540,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
         if (this->current_size != this->MAX_SIZE) {
             ::new (&p_buffer[this->write_index]) T(etl::forward<Args>(args)...);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->MAX_SIZE);
+            this->write_index = this->get_next_index(this->write_index, this->MAX_SIZE);
 
             ++this->current_size;
 
@@ -582,8 +559,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
         if (this->current_size != this->MAX_SIZE) {
             ::new (&p_buffer[this->write_index]) T(value1);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->MAX_SIZE);
+            this->write_index = this->get_next_index(this->write_index, this->MAX_SIZE);
 
             ++this->current_size;
 
@@ -602,8 +578,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
         if (this->current_size != this->MAX_SIZE) {
             ::new (&p_buffer[this->write_index]) T(value1, value2);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->MAX_SIZE);
+            this->write_index = this->get_next_index(this->write_index, this->MAX_SIZE);
 
             ++this->current_size;
 
@@ -618,13 +593,11 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3) {
         if (this->current_size != this->MAX_SIZE) {
             ::new (&p_buffer[this->write_index]) T(value1, value2, value3);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->MAX_SIZE);
+            this->write_index = this->get_next_index(this->write_index, this->MAX_SIZE);
 
             ++this->current_size;
 
@@ -639,14 +612,11 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3, const T4& value4) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         if (this->current_size != this->MAX_SIZE) {
-            ::new (&p_buffer[this->write_index])
-                T(value1, value2, value3, value4);
+            ::new (&p_buffer[this->write_index]) T(value1, value2, value3, value4);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->MAX_SIZE);
+            this->write_index = this->get_next_index(this->write_index, this->MAX_SIZE);
 
             ++this->current_size;
 
@@ -668,8 +638,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
             return false;
         }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
         value = etl::move(p_buffer[this->read_index]);
 #else
         value = p_buffer[this->read_index];
@@ -677,8 +646,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
 
         p_buffer[this->read_index].~T();
 
-        this->read_index =
-            this->get_next_index(this->read_index, this->MAX_SIZE);
+        this->read_index = this->get_next_index(this->read_index, this->MAX_SIZE);
 
         --this->current_size;
 
@@ -713,8 +681,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
 
         p_buffer[this->read_index].~T();
 
-        this->read_index =
-            this->get_next_index(this->read_index, this->MAX_SIZE);
+        this->read_index = this->get_next_index(this->read_index, this->MAX_SIZE);
 
         --this->current_size;
 
@@ -732,9 +699,8 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
 
     T* p_buffer;  ///< The internal buffer.
 
-    const etl::ifunction<void>& lock;  ///< The callback that locks interrupts.
-    const etl::ifunction<void>&
-        unlock;  ///< The callback that unlocks interrupts.
+    const etl::ifunction<void>& lock;    ///< The callback that locks interrupts.
+    const etl::ifunction<void>& unlock;  ///< The callback that unlocks interrupts.
 };
 
 //***************************************************************************
@@ -745,8 +711,7 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
 /// \tparam SIZE         The maximum capacity of the queue.
 /// \tparam MEMORY_MODEL The memory model for the queue. Determines the type of the internal counter variables.
 //***************************************************************************
-template <typename T, size_t SIZE,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, size_t SIZE, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class queue_spsc_locked : public etl::iqueue_spsc_locked<T, MEMORY_MODEL> {
    private:
     typedef etl::iqueue_spsc_locked<T, MEMORY_MODEL> base_t;
@@ -754,8 +719,7 @@ class queue_spsc_locked : public etl::iqueue_spsc_locked<T, MEMORY_MODEL> {
    public:
     typedef typename base_t::size_type size_type;
 
-    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max),
-                      "Size too large for memory model");
+    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max), "Size too large for memory model");
 
     static ETL_CONSTANT size_type MAX_SIZE = size_type(SIZE);
 
@@ -763,8 +727,7 @@ class queue_spsc_locked : public etl::iqueue_spsc_locked<T, MEMORY_MODEL> {
     /// Default constructor.
     //*************************************************************************
 
-    queue_spsc_locked(const etl::ifunction<void>& lock,
-                      const etl::ifunction<void>& unlock)
+    queue_spsc_locked(const etl::ifunction<void>& lock, const etl::ifunction<void>& unlock)
         : base_t(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, lock, unlock) {}
 
     //*************************************************************************

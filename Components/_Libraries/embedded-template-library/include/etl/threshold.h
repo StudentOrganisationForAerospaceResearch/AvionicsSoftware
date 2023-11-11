@@ -48,19 +48,13 @@ class threshold : public etl::unary_function<TInput, TInput> {
     //*****************************************************************
     // Constructor.
     //*****************************************************************
-    threshold(TInput threshold_value_, TInput true_value_, TInput false_value_,
-              TCompare compare_ = TCompare())
-        : threshold_value(threshold_value_),
-          true_value(true_value_),
-          false_value(false_value_),
-          compare(compare_) {}
+    threshold(TInput threshold_value_, TInput true_value_, TInput false_value_, TCompare compare_ = TCompare())
+        : threshold_value(threshold_value_), true_value(true_value_), false_value(false_value_), compare(compare_) {}
 
     //*****************************************************************
     // operator ()
     //*****************************************************************
-    TInput operator()(TInput value) const {
-        return compare(value, threshold_value) ? true_value : false_value;
-    }
+    TInput operator()(TInput value) const { return compare(value, threshold_value) ? true_value : false_value; }
 
    private:
     const TInput threshold_value;

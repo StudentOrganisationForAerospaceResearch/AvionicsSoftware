@@ -15,10 +15,8 @@
 #include "SimpleDualSectorStorage.hpp"
 
 // Macros/Constexprs ---------------------------------------------------------------------
-constexpr uint16_t SSDSS_READ_WRITE_MUTEX_TIMEOUT_MS =
-    1000;  // Waits up to 1 second for the mutex to be available
-constexpr uint16_t SSDSS_MAINTAIN_MUTEX_TIMEOUT_MS =
-    0;  // Does not wait for the mutex to be available
+constexpr uint16_t SSDSS_READ_WRITE_MUTEX_TIMEOUT_MS = 1000;  // Waits up to 1 second for the mutex to be available
+constexpr uint16_t SSDSS_MAINTAIN_MUTEX_TIMEOUT_MS = 0;       // Does not wait for the mutex to be available
 
 // Class ---------------------------------------------------------------------
 /**
@@ -48,8 +46,7 @@ class SafeSimpleDualSectorStorage : private SimpleDualSectorStorage<T> {
 };
 
 template <typename T>
-SafeSimpleDualSectorStorage<T>::SafeSimpleDualSectorStorage(Flash* flashDriver,
-                                                            uint32_t startAddr)
+SafeSimpleDualSectorStorage<T>::SafeSimpleDualSectorStorage(Flash* flashDriver, uint32_t startAddr)
     : SimpleDualSectorStorage<T>(flashDriver, startAddr) {}
 
 /**

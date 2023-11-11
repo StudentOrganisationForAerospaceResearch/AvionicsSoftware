@@ -65,8 +65,7 @@ namespace etl {
 //***************************************************************************
 class unordered_multimap_exception : public etl::exception {
    public:
-    unordered_multimap_exception(string_type reason_, string_type file_name_,
-                                 numeric_type line_number_)
+    unordered_multimap_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
@@ -78,24 +77,20 @@ class unordered_multimap_full : public etl::unordered_multimap_exception {
    public:
     unordered_multimap_full(string_type file_name_, numeric_type line_number_)
         : etl::unordered_multimap_exception(
-              ETL_ERROR_TEXT("unordered_multimap:full",
-                             ETL_UNORDERED_MULTIMAP_FILE_ID "A"),
-              file_name_, line_number_) {}
+              ETL_ERROR_TEXT("unordered_multimap:full", ETL_UNORDERED_MULTIMAP_FILE_ID "A"), file_name_, line_number_) {
+    }
 };
 
 //***************************************************************************
 /// Out of range exception for the unordered_multimap.
 ///\ingroup unordered_multimap
 //***************************************************************************
-class unordered_multimap_out_of_range
-    : public etl::unordered_multimap_exception {
+class unordered_multimap_out_of_range : public etl::unordered_multimap_exception {
    public:
-    unordered_multimap_out_of_range(string_type file_name_,
-                                    numeric_type line_number_)
+    unordered_multimap_out_of_range(string_type file_name_, numeric_type line_number_)
         : etl::unordered_multimap_exception(
-              ETL_ERROR_TEXT("unordered_multimap:range",
-                             ETL_UNORDERED_MULTIMAP_FILE_ID "B"),
-              file_name_, line_number_) {}
+              ETL_ERROR_TEXT("unordered_multimap:range", ETL_UNORDERED_MULTIMAP_FILE_ID "B"), file_name_,
+              line_number_) {}
 };
 
 //***************************************************************************
@@ -104,12 +99,10 @@ class unordered_multimap_out_of_range
 //***************************************************************************
 class unordered_multimap_iterator : public etl::unordered_multimap_exception {
    public:
-    unordered_multimap_iterator(string_type file_name_,
-                                numeric_type line_number_)
+    unordered_multimap_iterator(string_type file_name_, numeric_type line_number_)
         : etl::unordered_multimap_exception(
-              ETL_ERROR_TEXT("unordered_multimap:iterator",
-                             ETL_UNORDERED_MULTIMAP_FILE_ID "C"),
-              file_name_, line_number_) {}
+              ETL_ERROR_TEXT("unordered_multimap:iterator", ETL_UNORDERED_MULTIMAP_FILE_ID "C"), file_name_,
+              line_number_) {}
 };
 
 //***************************************************************************
@@ -117,8 +110,7 @@ class unordered_multimap_iterator : public etl::unordered_multimap_exception {
 /// Can be used as a reference type for all unordered_multimap containing a specific type.
 ///\ingroup unordered_multimap
 //***************************************************************************
-template <typename TKey, typename T, typename THash = etl::hash<TKey>,
-          typename TKeyEqual = etl::equal_to<TKey>>
+template <typename TKey, typename T, typename THash = etl::hash<TKey>, typename TKeyEqual = etl::equal_to<TKey>>
 class iunordered_multimap {
    public:
     typedef ETL_OR_STD::pair<const TKey, T> value_type;
@@ -143,8 +135,7 @@ class iunordered_multimap {
     //*********************************************************************
     // The nodes that store the elements.
     struct node_t : public link_t {
-        node_t(const_reference key_value_pair_)
-            : key_value_pair(key_value_pair_) {}
+        node_t(const_reference key_value_pair_) : key_value_pair(key_value_pair_) {}
 
         value_type key_value_pair;
     };
@@ -170,8 +161,7 @@ class iunordered_multimap {
     //*********************************************************************
     class iterator : public etl::iterator<ETL_OR_STD::forward_iterator_tag, T> {
        public:
-        typedef typename etl::iterator<ETL_OR_STD::forward_iterator_tag,
-                                       T>::value_type value_type;
+        typedef typename etl::iterator<ETL_OR_STD::forward_iterator_tag, T>::value_type value_type;
         typedef typename iunordered_multimap::key_type key_type;
         typedef typename iunordered_multimap::mapped_type mapped_type;
         typedef typename iunordered_multimap::hasher hasher;
@@ -190,9 +180,7 @@ class iunordered_multimap {
 
         //*********************************
         iterator(const iterator& other)
-            : pbuckets_end(other.pbuckets_end),
-              pbucket(other.pbucket),
-              inode(other.inode) {}
+            : pbuckets_end(other.pbuckets_end), pbucket(other.pbucket), inode(other.inode) {}
 
         //*********************************
         iterator& operator++() {
@@ -240,19 +228,14 @@ class iunordered_multimap {
         pointer operator->() const { return &(inode->key_value_pair); }
 
         //*********************************
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return lhs.compare(rhs);
-        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.compare(rhs); }
 
         //*********************************
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         //*********************************
-        iterator(bucket_t* pbuckets_end_, bucket_t* pbucket_,
-                 local_iterator inode_)
+        iterator(bucket_t* pbuckets_end_, bucket_t* pbucket_, local_iterator inode_)
             : pbuckets_end(pbuckets_end_), pbucket(pbucket_), inode(inode_) {}
 
         //*********************************
@@ -273,11 +256,9 @@ class iunordered_multimap {
     };
 
     //*********************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::forward_iterator_tag, const T> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::forward_iterator_tag, const T> {
        public:
-        typedef typename etl::iterator<ETL_OR_STD::forward_iterator_tag,
-                                       const T>::value_type value_type;
+        typedef typename etl::iterator<ETL_OR_STD::forward_iterator_tag, const T>::value_type value_type;
         typedef typename iunordered_multimap::key_type key_type;
         typedef typename iunordered_multimap::mapped_type mapped_type;
         typedef typename iunordered_multimap::hasher hasher;
@@ -296,15 +277,11 @@ class iunordered_multimap {
 
         //*********************************
         const_iterator(const typename iunordered_multimap::iterator& other)
-            : pbuckets_end(other.pbuckets_end),
-              pbucket(other.pbucket),
-              inode(other.inode) {}
+            : pbuckets_end(other.pbuckets_end), pbucket(other.pbucket), inode(other.inode) {}
 
         //*********************************
         const_iterator(const const_iterator& other)
-            : pbuckets_end(other.pbuckets_end),
-              pbucket(other.pbucket),
-              inode(other.inode) {}
+            : pbuckets_end(other.pbuckets_end), pbucket(other.pbucket), inode(other.inode) {}
 
         //*********************************
         const_iterator& operator++() {
@@ -353,27 +330,18 @@ class iunordered_multimap {
         const_pointer operator->() const { return &(inode->key_value_pair); }
 
         //*********************************
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return lhs.compare(rhs);
-        }
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) { return lhs.compare(rhs); }
 
         //*********************************
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         //*********************************
-        const_iterator(bucket_t* pbuckets_end_, bucket_t* pbucket_,
-                       local_iterator inode_)
+        const_iterator(bucket_t* pbuckets_end_, bucket_t* pbucket_, local_iterator inode_)
             : pbuckets_end(pbuckets_end_), pbucket(pbucket_), inode(inode_) {}
 
         //*********************************
-        bool compare(const const_iterator& rhs) const {
-            return rhs.inode == inode;
-        }
+        bool compare(const const_iterator& rhs) const { return rhs.inode == inode; }
 
         //*********************************
         bucket_t& get_bucket() { return *pbucket; }
@@ -389,8 +357,7 @@ class iunordered_multimap {
         local_iterator inode;
     };
 
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
     //*********************************************************************
     /// Returns an iterator to the beginning of the unordered_multimap.
@@ -405,8 +372,7 @@ class iunordered_multimap {
     ///\return A const iterator to the beginning of the unordered_multimap.
     //*********************************************************************
     const_iterator begin() const {
-        return const_iterator((pbuckets + number_of_buckets), first,
-                              first->begin());
+        return const_iterator((pbuckets + number_of_buckets), first, first->begin());
     }
 
     //*********************************************************************
@@ -414,8 +380,7 @@ class iunordered_multimap {
     ///\return A const iterator to the beginning of the unordered_multimap.
     //*********************************************************************
     const_iterator cbegin() const {
-        return const_iterator((pbuckets + number_of_buckets), first,
-                              first->begin());
+        return const_iterator((pbuckets + number_of_buckets), first, first->begin());
     }
 
     //*********************************************************************
@@ -455,8 +420,7 @@ class iunordered_multimap {
     ///\return A const iterator to the end of the unordered_multimap.
     //*********************************************************************
     const_iterator end() const {
-        return const_iterator((pbuckets + number_of_buckets), last,
-                              last->end());
+        return const_iterator((pbuckets + number_of_buckets), last, last->end());
     }
 
     //*********************************************************************
@@ -464,8 +428,7 @@ class iunordered_multimap {
     ///\return A const iterator to the end of the unordered_multimap.
     //*********************************************************************
     const_iterator cend() const {
-        return const_iterator((pbuckets + number_of_buckets), last,
-                              last->end());
+        return const_iterator((pbuckets + number_of_buckets), last, last->end());
     }
 
     //*********************************************************************
@@ -579,8 +542,7 @@ class iunordered_multimap {
             bucket.insert_after(bucket.before_begin(), node);
             adjust_first_last_markers_after_insert(pbucket);
 
-            result = iterator((pbuckets + number_of_buckets), pbucket,
-                              pbucket->begin());
+            result = iterator((pbuckets + number_of_buckets), pbucket, pbucket->begin());
         } else {
             // Step though the bucket looking for a place to insert.
             local_iterator inode_previous = bucket.before_begin();
@@ -606,8 +568,7 @@ class iunordered_multimap {
             adjust_first_last_markers_after_insert(&bucket);
             ++inode_previous;
 
-            result = iterator((pbuckets + number_of_buckets), pbucket,
-                              inode_previous);
+            result = iterator((pbuckets + number_of_buckets), pbucket, inode_previous);
         }
 
         return result;
@@ -644,8 +605,7 @@ class iunordered_multimap {
             bucket.insert_after(bucket.before_begin(), node);
             adjust_first_last_markers_after_insert(pbucket);
 
-            result = iterator((pbuckets + number_of_buckets), pbucket,
-                              pbucket->begin());
+            result = iterator((pbuckets + number_of_buckets), pbucket, pbucket->begin());
         } else {
             // Step though the bucket looking for a place to insert.
             local_iterator inode_previous = bucket.before_begin();
@@ -671,8 +631,7 @@ class iunordered_multimap {
             adjust_first_last_markers_after_insert(&bucket);
             ++inode_previous;
 
-            result = iterator((pbuckets + number_of_buckets), pbucket,
-                              inode_previous);
+            result = iterator((pbuckets + number_of_buckets), pbucket, inode_previous);
         }
 
         return result;
@@ -732,9 +691,9 @@ class iunordered_multimap {
 
         while (icurrent != bucket.end()) {
             if (key_equal_function(icurrent->key_value_pair.first, key)) {
-                bucket.erase_after(iprevious);  // Unlink from the bucket.
+                bucket.erase_after(iprevious);           // Unlink from the bucket.
                 icurrent->key_value_pair.~value_type();  // Destroy the value.
-                pnodepool->release(&*icurrent);  // Release it back to the pool.
+                pnodepool->release(&*icurrent);          // Release it back to the pool.
                 adjust_first_last_markers_after_erase(&bucket);
                 ++n;
                 icurrent = iprevious;
@@ -755,8 +714,7 @@ class iunordered_multimap {
     //*********************************************************************
     iterator erase(const_iterator ielement) {
         // Make a note of the next one.
-        iterator inext((pbuckets + number_of_buckets),
-                       ielement.get_bucket_list_iterator(),
+        iterator inext((pbuckets + number_of_buckets), ielement.get_bucket_list_iterator(),
                        ielement.get_local_iterator());
         ++inext;
 
@@ -793,18 +751,14 @@ class iunordered_multimap {
         }
 
         // Make a note of the last.
-        iterator result((pbuckets + number_of_buckets),
-                        last_.get_bucket_list_iterator(),
-                        last_.get_local_iterator());
+        iterator result((pbuckets + number_of_buckets), last_.get_bucket_list_iterator(), last_.get_local_iterator());
 
         // Get the starting point.
         bucket_t* pbucket = first_.get_bucket_list_iterator();
         bucket_t* pend_bucket = last_.get_bucket_list_iterator();
         local_iterator iprevious = pbucket->before_begin();
         local_iterator icurrent = first_.get_local_iterator();
-        local_iterator iend =
-            last_
-                .get_local_iterator();  // Note: May not be in the same bucket as icurrent.
+        local_iterator iend = last_.get_local_iterator();  // Note: May not be in the same bucket as icurrent.
 
         // Find the node previous to the first one.
         while (iprevious->etl_next != &*icurrent) {
@@ -814,10 +768,9 @@ class iunordered_multimap {
         // Until we reach the end.
         while ((icurrent != iend) || (pbucket != pend_bucket)) {
 
-            local_iterator inext =
-                pbucket->erase_after(iprevious);     // Unlink from the bucket.
-            icurrent->key_value_pair.~value_type();  // Destroy the value.
-            pnodepool->release(&*icurrent);  // Release it back to the pool.
+            local_iterator inext = pbucket->erase_after(iprevious);  // Unlink from the bucket.
+            icurrent->key_value_pair.~value_type();                  // Destroy the value.
+            pnodepool->release(&*icurrent);                          // Release it back to the pool.
             adjust_first_last_markers_after_erase(pbucket);
             ETL_DECREMENT_DEBUG_COUNT
 
@@ -891,8 +844,7 @@ class iunordered_multimap {
             while (inode != iend) {
                 // Do we have this one?
                 if (key_equal_function(key, inode->key_value_pair.first)) {
-                    return iterator((pbuckets + number_of_buckets), pbucket,
-                                    inode);
+                    return iterator((pbuckets + number_of_buckets), pbucket, inode);
                 }
 
                 ++inode;
@@ -922,8 +874,7 @@ class iunordered_multimap {
             while (inode != iend) {
                 // Do we have this one?
                 if (key_equal_function(key, inode->key_value_pair.first)) {
-                    return const_iterator((pbuckets + number_of_buckets),
-                                          pbucket, inode);
+                    return const_iterator((pbuckets + number_of_buckets), pbucket, inode);
                 }
 
                 ++inode;
@@ -964,8 +915,7 @@ class iunordered_multimap {
     ///\param key The key to search for.
     ///\return A const iterator pair to the range of elements if the key exists, otherwise end().
     //*********************************************************************
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
         const_iterator f = find(key);
         const_iterator l = f;
 
@@ -1082,8 +1032,7 @@ class iunordered_multimap {
     //*********************************************************************
     /// Constructor.
     //*********************************************************************
-    iunordered_multimap(pool_t& node_pool_, bucket_t* pbuckets_,
-                        size_t number_of_buckets_, hasher key_hash_function_,
+    iunordered_multimap(pool_t& node_pool_, bucket_t* pbuckets_, size_t number_of_buckets_, hasher key_hash_function_,
                         key_equal key_equal_function_)
         : pnodepool(&node_pool_),
           pbuckets(pbuckets_),
@@ -1224,8 +1173,7 @@ class iunordered_multimap {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_UNORDERED_MULTIMAP) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_UNORDERED_MULTIMAP) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual ~iunordered_multimap() {}
 #else
@@ -1242,9 +1190,8 @@ class iunordered_multimap {
 ///\ingroup unordered_multimap
 //***************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator==(
-    const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& lhs,
-    const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& rhs) {
+bool operator==(const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& lhs,
+                const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& rhs) {
     const bool sizes_match = (lhs.size() == rhs.size());
     bool elements_match = true;
 
@@ -1267,21 +1214,17 @@ bool operator==(
 ///\ingroup unordered_multimap
 //***************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator!=(
-    const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& lhs,
-    const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& rhs) {
+bool operator!=(const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& lhs,
+                const etl::iunordered_multimap<TKey, TMapped, TKeyCompare>& rhs) {
     return !(lhs == rhs);
 }
 
 //*************************************************************************
 /// A templated unordered_multimap implementation that uses a fixed size buffer.
 //*************************************************************************
-template <typename TKey, typename TValue, const size_t MAX_SIZE_,
-          const size_t MAX_BUCKETS_ = MAX_SIZE_,
-          typename THash = etl::hash<TKey>,
-          typename TKeyEqual = etl::equal_to<TKey>>
-class unordered_multimap
-    : public etl::iunordered_multimap<TKey, TValue, THash, TKeyEqual> {
+template <typename TKey, typename TValue, const size_t MAX_SIZE_, const size_t MAX_BUCKETS_ = MAX_SIZE_,
+          typename THash = etl::hash<TKey>, typename TKeyEqual = etl::equal_to<TKey>>
+class unordered_multimap : public etl::iunordered_multimap<TKey, TValue, THash, TKeyEqual> {
    private:
     typedef etl::iunordered_multimap<TKey, TValue, THash, TKeyEqual> base;
 
@@ -1292,16 +1235,14 @@ class unordered_multimap
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    unordered_multimap(const THash& hash = THash(),
-                       const TKeyEqual& equal = TKeyEqual())
+    unordered_multimap(const THash& hash = THash(), const TKeyEqual& equal = TKeyEqual())
         : base(node_pool, buckets, MAX_BUCKETS, hash, equal) {}
 
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
     unordered_multimap(const unordered_multimap& other)
-        : base(node_pool, buckets, MAX_BUCKETS, other.hash_function(),
-               other.key_eq()) {
+        : base(node_pool, buckets, MAX_BUCKETS, other.hash_function(), other.key_eq()) {
         // Skip if doing self assignment
         if (this != &other) {
             base::assign(other.cbegin(), other.cend());
@@ -1313,8 +1254,7 @@ class unordered_multimap
     /// Move constructor.
     //*************************************************************************
     unordered_multimap(unordered_multimap&& other)
-        : base(node_pool, buckets, MAX_BUCKETS, other.hash_function(),
-               other.key_eq()) {
+        : base(node_pool, buckets, MAX_BUCKETS, other.hash_function(), other.key_eq()) {
         // Skip if doing self assignment
         if (this != &other) {
             base::move(other.begin(), other.end());
@@ -1329,8 +1269,7 @@ class unordered_multimap
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    unordered_multimap(TIterator first_, TIterator last_,
-                       const THash& hash = THash(),
+    unordered_multimap(TIterator first_, TIterator last_, const THash& hash = THash(),
                        const TKeyEqual& equal = TKeyEqual())
         : base(node_pool, buckets, MAX_BUCKETS, hash, equal) {
         base::assign(first_, last_);
@@ -1340,9 +1279,8 @@ class unordered_multimap
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    unordered_multimap(
-        std::initializer_list<ETL_OR_STD::pair<TKey, TValue>> init,
-        const THash& hash = THash(), const TKeyEqual& equal = TKeyEqual())
+    unordered_multimap(std::initializer_list<ETL_OR_STD::pair<TKey, TValue>> init, const THash& hash = THash(),
+                       const TKeyEqual& equal = TKeyEqual())
         : base(node_pool, buckets, MAX_BUCKETS_, hash, equal) {
         base::assign(init.begin(), init.end());
     }
@@ -1390,19 +1328,17 @@ class unordered_multimap
 template <typename... TPairs>
 unordered_multimap(TPairs...)
     -> unordered_multimap<typename etl::nth_type_t<0, TPairs...>::first_type,
-                          typename etl::nth_type_t<0, TPairs...>::second_type,
-                          sizeof...(TPairs)>;
+                          typename etl::nth_type_t<0, TPairs...>::second_type, sizeof...(TPairs)>;
 #endif
 
 //*************************************************************************
 /// Make
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
-template <typename TKey, typename T, typename THash = etl::hash<TKey>,
-          typename TKeyEqual = etl::equal_to<TKey>, typename... TPairs>
+template <typename TKey, typename T, typename THash = etl::hash<TKey>, typename TKeyEqual = etl::equal_to<TKey>,
+          typename... TPairs>
 constexpr auto make_unordered_multimap(TPairs&&... pairs)
-    -> etl::unordered_multimap<TKey, T, sizeof...(TPairs), sizeof...(TPairs),
-                               THash, TKeyEqual> {
+    -> etl::unordered_multimap<TKey, T, sizeof...(TPairs), sizeof...(TPairs), THash, TKeyEqual> {
     return {{etl::forward<TPairs>(pairs)...}};
 }
 #endif

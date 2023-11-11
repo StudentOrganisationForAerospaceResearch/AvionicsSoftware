@@ -34,7 +34,7 @@ enum GPS_REQUEST_COMMANDS {
     GPS_NONE = 0,
     GPS_REQUEST_SAMPLE_INVALID,  // Get a new GPS sample (does nothing for GPS)
     GPS_REQUEST_TRANSMIT,        // Send the current GPS data over the Radio
-    GPS_REQUEST_DEBUG,  // Send the current GPS data over the Debug UART
+    GPS_REQUEST_DEBUG,           // Send the current GPS data over the Debug UART
     GPS_REQUEST_FLASH_LOG,
 };
 

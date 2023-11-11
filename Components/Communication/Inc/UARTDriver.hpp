@@ -51,8 +51,7 @@ class UARTReceiverBase {
  */
 class UARTDriver {
    public:
-    UARTDriver(USART_TypeDef* uartInstance)
-        : kUart_(uartInstance), rxCharBuf_(nullptr), rxReceiver_(nullptr) {}
+    UARTDriver(USART_TypeDef* uartInstance) : kUart_(uartInstance), rxCharBuf_(nullptr), rxReceiver_(nullptr) {}
 
     // Polling Functions
     bool Transmit(uint8_t* data, uint16_t len);
@@ -72,8 +71,7 @@ class UARTDriver {
     USART_TypeDef* kUart_;  // Stores the UART instance
 
     // Variables
-    uint8_t*
-        rxCharBuf_;  // Stores a pointer to the buffer to store the received data
+    uint8_t* rxCharBuf_;            // Stores a pointer to the buffer to store the received data
     UARTReceiverBase* rxReceiver_;  // Stores a pointer to the receiver object
 };
 

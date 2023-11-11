@@ -63,9 +63,7 @@ class bresenham_line {
     //***************************************************
     /// Const Iterator
     //***************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::forward_iterator_tag,
-                               const value_type> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::forward_iterator_tag, const value_type> {
        public:
         friend class bresenham_line;
 
@@ -77,8 +75,7 @@ class bresenham_line {
         //***************************************************
         /// Copy constructor
         //***************************************************
-        const_iterator(const const_iterator& other)
-            : p_bresenham_line(other.p_bresenham_line) {}
+        const_iterator(const const_iterator& other) : p_bresenham_line(other.p_bresenham_line) {}
 
         //***************************************************
         /// Assignment operator
@@ -94,8 +91,7 @@ class bresenham_line {
         //***************************************************
         const_iterator& operator++() {
             // Has the end of the series has been reached?
-            if (p_bresenham_line->get_coordinate() ==
-                p_bresenham_line->back()) {
+            if (p_bresenham_line->get_coordinate() == p_bresenham_line->back()) {
                 // Mark it as an end iterator.
                 p_bresenham_line = ETL_NULLPTR;
             } else {
@@ -108,25 +104,19 @@ class bresenham_line {
         //***************************************************
         /// De-reference operator
         //***************************************************
-        value_type operator*() const {
-            return p_bresenham_line->get_coordinate();
-        }
+        value_type operator*() const { return p_bresenham_line->get_coordinate(); }
 
         //***************************************************
         /// Equality operator
         //***************************************************
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.p_bresenham_line == rhs.p_bresenham_line;
         }
 
         //***************************************************
         /// Inequality operator
         //***************************************************
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         //***************************************************
@@ -154,9 +144,7 @@ class bresenham_line {
     /// Constructor.
     /// Supplied first and last coordinates
     //***************************************************
-    bresenham_line(T first_x, T first_y, T last_x, T last_y) {
-        initialise(first_x, first_y, last_x, last_y);
-    }
+    bresenham_line(T first_x, T first_y, T last_x, T last_y) { initialise(first_x, first_y, last_x, last_y); }
 
     //***************************************************
     /// Resets the line.
@@ -170,9 +158,7 @@ class bresenham_line {
     /// Resets the line.
     /// Supplied first and last coordinates
     //***************************************************
-    void reset(T first_x, T first_y, T last_x, T last_y) {
-        initialise(first_x, first_y, last_x, last_y);
-    }
+    void reset(T first_x, T first_y, T last_x, T last_y) { initialise(first_x, first_y, last_x, last_y); }
 
     //***************************************************
     /// Get a const_iterator to the first coordinate.
@@ -213,18 +199,14 @@ class bresenham_line {
     //***************************************************
     /// Equality operator
     //***************************************************
-    friend bool operator==(const bresenham_line& lhs,
-                           const bresenham_line& rhs) {
+    friend bool operator==(const bresenham_line& lhs, const bresenham_line& rhs) {
         return (lhs.front() == rhs.front()) && (lhs.back() == rhs.back());
     }
 
     //***************************************************
     /// Inequality operator
     //***************************************************
-    friend bool operator!=(const bresenham_line& lhs,
-                           const bresenham_line& rhs) {
-        return !(lhs == rhs);
-    }
+    friend bool operator!=(const bresenham_line& lhs, const bresenham_line& rhs) { return !(lhs == rhs); }
 
    private:
     //***************************************************

@@ -39,8 +39,7 @@ namespace etl {
 // For signed types.
 //***************************************************************************
 template <typename T>
-ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, T>::type
-absolute(T value) {
+ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, T>::type absolute(T value) {
     return (value < T(0)) ? -value : value;
 }
 
@@ -48,8 +47,7 @@ absolute(T value) {
 // For unsigned types.
 //***************************************************************************
 template <typename T>
-ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, T>::type
-absolute(T value) {
+ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, T>::type absolute(T value) {
     return value;
 }
 
@@ -62,12 +60,10 @@ template <typename T, typename TReturn = typename etl::make_unsigned<T>::type>
 #else
 template <typename T, typename TReturn>
 #endif
-ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, TReturn>::type
-absolute_unsigned(T value) {
-    return (value == etl::integral_limits<T>::min)
-               ? etl::integral_limits<TReturn>::max / 2U
-           : (value < T(0)) ? TReturn(-value)
-                            : TReturn(value);
+ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, TReturn>::type absolute_unsigned(T value) {
+    return (value == etl::integral_limits<T>::min) ? etl::integral_limits<TReturn>::max / 2U
+           : (value < T(0))                        ? TReturn(-value)
+                                                   : TReturn(value);
 }
 
 //***************************************************************************
@@ -75,8 +71,7 @@ absolute_unsigned(T value) {
 // Returns the result as the unsigned type.
 //***************************************************************************
 template <typename T>
-ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, T>::type
-absolute_unsigned(T value) {
+ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, T>::type absolute_unsigned(T value) {
     return etl::absolute(value);
 }
 }  // namespace etl

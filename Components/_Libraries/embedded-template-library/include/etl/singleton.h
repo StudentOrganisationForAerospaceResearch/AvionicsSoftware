@@ -47,8 +47,7 @@ namespace etl {
 //*************************************************************************
 class singleton_exception : public etl::exception {
    public:
-    singleton_exception(string_type reason_, string_type file_name_,
-                        numeric_type line_number_)
+    singleton_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -58,9 +57,8 @@ class singleton_exception : public etl::exception {
 class singleton_not_created : public etl::singleton_exception {
    public:
     singleton_not_created(string_type file_name_, numeric_type line_number_)
-        : singleton_exception(ETL_ERROR_TEXT("singleton:not created",
-                                             ETL_SINGLETON_FILE_ID "A"),
-                              file_name_, line_number_) {}
+        : singleton_exception(ETL_ERROR_TEXT("singleton:not created", ETL_SINGLETON_FILE_ID "A"), file_name_,
+                              line_number_) {}
 };
 
 #if ETL_USING_CPP11 && !defined(ETL_SINGLETON_FORCE_CPP03_IMPLEMENTATION)

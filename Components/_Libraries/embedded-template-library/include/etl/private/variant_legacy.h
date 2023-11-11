@@ -72,8 +72,7 @@ struct no_type {};
 //***************************************************************************
 class variant_exception : public etl::exception {
    public:
-    variant_exception(string_type reason_, string_type file_name_,
-                      numeric_type line_number_)
+    variant_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -83,11 +82,9 @@ class variant_exception : public etl::exception {
 //***************************************************************************
 class variant_incorrect_type_exception : public variant_exception {
    public:
-    variant_incorrect_type_exception(string_type file_name_,
-                                     numeric_type line_number_)
-        : variant_exception(ETL_ERROR_TEXT("variant:unsupported type",
-                                           ETL_VARIANT_FILE_ID "A"),
-                            file_name_, line_number_) {}
+    variant_incorrect_type_exception(string_type file_name_, numeric_type line_number_)
+        : variant_exception(ETL_ERROR_TEXT("variant:unsupported type", ETL_VARIANT_FILE_ID "A"), file_name_,
+                            line_number_) {}
 };
 
 //***************************************************************************
@@ -97,9 +94,8 @@ class variant_incorrect_type_exception : public variant_exception {
 class bad_variant_access : public variant_exception {
    public:
     bad_variant_access(string_type file_name_, numeric_type line_number_)
-        : variant_exception(ETL_ERROR_TEXT("variant:bad variant access",
-                                           ETL_VARIANT_FILE_ID "B"),
-                            file_name_, line_number_) {}
+        : variant_exception(ETL_ERROR_TEXT("variant:bad variant access", ETL_VARIANT_FILE_ID "B"), file_name_,
+                            line_number_) {}
 };
 
 //***************************************************************************
@@ -108,11 +104,8 @@ class bad_variant_access : public variant_exception {
 //***************************************************************************
 class variant_not_a_base_exception : public variant_exception {
    public:
-    variant_not_a_base_exception(string_type file_name_,
-                                 numeric_type line_number_)
-        : variant_exception(
-              ETL_ERROR_TEXT("variant:not_a base", ETL_VARIANT_FILE_ID "C"),
-              file_name_, line_number_) {}
+    variant_not_a_base_exception(string_type file_name_, numeric_type line_number_)
+        : variant_exception(ETL_ERROR_TEXT("variant:not_a base", ETL_VARIANT_FILE_ID "C"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -120,9 +113,8 @@ class variant_not_a_base_exception : public variant_exception {
 /// Supports up to 8 types.
 ///\ingroup variant
 //***************************************************************************
-template <typename T1, typename T2 = etl::null_type<2>,
-          typename T3 = etl::null_type<3>, typename T4 = etl::null_type<4>,
-          typename T5 = etl::null_type<5>, typename T6 = etl::null_type<6>,
+template <typename T1, typename T2 = etl::null_type<2>, typename T3 = etl::null_type<3>,
+          typename T4 = etl::null_type<4>, typename T5 = etl::null_type<5>, typename T6 = etl::null_type<6>,
           typename T7 = etl::null_type<7>, typename T8 = etl::null_type<8>>
 class variant {
    public:
@@ -134,20 +126,17 @@ class variant {
     //***************************************************************************
     /// The id a unsupported types.
     //***************************************************************************
-    static const type_id_t UNSUPPORTED_TYPE_ID =
-        etl::integral_limits<type_id_t>::max;
+    static const type_id_t UNSUPPORTED_TYPE_ID = etl::integral_limits<type_id_t>::max;
 
    private:
     // All types of variant are friends.
-    template <typename U1, typename U2, typename U3, typename U4, typename U5,
-              typename U6, typename U7, typename U8>
+    template <typename U1, typename U2, typename U3, typename U4, typename U5, typename U6, typename U7, typename U8>
     friend class variant;
 
     //***************************************************************************
     /// The largest type.
     //***************************************************************************
-    typedef typename etl::largest_type<T1, T2, T3, T4, T5, T6, T7, T8>::type
-        largest_t;
+    typedef typename etl::largest_type<T1, T2, T3, T4, T5, T6, T7, T8>::type largest_t;
 
     //***************************************************************************
     /// The largest size.
@@ -157,8 +146,7 @@ class variant {
     //***************************************************************************
     /// The largest alignment.
     //***************************************************************************
-    static const size_t ALIGNMENT =
-        etl::largest_alignment<T1, T2, T3, T4, T5, T6, T7, T8>::value;
+    static const size_t ALIGNMENT = etl::largest_alignment<T1, T2, T3, T4, T5, T6, T7, T8>::value;
 
     //***************************************************************************
     /// Short form of no_type placeholders.
@@ -183,9 +171,8 @@ class variant {
                                              : etl::is_same<T, T5>::value ? 4
                                              : etl::is_same<T, T6>::value ? 5
                                              : etl::is_same<T, T7>::value ? 6
-                                             : etl::is_same<T, T8>::value
-                                                 ? 7
-                                                 : UNSUPPORTED_TYPE_ID;
+                                             : etl::is_same<T, T8>::value ? 7
+                                                                          : UNSUPPORTED_TYPE_ID;
     };
 
     //***************************************************************************
@@ -193,12 +180,10 @@ class variant {
     //***************************************************************************
     template <typename T>
     struct Type_Is_Supported
-        : public etl::integral_constant<
-              bool,
-              etl::is_same<T, T1>::value || etl::is_same<T, T2>::value ||
-                  etl::is_same<T, T3>::value || etl::is_same<T, T4>::value ||
-                  etl::is_same<T, T5>::value || etl::is_same<T, T6>::value ||
-                  etl::is_same<T, T7>::value || etl::is_same<T, T8>::value> {};
+        : public etl::integral_constant<bool, etl::is_same<T, T1>::value || etl::is_same<T, T2>::value ||
+                                                  etl::is_same<T, T3>::value || etl::is_same<T, T4>::value ||
+                                                  etl::is_same<T, T5>::value || etl::is_same<T, T6>::value ||
+                                                  etl::is_same<T, T7>::value || etl::is_same<T, T8>::value> {};
 
    public:
     //***************************************************************************
@@ -215,10 +200,8 @@ class variant {
     /// Allows for typesafe access to the stored value types.
     /// Define the reader type for 8 types.
     //*************************************************************************
-    template <typename R1, typename R2 = no_type2, typename R3 = no_type3,
-              typename R4 = no_type4, typename R5 = no_type5,
-              typename R6 = no_type6, typename R7 = no_type7,
-              typename R8 = no_type8>
+    template <typename R1, typename R2 = no_type2, typename R3 = no_type3, typename R4 = no_type4,
+              typename R5 = no_type5, typename R6 = no_type6, typename R7 = no_type7, typename R8 = no_type8>
     class reader_type {
        public:
         friend class variant;
@@ -238,8 +221,7 @@ class variant {
     //*************************************************************************
     /// Define the reader type for 7 types.
     //*************************************************************************
-    template <typename R1, typename R2, typename R3, typename R4, typename R5,
-              typename R6, typename R7>
+    template <typename R1, typename R2, typename R3, typename R4, typename R5, typename R6, typename R7>
     class reader_type<R1, R2, R3, R4, R5, R6, R7, no_type8> {
        public:
         friend class variant;
@@ -261,8 +243,7 @@ class variant {
     //*************************************************************************
     /// Define the reader type for 6 types.
     //*************************************************************************
-    template <typename R1, typename R2, typename R3, typename R4, typename R5,
-              typename R6>
+    template <typename R1, typename R2, typename R3, typename R4, typename R5, typename R6>
     class reader_type<R1, R2, R3, R4, R5, R6, no_type7, no_type8> {
        public:
         friend class variant;
@@ -329,8 +310,7 @@ class variant {
     /// Define the reader type for 3 types.
     //*************************************************************************
     template <typename R1, typename R2, typename R3>
-    class reader_type<R1, R2, R3, no_type4, no_type5, no_type6, no_type7,
-                      no_type8> {
+    class reader_type<R1, R2, R3, no_type4, no_type5, no_type6, no_type7, no_type8> {
        public:
         friend class variant;
 
@@ -352,8 +332,7 @@ class variant {
     /// Define the reader type for 2 types.
     //*************************************************************************
     template <typename R1, typename R2>
-    class reader_type<R1, R2, no_type3, no_type4, no_type5, no_type6, no_type7,
-                      no_type8> {
+    class reader_type<R1, R2, no_type3, no_type4, no_type5, no_type6, no_type7, no_type8> {
        public:
         friend class variant;
 
@@ -375,8 +354,7 @@ class variant {
     /// Define the reader type for 1 type.
     //*************************************************************************
     template <typename R1>
-    class reader_type<R1, no_type2, no_type3, no_type4, no_type5, no_type6,
-                      no_type7, no_type8> {
+    class reader_type<R1, no_type2, no_type3, no_type4, no_type5, no_type6, no_type7, no_type8> {
        public:
         friend class variant;
 
@@ -454,8 +432,7 @@ class variant {
         type_id = other.type_id;
     }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_VARIANT_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_VARIANT_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Emplace with variadic constructor parameters.
     //*************************************************************************
@@ -515,10 +492,8 @@ class variant {
     //***************************************************************************
     /// Emplace with four constructor parameters.
     //***************************************************************************
-    template <typename T, typename TP1, typename TP2, typename TP3,
-              typename TP4>
-    T& emplace(const TP1& value1, const TP2& value2, const TP3& value3,
-               const TP4& value4) {
+    template <typename T, typename TP1, typename TP2, typename TP3, typename TP4>
+    T& emplace(const TP1& value1, const TP2& value2, const TP3& value3, const TP4& value4) {
         ETL_STATIC_ASSERT(Type_Is_Supported<T>::value, "Unsupported type");
 
         destruct_current();
@@ -601,10 +576,8 @@ class variant {
     /// For variants with differing declarations.
     ///\return <b>true</b> if the types are the same, otherwise <b>false</b>.
     //***************************************************************************
-    template <typename U1, typename U2, typename U3, typename U4, typename U5,
-              typename U6, typename U7, typename U8>
-    bool is_same_type(
-        const variant<U1, U2, U3, U4, U5, U6, U7, U8>& other) const {
+    template <typename U1, typename U2, typename U3, typename U4, typename U5, typename U6, typename U7, typename U8>
+    bool is_same_type(const variant<U1, U2, U3, U4, U5, U6, U7, U8>& other) const {
         bool is_same = false;
 
         switch (other.type_id) {
@@ -764,8 +737,7 @@ class variant {
     template <typename TBase>
     const TBase* upcast_ptr() const {
         if (is_base_of<TBase>()) {
-            return reinterpret_cast<const TBase*>(
-                static_cast<const uint_least8_t*>(data));
+            return reinterpret_cast<const TBase*>(static_cast<const uint_least8_t*>(data));
         } else {
             return ETL_NULLPTR;
         }
@@ -922,12 +894,10 @@ class variant {
 namespace private_variant {
 template <size_t, typename>
 struct variant_alternative_helper;
-#define ETL_VARIANT_HELPER(INDEX, TYPE)                                        \
-    template <typename T1, typename T2, typename T3, typename T4, typename T5, \
-              typename T6, typename T7, typename T8>                           \
-    struct variant_alternative_helper<                                         \
-        INDEX, variant<T1, T2, T3, T4, T5, T6, T7, T8>> {                      \
-        typedef TYPE type;                                                     \
+#define ETL_VARIANT_HELPER(INDEX, TYPE)                                                                               \
+    template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8> \
+    struct variant_alternative_helper<INDEX, variant<T1, T2, T3, T4, T5, T6, T7, T8>> {                               \
+        typedef TYPE type;                                                                                            \
     };
 ETL_VARIANT_HELPER(0, T1)
 ETL_VARIANT_HELPER(1, T2)
@@ -942,26 +912,22 @@ ETL_VARIANT_HELPER(7, T8)
 
 template <size_t tIndex, typename TVariant>
 struct variant_alternative {
-    typedef typename private_variant::variant_alternative_helper<
-        tIndex, TVariant>::type type;
+    typedef typename private_variant::variant_alternative_helper<tIndex, TVariant>::type type;
 };
 
 template <size_t tIndex, typename TVariant>
 struct variant_alternative<tIndex, TVariant const> {
-    typedef typename private_variant::variant_alternative_helper<
-        tIndex, TVariant>::type const type;
+    typedef typename private_variant::variant_alternative_helper<tIndex, TVariant>::type const type;
 };
 
 template <size_t tIndex, typename TVariant>
 struct variant_alternative<tIndex, TVariant volatile> {
-    typedef typename private_variant::variant_alternative_helper<
-        tIndex, TVariant>::type volatile type;
+    typedef typename private_variant::variant_alternative_helper<tIndex, TVariant>::type volatile type;
 };
 
 template <size_t tIndex, typename TVariant>
 struct variant_alternative<tIndex, TVariant const volatile> {
-    typedef typename private_variant::variant_alternative_helper<
-        tIndex, TVariant>::type const volatile type;
+    typedef typename private_variant::variant_alternative_helper<tIndex, TVariant>::type const volatile type;
 };
 
 template <typename T, typename TVariant>
@@ -975,41 +941,38 @@ inline T const& get(TVariant const& variant) {
 }
 
 template <size_t tIndex, typename TVariant>
-inline typename variant_alternative<tIndex, TVariant>::type& get(
-    TVariant& variant) {
+inline typename variant_alternative<tIndex, TVariant>::type& get(TVariant& variant) {
     return get<typename variant_alternative<tIndex, TVariant>::type>(variant);
 }
 
 template <size_t tIndex, typename TVariant>
-inline typename variant_alternative<tIndex, TVariant const>::type& get(
-    TVariant const& variant) {
+inline typename variant_alternative<tIndex, TVariant const>::type& get(TVariant const& variant) {
     return get<typename variant_alternative<tIndex, TVariant>::type>(variant);
 }
 
-#define ETL_GEN_LEGACY_VISIT(VISITQUAL, VARIANTQUAL)                   \
-    template <typename TReturn, typename TVisitor, typename TVariant>  \
-    static TReturn visit(TVisitor VISITQUAL visitor,                   \
-                         TVariant VARIANTQUAL variant) {               \
-        switch (variant.index()) {                                     \
-            case 0:                                                    \
-                return static_cast<TReturn>(visitor(get<0>(variant))); \
-            case 1:                                                    \
-                return static_cast<TReturn>(visitor(get<1>(variant))); \
-            case 2:                                                    \
-                return static_cast<TReturn>(visitor(get<2>(variant))); \
-            case 3:                                                    \
-                return static_cast<TReturn>(visitor(get<3>(variant))); \
-            case 4:                                                    \
-                return static_cast<TReturn>(visitor(get<4>(variant))); \
-            case 5:                                                    \
-                return static_cast<TReturn>(visitor(get<5>(variant))); \
-            case 6:                                                    \
-                return static_cast<TReturn>(visitor(get<6>(variant))); \
-            case 7:                                                    \
-                return static_cast<TReturn>(visitor(get<7>(variant))); \
-            default:                                                   \
-                ETL_ASSERT(false, ETL_ERROR(bad_variant_access));      \
-        }                                                              \
+#define ETL_GEN_LEGACY_VISIT(VISITQUAL, VARIANTQUAL)                                 \
+    template <typename TReturn, typename TVisitor, typename TVariant>                \
+    static TReturn visit(TVisitor VISITQUAL visitor, TVariant VARIANTQUAL variant) { \
+        switch (variant.index()) {                                                   \
+            case 0:                                                                  \
+                return static_cast<TReturn>(visitor(get<0>(variant)));               \
+            case 1:                                                                  \
+                return static_cast<TReturn>(visitor(get<1>(variant)));               \
+            case 2:                                                                  \
+                return static_cast<TReturn>(visitor(get<2>(variant)));               \
+            case 3:                                                                  \
+                return static_cast<TReturn>(visitor(get<3>(variant)));               \
+            case 4:                                                                  \
+                return static_cast<TReturn>(visitor(get<4>(variant)));               \
+            case 5:                                                                  \
+                return static_cast<TReturn>(visitor(get<5>(variant)));               \
+            case 6:                                                                  \
+                return static_cast<TReturn>(visitor(get<6>(variant)));               \
+            case 7:                                                                  \
+                return static_cast<TReturn>(visitor(get<7>(variant)));               \
+            default:                                                                 \
+                ETL_ASSERT(false, ETL_ERROR(bad_variant_access));                    \
+        }                                                                            \
     }
 
 ETL_GEN_LEGACY_VISIT(&, &)

@@ -56,8 +56,7 @@ class ivector<T*> : public pvoidvector {
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
     typedef size_t size_type;
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
    protected:
     typedef value_type parameter_t;
@@ -106,49 +105,37 @@ class ivector<T*> : public pvoidvector {
     /// Returns an reverse iterator to the reverse beginning of the vector.
     ///\return Iterator to the reverse beginning of the vector.
     //*********************************************************************
-    reverse_iterator rbegin() {
-        return reverse_iterator(iterator(base_t::end()));
-    }
+    reverse_iterator rbegin() { return reverse_iterator(iterator(base_t::end())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the vector.
     ///\return Const iterator to the reverse beginning of the vector.
     //*********************************************************************
-    const_reverse_iterator rbegin() const {
-        return const_reverse_iterator(const_iterator(base_t::end()));
-    }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(const_iterator(base_t::end())); }
 
     //*********************************************************************
     /// Returns a reverse iterator to the end + 1 of the vector.
     ///\return Reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    reverse_iterator rend() {
-        return reverse_iterator(iterator(base_t::begin()));
-    }
+    reverse_iterator rend() { return reverse_iterator(iterator(base_t::begin())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the vector.
     ///\return Const reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    const_reverse_iterator rend() const {
-        return const_reverse_iterator(const_iterator(base_t::begin()));
-    }
+    const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(base_t::begin())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the vector.
     ///\return Const reverse iterator to the reverse beginning of the vector.
     //*********************************************************************
-    const_reverse_iterator crbegin() const {
-        return const_reverse_iterator(const_iterator(base_t::cend()));
-    }
+    const_reverse_iterator crbegin() const { return const_reverse_iterator(const_iterator(base_t::cend())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the vector.
     ///\return Const reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    const_reverse_iterator crend() const {
-        return const_reverse_iterator(const_iterator(base_t::cbegin()));
-    }
+    const_reverse_iterator crend() const { return const_reverse_iterator(const_iterator(base_t::cbegin())); }
 
     //*********************************************************************
     /// Resizes the vector.
@@ -165,17 +152,13 @@ class ivector<T*> : public pvoidvector {
     ///\param new_size The new size.
     ///\param value   The value to fill new elements with. Default = default constructed value.
     //*********************************************************************
-    void resize(size_t new_size, value_type value) {
-        base_t::resize(new_size, value);
-    }
+    void resize(size_t new_size, value_type value) { base_t::resize(new_size, value); }
 
     //*********************************************************************
     /// Resizes the vector, but does not initialise new entries.
     ///\param new_size The new size.
     //*********************************************************************
-    void uninitialized_resize(size_t new_size) {
-        base_t::uninitialized_resize(new_size);
-    }
+    void uninitialized_resize(size_t new_size) { base_t::uninitialized_resize(new_size); }
 
     //*********************************************************************
     /// Returns a reference to the value at index 'i'
@@ -189,9 +172,7 @@ class ivector<T*> : public pvoidvector {
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference operator[](size_t i) const {
-        return const_reference(base_t::operator[](i));
-    }
+    const_reference operator[](size_t i) const { return const_reference(base_t::operator[](i)); }
 
     //*********************************************************************
     /// Returns a reference to the value at index 'i'
@@ -207,9 +188,7 @@ class ivector<T*> : public pvoidvector {
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference at(size_t i) const {
-        return const_reference(base_t::at(i));
-    }
+    const_reference at(size_t i) const { return const_reference(base_t::at(i)); }
 
     //*********************************************************************
     /// Returns a reference to the first element.
@@ -337,18 +316,14 @@ class ivector<T*> : public pvoidvector {
     ///\param i_element Iterator to the element.
     ///\return An iterator pointing to the element that followed the erased element.
     //*********************************************************************
-    iterator erase(iterator i_element) {
-        return iterator(base_t::erase(base_t::iterator(i_element)));
-    }
+    iterator erase(iterator i_element) { return iterator(base_t::erase(base_t::iterator(i_element))); }
 
     //*********************************************************************
     /// Erases an element.
     ///\param i_element Iterator to the element.
     ///\return An iterator pointing to the element that followed the erased element.
     //*********************************************************************
-    iterator erase(const_iterator i_element) {
-        return iterator(base_t::erase(base_t::const_iterator(i_element)));
-    }
+    iterator erase(const_iterator i_element) { return iterator(base_t::erase(base_t::const_iterator(i_element))); }
 
     //*********************************************************************
     /// Erases a range of elements.
@@ -359,8 +334,7 @@ class ivector<T*> : public pvoidvector {
     ///\return An iterator pointing to the element that followed the erased element.
     //*********************************************************************
     iterator erase(const_iterator first, const_iterator last) {
-        return iterator(base_t::erase(base_t::const_iterator(first),
-                                      base_t::const_iterator(last)));
+        return iterator(base_t::erase(base_t::const_iterator(first), base_t::const_iterator(last)));
     }
 
     //*************************************************************************
@@ -394,8 +368,7 @@ class ivector<T*> : public pvoidvector {
     //*********************************************************************
     /// Constructor.
     //*********************************************************************
-    ivector(T** p_buffer_, size_t MAX_SIZE_)
-        : pvoidvector(reinterpret_cast<void**>(p_buffer_), MAX_SIZE_) {}
+    ivector(T** p_buffer_, size_t MAX_SIZE_) : pvoidvector(reinterpret_cast<void**>(p_buffer_), MAX_SIZE_) {}
 };
 
 template <typename T>
@@ -411,8 +384,7 @@ class ivector<const T*> : public pvoidvector {
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
     typedef size_t size_type;
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
    protected:
     typedef value_type parameter_t;
@@ -461,49 +433,37 @@ class ivector<const T*> : public pvoidvector {
     /// Returns an reverse iterator to the reverse beginning of the vector.
     ///\return Iterator to the reverse beginning of the vector.
     //*********************************************************************
-    reverse_iterator rbegin() {
-        return reverse_iterator(iterator(base_t::end()));
-    }
+    reverse_iterator rbegin() { return reverse_iterator(iterator(base_t::end())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the vector.
     ///\return Const iterator to the reverse beginning of the vector.
     //*********************************************************************
-    const_reverse_iterator rbegin() const {
-        return const_reverse_iterator(const_iterator(base_t::end()));
-    }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(const_iterator(base_t::end())); }
 
     //*********************************************************************
     /// Returns a reverse iterator to the end + 1 of the vector.
     ///\return Reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    reverse_iterator rend() {
-        return reverse_iterator(iterator(base_t::begin()));
-    }
+    reverse_iterator rend() { return reverse_iterator(iterator(base_t::begin())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the vector.
     ///\return Const reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    const_reverse_iterator rend() const {
-        return const_reverse_iterator(const_iterator(base_t::begin()));
-    }
+    const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(base_t::begin())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the vector.
     ///\return Const reverse iterator to the reverse beginning of the vector.
     //*********************************************************************
-    const_reverse_iterator crbegin() const {
-        return const_reverse_iterator(const_iterator(base_t::cend()));
-    }
+    const_reverse_iterator crbegin() const { return const_reverse_iterator(const_iterator(base_t::cend())); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the vector.
     ///\return Const reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    const_reverse_iterator crend() const {
-        return const_reverse_iterator(const_iterator(base_t::cbegin()));
-    }
+    const_reverse_iterator crend() const { return const_reverse_iterator(const_iterator(base_t::cbegin())); }
 
     //*********************************************************************
     /// Resizes the vector.
@@ -520,17 +480,13 @@ class ivector<const T*> : public pvoidvector {
     ///\param new_size The new size.
     ///\param value   The value to fill new elements with. Default = default constructed value.
     //*********************************************************************
-    void resize(size_t new_size, value_type value) {
-        base_t::resize(new_size, const_cast<T*>(value));
-    }
+    void resize(size_t new_size, value_type value) { base_t::resize(new_size, const_cast<T*>(value)); }
 
     //*********************************************************************
     /// Resizes the vector, but does not initialise new entries.
     ///\param new_size The new size.
     //*********************************************************************
-    void uninitialized_resize(size_t new_size) {
-        base_t::uninitialized_resize(new_size);
-    }
+    void uninitialized_resize(size_t new_size) { base_t::uninitialized_resize(new_size); }
 
     //*********************************************************************
     /// Returns a reference to the value at index 'i'
@@ -544,9 +500,7 @@ class ivector<const T*> : public pvoidvector {
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference operator[](size_t i) const {
-        return const_reference(base_t::operator[](i));
-    }
+    const_reference operator[](size_t i) const { return const_reference(base_t::operator[](i)); }
 
     //*********************************************************************
     /// Returns a reference to the value at index 'i'
@@ -562,9 +516,7 @@ class ivector<const T*> : public pvoidvector {
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference at(size_t i) const {
-        return const_reference(base_t::at(i));
-    }
+    const_reference at(size_t i) const { return const_reference(base_t::at(i)); }
 
     //*********************************************************************
     /// Returns a reference to the first element.
@@ -620,9 +572,7 @@ class ivector<const T*> : public pvoidvector {
     ///\param n     The number of elements to add.
     ///\param value The value to insert for each element.
     //*********************************************************************
-    void assign(size_t n, parameter_t value) {
-        base_t::assign(n, const_cast<T*>(value));
-    }
+    void assign(size_t n, parameter_t value) { base_t::assign(n, const_cast<T*>(value)); }
 
     //*************************************************************************
     /// Clears the vector.
@@ -634,9 +584,7 @@ class ivector<const T*> : public pvoidvector {
     /// If asserts or exceptions are enabled, emits vector_full if the vector is already full.
     ///\param value The value to add.
     //*********************************************************************
-    void push_back(parameter_t value) {
-        base_t::push_back(const_cast<T*>(value));
-    }
+    void push_back(parameter_t value) { base_t::push_back(const_cast<T*>(value)); }
 
     //*************************************************************************
     /// Removes an element from the end of the vector.
@@ -651,8 +599,7 @@ class ivector<const T*> : public pvoidvector {
     ///\param value    The value to insert.
     //*********************************************************************
     iterator insert(const_iterator position, parameter_t value) {
-        return iterator(
-            base_t::insert(base_t::iterator(position), const_cast<T*>(value)));
+        return iterator(base_t::insert(base_t::iterator(position), const_cast<T*>(value)));
     }
 
     //*********************************************************************
@@ -683,18 +630,14 @@ class ivector<const T*> : public pvoidvector {
     ///\param i_element Iterator to the element.
     ///\return An iterator pointing to the element that followed the erased element.
     //*********************************************************************
-    iterator erase(iterator i_element) {
-        return iterator(base_t::erase(base_t::iterator(i_element)));
-    }
+    iterator erase(iterator i_element) { return iterator(base_t::erase(base_t::iterator(i_element))); }
 
     //*********************************************************************
     /// Erases an element.
     ///\param i_element Iterator to the element.
     ///\return An iterator pointing to the element that followed the erased element.
     //*********************************************************************
-    iterator erase(const_iterator i_element) {
-        return iterator(base_t::erase(base_t::iterator(i_element)));
-    }
+    iterator erase(const_iterator i_element) { return iterator(base_t::erase(base_t::iterator(i_element))); }
 
     //*********************************************************************
     /// Erases a range of elements.
@@ -705,8 +648,7 @@ class ivector<const T*> : public pvoidvector {
     ///\return An iterator pointing to the element that followed the erased element.
     //*********************************************************************
     iterator erase(const_iterator first, const_iterator last) {
-        return iterator(
-            base_t::erase(base_t::iterator(first), base_t::iterator(last)));
+        return iterator(base_t::erase(base_t::iterator(first), base_t::iterator(last)));
     }
 
     //*************************************************************************
@@ -741,8 +683,7 @@ class ivector<const T*> : public pvoidvector {
     /// Constructor.
     //*********************************************************************
     ivector(const T** p_buffer_, size_t MAX_SIZE_)
-        : pvoidvector(reinterpret_cast<void**>(const_cast<T**>(p_buffer_)),
-                      MAX_SIZE_) {}
+        : pvoidvector(reinterpret_cast<void**>(const_cast<T**>(p_buffer_)), MAX_SIZE_) {}
 };
 
 //***************************************************************************
@@ -820,33 +761,27 @@ bool operator>=(const etl::ivector<T*>& lhs, const etl::ivector<T*>& rhs) {
 //***************************************************************************
 // Helper functions
 //***************************************************************************
-inline bool pvoidvector_equal(const etl::pvoidvector& lhs,
-                              const etl::pvoidvector& rhs) {
+inline bool pvoidvector_equal(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return operator==(lhs, rhs);
 }
 
-inline bool pvoidvector_not_equal(const etl::pvoidvector& lhs,
-                                  const etl::pvoidvector& rhs) {
+inline bool pvoidvector_not_equal(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return operator!=(lhs, rhs);
 }
 
-inline bool pvoidvector_less_than(const etl::pvoidvector& lhs,
-                                  const etl::pvoidvector& rhs) {
+inline bool pvoidvector_less_than(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return operator<(lhs, rhs);
 }
 
-inline bool pvoidvector_greater_than(const etl::pvoidvector& lhs,
-                                     const etl::pvoidvector& rhs) {
+inline bool pvoidvector_greater_than(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return operator>(lhs, rhs);
 }
 
-inline bool pvoidvector_less_than_equal(const etl::pvoidvector& lhs,
-                                        const etl::pvoidvector& rhs) {
+inline bool pvoidvector_less_than_equal(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return operator<=(lhs, rhs);
 }
 
-inline bool pvoidvector_greater_than_equal(const etl::pvoidvector& lhs,
-                                           const etl::pvoidvector& rhs) {
+inline bool pvoidvector_greater_than_equal(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return operator>=(lhs, rhs);
 }
 }  // namespace etl

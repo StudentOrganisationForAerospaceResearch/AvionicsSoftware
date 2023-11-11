@@ -69,8 +69,7 @@ struct mean_traits<double, TCalc> {
 /// Mean.
 //***************************************************************************
 template <typename TInput, typename TCalc = TInput>
-class mean : public private_mean::mean_traits<TInput, TCalc>,
-             public etl::binary_function<TInput, TInput, void> {
+class mean : public private_mean::mean_traits<TInput, TCalc>, public etl::binary_function<TInput, TInput, void> {
    private:
     typedef typename private_mean::mean_traits<TInput, TCalc>::calc_t calc_t;
 

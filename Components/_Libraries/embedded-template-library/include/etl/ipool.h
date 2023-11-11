@@ -48,8 +48,7 @@ namespace etl {
 //***************************************************************************
 class pool_exception : public exception {
    public:
-    pool_exception(string_type reason_, string_type file_name_,
-                   numeric_type line_number_)
+    pool_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -59,11 +58,8 @@ class pool_exception : public exception {
 //***************************************************************************
 class pool_no_allocation : public pool_exception {
    public:
-    explicit pool_no_allocation(string_type file_name_,
-                                numeric_type line_number_)
-        : pool_exception(
-              ETL_ERROR_TEXT("pool:allocation", ETL_POOL_FILE_ID "A"),
-              file_name_, line_number_) {}
+    explicit pool_no_allocation(string_type file_name_, numeric_type line_number_)
+        : pool_exception(ETL_ERROR_TEXT("pool:allocation", ETL_POOL_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -73,9 +69,7 @@ class pool_no_allocation : public pool_exception {
 class pool_object_not_in_pool : public pool_exception {
    public:
     pool_object_not_in_pool(string_type file_name_, numeric_type line_number_)
-        : pool_exception(
-              ETL_ERROR_TEXT("pool:not in pool", ETL_POOL_FILE_ID "B"),
-              file_name_, line_number_) {}
+        : pool_exception(ETL_ERROR_TEXT("pool:not in pool", ETL_POOL_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -85,9 +79,7 @@ class pool_object_not_in_pool : public pool_exception {
 class pool_element_size : public pool_exception {
    public:
     pool_element_size(string_type file_name_, numeric_type line_number_)
-        : pool_exception(
-              ETL_ERROR_TEXT("pool:element size", ETL_POOL_FILE_ID "C"),
-              file_name_, line_number_) {}
+        : pool_exception(ETL_ERROR_TEXT("pool:element size", ETL_POOL_FILE_ID "C"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -167,8 +159,7 @@ class ipool {
     }
 
     template <typename T, typename T1, typename T2, typename T3, typename T4>
-    T* create(const T1& value1, const T2& value2, const T3& value3,
-              const T4& value4) {
+    T* create(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         T* p = allocate<T>();
 
         if (p) {
@@ -334,8 +325,7 @@ class ipool {
     //*************************************************************************
     void release_item(char* p_value) {
         // Does it belong to us?
-        ETL_ASSERT(is_item_in_pool(p_value),
-                   ETL_ERROR(pool_object_not_in_pool));
+        ETL_ASSERT(is_item_in_pool(p_value), ETL_ERROR(pool_object_not_in_pool));
 
         if (p_next != ETL_NULLPTR) {
             // Point it to the current free item.
@@ -356,9 +346,7 @@ class ipool {
     bool is_item_in_pool(const char* p) const {
         // Within the range of the buffer?
         intptr_t distance = p - p_buffer;
-        bool is_within_range =
-            (distance >= 0) &&
-            (distance <= intptr_t((Item_Size * Max_Size) - Item_Size));
+        bool is_within_range = (distance >= 0) && (distance <= intptr_t((Item_Size * Max_Size) - Item_Size));
 
         // Modulus and division can be slow on some architectures, so only do this in debug.
 #if ETL_IS_DEBUG_BUILD
@@ -382,8 +370,7 @@ class ipool {
     uint32_t items_initialised;  ///< The number of items initialised.
 
     const uint32_t Item_Size;  ///< The size of allocated items.
-    const uint32_t
-        Max_Size;  ///< The maximum number of objects that can be allocated.
+    const uint32_t Max_Size;   ///< The maximum number of objects that can be allocated.
 
     //*************************************************************************
     /// Destructor.

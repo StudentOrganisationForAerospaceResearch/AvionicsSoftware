@@ -43,20 +43,17 @@ SOFTWARE.
 #include <stdint.h>
 
 namespace etl {
-template <typename T,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class queue_spsc_isr_base {
    public:
     /// The type used for determining the size of queue.
     typedef typename etl::size_type_lookup<MEMORY_MODEL>::type size_type;
 
-    typedef T value_type;  ///< The type stored in the queue.
-    typedef T& reference;  ///< A reference to the type used in the queue.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the queue.
+    typedef T value_type;              ///< The type stored in the queue.
+    typedef T& reference;              ///< A reference to the type used in the queue.
+    typedef const T& const_reference;  ///< A const reference to the type used in the queue.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue reference to the type used in the queue.
+    typedef T&& rvalue_reference;  ///< An rvalue reference to the type used in the queue.
 #endif
 
     //*************************************************************************
@@ -80,8 +77,7 @@ class queue_spsc_isr_base {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     ///\param value The value to use to construct the item to push to the queue.
     //*************************************************************************
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_ISR_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_ISR_FORCE_CPP03_IMPLEMENTATION)
     template <typename... Args>
     bool emplace_from_isr(Args&&... args) {
         return emplace_implementation(etl::forward<Args>(args)...);
@@ -173,11 +169,7 @@ class queue_spsc_isr_base {
 
    protected:
     queue_spsc_isr_base(T* p_buffer_, size_type max_size_)
-        : p_buffer(p_buffer_),
-          write_index(0),
-          read_index(0),
-          current_size(0),
-          MAX_SIZE(max_size_) {}
+        : p_buffer(p_buffer_), write_index(0), read_index(0), current_size(0), MAX_SIZE(max_size_) {}
 
     //*************************************************************************
     /// Push a value to the queue.
@@ -217,8 +209,7 @@ class queue_spsc_isr_base {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_ISR_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_ISR_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
@@ -285,8 +276,7 @@ class queue_spsc_isr_base {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3) {
         if (current_size != MAX_SIZE) {
             ::new (&p_buffer[write_index]) T(value1, value2, value3);
 
@@ -306,8 +296,7 @@ class queue_spsc_isr_base {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3, const T4& value4) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         if (current_size != MAX_SIZE) {
             ::new (&p_buffer[write_index]) T(value1, value2, value3, value4);
 
@@ -333,8 +322,7 @@ class queue_spsc_isr_base {
             return false;
         }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
         value = etl::move(p_buffer[read_index]);
 #else
         value = p_buffer[read_index];
@@ -405,8 +393,7 @@ class queue_spsc_isr_base {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_SPSC_QUEUE_ISR) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_SPSC_QUEUE_ISR) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual ~queue_spsc_isr_base() {}
 #else
@@ -426,25 +413,19 @@ class queue_spsc_isr_base {
 /// This queue supports concurrent access by one producer and one consumer.
 /// \tparam T The type of value that the queue_spsc_isr holds.
 //***************************************************************************
-template <typename T, typename TAccess,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, typename TAccess, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class iqueue_spsc_isr : public queue_spsc_isr_base<T, MEMORY_MODEL> {
    private:
     typedef queue_spsc_isr_base<T, MEMORY_MODEL> base_t;
 
    public:
-    typedef typename base_t::value_type
-        value_type;  ///< The type stored in the queue.
-    typedef typename base_t::reference
-        reference;  ///< A reference to the type used in the queue.
-    typedef typename base_t::const_reference
-        const_reference;  ///< A const reference to the type used in the queue.
+    typedef typename base_t::value_type value_type;            ///< The type stored in the queue.
+    typedef typename base_t::reference reference;              ///< A reference to the type used in the queue.
+    typedef typename base_t::const_reference const_reference;  ///< A const reference to the type used in the queue.
 #if ETL_USING_CPP11
-    typedef typename base_t::rvalue_reference
-        rvalue_reference;  ///< A const reference to the type used in the queue.
+    typedef typename base_t::rvalue_reference rvalue_reference;  ///< A const reference to the type used in the queue.
 #endif
-    typedef typename base_t::size_type
-        size_type;  ///< The type used for determining the size of the queue.
+    typedef typename base_t::size_type size_type;  ///< The type used for determining the size of the queue.
 
     //*************************************************************************
     /// Push a value to the queue.
@@ -478,8 +459,7 @@ class iqueue_spsc_isr : public queue_spsc_isr_base<T, MEMORY_MODEL> {
     /// Constructs a value in the queue 'in place'.
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_ISR_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_ISR_FORCE_CPP03_IMPLEMENTATION)
     template <typename... Args>
     bool emplace(Args&&... args) {
         TAccess::lock();
@@ -541,12 +521,10 @@ class iqueue_spsc_isr : public queue_spsc_isr_base<T, MEMORY_MODEL> {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    bool emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         TAccess::lock();
 
-        bool result =
-            this->emplace_implementation(value1, value2, value3, value4);
+        bool result = this->emplace_implementation(value1, value2, value3, value4);
 
         TAccess::unlock();
 
@@ -675,8 +653,7 @@ class iqueue_spsc_isr : public queue_spsc_isr_base<T, MEMORY_MODEL> {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    iqueue_spsc_isr(T* p_buffer_, size_type max_size_)
-        : base_t(p_buffer_, max_size_) {}
+    iqueue_spsc_isr(T* p_buffer_, size_type max_size_) : base_t(p_buffer_, max_size_) {}
 
    private:
     // Disable copy construction and assignment.
@@ -700,8 +677,7 @@ class iqueue_spsc_isr : public queue_spsc_isr_base<T, MEMORY_MODEL> {
 /// \tparam TAccess      The type that will lock and unlock interrupts.
 /// \tparam MEMORY_MODEL The memory model for the queue. Determines the type of the internal counter variables.
 //***************************************************************************
-template <typename T, size_t SIZE, typename TAccess,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, size_t SIZE, typename TAccess, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class queue_spsc_isr : public etl::iqueue_spsc_isr<T, TAccess, MEMORY_MODEL> {
    private:
     typedef etl::iqueue_spsc_isr<T, TAccess, MEMORY_MODEL> base_t;
@@ -709,8 +685,7 @@ class queue_spsc_isr : public etl::iqueue_spsc_isr<T, TAccess, MEMORY_MODEL> {
    public:
     typedef typename base_t::size_type size_type;
 
-    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max),
-                      "Size too large for memory model");
+    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max), "Size too large for memory model");
 
     static ETL_CONSTANT size_type MAX_SIZE = size_type(SIZE);
 
@@ -734,8 +709,7 @@ class queue_spsc_isr : public etl::iqueue_spsc_isr<T, TAccess, MEMORY_MODEL> {
 #endif
 
     /// The uninitialised buffer of T used in the queue_spsc_isr.
-    typename etl::aligned_storage<sizeof(T), etl::alignment_of<T>::value>::type
-        buffer[MAX_SIZE];
+    typename etl::aligned_storage<sizeof(T), etl::alignment_of<T>::value>::type buffer[MAX_SIZE];
 };
 }  // namespace etl
 

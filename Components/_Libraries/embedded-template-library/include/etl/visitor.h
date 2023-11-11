@@ -81,8 +81,7 @@ class visitable<T1> {
 /// Derive visitable classes from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2 = void, typename T3 = void,
-          typename T4 = void>
+template <typename T1, typename T2 = void, typename T3 = void, typename T4 = void>
 class visitable {
    public:
     virtual ~visitable() {}
@@ -169,11 +168,9 @@ class visitor<T1> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2 = void, typename T3 = void,
-          typename T4 = void, typename T5 = void, typename T6 = void,
-          typename T7 = void, typename T8 = void, typename T9 = void,
-          typename T10 = void, typename T11 = void, typename T12 = void,
-          typename T13 = void, typename T14 = void, typename T15 = void,
+template <typename T1, typename T2 = void, typename T3 = void, typename T4 = void, typename T5 = void,
+          typename T6 = void, typename T7 = void, typename T8 = void, typename T9 = void, typename T10 = void,
+          typename T11 = void, typename T12 = void, typename T13 = void, typename T14 = void, typename T15 = void,
           typename T16 = void>
 class visitor {
    public:
@@ -202,11 +199,9 @@ class visitor {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12, typename T13, typename T14, typename T15>
-class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14,
-              T15> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12, typename T13, typename T14, typename T15>
+class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> {
    public:
     virtual ~visitor() {}
 
@@ -232,9 +227,8 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14,
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12, typename T13, typename T14>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12, typename T13, typename T14>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> {
    public:
     virtual ~visitor() {}
@@ -260,9 +254,8 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12, typename T13>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12, typename T13>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> {
    public:
     virtual ~visitor() {}
@@ -287,9 +280,8 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> {
    public:
     virtual ~visitor() {}
@@ -313,9 +305,8 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> {
    public:
     virtual ~visitor() {}
@@ -338,8 +329,8 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> {
    public:
     virtual ~visitor() {}
@@ -361,8 +352,8 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
    public:
     virtual ~visitor() {}
@@ -383,8 +374,7 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
 class visitor<T1, T2, T3, T4, T5, T6, T7, T8> {
    public:
     virtual ~visitor() {}
@@ -404,8 +394,7 @@ class visitor<T1, T2, T3, T4, T5, T6, T7, T8> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 class visitor<T1, T2, T3, T4, T5, T6, T7> {
    public:
     virtual ~visitor() {}
@@ -424,8 +413,7 @@ class visitor<T1, T2, T3, T4, T5, T6, T7> {
 /// Derive visitors from this.
 ///\ingroup visitor
 //*****************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6>
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 class visitor<T1, T2, T3, T4, T5, T6> {
    public:
     virtual ~visitor() {}

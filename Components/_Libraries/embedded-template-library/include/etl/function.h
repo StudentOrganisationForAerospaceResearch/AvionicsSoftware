@@ -51,8 +51,7 @@ namespace etl {
 template <typename TParameter>
 class ifunction {
    public:
-    typedef TParameter
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef TParameter parameter_type;  ///< The type of parameter sent to the function.
 
     virtual ~ifunction() {}
 
@@ -69,8 +68,7 @@ class ifunction {
 template <>
 class ifunction<void> {
    public:
-    typedef void
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef void parameter_type;  ///< The type of parameter sent to the function.
 
     virtual ~ifunction() {}
 
@@ -89,9 +87,8 @@ class ifunction<void> {
 template <typename TObject, typename TParameter>
 class function : public ifunction<TParameter> {
    public:
-    typedef TObject object_type;  ///< The type of object.
-    typedef TParameter
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef TObject object_type;        ///< The type of object.
+    typedef TParameter parameter_type;  ///< The type of parameter sent to the function.
 
     //*************************************************************************
     /// Constructor.
@@ -111,9 +108,8 @@ class function : public ifunction<TParameter> {
     }
 
    private:
-    TObject* p_object;  ///< Pointer to the object that contains the function.
-    void (TObject::*p_function)(
-        TParameter);  ///< Pointer to the member function.
+    TObject* p_object;                        ///< Pointer to the object that contains the function.
+    void (TObject::*p_function)(TParameter);  ///< Pointer to the member function.
 };
 
 //***************************************************************************
@@ -129,8 +125,7 @@ class function<TObject, void> : public ifunction<void> {
     ///\param object   Reference to the object
     ///\param p_function Pointer to the member function
     //*************************************************************************
-    function(TObject& object_, void (TObject::*p_function_)(void))
-        : p_object(&object_), p_function(p_function_) {}
+    function(TObject& object_, void (TObject::*p_function_)(void)) : p_object(&object_), p_function(p_function_) {}
 
     //*************************************************************************
     /// The function operator that calls the destination function.
@@ -141,7 +136,7 @@ class function<TObject, void> : public ifunction<void> {
     }
 
    private:
-    TObject* p_object;  ///< Pointer to the object that contains the function.
+    TObject* p_object;              ///< Pointer to the object that contains the function.
     void (TObject::*p_function)();  ///< Pointer to the member function.
 };
 
@@ -156,8 +151,7 @@ class function<void, TParameter> : public ifunction<TParameter> {
     /// Constructor.
     ///\param p_function Pointer to the function
     //*************************************************************************
-    explicit function(void (*p_function_)(TParameter))
-        : p_function(p_function_) {}
+    explicit function(void (*p_function_)(TParameter)) : p_function(p_function_) {}
 
     //*************************************************************************
     /// The function operator that calls the destination function.
@@ -203,13 +197,11 @@ class function<void, void> : public ifunction<void> {
 ///\tparam TObject    The object type that contains the member function.
 ///\tparam TParameter The parameter type accepted by the member function.
 //***************************************************************************
-template <typename TObject, typename TParameter,
-          void (TObject::*Function)(TParameter)>
+template <typename TObject, typename TParameter, void (TObject::*Function)(TParameter)>
 class function_mp : public ifunction<TParameter> {
    public:
-    typedef TObject object_type;  ///< The type of object.
-    typedef TParameter
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef TObject object_type;        ///< The type of object.
+    typedef TParameter parameter_type;  ///< The type of parameter sent to the function.
 
     //*************************************************************************
     /// Constructor.
@@ -240,8 +232,7 @@ template <typename TObject, void (TObject::*Function)(void)>
 class function_mv : public ifunction<void> {
    public:
     typedef TObject object_type;  ///< The type of object.
-    typedef void
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef void parameter_type;  ///< The type of parameter sent to the function.
 
     //*************************************************************************
     /// Constructor.
@@ -268,13 +259,11 @@ class function_mv : public ifunction<void> {
 ///\tparam TObject    The object type that contains the member function.
 ///\tparam TParameter The parameter type accepted by the member function.
 //***************************************************************************
-template <typename TObject, typename TParameter, TObject& Instance,
-          void (TObject::*Function)(TParameter)>
+template <typename TObject, typename TParameter, TObject& Instance, void (TObject::*Function)(TParameter)>
 class function_imp : public ifunction<TParameter> {
    public:
-    typedef TObject object_type;  ///< The type of object.
-    typedef TParameter
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef TObject object_type;        ///< The type of object.
+    typedef TParameter parameter_type;  ///< The type of parameter sent to the function.
 
     //*************************************************************************
     /// The function operator that calls the destination function.
@@ -296,8 +285,7 @@ template <typename TObject, TObject& Instance, void (TObject::*Function)(void)>
 class function_imv : public ifunction<void> {
    public:
     typedef TObject object_type;  ///< The type of object.
-    typedef void
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef void parameter_type;  ///< The type of parameter sent to the function.
 
     //*************************************************************************
     /// The function operator that calls the destination function.
@@ -317,8 +305,7 @@ class function_imv : public ifunction<void> {
 template <typename TParameter, void (*Function)(TParameter)>
 class function_fp : public ifunction<TParameter> {
    public:
-    typedef TParameter
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef TParameter parameter_type;  ///< The type of parameter sent to the function.
 
     //*************************************************************************
     /// Constructor.
@@ -345,8 +332,7 @@ class function_fp : public ifunction<TParameter> {
 template <void (*Function)(void)>
 class function_fv : public ifunction<void> {
    public:
-    typedef void
-        parameter_type;  ///< The type of parameter sent to the function.
+    typedef void parameter_type;  ///< The type of parameter sent to the function.
 
     //*************************************************************************
     /// Constructor.

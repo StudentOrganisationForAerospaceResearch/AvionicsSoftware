@@ -50,15 +50,12 @@ class invert : public etl::unary_function<TInput, TInput> {
     //*****************************************************************
     invert()
         : offset(TInput(0)),
-          minuend((etl::numeric_limits<TInput>::is_signed)
-                      ? TInput(0)
-                      : etl::numeric_limits<TInput>::max()) {}
+          minuend((etl::numeric_limits<TInput>::is_signed) ? TInput(0) : etl::numeric_limits<TInput>::max()) {}
 
     //*****************************************************************
     // Constructor.
     //*****************************************************************
-    invert(TInput offset_, TInput minuend_)
-        : offset(offset_), minuend(minuend_) {}
+    invert(TInput offset_, TInput minuend_) : offset(offset_), minuend(minuend_) {}
 
     //*****************************************************************
     // operator ()

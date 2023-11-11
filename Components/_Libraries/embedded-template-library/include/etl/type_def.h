@@ -221,34 +221,22 @@ class type_def {
     const TValue& get() const { return value; }
 
     //*********************************************************************
-    friend bool operator<(const type_def& lhs, const type_def& rhs) {
-        return lhs.value < rhs.value;
-    }
+    friend bool operator<(const type_def& lhs, const type_def& rhs) { return lhs.value < rhs.value; }
 
     //*********************************************************************
-    friend bool operator<=(const type_def& lhs, const type_def& rhs) {
-        return lhs.value <= rhs.value;
-    }
+    friend bool operator<=(const type_def& lhs, const type_def& rhs) { return lhs.value <= rhs.value; }
 
     //*********************************************************************
-    friend bool operator>(const type_def& lhs, const type_def& rhs) {
-        return lhs.value > rhs.value;
-    }
+    friend bool operator>(const type_def& lhs, const type_def& rhs) { return lhs.value > rhs.value; }
 
     //*********************************************************************
-    friend bool operator>=(const type_def& lhs, const type_def& rhs) {
-        return lhs.value >= rhs.value;
-    }
+    friend bool operator>=(const type_def& lhs, const type_def& rhs) { return lhs.value >= rhs.value; }
 
     //*********************************************************************
-    friend bool operator==(const type_def& lhs, const type_def& rhs) {
-        return lhs.value == rhs.value;
-    }
+    friend bool operator==(const type_def& lhs, const type_def& rhs) { return lhs.value == rhs.value; }
 
     //*********************************************************************
-    friend bool operator!=(const type_def& lhs, const type_def& rhs) {
-        return lhs.value != rhs.value;
-    }
+    friend bool operator!=(const type_def& lhs, const type_def& rhs) { return lhs.value != rhs.value; }
 
    private:
     TValue value;

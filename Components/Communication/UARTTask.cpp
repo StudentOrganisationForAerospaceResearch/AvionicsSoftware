@@ -25,14 +25,12 @@ void UARTTask::InitTask() {
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize UART task twice");
 
     // Start the task
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)UARTTask::RunTask, (const char*)"UARTTask",
-        (uint16_t)UART_TASK_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)UART_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue =
+        xTaskCreate((TaskFunction_t)UARTTask::RunTask, (const char*)"UARTTask", (uint16_t)UART_TASK_STACK_DEPTH_WORDS,
+                    (void*)this, (UBaseType_t)UART_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS,
-                "UARTTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
 
     // Configure DMA
 }
@@ -66,24 +64,19 @@ void UARTTask::HandleCommand(Command& cm) {
             //Switch for task specific command within DATA_COMMAND
             switch (cm.GetTaskCommand()) {
                 case UART_TASK_COMMAND_SEND_DEBUG:
-                    UART::Debug->Transmit(cm.GetDataPointer(),
-                                          cm.GetDataSize());
+                    UART::Debug->Transmit(cm.GetDataPointer(), cm.GetDataSize());
                     osDelay(1);
                     break;
                 case UART_TASK_COMMAND_SEND_RADIO:
-                    UART::Radio->Transmit(cm.GetDataPointer(),
-                                          cm.GetDataSize());
+                    UART::Radio->Transmit(cm.GetDataPointer(), cm.GetDataSize());
                     osDelay(1);
                     break;
                 case UART_TASK_COMMAND_SEND_PBB:
-                    UART::Conduit_PBB->Transmit(cm.GetDataPointer(),
-                                                cm.GetDataSize());
+                    UART::Conduit_PBB->Transmit(cm.GetDataPointer(), cm.GetDataSize());
                     osDelay(1);
                     break;
                 default:
-                    SOAR_PRINT(
-                        "UARTTask - Received Unsupported DATA_COMMAND {%d}\n",
-                        cm.GetTaskCommand());
+                    SOAR_PRINT("UARTTask - Received Unsupported DATA_COMMAND {%d}\n", cm.GetTaskCommand());
                     break;
             }
         }
@@ -91,8 +84,7 @@ void UARTTask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("UARTTask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 

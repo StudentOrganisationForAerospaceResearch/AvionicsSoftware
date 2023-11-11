@@ -106,11 +106,7 @@ enum float_round_style {
     round_toward_neg_infinity = 3,
 };
 
-enum float_denorm_style {
-    denorm_indeterminate = -1,
-    denorm_absent = 0,
-    denorm_present = 1
-};
+enum float_denorm_style { denorm_indeterminate = -1, denorm_absent = 0, denorm_present = 1 };
 
 class etl_integral_limits {
    public:
@@ -197,8 +193,7 @@ class numeric_limits<bool> : public etl_integral_limits {
 template <>
 class numeric_limits<char> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(char)) - (etl::is_signed<char>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(char)) - (etl::is_signed<char>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = etl::is_signed<char>::value;
     static ETL_CONSTANT bool is_modulo = false;
@@ -220,8 +215,7 @@ template <>
 class numeric_limits<unsigned char> : public etl_integral_limits {
    public:
     static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(unsigned char)) -
-        (etl::is_signed<unsigned char>::value ? 1 : 0);
+        (CHAR_BIT * sizeof(unsigned char)) - (etl::is_signed<unsigned char>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = false;
     static ETL_CONSTANT bool is_modulo = true;
@@ -242,8 +236,7 @@ class numeric_limits<unsigned char> : public etl_integral_limits {
 template <>
 class numeric_limits<signed char> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(char)) - (etl::is_signed<char>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(char)) - (etl::is_signed<char>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = true;
     static ETL_CONSTANT bool is_modulo = false;
@@ -265,8 +258,7 @@ class numeric_limits<signed char> : public etl_integral_limits {
 template <>
 class numeric_limits<char8_t> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(char8_t)) - (etl::is_signed<char8_t>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(char8_t)) - (etl::is_signed<char8_t>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = etl::is_signed<char8_t>::value;
     static ETL_CONSTANT bool is_modulo = false;
@@ -289,8 +281,7 @@ class numeric_limits<char8_t> : public etl_integral_limits {
 template <>
 class numeric_limits<char16_t> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(char16_t)) -
-                                     (etl::is_signed<char16_t>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(char16_t)) - (etl::is_signed<char16_t>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = false;
     static ETL_CONSTANT bool is_modulo = true;
@@ -313,8 +304,7 @@ class numeric_limits<char16_t> : public etl_integral_limits {
 template <>
 class numeric_limits<char32_t> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(char32_t)) -
-                                     (etl::is_signed<char32_t>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(char32_t)) - (etl::is_signed<char32_t>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = false;
     static ETL_CONSTANT bool is_modulo = true;
@@ -336,8 +326,7 @@ class numeric_limits<char32_t> : public etl_integral_limits {
 template <>
 class numeric_limits<wchar_t> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(wchar_t)) - (etl::is_signed<wchar_t>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(wchar_t)) - (etl::is_signed<wchar_t>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = etl::is_signed<wchar_t>::value;
     static ETL_CONSTANT bool is_modulo = etl::is_unsigned<wchar_t>::value;
@@ -357,8 +346,7 @@ class numeric_limits<wchar_t> : public etl_integral_limits {
 template <>
 class numeric_limits<short> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(short)) - (etl::is_signed<short>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(short)) - (etl::is_signed<short>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = true;
     static ETL_CONSTANT bool is_modulo = false;
@@ -380,8 +368,7 @@ template <>
 class numeric_limits<unsigned short> : public etl_integral_limits {
    public:
     static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(unsigned short)) -
-        (etl::is_signed<unsigned short>::value ? 1 : 0);
+        (CHAR_BIT * sizeof(unsigned short)) - (etl::is_signed<unsigned short>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = false;
     static ETL_CONSTANT bool is_modulo = true;
@@ -402,8 +389,7 @@ class numeric_limits<unsigned short> : public etl_integral_limits {
 template <>
 class numeric_limits<int> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(int)) - (etl::is_signed<int>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(int)) - (etl::is_signed<int>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = true;
     static ETL_CONSTANT bool is_modulo = false;
@@ -424,9 +410,7 @@ class numeric_limits<int> : public etl_integral_limits {
 template <>
 class numeric_limits<unsigned int> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(unsigned int)) -
-        (etl::is_signed<unsigned int>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(unsigned int)) - (etl::is_signed<unsigned int>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = false;
     static ETL_CONSTANT bool is_modulo = true;
@@ -447,8 +431,7 @@ class numeric_limits<unsigned int> : public etl_integral_limits {
 template <>
 class numeric_limits<long> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(long)) - (etl::is_signed<long>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(long)) - (etl::is_signed<long>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = true;
     static ETL_CONSTANT bool is_modulo = false;
@@ -470,8 +453,7 @@ template <>
 class numeric_limits<unsigned long> : public etl_integral_limits {
    public:
     static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(unsigned long)) -
-        (etl::is_signed<unsigned long>::value ? 1 : 0);
+        (CHAR_BIT * sizeof(unsigned long)) - (etl::is_signed<unsigned long>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = false;
     static ETL_CONSTANT bool is_modulo = true;
@@ -492,8 +474,7 @@ class numeric_limits<unsigned long> : public etl_integral_limits {
 template <>
 class numeric_limits<long long> : public etl_integral_limits {
    public:
-    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(long long)) -
-                                     (etl::is_signed<long long>::value ? 1 : 0);
+    static ETL_CONSTANT int digits = (CHAR_BIT * sizeof(long long)) - (etl::is_signed<long long>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = true;
     static ETL_CONSTANT bool is_modulo = false;
@@ -515,8 +496,7 @@ template <>
 class numeric_limits<unsigned long long> : public etl_integral_limits {
    public:
     static ETL_CONSTANT int digits =
-        (CHAR_BIT * sizeof(unsigned long long)) -
-        (etl::is_signed<unsigned long long>::value ? 1 : 0);
+        (CHAR_BIT * sizeof(unsigned long long)) - (etl::is_signed<unsigned long long>::value ? 1 : 0);
     static ETL_CONSTANT int digits10 = ETL_LOG10_OF_2(digits);
     static ETL_CONSTANT bool is_signed = false;
     static ETL_CONSTANT bool is_modulo = true;

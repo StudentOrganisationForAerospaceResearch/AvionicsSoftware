@@ -50,13 +50,11 @@ namespace etl {
 template <typename T, T MASK = etl::integral_limits<T>::max>
 class flags {
    public:
-    ETL_STATIC_ASSERT(etl::is_integral<T>::value&& etl::is_unsigned<T>::value,
-                      "Unsigned integral values only");
+    ETL_STATIC_ASSERT(etl::is_integral<T>::value&& etl::is_unsigned<T>::value, "Unsigned integral values only");
 
     typedef T value_type;
 
-    static ETL_CONSTANT value_type ALL_SET =
-        etl::integral_limits<value_type>::max & MASK;
+    static ETL_CONSTANT value_type ALL_SET = etl::integral_limits<value_type>::max & MASK;
     static ETL_CONSTANT value_type ALL_CLEAR = 0;
 
     static ETL_CONSTANT size_t NBITS = etl::integral_limits<value_type>::bits;
@@ -66,11 +64,9 @@ class flags {
     //*************************************************************************
     ETL_CONSTEXPR flags() ETL_NOEXCEPT : data(value_type(0)) {}
 
-    ETL_CONSTEXPR flags(value_type pattern) ETL_NOEXCEPT : data(pattern& MASK) {
-    }
+    ETL_CONSTEXPR flags(value_type pattern) ETL_NOEXCEPT : data(pattern& MASK) {}
 
-    ETL_CONSTEXPR flags(const flags<T, MASK>& pattern) ETL_NOEXCEPT
-        : data(pattern.value()) {}
+    ETL_CONSTEXPR flags(const flags<T, MASK>& pattern) ETL_NOEXCEPT : data(pattern.value()) {}
 
     //*************************************************************************
     /// Tests bits.
@@ -81,9 +77,7 @@ class flags {
     }
 
     //*******************************************
-    ETL_CONSTEXPR bool test(value_type pattern) const ETL_NOEXCEPT {
-        return (data & pattern) != value_type(0);
-    }
+    ETL_CONSTEXPR bool test(value_type pattern) const ETL_NOEXCEPT { return (data & pattern) != value_type(0); }
 
     //*************************************************************************
     /// Set the bits.
@@ -119,8 +113,7 @@ class flags {
     }
 
     //*******************************************
-    ETL_CONSTEXPR14 flags<T, MASK>& set(value_type pattern,
-                                        bool value) ETL_NOEXCEPT {
+    ETL_CONSTEXPR14 flags<T, MASK>& set(value_type pattern, bool value) ETL_NOEXCEPT {
         value ? data |= (pattern & MASK) : data &= (~pattern & MASK);
 
         return *this;
@@ -195,9 +188,7 @@ class flags {
     //*************************************************************************
     /// Are none of the bits set?
     //*************************************************************************
-    ETL_CONSTEXPR bool none() const ETL_NOEXCEPT {
-        return (data & MASK) == ALL_CLEAR;
-    }
+    ETL_CONSTEXPR bool none() const ETL_NOEXCEPT { return (data & MASK) == ALL_CLEAR; }
 
     //*******************************************
     template <value_type pattern>
@@ -206,16 +197,12 @@ class flags {
     }
 
     //*******************************************
-    ETL_CONSTEXPR bool none_of(value_type pattern) const ETL_NOEXCEPT {
-        return !any_of(pattern);
-    }
+    ETL_CONSTEXPR bool none_of(value_type pattern) const ETL_NOEXCEPT { return !any_of(pattern); }
 
     //*************************************************************************
     /// Are any of the bits set?
     //*************************************************************************
-    ETL_CONSTEXPR bool any() const ETL_NOEXCEPT {
-        return (data & MASK) != value_type(0);
-    }
+    ETL_CONSTEXPR bool any() const ETL_NOEXCEPT { return (data & MASK) != value_type(0); }
 
     //*******************************************
     template <value_type pattern>
@@ -224,9 +211,7 @@ class flags {
     }
 
     //*******************************************
-    ETL_CONSTEXPR bool any_of(value_type pattern) const {
-        return (data & (pattern & MASK)) != value_type(0);
-    }
+    ETL_CONSTEXPR bool any_of(value_type pattern) const { return (data & (pattern & MASK)) != value_type(0); }
 
     //*************************************************************************
     /// Return the value of the flags.
@@ -250,8 +235,7 @@ class flags {
     //*************************************************************************
     /// operator &=
     //*************************************************************************
-    ETL_CONSTEXPR14 flags<T, MASK>& operator&=(value_type pattern)
-        ETL_NOEXCEPT {
+    ETL_CONSTEXPR14 flags<T, MASK>& operator&=(value_type pattern) ETL_NOEXCEPT {
         data &= pattern;
 
         return *this;
@@ -260,8 +244,7 @@ class flags {
     //*************************************************************************
     /// operator |=
     //*************************************************************************
-    ETL_CONSTEXPR14 flags<T, MASK>& operator|=(value_type pattern)
-        ETL_NOEXCEPT {
+    ETL_CONSTEXPR14 flags<T, MASK>& operator|=(value_type pattern) ETL_NOEXCEPT {
         data |= (pattern & MASK);
 
         return *this;
@@ -270,8 +253,7 @@ class flags {
     //*************************************************************************
     /// operator ^=
     //*************************************************************************
-    ETL_CONSTEXPR14 flags<T, MASK>& operator^=(value_type pattern)
-        ETL_NOEXCEPT {
+    ETL_CONSTEXPR14 flags<T, MASK>& operator^=(value_type pattern) ETL_NOEXCEPT {
         data ^= (pattern & MASK);
 
         return *this;
@@ -280,8 +262,7 @@ class flags {
     //*************************************************************************
     /// operator =
     //*************************************************************************
-    ETL_CONSTEXPR14 flags<T, MASK>& operator=(flags<T, MASK> other)
-        ETL_NOEXCEPT {
+    ETL_CONSTEXPR14 flags<T, MASK>& operator=(flags<T, MASK> other) ETL_NOEXCEPT {
         data = other.data;
 
         return *this;
@@ -312,8 +293,7 @@ class flags {
 /// operator ==
 //***************************************************************************
 template <typename T, T MASK>
-ETL_CONSTEXPR bool operator==(flags<T, MASK> lhs,
-                              flags<T, MASK> rhs) ETL_NOEXCEPT {
+ETL_CONSTEXPR bool operator==(flags<T, MASK> lhs, flags<T, MASK> rhs) ETL_NOEXCEPT {
     return lhs.value() == rhs.value();
 }
 
@@ -321,8 +301,7 @@ ETL_CONSTEXPR bool operator==(flags<T, MASK> lhs,
 /// operator !=
 //***************************************************************************
 template <typename T, T MASK>
-ETL_CONSTEXPR bool operator!=(flags<T, MASK> lhs,
-                              flags<T, MASK> rhs) ETL_NOEXCEPT {
+ETL_CONSTEXPR bool operator!=(flags<T, MASK> lhs, flags<T, MASK> rhs) ETL_NOEXCEPT {
     return !(lhs == rhs);
 }
 

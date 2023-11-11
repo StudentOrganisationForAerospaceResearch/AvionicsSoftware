@@ -24,9 +24,7 @@ class PBBRxProtocolTask : public ProtocolTask {
     void InitTask();
 
     static void SendProtobufMessage(
-        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>&
-            writeBuffer,
-        Proto::MessageID msgId) {
+        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>& writeBuffer, Proto::MessageID msgId) {
         Inst().ProtocolTask::SendProtobufMessage(writeBuffer, msgId);
     }
 
@@ -37,11 +35,9 @@ class PBBRxProtocolTask : public ProtocolTask {
         cmdMsg.set_target(Proto::Node::NODE_PBB);
         pbbCmd.set_command_enum(cmd);
         cmdMsg.set_pbb_command(pbbCmd);
-        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-            writeBuffer;
+        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
         cmdMsg.serialize(writeBuffer);
-        PBBRxProtocolTask::SendProtobufMessage(writeBuffer,
-                                               Proto::MessageID::MSG_COMMAND);
+        PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_COMMAND);
     }
 
    protected:
@@ -50,23 +46,16 @@ class PBBRxProtocolTask : public ProtocolTask {
     }  // Static Task Interface, passes control to the instance Run();
 
     // These handlers will receive a buffer and size corresponding to a decoded message
-    void HandleProtobufCommandMessage(
-        EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>&
-            readBuffer);
-    void HandleProtobufControlMesssage(
-        EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>&
-            readBuffer);
-    void HandleProtobufTelemetryMessage(
-        EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>&
-            readBuffer);
+    void HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer);
+    void HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer);
+    void HandleProtobufTelemetryMessage(EmbeddedProto::ReadBufferFixedSize<PROTOCOL_RX_BUFFER_SZ_BYTES>& readBuffer);
 
     // Member variables
 
    private:
-    PBBRxProtocolTask();                          // Private constructor
-    PBBRxProtocolTask(const PBBRxProtocolTask&);  // Prevent copy-construction
-    PBBRxProtocolTask& operator=(
-        const PBBRxProtocolTask&);  // Prevent assignment
+    PBBRxProtocolTask();                                     // Private constructor
+    PBBRxProtocolTask(const PBBRxProtocolTask&);             // Prevent copy-construction
+    PBBRxProtocolTask& operator=(const PBBRxProtocolTask&);  // Prevent assignment
 };
 
 #endif  // SOAR_PBBRXPROTOCOL_HPP_

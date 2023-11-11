@@ -34,11 +34,9 @@ SOFTWARE.
 //*****************************************************************************
 // Macros that are conditionally defined.
 //*****************************************************************************
-#if !defined(ETL_COMPILER_GCC) && !defined(ETL_COMPILER_MICROSOFT) &&   \
-    !defined(ETL_COMPILER_ARM5) && !defined(ETL_COMPILER_ARM6) &&       \
-    !defined(ETL_COMPILER_ARM7) && !defined(ETL_COMPILER_CLANG) &&      \
-    !defined(ETL_COMPILER_GREEN_HILLS) && !defined(ETL_COMPILER_IAR) && \
-    !defined(ETL_COMPILER_INTEL) &&                                     \
+#if !defined(ETL_COMPILER_GCC) && !defined(ETL_COMPILER_MICROSOFT) && !defined(ETL_COMPILER_ARM5) &&    \
+    !defined(ETL_COMPILER_ARM6) && !defined(ETL_COMPILER_ARM7) && !defined(ETL_COMPILER_CLANG) &&       \
+    !defined(ETL_COMPILER_GREEN_HILLS) && !defined(ETL_COMPILER_IAR) && !defined(ETL_COMPILER_INTEL) && \
     !defined(ETL_COMPILER_TEXAS_INSTRUMENTS) && !defined(ETL_COMPILER_GENERIC)
 
 #if !defined(ETL_COMPILER_TYPE_DETECTED) && !defined(ETL_COMPILER_ARM5)
@@ -49,16 +47,14 @@ SOFTWARE.
 #endif
 
 #if !defined(ETL_COMPILER_TYPE_DETECTED) && !defined(ETL_COMPILER_ARM6)
-#if defined(__ARMCOMPILER_VERSION) && (__ARMCOMPILER_VERSION >= 6000000L) && \
-    (__ARMCOMPILER_VERSION < 7000000L)
+#if defined(__ARMCOMPILER_VERSION) && (__ARMCOMPILER_VERSION >= 6000000L) && (__ARMCOMPILER_VERSION < 7000000L)
 #define ETL_COMPILER_ARM6
 #define ETL_COMPILER_TYPE_DETECTED 1
 #endif
 #endif
 
 #if !defined(ETL_COMPILER_TYPE_DETECTED) && !defined(ETL_COMPILER_ARM7)
-#if defined(__ARMCOMPILER_VERSION) && (__ARMCOMPILER_VERSION >= 7000000L) && \
-    (__ARMCOMPILER_VERSION < 8000000L)
+#if defined(__ARMCOMPILER_VERSION) && (__ARMCOMPILER_VERSION >= 7000000L) && (__ARMCOMPILER_VERSION < 8000000L)
 #define ETL_COMPILER_ARM7
 #define ETL_COMPILER_TYPE_DETECTED
 #endif
@@ -102,8 +98,7 @@ SOFTWARE.
 #endif
 #endif
 
-#if !defined(ETL_COMPILER_TYPE_DETECTED) && \
-    !defined(ETL_COMPILER_TEXAS_INSTRUMENTS)
+#if !defined(ETL_COMPILER_TYPE_DETECTED) && !defined(ETL_COMPILER_TEXAS_INSTRUMENTS)
 #if defined(__TI_COMPILER_VERSION__)
 #define ETL_COMPILER_TEXAS_INSTRUMENTS
 #define ETL_COMPILER_TYPE_DETECTED

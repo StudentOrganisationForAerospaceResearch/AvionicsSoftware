@@ -111,9 +111,7 @@ class pvoidvector : public vector_base {
     /// Returns a const reverse iterator to the reverse beginning of the vector.
     ///\return Const iterator to the reverse beginning of the vector.
     //*********************************************************************
-    const_reverse_iterator rbegin() const {
-        return const_reverse_iterator(end());
-    }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
 
     //*********************************************************************
     /// Returns a reverse iterator to the end + 1 of the vector.
@@ -125,25 +123,19 @@ class pvoidvector : public vector_base {
     /// Returns a const reverse iterator to the end + 1 of the vector.
     ///\return Const reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    const_reverse_iterator rend() const {
-        return const_reverse_iterator(begin());
-    }
+    const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the vector.
     ///\return Const reverse iterator to the reverse beginning of the vector.
     //*********************************************************************
-    const_reverse_iterator crbegin() const {
-        return const_reverse_iterator(cend());
-    }
+    const_reverse_iterator crbegin() const { return const_reverse_iterator(cend()); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the vector.
     ///\return Const reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    const_reverse_iterator crend() const {
-        return const_reverse_iterator(cbegin());
-    }
+    const_reverse_iterator crend() const { return const_reverse_iterator(cbegin()); }
 
     //*********************************************************************
     /// Resizes the vector.
@@ -267,8 +259,7 @@ class pvoidvector : public vector_base {
     ///\param last  The iterator to the last element + 1.
     //*********************************************************************
     template <typename TIterator>
-    typename etl::enable_if<!etl::is_pointer<TIterator>::value, void>::type
-    assign(TIterator first, TIterator last) {
+    typename etl::enable_if<!etl::is_pointer<TIterator>::value, void>::type assign(TIterator first, TIterator last) {
 #if ETL_IS_DEBUG_BUILD
         difference_type d = etl::distance(first, last);
         ETL_ASSERT(static_cast<size_t>(d) <= CAPACITY, ETL_ERROR(vector_full));
@@ -290,8 +281,7 @@ class pvoidvector : public vector_base {
     ///\param last  The iterator to the last element + 1.
     //*********************************************************************
     template <typename TIterator>
-    typename etl::enable_if<etl::is_pointer<TIterator>::value, void>::type
-    assign(TIterator first, TIterator last) {
+    typename etl::enable_if<etl::is_pointer<TIterator>::value, void>::type assign(TIterator first, TIterator last) {
 #if ETL_IS_DEBUG_BUILD
         difference_type d = etl::distance(first, last);
         ETL_ASSERT(static_cast<size_t>(d) <= CAPACITY, ETL_ERROR(vector_full));
@@ -554,8 +544,7 @@ class pvoidvector : public vector_base {
     //*********************************************************************
     /// Constructor.
     //*********************************************************************
-    pvoidvector(void** p_buffer_, size_t MAX_SIZE)
-        : vector_base(MAX_SIZE), p_buffer(p_buffer_), p_end(p_buffer_) {}
+    pvoidvector(void** p_buffer_, size_t MAX_SIZE) : vector_base(MAX_SIZE), p_buffer(p_buffer_), p_end(p_buffer_) {}
 
     //*********************************************************************
     /// Initialise the vector.
@@ -596,10 +585,8 @@ class pvoidvector : public vector_base {
 ///\return <b>true</b> if the arrays are equal, otherwise <b>false</b>
 ///\ingroup vector
 //***************************************************************************
-inline bool operator==(const etl::pvoidvector& lhs,
-                       const etl::pvoidvector& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+inline bool operator==(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -609,8 +596,7 @@ inline bool operator==(const etl::pvoidvector& lhs,
 ///\return <b>true</b> if the arrays are not equal, otherwise <b>false</b>
 ///\ingroup vector
 //***************************************************************************
-inline bool operator!=(const etl::pvoidvector& lhs,
-                       const etl::pvoidvector& rhs) {
+inline bool operator!=(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return !(lhs == rhs);
 }
 
@@ -621,10 +607,8 @@ inline bool operator!=(const etl::pvoidvector& lhs,
 ///\return <b>true</b> if the first vector is lexicographically less than the second, otherwise <b>false</b>
 ///\ingroup vector
 //***************************************************************************
-inline bool operator<(const etl::pvoidvector& lhs,
-                      const etl::pvoidvector& rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                        rhs.end());
+inline bool operator<(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //***************************************************************************
@@ -634,8 +618,7 @@ inline bool operator<(const etl::pvoidvector& lhs,
 ///\return <b>true</b> if the first vector is lexicographically greater than the second, otherwise <b>false</b>
 ///\ingroup vector
 //***************************************************************************
-inline bool operator>(const etl::pvoidvector& lhs,
-                      const etl::pvoidvector& rhs) {
+inline bool operator>(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return (rhs < lhs);
 }
 
@@ -646,8 +629,7 @@ inline bool operator>(const etl::pvoidvector& lhs,
 ///\return <b>true</b> if the first vector is lexicographically less than or equal to the second, otherwise <b>false</b>
 ///\ingroup vector
 //***************************************************************************
-inline bool operator<=(const etl::pvoidvector& lhs,
-                       const etl::pvoidvector& rhs) {
+inline bool operator<=(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return !(lhs > rhs);
 }
 
@@ -658,8 +640,7 @@ inline bool operator<=(const etl::pvoidvector& lhs,
 ///\return <b>true</b> if the first vector is lexicographically greater than or equal to the second, otherwise <b>false</b>
 ///\ingroup vector
 //***************************************************************************
-inline bool operator>=(const etl::pvoidvector& lhs,
-                       const etl::pvoidvector& rhs) {
+inline bool operator>=(const etl::pvoidvector& lhs, const etl::pvoidvector& rhs) {
     return !(lhs < rhs);
 }
 }  // namespace etl

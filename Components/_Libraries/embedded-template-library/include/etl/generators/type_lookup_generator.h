@@ -90,16 +90,14 @@ struct type_id_lookup {
     // For N type pairs.
     template <size_t ID, typename T1, typename... TRest>
     struct type_from_id_helper {
-        using type = typename etl::conditional<
-            ID == T1::ID, typename T1::type,
-            typename type_from_id_helper<ID, TRest...>::type>::type;
+        using type = typename etl::conditional<ID == T1::ID, typename T1::type,
+                                               typename type_from_id_helper<ID, TRest...>::type>::type;
     };
 
     // Specialisation for 1 type pair.
     template <size_t ID, typename T1>
     struct type_from_id_helper<ID, T1> {
-        using type = typename etl::conditional<ID == T1::ID, typename T1::type,
-                                               nulltype>::type;
+        using type = typename etl::conditional<ID == T1::ID, typename T1::type, nulltype>::type;
     };
 
    public:
@@ -123,16 +121,13 @@ struct type_id_lookup {
     template <typename T, typename T1, typename... TRest>
     struct id_from_type_helper {
         static constexpr size_t value =
-            etl::is_same<T, typename T1::type>::value
-                ? T1::ID
-                : id_from_type_helper<T, TRest...>::value;
+            etl::is_same<T, typename T1::type>::value ? T1::ID : id_from_type_helper<T, TRest...>::value;
     };
 
     // Specialisation for 1 type pair.
     template <typename T, typename T1>
     struct id_from_type_helper<T, T1> {
-        static constexpr size_t value =
-            etl::is_same<T, typename T1::type>::value ? T1::ID : UNKNOWN;
+        static constexpr size_t value = etl::is_same<T, typename T1::type>::value ? T1::ID : UNKNOWN;
     };
 
    public:
@@ -141,8 +136,7 @@ struct type_id_lookup {
     //************************************
     template <typename T>
     struct id_from_type {
-        static constexpr size_t value =
-            id_from_type_helper<T, TTypes...>::value;
+        static constexpr size_t value = id_from_type_helper<T, TTypes...>::value;
 
         static_assert(value != UNKNOWN, "Invalid type");
     };
@@ -176,16 +170,14 @@ class type_type_lookup {
 
     template <typename T, typename T1, typename... TRest>
     struct type_from_type_helper {
-        using type = typename etl::conditional<
-            etl::is_same<T, typename T1::type1>::value, typename T1::type2,
-            typename type_from_type_helper<T, TRest...>::type>::type;
+        using type = typename etl::conditional<etl::is_same<T, typename T1::type1>::value, typename T1::type2,
+                                               typename type_from_type_helper<T, TRest...>::type>::type;
     };
 
     template <typename T, typename T1>
     struct type_from_type_helper<T, T1> {
-        using type = typename etl::conditional<
-            etl::is_same<T, typename T1::type1>::value, typename T1::type2,
-            nulltype>::type;
+        using type =
+            typename etl::conditional<etl::is_same<T, typename T1::type1>::value, typename T1::type2, nulltype>::type;
     };
 
    public:
@@ -195,8 +187,7 @@ class type_type_lookup {
         // The matched type or nulltype
         using type = typename type_from_type_helper<T, TTypes...>::type;
 
-        static_assert(!etl::is_same<type, nulltype>::value,
-                      "Type match not found");
+        static_assert(!etl::is_same<type, nulltype>::value, "Type match not found");
     };
 
     // Template alias.

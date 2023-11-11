@@ -43,8 +43,7 @@ namespace etl {
 //***************************************************************************
 class successor_exception : public etl::exception {
    public:
-    successor_exception(string_type reason_, string_type file_name_,
-                        numeric_type line_number_)
+    successor_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -54,9 +53,8 @@ class successor_exception : public etl::exception {
 class successor_invalid : public etl::successor_exception {
    public:
     successor_invalid(string_type file_name_, numeric_type line_number_)
-        : etl::successor_exception(
-              ETL_ERROR_TEXT("successor:invalid", ETL_SUCCESSOR_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : etl::successor_exception(ETL_ERROR_TEXT("successor:invalid", ETL_SUCCESSOR_FILE_ID "A"), file_name_,
+                                   line_number_) {}
 };
 
 //***************************************************************************

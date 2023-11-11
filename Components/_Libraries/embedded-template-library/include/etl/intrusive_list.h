@@ -52,8 +52,7 @@ namespace etl {
 //***************************************************************************
 class intrusive_list_exception : public exception {
    public:
-    intrusive_list_exception(string_type reason_, string_type file_name_,
-                             numeric_type line_number_)
+    intrusive_list_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -64,10 +63,8 @@ class intrusive_list_exception : public exception {
 class intrusive_list_empty : public intrusive_list_exception {
    public:
     intrusive_list_empty(string_type file_name_, numeric_type line_number_)
-        : intrusive_list_exception(
-              ETL_ERROR_TEXT("intrusive_list:empty",
-                             ETL_INTRUSIVE_LIST_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : intrusive_list_exception(ETL_ERROR_TEXT("intrusive_list:empty", ETL_INTRUSIVE_LIST_FILE_ID "A"), file_name_,
+                                   line_number_) {}
 };
 
 //***************************************************************************
@@ -76,12 +73,9 @@ class intrusive_list_empty : public intrusive_list_exception {
 //***************************************************************************
 class intrusive_list_iterator_exception : public intrusive_list_exception {
    public:
-    intrusive_list_iterator_exception(string_type file_name_,
-                                      numeric_type line_number_)
-        : intrusive_list_exception(
-              ETL_ERROR_TEXT("intrusive_list:iterator",
-                             ETL_INTRUSIVE_LIST_FILE_ID "B"),
-              file_name_, line_number_) {}
+    intrusive_list_iterator_exception(string_type file_name_, numeric_type line_number_)
+        : intrusive_list_exception(ETL_ERROR_TEXT("intrusive_list:iterator", ETL_INTRUSIVE_LIST_FILE_ID "B"),
+                                   file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -91,10 +85,8 @@ class intrusive_list_iterator_exception : public intrusive_list_exception {
 class intrusive_list_unsorted : public intrusive_list_exception {
    public:
     intrusive_list_unsorted(string_type file_name_, numeric_type line_number_)
-        : intrusive_list_exception(
-              ETL_ERROR_TEXT("intrusive_list:unsorted",
-                             ETL_INTRUSIVE_LIST_FILE_ID "C"),
-              file_name_, line_number_) {}
+        : intrusive_list_exception(ETL_ERROR_TEXT("intrusive_list:unsorted", ETL_INTRUSIVE_LIST_FILE_ID "C"),
+                                   file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -185,9 +177,7 @@ class intrusive_list_base {
 
         while (pnode != &terminal_link) {
             pnode->reverse();
-            pnode =
-                pnode
-                    ->etl_previous;  // Now we've reversed it, we must go to the previous node.
+            pnode = pnode->etl_previous;  // Now we've reversed it, we must go to the previous node.
         }
 
         // Terminal node.
@@ -340,9 +330,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     //*************************************************************************
     /// iterator.
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               value_type> {
+    class iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, value_type> {
        public:
         friend class intrusive_list;
         friend class const_iterator;
@@ -368,16 +356,14 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
 
         iterator& operator--() {
             // Read the appropriate 'etl_previous'.
-            p_value =
-                static_cast<value_type*>(p_value->link_type::etl_previous);
+            p_value = static_cast<value_type*>(p_value->link_type::etl_previous);
             return *this;
         }
 
         iterator operator--(int) {
             iterator temp(*this);
             // Read the appropriate 'etl_previous'.
-            p_value =
-                static_cast<value_type*>(p_value->link_type::etl_previous);
+            p_value = static_cast<value_type*>(p_value->link_type::etl_previous);
             return temp;
         }
 
@@ -392,13 +378,9 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
 
         pointer operator->() const { return p_value; }
 
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return lhs.p_value == rhs.p_value;
-        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.p_value == rhs.p_value; }
 
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         value_type* p_value;
@@ -407,9 +389,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     //*************************************************************************
     /// const_iterator
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               const value_type> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, const value_type> {
        public:
         friend class intrusive_list;
 
@@ -417,8 +397,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
 
         const_iterator(const value_type& value) : p_value(&value) {}
 
-        const_iterator(const typename intrusive_list::iterator& other)
-            : p_value(other.p_value) {}
+        const_iterator(const typename intrusive_list::iterator& other) : p_value(other.p_value) {}
 
         const_iterator(const const_iterator& other) : p_value(other.p_value) {}
 
@@ -437,16 +416,14 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
 
         const_iterator& operator--() {
             // Read the appropriate 'etl_previous'.
-            p_value =
-                static_cast<value_type*>(p_value->link_type::etl_previous);
+            p_value = static_cast<value_type*>(p_value->link_type::etl_previous);
             return *this;
         }
 
         const_iterator operator--(int) {
             const_iterator temp(*this);
             // Read the appropriate 'etl_previous'.
-            p_value =
-                static_cast<value_type*>(p_value->link_type::etl_previous);
+            p_value = static_cast<value_type*>(p_value->link_type::etl_previous);
             return temp;
         }
 
@@ -461,22 +438,17 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
 
         const_pointer operator->() const { return p_value; }
 
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.p_value == rhs.p_value;
         }
 
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         const value_type* p_value;
     };
 
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
     //*************************************************************************
     /// Constructor.
@@ -493,56 +465,39 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     //*************************************************************************
     template <typename TIterator>
     intrusive_list(TIterator first, TIterator last,
-                   typename etl::enable_if<!etl::is_integral<TIterator>::value,
-                                           int>::type = 0) {
+                   typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0) {
         this->assign(first, last);
     }
 
     //*************************************************************************
     /// Gets the beginning of the intrusive_list.
     //*************************************************************************
-    iterator begin() {
-        return iterator(static_cast<value_type&>(*this->get_head()));
-    }
+    iterator begin() { return iterator(static_cast<value_type&>(*this->get_head())); }
 
     //*************************************************************************
     /// Gets the beginning of the intrusive_list.
     //*************************************************************************
-    const_iterator begin() const {
-        return const_iterator(
-            static_cast<const value_type&>(*this->get_head()));
-    }
+    const_iterator begin() const { return const_iterator(static_cast<const value_type&>(*this->get_head())); }
 
     //*************************************************************************
     /// Gets the beginning of the intrusive_list.
     //*************************************************************************
-    const_iterator cbegin() const {
-        return const_iterator(
-            static_cast<const value_type&>(*this->get_head()));
-    }
+    const_iterator cbegin() const { return const_iterator(static_cast<const value_type&>(*this->get_head())); }
 
     //*************************************************************************
     /// Gets the end of the intrusive_list.
     //*************************************************************************
-    iterator end() {
-        return iterator(static_cast<value_type&>(this->terminal_link));
-    }
+    iterator end() { return iterator(static_cast<value_type&>(this->terminal_link)); }
 
     //*************************************************************************
     /// Gets the end of the intrusive_list.
     //*************************************************************************
-    const_iterator end() const {
-        return const_iterator(
-            static_cast<const value_type&>(this->terminal_link));
-    }
+    const_iterator end() const { return const_iterator(static_cast<const value_type&>(this->terminal_link)); }
 
     //*************************************************************************
     /// Gets the end of the intrusive_list.
     //*************************************************************************
-    const_iterator cend() const {
-        return const_iterator(
-            static_cast<const value_type&>(this->terminal_link));
-    }
+    const_iterator cend() const { return const_iterator(static_cast<const value_type&>(this->terminal_link)); }
 
     //*************************************************************************
     /// Gets a reference to the first element.
@@ -552,9 +507,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     //*************************************************************************
     /// Gets a const reference to the first element.
     //*************************************************************************
-    const_reference front() const {
-        return *static_cast<const value_type*>(this->get_head());
-    }
+    const_reference front() const { return *static_cast<const value_type*>(this->get_head()); }
 
     //*************************************************************************
     /// Gets a reference to the last element.
@@ -564,9 +517,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     //*************************************************************************
     /// Gets a const reference to the last element.
     //*************************************************************************
-    const_reference back() const {
-        return *static_cast<const value_type*>(this->get_tail());
-    }
+    const_reference back() const { return *static_cast<const value_type*>(this->get_tail()); }
 
     //*************************************************************************
     /// Inserts a value to the intrusive_list before the specified position.
@@ -583,8 +534,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     void insert(const_iterator position, TIterator first, TIterator last) {
         while (first != last) {
             // Set up the next free link.
-            this->insert_link(*position.p_value->link_type::etl_previous,
-                              *first);
+            this->insert_link(*position.p_value->link_type::etl_previous, *first);
             ++first;
         }
     }
@@ -711,8 +661,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
             i_head = end();
             i_tail = end();
 
-            number_of_merges =
-                0;  // Count the number of merges we do in this pass.
+            number_of_merges = 0;  // Count the number of merges we do in this pass.
 
             while (i_left != end()) {
                 ++number_of_merges;  // There exists a merge to be done.
@@ -772,8 +721,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
             }
 
             // If we have done only one merge, we're finished.
-            if (number_of_merges <=
-                1)  // Allow for number_of_merges == 0, the empty head case
+            if (number_of_merges <= 1)  // Allow for number_of_merges == 0, the empty head case
             {
                 return;
             }
@@ -857,8 +805,7 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     //*************************************************************************
     /// Splice a range of elements from another list into this one.
     //*************************************************************************
-    void splice(iterator position, list_type& other, iterator begin_,
-                iterator end_) {
+    void splice(iterator position, list_type& other, iterator begin_, iterator end_) {
         if (!other.empty()) {
             if (&other != this) {
                 size_t n = etl::distance(begin_, end_);
@@ -891,47 +838,35 @@ class intrusive_list : public etl::intrusive_list_base<TLink> {
     void merge(list_type& other, TCompare compare) {
         if ((this != &other) && !other.empty()) {
 #if ETL_IS_DEBUG_BUILD
-            ETL_ASSERT(etl::is_sorted(other.begin(), other.end(), compare),
-                       ETL_ERROR(intrusive_list_unsorted));
-            ETL_ASSERT(etl::is_sorted(begin(), end(), compare),
-                       ETL_ERROR(intrusive_list_unsorted));
+            ETL_ASSERT(etl::is_sorted(other.begin(), other.end(), compare), ETL_ERROR(intrusive_list_unsorted));
+            ETL_ASSERT(etl::is_sorted(begin(), end(), compare), ETL_ERROR(intrusive_list_unsorted));
 #endif
 
-            value_type* other_begin =
-                static_cast<value_type*>(other.get_head());
-            value_type* other_end =
-                static_cast<value_type*>(&other.terminal_link);
+            value_type* other_begin = static_cast<value_type*>(other.get_head());
+            value_type* other_end = static_cast<value_type*>(&other.terminal_link);
 
             value_type* this_begin = static_cast<value_type*>(this->get_head());
-            value_type* this_end =
-                static_cast<value_type*>(&this->terminal_link);
+            value_type* this_end = static_cast<value_type*>(&this->terminal_link);
 
             while ((this_begin != this_end) && (other_begin != other_end)) {
                 // Find the place to insert.
-                while ((this_begin != this_end) &&
-                       !(compare(*other_begin, *this_begin))) {
-                    this_begin = static_cast<value_type*>(
-                        this_begin->link_type::etl_next);
+                while ((this_begin != this_end) && !(compare(*other_begin, *this_begin))) {
+                    this_begin = static_cast<value_type*>(this_begin->link_type::etl_next);
                 }
 
                 // Insert.
                 if (this_begin != this_end) {
-                    while ((other_begin != other_end) &&
-                           (compare(*other_begin, *this_begin))) {
+                    while ((other_begin != other_end) && (compare(*other_begin, *this_begin))) {
                         value_type* value = other_begin;
-                        other_begin = static_cast<value_type*>(
-                            other_begin->link_type::etl_next);
-                        etl::link_splice<link_type>(
-                            *this_begin->link_type::etl_previous, *value);
+                        other_begin = static_cast<value_type*>(other_begin->link_type::etl_next);
+                        etl::link_splice<link_type>(*this_begin->link_type::etl_previous, *value);
                     }
                 }
             }
 
             // Any left over?
             if ((this_begin == this_end) && (other_begin != other_end)) {
-                etl::link_splice<link_type>(
-                    *this->get_tail(), *other_begin,
-                    *other_end->link_type::etl_previous);
+                etl::link_splice<link_type>(*this->get_tail(), *other_begin, *other_end->link_type::etl_previous);
             }
 
             this->current_size += other.size();

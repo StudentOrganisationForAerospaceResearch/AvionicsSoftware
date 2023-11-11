@@ -82,8 +82,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
    public:
     //*********************************************************************
@@ -359,8 +358,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
     /// Emplaces a value to the set.
     //*************************************************************************
     template <typename T1, typename T2>
-    ETL_OR_STD::pair<iterator, bool> emplace(const T1& value1,
-                                             const T2& value2) {
+    ETL_OR_STD::pair<iterator, bool> emplace(const T1& value1, const T2& value2) {
         ETL_ASSERT(!full(), ETL_ERROR(flat_set_full));
 
         ETL_OR_STD::pair<iterator, bool> result;
@@ -389,8 +387,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
     /// Emplaces a value to the set.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    ETL_OR_STD::pair<iterator, bool> emplace(const T1& value1, const T2& value2,
-                                             const T3& value3) {
+    ETL_OR_STD::pair<iterator, bool> emplace(const T1& value1, const T2& value2, const T3& value3) {
         ETL_ASSERT(!full(), ETL_ERROR(flat_set_full));
 
         ETL_OR_STD::pair<iterator, bool> result;
@@ -419,9 +416,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
     /// Emplaces a value to the set.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    ETL_OR_STD::pair<iterator, bool> emplace(const T1& value1, const T2& value2,
-                                             const T3& value3,
-                                             const T4& value4) {
+    ETL_OR_STD::pair<iterator, bool> emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         ETL_ASSERT(!full(), ETL_ERROR(flat_set_full));
 
         ETL_OR_STD::pair<iterator, bool> result;
@@ -468,8 +463,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_t erase(K&& key) {
         iterator i_element = find(etl::forward<K>(key));
 
@@ -531,8 +525,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
     /// Clears the flat_set.
     //*************************************************************************
     void clear() {
-        if ETL_IF_CONSTEXPR (etl::is_trivially_destructible<
-                                 value_type>::value) {
+        if ETL_IF_CONSTEXPR (etl::is_trivially_destructible<value_type>::value) {
             storage.release_all();
         } else {
             iterator itr = begin();
@@ -560,8 +553,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator find(const K& key) {
         return refset_t::find(key);
     }
@@ -578,8 +570,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator find(const K& key) const {
         return refset_t::find(key);
     }
@@ -596,8 +587,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_t count(const K& key) const {
         return refset_t::count(key);
     }
@@ -614,8 +604,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator lower_bound(const K& key) {
         return refset_t::lower_bound(key);
     }
@@ -632,8 +621,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator lower_bound(const K& key) const {
         return refset_t::lower_bound(key);
     }
@@ -650,8 +638,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator upper_bound(const K& key) {
         return refset_t::upper_bound(key);
     }
@@ -668,8 +655,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator upper_bound(const K& key) const {
         return refset_t::upper_bound(key);
     }
@@ -686,8 +672,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     ETL_OR_STD::pair<iterator, iterator> equal_range(const K& key) {
         return refset_t::equal_range(key);
     }
@@ -698,17 +683,14 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
     ///\param key The key to search for.
     ///\return An iterator pair.
     //*********************************************************************
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
         return refset_t::upper_bound(key);
     }
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        const K& key) const {
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(const K& key) const {
         return refset_t::upper_bound(key);
     }
 #endif
@@ -722,8 +704,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool contains(const K& k) const {
         return find(k) != end();
     }
@@ -803,8 +784,7 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
     //*********************************************************************
     /// Constructor.
     //*********************************************************************
-    iflat_set(lookup_t& lookup_, storage_t& storage_)
-        : refset_t(lookup_), storage(storage_) {}
+    iflat_set(lookup_t& lookup_, storage_t& storage_) : refset_t(lookup_), storage(storage_) {}
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -861,10 +841,8 @@ class iflat_set : private etl::ireference_flat_set<T, TKeyCompare> {
 ///\ingroup flat_set
 //***************************************************************************
 template <typename T, typename TKeyCompare>
-bool operator==(const etl::iflat_set<T, TKeyCompare>& lhs,
-                const etl::iflat_set<T, TKeyCompare>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const etl::iflat_set<T, TKeyCompare>& lhs, const etl::iflat_set<T, TKeyCompare>& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -875,8 +853,7 @@ bool operator==(const etl::iflat_set<T, TKeyCompare>& lhs,
 ///\ingroup flat_set
 //***************************************************************************
 template <typename T, typename TKeyCompare>
-bool operator!=(const etl::iflat_set<T, TKeyCompare>& lhs,
-                const etl::iflat_set<T, TKeyCompare>& rhs) {
+bool operator!=(const etl::iflat_set<T, TKeyCompare>& lhs, const etl::iflat_set<T, TKeyCompare>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -900,8 +877,7 @@ class flat_set : public etl::iflat_set<T, TCompare> {
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
-    flat_set(const flat_set& other)
-        : etl::iflat_set<T, TCompare>(lookup, storage) {
+    flat_set(const flat_set& other) : etl::iflat_set<T, TCompare>(lookup, storage) {
         this->assign(other.cbegin(), other.cend());
     }
 
@@ -923,8 +899,7 @@ class flat_set : public etl::iflat_set<T, TCompare> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    flat_set(TIterator first, TIterator last)
-        : etl::iflat_set<T, TCompare>(lookup, storage) {
+    flat_set(TIterator first, TIterator last) : etl::iflat_set<T, TCompare>(lookup, storage) {
         this->assign(first, last);
     }
 
@@ -932,8 +907,7 @@ class flat_set : public etl::iflat_set<T, TCompare> {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    flat_set(std::initializer_list<T> init)
-        : etl::iflat_set<T, TCompare>(lookup, storage) {
+    flat_set(std::initializer_list<T> init) : etl::iflat_set<T, TCompare>(lookup, storage) {
         this->assign(init.begin(), init.end());
     }
 #endif
@@ -992,8 +966,7 @@ flat_set(T...) -> flat_set<etl::nth_type_t<0, T...>, sizeof...(T)>;
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
 template <typename TKey, typename TKeyCompare = etl::less<TKey>, typename... T>
-constexpr auto make_flat_set(T&&... keys)
-    -> etl::flat_set<TKey, sizeof...(T), TKeyCompare> {
+constexpr auto make_flat_set(T&&... keys) -> etl::flat_set<TKey, sizeof...(T), TKeyCompare> {
     return {{etl::forward<T>(keys)...}};
 }
 #endif

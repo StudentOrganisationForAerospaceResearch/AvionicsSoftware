@@ -65,8 +65,7 @@ namespace etl {
 //***************************************************************************
 class map_exception : public etl::exception {
    public:
-    map_exception(string_type reason_, string_type file_name_,
-                  numeric_type line_number_)
+    map_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -77,8 +76,7 @@ class map_exception : public etl::exception {
 class map_full : public etl::map_exception {
    public:
     map_full(string_type file_name_, numeric_type line_number_)
-        : etl::map_exception(ETL_ERROR_TEXT("map:full", ETL_MAP_FILE_ID "A"),
-                             file_name_, line_number_) {}
+        : etl::map_exception(ETL_ERROR_TEXT("map:full", ETL_MAP_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -88,8 +86,7 @@ class map_full : public etl::map_exception {
 class map_out_of_bounds : public etl::map_exception {
    public:
     map_out_of_bounds(string_type file_name_, numeric_type line_number_)
-        : etl::map_exception(ETL_ERROR_TEXT("map:bounds", ETL_MAP_FILE_ID "B"),
-                             file_name_, line_number_) {}
+        : etl::map_exception(ETL_ERROR_TEXT("map:bounds", ETL_MAP_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -99,9 +96,7 @@ class map_out_of_bounds : public etl::map_exception {
 class map_iterator : public etl::map_exception {
    public:
     map_iterator(string_type file_name_, numeric_type line_number_)
-        : etl::map_exception(
-              ETL_ERROR_TEXT("map:iterator", ETL_MAP_FILE_ID "C"), file_name_,
-              line_number_) {}
+        : etl::map_exception(ETL_ERROR_TEXT("map:iterator", ETL_MAP_FILE_ID "C"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -110,8 +105,7 @@ class map_iterator : public etl::map_exception {
 //***************************************************************************
 class map_base {
    public:
-    typedef size_t
-        size_type;  ///< The type used for determining the size of map.
+    typedef size_t size_type;  ///< The type used for determining the size of map.
 
     //*************************************************************************
     /// Gets the size of the map.
@@ -230,17 +224,14 @@ class map_base {
         else {
             // If critical node matches child node direction then perform a two
             // node rotate in the direction of the critical node
-            if (critical_node->weight ==
-                critical_node->children[critical_node->dir]->dir) {
+            if (critical_node->weight == critical_node->children[critical_node->dir]->dir) {
                 rotate_2node(critical_node, critical_node->dir);
             }
             // Otherwise perform a three node rotation in the direction of the
             // critical node
             else {
                 rotate_3node(critical_node, critical_node->dir,
-                             critical_node->children[critical_node->dir]
-                                 ->children[1 - critical_node->dir]
-                                 ->dir);
+                             critical_node->children[critical_node->dir]->children[1 - critical_node->dir]->dir);
             }
         }
     }
@@ -294,18 +285,14 @@ class map_base {
         Node* new_root = position->children[dir]->children[1 - dir];
         // Set weight factor for B or C based on F or G existing and being a different than dir
         position->children[dir]->weight =
-            third != uint_least8_t(kNeither) && third != dir
-                ? dir
-                : uint_least8_t(kNeither);
+            third != uint_least8_t(kNeither) && third != dir ? dir : uint_least8_t(kNeither);
 
         // Detach new root from its tree (replace with new roots child)
         position->children[dir]->children[1 - dir] = new_root->children[dir];
         // Attach current left tree to new root
         new_root->children[dir] = position->children[dir];
         // Set weight factor for A based on F or G
-        position->weight = third != uint_least8_t(kNeither) && third == dir
-                               ? 1 - dir
-                               : uint_least8_t(kNeither);
+        position->weight = third != uint_least8_t(kNeither) && third == dir ? 1 - dir : uint_least8_t(kNeither);
 
         // Move new root's right tree to current roots left tree
         position->children[dir] = new_root->children[1 - dir];
@@ -394,8 +381,7 @@ class map_base {
 /// A templated base for all etl::map types.
 ///\ingroup map
 //***************************************************************************
-template <typename TKey, typename TMapped,
-          typename TKeyCompare = etl::less<TKey>>
+template <typename TKey, typename TMapped, typename TKeyCompare = etl::less<TKey>>
 class imap : public etl::map_base {
    public:
     typedef TKey key_type;
@@ -413,9 +399,7 @@ class imap : public etl::map_base {
 
     class value_compare {
        public:
-        bool operator()(const_reference lhs, const_reference rhs) const {
-            return (kcompare(lhs.first, rhs.first));
-        }
+        bool operator()(const_reference lhs, const_reference rhs) const { return (kcompare(lhs.first, rhs.first)); }
 
        private:
         key_compare kcompare;
@@ -452,14 +436,12 @@ class imap : public etl::map_base {
     }
 
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const Data_Node& node, const K& key) const {
         return kcompare(node.value.first, key);
     }
 
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const K& key, const Data_Node& node) const {
         return kcompare(key, node.value.first);
     }
@@ -504,9 +486,7 @@ class imap : public etl::map_base {
     //*************************************************************************
     /// iterator.
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               value_type> {
+    class iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, value_type> {
        public:
         friend class imap;
         friend class const_iterator;
@@ -517,8 +497,7 @@ class imap : public etl::map_base {
 
         iterator(imap& map, Node* node) : p_map(&map), p_node(node) {}
 
-        iterator(const iterator& other)
-            : p_map(other.p_map), p_node(other.p_node) {}
+        iterator(const iterator& other) : p_map(other.p_map), p_node(other.p_node) {}
 
         ~iterator() {}
 
@@ -560,9 +539,7 @@ class imap : public etl::map_base {
             return lhs.p_map == rhs.p_map && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Pointer to map associated with this iterator
@@ -577,9 +554,7 @@ class imap : public etl::map_base {
     //*************************************************************************
     /// const_iterator
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               const value_type> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, const value_type> {
        public:
         friend class imap;
 
@@ -587,14 +562,11 @@ class imap : public etl::map_base {
 
         const_iterator(const imap& map) : p_map(&map), p_node(ETL_NULLPTR) {}
 
-        const_iterator(const imap& map, const Node* node)
-            : p_map(&map), p_node(node) {}
+        const_iterator(const imap& map, const Node* node) : p_map(&map), p_node(node) {}
 
-        const_iterator(const typename imap::iterator& other)
-            : p_map(other.p_map), p_node(other.p_node) {}
+        const_iterator(const typename imap::iterator& other) : p_map(other.p_map), p_node(other.p_node) {}
 
-        const_iterator(const const_iterator& other)
-            : p_map(other.p_map), p_node(other.p_node) {}
+        const_iterator(const const_iterator& other) : p_map(other.p_map), p_node(other.p_node) {}
 
         ~const_iterator() {}
 
@@ -626,33 +598,22 @@ class imap : public etl::map_base {
             return *this;
         }
 
-        const_reference operator*() const {
-            return imap::data_cast(p_node)->value;
-        }
+        const_reference operator*() const { return imap::data_cast(p_node)->value; }
 
-        const_pointer operator&() const {
-            return imap::data_cast(p_node)->value;
-        }
+        const_pointer operator&() const { return imap::data_cast(p_node)->value; }
 
-        const_pointer operator->() const {
-            return &(imap::data_cast(p_node)->value);
-        }
+        const_pointer operator->() const { return &(imap::data_cast(p_node)->value); }
 
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.p_map == rhs.p_map && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Convert to an iterator.
         imap::iterator to_iterator() const {
-            return imap::iterator(const_cast<imap&>(*p_map),
-                                  const_cast<Node*>(p_node));
+            return imap::iterator(const_cast<imap&>(*p_map), const_cast<Node*>(p_node));
         }
 
         // Pointer to map associated with this iterator
@@ -664,8 +625,7 @@ class imap : public etl::map_base {
 
     friend class const_iterator;
 
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -730,16 +690,14 @@ class imap : public etl::map_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     reverse_iterator rend() {
-        return reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator rend() const {
-        return const_reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
@@ -753,8 +711,7 @@ class imap : public etl::map_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator crend() const {
-        return const_reverse_iterator(
-            const_iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(const_iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*********************************************************************
@@ -782,21 +739,18 @@ class imap : public etl::map_base {
     mapped_type& at(key_parameter_t key) {
         iterator i_element = find(key);
 
-        ETL_ASSERT(i_element.p_node != ETL_NULLPTR,
-                   ETL_ERROR(map_out_of_bounds));
+        ETL_ASSERT(i_element.p_node != ETL_NULLPTR, ETL_ERROR(map_out_of_bounds));
 
         return i_element->second;
     }
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     mapped_type& at(const K& key) {
         iterator i_element = find(key);
 
-        ETL_ASSERT(i_element.p_node != ETL_NULLPTR,
-                   ETL_ERROR(map_out_of_bounds));
+        ETL_ASSERT(i_element.p_node != ETL_NULLPTR, ETL_ERROR(map_out_of_bounds));
 
         return i_element->second;
     }
@@ -811,21 +765,18 @@ class imap : public etl::map_base {
     const mapped_type& at(key_parameter_t key) const {
         const_iterator i_element = find(key);
 
-        ETL_ASSERT(i_element.p_node != ETL_NULLPTR,
-                   ETL_ERROR(map_out_of_bounds));
+        ETL_ASSERT(i_element.p_node != ETL_NULLPTR, ETL_ERROR(map_out_of_bounds));
 
         return i_element->second;
     }
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const mapped_type& at(const K& key) const {
         const_iterator i_element = find(key);
 
-        ETL_ASSERT(i_element.p_node != ETL_NULLPTR,
-                   ETL_ERROR(map_out_of_bounds));
+        ETL_ASSERT(i_element.p_node != ETL_NULLPTR, ETL_ERROR(map_out_of_bounds));
 
         return i_element->second;
     }
@@ -862,8 +813,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type count(const K& key) const {
         return find_node(root_node, key) ? 1 : 0;
     }
@@ -874,19 +824,16 @@ class imap : public etl::map_base {
     /// provided
     //*************************************************************************
     ETL_OR_STD::pair<iterator, iterator> equal_range(key_parameter_t key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     ETL_OR_STD::pair<iterator, iterator> equal_range(const K& key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 #endif
 
@@ -894,8 +841,7 @@ class imap : public etl::map_base {
     /// Returns two const iterators with bounding (lower bound, upper bound)
     /// the key provided.
     //*************************************************************************
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -903,10 +849,8 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        const K& key) const {
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(const K& key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -937,8 +881,7 @@ class imap : public etl::map_base {
 
     //*********************************************************************
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type erase(K&& key) {
         // Return 1 if key value was found and removed
         return remove_node(root_node, etl::forward<K>(key)) ? 1 : 0;
@@ -967,8 +910,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator find(const K& k) {
         return iterator(*this, find_node(root_node, k));
     }
@@ -985,8 +927,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator find(const K& k) const {
         return const_iterator(*this, find_node(root_node, k));
     }
@@ -1113,8 +1054,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator lower_bound(const K& key) {
         return iterator(*this, find_lower_node(root_node, key));
     }
@@ -1132,8 +1072,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator lower_bound(const K& key) const {
         return const_iterator(*this, find_lower_node(root_node, key));
     }
@@ -1151,8 +1090,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator upper_bound(const K& key) {
         return iterator(*this, find_upper_node(root_node, key));
     }
@@ -1170,8 +1108,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator upper_bound(const K& key) const {
         return const_iterator(*this, find_upper_node(root_node, key));
     }
@@ -1198,8 +1135,7 @@ class imap : public etl::map_base {
         if (this != &rhs) {
             this->clear();
 
-            typename etl::imap<TKey, TMapped, TKeyCompare>::iterator from =
-                rhs.begin();
+            typename etl::imap<TKey, TMapped, TKeyCompare>::iterator from = rhs.begin();
 
             while (from != rhs.end()) {
                 this->insert(etl::move(*from));
@@ -1234,8 +1170,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool contains(const K& k) const {
         return find(k) != end();
     }
@@ -1245,8 +1180,7 @@ class imap : public etl::map_base {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    imap(etl::ipool& node_pool, size_t max_size_)
-        : etl::map_base(max_size_), p_node_pool(&node_pool) {}
+    imap(etl::ipool& node_pool, size_t max_size_) : etl::map_base(max_size_), p_node_pool(&node_pool) {}
 
     //*************************************************************************
     /// Initialise the map.
@@ -1327,8 +1261,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_node(Node* position, const K& key) {
         Node* found = position;
         while (found) {
@@ -1381,8 +1314,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const Node* find_node(const Node* position, const K& key) const {
         const Node* found = position;
         while (found) {
@@ -1452,8 +1384,7 @@ class imap : public etl::map_base {
         if (position && node && position != node) {
             while (position) {
                 // Is this position not the parent of the node we are looking for?
-                if (position->children[kLeft] != node &&
-                    position->children[kRight] != node) {
+                if (position->children[kLeft] != node && position->children[kRight] != node) {
                     // Downcast node and position to Data_Node references for key comparisons
                     const Data_Node& node_data_node = imap::data_cast(*node);
                     Data_Node& position_data_node = imap::data_cast(*position);
@@ -1491,12 +1422,10 @@ class imap : public etl::map_base {
         if (position && node && position != node) {
             while (position) {
                 // Is this position not the parent of the node we are looking for?
-                if (position->children[kLeft] != node &&
-                    position->children[kRight] != node) {
+                if (position->children[kLeft] != node && position->children[kRight] != node) {
                     // Downcast node and position to Data_Node references for key comparisons
                     const Data_Node& node_data_node = imap::data_cast(*node);
-                    const Data_Node& position_data_node =
-                        imap::data_cast(*position);
+                    const Data_Node& position_data_node = imap::data_cast(*position);
                     // Compare the node value to the current position value
                     if (node_comp(node_data_node, position_data_node)) {
                         // Keep looking for parent on the left
@@ -1552,8 +1481,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_lower_node(Node* position, const K& key) const {
         // Something at this position? keep going
         Node* lower_node = ETL_NULLPTR;
@@ -1614,8 +1542,7 @@ class imap : public etl::map_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_upper_node(Node* position, const K& key) const {
         // Keep track of parent of last upper node
         Node* upper_node = ETL_NULLPTR;
@@ -1713,16 +1640,13 @@ class imap : public etl::map_base {
 
             // Was a critical node found that should be checked for balance?
             if (critical_node) {
-                if (critical_parent_node == ETL_NULLPTR &&
-                    critical_node == root_node) {
+                if (critical_parent_node == ETL_NULLPTR && critical_node == root_node) {
                     balance_node(root_node);
-                } else if (critical_parent_node == ETL_NULLPTR &&
-                           critical_node == position) {
+                } else if (critical_parent_node == ETL_NULLPTR && critical_node == position) {
                     balance_node(position);
                 } else {
                     if (critical_parent_node != ETL_NULLPTR) {
-                        balance_node(critical_parent_node
-                                         ->children[critical_parent_node->dir]);
+                        balance_node(critical_parent_node->children[critical_parent_node->dir]);
                     }
                 }
             }
@@ -1903,8 +1827,7 @@ class imap : public etl::map_base {
             // balanced then we need to update the balance node to match this
             // replacement node but all our ancestors will not require rebalancing
             if ((replace->weight == kNeither) ||
-                (replace->weight == (1 - replace->dir) &&
-                 replace->children[1 - replace->dir]->weight == kNeither)) {
+                (replace->weight == (1 - replace->dir) && replace->children[1 - replace->dir]->weight == kNeither)) {
                 // Update balance node (and its parent) to replacement node
                 balance_parent = replace_parent;
                 balance = replace;
@@ -1934,16 +1857,10 @@ class imap : public etl::map_base {
                         // Is the root node being rebalanced (no parent)
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_3node(root_node, 1 - balance->dir,
-                                         balance->children[1 - balance->dir]
-                                             ->children[balance->dir]
-                                             ->weight);
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         } else {
-                            rotate_3node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir,
-                                balance->children[1 - balance->dir]
-                                    ->children[balance->dir]
-                                    ->weight);
+                            rotate_3node(balance_parent->children[balance_parent->dir], 1 - balance->dir,
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         }
                     }
                     // Already balanced, rebalance and make it heavy in opposite
@@ -1954,11 +1871,8 @@ class imap : public etl::map_base {
                             rotate_2node(root_node, 1 - balance->dir);
                             root_node->weight = balance->dir;
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
-                            balance_parent->children[balance_parent->dir]
-                                ->weight = balance->dir;
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
+                            balance_parent->children[balance_parent->dir]->weight = balance->dir;
                         }
                         // Update balance node weight in opposite direction of node removed
                         balance->weight = 1 - balance->dir;
@@ -1969,9 +1883,7 @@ class imap : public etl::map_base {
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_2node(root_node, 1 - balance->dir);
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
                         }
                     }
 
@@ -1979,17 +1891,12 @@ class imap : public etl::map_base {
                     // its parent after the rotation performed above
                     if (balance == found) {
                         if (balance_parent) {
-                            found_parent =
-                                balance_parent->children[balance_parent->dir];
+                            found_parent = balance_parent->children[balance_parent->dir];
                             // Update dir since it is likely stale
-                            found_parent->dir =
-                                found_parent->children[kLeft] == found ? kLeft
-                                                                       : kRight;
+                            found_parent->dir = found_parent->children[kLeft] == found ? kLeft : kRight;
                         } else {
                             found_parent = root_node;
-                            root_node->dir = root_node->children[kLeft] == found
-                                                 ? kLeft
-                                                 : kRight;
+                            root_node->dir = root_node->children[kLeft] == found ? kLeft : kRight;
                         }
                     }
                 }
@@ -2002,15 +1909,13 @@ class imap : public etl::map_base {
             // Step 3: Swap found node with replacement node
             if (found_parent) {
                 // Handle traditional case
-                detach_node(found_parent->children[found_parent->dir],
-                            replace_parent->children[replace_parent->dir]);
+                detach_node(found_parent->children[found_parent->dir], replace_parent->children[replace_parent->dir]);
             }
             // Handle root node removal
             else {
                 // Valid replacement node for root node being removed?
                 if (replace_parent) {
-                    detach_node(root_node,
-                                replace_parent->children[replace_parent->dir]);
+                    detach_node(root_node, replace_parent->children[replace_parent->dir]);
                 } else {
                     // Target node and replacement node are both root node
                     detach_node(root_node, root_node);
@@ -2036,8 +1941,7 @@ class imap : public etl::map_base {
     /// Remove the node specified from somewhere starting at the position
     /// provided
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* remove_node(Node*& position, const K& key) {
         // Step 1: Find the target node that matches the key provided, the
         // replacement node (might be the same as target node), and the critical
@@ -2079,8 +1983,7 @@ class imap : public etl::map_base {
             // balanced then we need to update the balance node to match this
             // replacement node but all our ancestors will not require rebalancing
             if ((replace->weight == kNeither) ||
-                (replace->weight == (1 - replace->dir) &&
-                 replace->children[1 - replace->dir]->weight == kNeither)) {
+                (replace->weight == (1 - replace->dir) && replace->children[1 - replace->dir]->weight == kNeither)) {
                 // Update balance node (and its parent) to replacement node
                 balance_parent = replace_parent;
                 balance = replace;
@@ -2110,16 +2013,10 @@ class imap : public etl::map_base {
                         // Is the root node being rebalanced (no parent)
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_3node(root_node, 1 - balance->dir,
-                                         balance->children[1 - balance->dir]
-                                             ->children[balance->dir]
-                                             ->weight);
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         } else {
-                            rotate_3node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir,
-                                balance->children[1 - balance->dir]
-                                    ->children[balance->dir]
-                                    ->weight);
+                            rotate_3node(balance_parent->children[balance_parent->dir], 1 - balance->dir,
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         }
                     }
                     // Already balanced, rebalance and make it heavy in opposite
@@ -2130,11 +2027,8 @@ class imap : public etl::map_base {
                             rotate_2node(root_node, 1 - balance->dir);
                             root_node->weight = balance->dir;
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
-                            balance_parent->children[balance_parent->dir]
-                                ->weight = balance->dir;
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
+                            balance_parent->children[balance_parent->dir]->weight = balance->dir;
                         }
                         // Update balance node weight in opposite direction of node removed
                         balance->weight = 1 - balance->dir;
@@ -2145,9 +2039,7 @@ class imap : public etl::map_base {
                         if (balance_parent == ETL_NULLPTR) {
                             rotate_2node(root_node, 1 - balance->dir);
                         } else {
-                            rotate_2node(
-                                balance_parent->children[balance_parent->dir],
-                                1 - balance->dir);
+                            rotate_2node(balance_parent->children[balance_parent->dir], 1 - balance->dir);
                         }
                     }
 
@@ -2155,17 +2047,12 @@ class imap : public etl::map_base {
                     // its parent after the rotation performed above
                     if (balance == found) {
                         if (balance_parent) {
-                            found_parent =
-                                balance_parent->children[balance_parent->dir];
+                            found_parent = balance_parent->children[balance_parent->dir];
                             // Update dir since it is likely stale
-                            found_parent->dir =
-                                found_parent->children[kLeft] == found ? kLeft
-                                                                       : kRight;
+                            found_parent->dir = found_parent->children[kLeft] == found ? kLeft : kRight;
                         } else {
                             found_parent = root_node;
-                            root_node->dir = root_node->children[kLeft] == found
-                                                 ? kLeft
-                                                 : kRight;
+                            root_node->dir = root_node->children[kLeft] == found ? kLeft : kRight;
                         }
                     }
                 }
@@ -2178,15 +2065,13 @@ class imap : public etl::map_base {
             // Step 3: Swap found node with replacement node
             if (found_parent) {
                 // Handle traditional case
-                detach_node(found_parent->children[found_parent->dir],
-                            replace_parent->children[replace_parent->dir]);
+                detach_node(found_parent->children[found_parent->dir], replace_parent->children[replace_parent->dir]);
             }
             // Handle root node removal
             else {
                 // Valid replacement node for root node being removed?
                 if (replace_parent) {
-                    detach_node(root_node,
-                                replace_parent->children[replace_parent->dir]);
+                    detach_node(root_node, replace_parent->children[replace_parent->dir]);
                 } else {
                     // Target node and replacement node are both root node
                     detach_node(root_node, root_node);
@@ -2226,8 +2111,7 @@ class imap : public etl::map_base {
 //*************************************************************************
 /// A templated map implementation that uses a fixed size buffer.
 //*************************************************************************
-template <typename TKey, typename TValue, const size_t MAX_SIZE_,
-          typename TCompare = etl::less<TKey>>
+template <typename TKey, typename TValue, const size_t MAX_SIZE_, typename TCompare = etl::less<TKey>>
 class map : public etl::imap<TKey, TValue, TCompare> {
    public:
     static ETL_CONSTANT size_t MAX_SIZE = MAX_SIZE_;
@@ -2235,15 +2119,12 @@ class map : public etl::imap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    map() : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
-        this->initialise();
-    }
+    map() : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) { this->initialise(); }
 
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
-    map(const map& other)
-        : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
+    map(const map& other) : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         if (this != &other) {
             this->assign(other.cbegin(), other.cend());
         }
@@ -2255,12 +2136,10 @@ class map : public etl::imap<TKey, TValue, TCompare> {
     //*************************************************************************
     map(map&& other) : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         if (this != &other) {
-            typename etl::imap<TKey, TValue, TCompare>::iterator from =
-                other.begin();
+            typename etl::imap<TKey, TValue, TCompare>::iterator from = other.begin();
 
             while (from != other.end()) {
-                typename etl::imap<TKey, TValue, TCompare>::iterator temp =
-                    from;
+                typename etl::imap<TKey, TValue, TCompare>::iterator temp = from;
                 ++temp;
 
                 this->insert(etl::move(*from));
@@ -2277,8 +2156,7 @@ class map : public etl::imap<TKey, TValue, TCompare> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    map(TIterator first, TIterator last)
-        : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
+    map(TIterator first, TIterator last) : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         this->assign(first, last);
     }
 
@@ -2286,9 +2164,7 @@ class map : public etl::imap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Constructor, from an initializer_list.
     //*************************************************************************
-    map(std::initializer_list<
-        typename etl::imap<TKey, TValue, TCompare>::value_type>
-            init)
+    map(std::initializer_list<typename etl::imap<TKey, TValue, TCompare>::value_type> init)
         : etl::imap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         this->assign(init.begin(), init.end());
     }
@@ -2322,12 +2198,10 @@ class map : public etl::imap<TKey, TValue, TCompare> {
         if (this != &rhs) {
             this->clear();
 
-            typename etl::imap<TKey, TValue, TCompare>::iterator from =
-                rhs.begin();
+            typename etl::imap<TKey, TValue, TCompare>::iterator from = rhs.begin();
 
             while (from != rhs.end()) {
-                typename etl::imap<TKey, TValue, TCompare>::iterator temp =
-                    from;
+                typename etl::imap<TKey, TValue, TCompare>::iterator temp = from;
                 ++temp;
 
                 this->insert(etl::move(*from));
@@ -2341,8 +2215,7 @@ class map : public etl::imap<TKey, TValue, TCompare> {
 
    private:
     /// The pool of data nodes used for the map.
-    etl::pool<typename etl::imap<TKey, TValue, TCompare>::Data_Node, MAX_SIZE>
-        node_pool;
+    etl::pool<typename etl::imap<TKey, TValue, TCompare>::Data_Node, MAX_SIZE> node_pool;
 };
 
 //*************************************************************************
@@ -2351,18 +2224,15 @@ class map : public etl::imap<TKey, TValue, TCompare> {
 #if ETL_USING_CPP17 && ETL_HAS_INITIALIZER_LIST
 template <typename... TPairs>
 map(TPairs...) -> map<typename etl::nth_type_t<0, TPairs...>::first_type,
-                      typename etl::nth_type_t<0, TPairs...>::second_type,
-                      sizeof...(TPairs)>;
+                      typename etl::nth_type_t<0, TPairs...>::second_type, sizeof...(TPairs)>;
 #endif
 
 //*************************************************************************
 /// Make
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
-template <typename TKey, typename TMapped,
-          typename TKeyCompare = etl::less<TKey>, typename... TPairs>
-constexpr auto make_map(TPairs&&... pairs)
-    -> etl::map<TKey, TMapped, sizeof...(TPairs), TKeyCompare> {
+template <typename TKey, typename TMapped, typename TKeyCompare = etl::less<TKey>, typename... TPairs>
+constexpr auto make_map(TPairs&&... pairs) -> etl::map<TKey, TMapped, sizeof...(TPairs), TKeyCompare> {
     return {{etl::forward<TPairs>(pairs)...}};
 }
 #endif
@@ -2375,10 +2245,8 @@ constexpr auto make_map(TPairs&&... pairs)
 ///\ingroup lookup
 //***************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator==(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
-                const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const etl::imap<TKey, TMapped, TKeyCompare>& lhs, const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -2389,8 +2257,7 @@ bool operator==(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
 ///\ingroup lookup
 //***************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator!=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
-                const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
+bool operator!=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs, const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -2402,10 +2269,8 @@ bool operator!=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
 /// second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator<(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
-               const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                        rhs.end());
+bool operator<(const etl::imap<TKey, TMapped, TKeyCompare>& lhs, const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //*************************************************************************
@@ -2416,8 +2281,7 @@ bool operator<(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
 /// second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator>(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
-               const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
+bool operator>(const etl::imap<TKey, TMapped, TKeyCompare>& lhs, const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
     return (rhs < lhs);
 }
 
@@ -2429,8 +2293,7 @@ bool operator>(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
 /// to the second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator<=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
-                const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
+bool operator<=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs, const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
     return !(lhs > rhs);
 }
 
@@ -2442,8 +2305,7 @@ bool operator<=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
 /// equal to the second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator>=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs,
-                const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
+bool operator>=(const etl::imap<TKey, TMapped, TKeyCompare>& lhs, const etl::imap<TKey, TMapped, TKeyCompare>& rhs) {
     return !(lhs < rhs);
 }
 }  // namespace etl

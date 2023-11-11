@@ -61,8 +61,7 @@ namespace etl {
 //***************************************************************************
 class deque_exception : public etl::exception {
    public:
-    deque_exception(string_type reason_, string_type file_name_,
-                    numeric_type line_number_)
+    deque_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -73,9 +72,7 @@ class deque_exception : public etl::exception {
 class deque_full : public etl::deque_exception {
    public:
     deque_full(string_type file_name_, numeric_type line_number_)
-        : etl::deque_exception(
-              ETL_ERROR_TEXT("deque:full", ETL_DEQUE_FILE_ID "A"), file_name_,
-              line_number_) {}
+        : etl::deque_exception(ETL_ERROR_TEXT("deque:full", ETL_DEQUE_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -85,9 +82,7 @@ class deque_full : public etl::deque_exception {
 class deque_empty : public etl::deque_exception {
    public:
     deque_empty(string_type file_name_, numeric_type line_number_)
-        : etl::deque_exception(
-              ETL_ERROR_TEXT("deque:empty", ETL_DEQUE_FILE_ID "B"), file_name_,
-              line_number_) {}
+        : etl::deque_exception(ETL_ERROR_TEXT("deque:empty", ETL_DEQUE_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -97,9 +92,7 @@ class deque_empty : public etl::deque_exception {
 class deque_out_of_bounds : public etl::deque_exception {
    public:
     deque_out_of_bounds(string_type file_name_, numeric_type line_number_)
-        : etl::deque_exception(
-              ETL_ERROR_TEXT("deque:bounds", ETL_DEQUE_FILE_ID "C"), file_name_,
-              line_number_) {}
+        : etl::deque_exception(ETL_ERROR_TEXT("deque:bounds", ETL_DEQUE_FILE_ID "C"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -109,8 +102,7 @@ class deque_out_of_bounds : public etl::deque_exception {
 class deque_incompatible_type : public deque_exception {
    public:
     deque_incompatible_type(string_type file_name_, numeric_type line_number_)
-        : deque_exception(ETL_ERROR_TEXT("deque:type", ETL_DEQUE_FILE_ID "D"),
-                          file_name_, line_number_) {}
+        : deque_exception(ETL_ERROR_TEXT("deque:type", ETL_DEQUE_FILE_ID "D"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -169,8 +161,8 @@ class deque_base {
     //*************************************************************************
     ~deque_base() {}
 
-    size_type current_size;    ///< The current number of elements in the deque.
-    const size_type CAPACITY;  ///< The maximum number of elements in the deque.
+    size_type current_size;       ///< The current number of elements in the deque.
+    const size_type CAPACITY;     ///< The maximum number of elements in the deque.
     const size_type BUFFER_SIZE;  ///< The number of elements in the buffer.
     ETL_DECLARE_DEBUG_COUNT       ///< Internal debugging.
 };
@@ -192,14 +184,12 @@ class ideque : public etl::deque_base {
 #endif
     typedef T* pointer;
     typedef const T* const_pointer;
-    typedef
-        typename etl::iterator_traits<pointer>::difference_type difference_type;
+    typedef typename etl::iterator_traits<pointer>::difference_type difference_type;
 
     //*************************************************************************
     /// Iterator
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, T> {
+    class iterator : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, T> {
        public:
         friend class ideque;
         friend class const_iterator;
@@ -208,10 +198,7 @@ class ideque : public etl::deque_base {
         iterator() : index(0), p_deque(0), p_buffer(0) {}
 
         //***************************************************
-        iterator(const iterator& other)
-            : index(other.index),
-              p_deque(other.p_deque),
-              p_buffer(other.p_buffer) {}
+        iterator(const iterator& other) : index(other.index), p_deque(other.p_deque), p_buffer(other.p_buffer) {}
 
         //***************************************************
         iterator& operator=(const iterator& other) {
@@ -224,9 +211,7 @@ class ideque : public etl::deque_base {
 
         //***************************************************
         iterator& operator++() {
-            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1)
-                        ? 0
-                        : index + 1;
+            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1) ? 0 : index + 1;
 
             return *this;
         }
@@ -234,9 +219,7 @@ class ideque : public etl::deque_base {
         //***************************************************
         iterator operator++(int) {
             iterator previous(*this);
-            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1)
-                        ? 0
-                        : index + 1;
+            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1) ? 0 : index + 1;
 
             return previous;
         }
@@ -245,9 +228,7 @@ class ideque : public etl::deque_base {
         iterator& operator+=(difference_type offset) {
             if (offset > 0) {
                 index += offset;
-                index = (static_cast<size_t>(index) > p_deque->BUFFER_SIZE - 1)
-                            ? index - p_deque->BUFFER_SIZE
-                            : index;
+                index = (static_cast<size_t>(index) > p_deque->BUFFER_SIZE - 1) ? index - p_deque->BUFFER_SIZE : index;
             } else if (offset < 0) {
                 operator-=(-offset);
             }
@@ -303,49 +284,34 @@ class ideque : public etl::deque_base {
         }
 
         //***************************************************
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return lhs.index == rhs.index;
-        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.index == rhs.index; }
 
         //***************************************************
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
         //***************************************************
         friend bool operator<(const iterator& lhs, const iterator& rhs) {
             const difference_type lhs_index = lhs.get_index();
             const difference_type rhs_index = rhs.get_index();
-            const difference_type reference_index =
-                lhs.container().begin().get_index();
+            const difference_type reference_index = lhs.container().begin().get_index();
             const size_t buffer_size = lhs.container().max_size() + 1;
 
             const difference_type lhs_distance =
-                (lhs_index < reference_index)
-                    ? buffer_size + lhs_index - reference_index
-                    : lhs_index - reference_index;
+                (lhs_index < reference_index) ? buffer_size + lhs_index - reference_index : lhs_index - reference_index;
             const difference_type rhs_distance =
-                (rhs_index < reference_index)
-                    ? buffer_size + rhs_index - reference_index
-                    : rhs_index - reference_index;
+                (rhs_index < reference_index) ? buffer_size + rhs_index - reference_index : rhs_index - reference_index;
 
             return lhs_distance < rhs_distance;
         }
 
         //***************************************************
-        friend bool operator<=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs > rhs);
-        }
+        friend bool operator<=(const iterator& lhs, const iterator& rhs) { return !(lhs > rhs); }
 
         //***************************************************
-        friend bool operator>(const iterator& lhs, const iterator& rhs) {
-            return (rhs < lhs);
-        }
+        friend bool operator>(const iterator& lhs, const iterator& rhs) { return (rhs < lhs); }
 
         //***************************************************
-        friend bool operator>=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs < rhs);
-        }
+        friend bool operator>=(const iterator& lhs, const iterator& rhs) { return !(lhs < rhs); }
 
         //***************************************************
         difference_type get_index() const { return index; }
@@ -365,8 +331,7 @@ class ideque : public etl::deque_base {
 
        private:
         //***************************************************
-        difference_type distance(difference_type firstIndex,
-                                 difference_type index_) const {
+        difference_type distance(difference_type firstIndex, difference_type index_) const {
             if (index_ < firstIndex) {
                 return p_deque->BUFFER_SIZE + index_ - firstIndex;
             } else {
@@ -386,9 +351,7 @@ class ideque : public etl::deque_base {
     //*************************************************************************
     /// Const Iterator
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::random_access_iterator_tag,
-                               const T> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::random_access_iterator_tag, const T> {
        public:
         friend class ideque;
 
@@ -397,15 +360,11 @@ class ideque : public etl::deque_base {
 
         //***************************************************
         const_iterator(const const_iterator& other)
-            : index(other.index),
-              p_deque(other.p_deque),
-              p_buffer(other.p_buffer) {}
+            : index(other.index), p_deque(other.p_deque), p_buffer(other.p_buffer) {}
 
         //***************************************************
         const_iterator(const typename ideque::iterator& other)
-            : index(other.index),
-              p_deque(other.p_deque),
-              p_buffer(other.p_buffer) {}
+            : index(other.index), p_deque(other.p_deque), p_buffer(other.p_buffer) {}
 
         //***************************************************
         const_iterator& operator=(const const_iterator& other) {
@@ -426,9 +385,7 @@ class ideque : public etl::deque_base {
 
         //***************************************************
         const_iterator& operator++() {
-            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1)
-                        ? 0
-                        : index + 1;
+            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1) ? 0 : index + 1;
 
             return *this;
         }
@@ -436,9 +393,7 @@ class ideque : public etl::deque_base {
         //***************************************************
         const_iterator operator++(int) {
             const_iterator previous(*this);
-            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1)
-                        ? 0
-                        : index + 1;
+            index = (static_cast<size_t>(index) == p_deque->BUFFER_SIZE - 1) ? 0 : index + 1;
 
             return previous;
         }
@@ -447,9 +402,7 @@ class ideque : public etl::deque_base {
         const_iterator& operator+=(difference_type offset) {
             if (offset > 0) {
                 index += offset;
-                index = (static_cast<size_t>(index) > p_deque->BUFFER_SIZE - 1)
-                            ? index - p_deque->BUFFER_SIZE
-                            : index;
+                index = (static_cast<size_t>(index) > p_deque->BUFFER_SIZE - 1) ? index - p_deque->BUFFER_SIZE : index;
             } else if (offset < 0) {
                 operator-=(-offset);
             }
@@ -461,9 +414,7 @@ class ideque : public etl::deque_base {
         const_iterator& operator-=(difference_type offset) {
             if (offset > 0) {
                 index -= offset;
-                index = (index < 0)
-                            ? static_cast<size_t>(index) + p_deque->BUFFER_SIZE
-                            : index;
+                index = (index < 0) ? static_cast<size_t>(index) + p_deque->BUFFER_SIZE : index;
             } else if (offset < 0) {
                 operator+=(-offset);
             }
@@ -493,71 +444,48 @@ class ideque : public etl::deque_base {
         const_pointer operator->() const { return &p_buffer[index]; }
 
         //***************************************************
-        friend const_iterator operator+(const const_iterator& lhs,
-                                        difference_type offset) {
+        friend const_iterator operator+(const const_iterator& lhs, difference_type offset) {
             const_iterator result(lhs);
             result += offset;
             return result;
         }
 
         //***************************************************
-        friend const_iterator operator-(const const_iterator& lhs,
-                                        difference_type offset) {
+        friend const_iterator operator-(const const_iterator& lhs, difference_type offset) {
             const_iterator result(lhs);
             result -= offset;
             return result;
         }
 
         //***************************************************
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return lhs.index == rhs.index;
-        }
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) { return lhs.index == rhs.index; }
 
         //***************************************************
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
         //***************************************************
-        friend bool operator<(const const_iterator& lhs,
-                              const const_iterator& rhs) {
+        friend bool operator<(const const_iterator& lhs, const const_iterator& rhs) {
             const difference_type lhs_index = lhs.get_index();
             const difference_type rhs_index = rhs.get_index();
-            const difference_type reference_index =
-                lhs.container().begin().get_index();
+            const difference_type reference_index = lhs.container().begin().get_index();
             const size_t buffer_size = lhs.container().max_size() + 1UL;
 
             const difference_type lhs_distance =
-                (lhs_index < reference_index)
-                    ? buffer_size + lhs_index - reference_index
-                    : lhs_index - reference_index;
+                (lhs_index < reference_index) ? buffer_size + lhs_index - reference_index : lhs_index - reference_index;
             const difference_type rhs_distance =
-                (rhs_index < reference_index)
-                    ? buffer_size + rhs_index - reference_index
-                    : rhs_index - reference_index;
+                (rhs_index < reference_index) ? buffer_size + rhs_index - reference_index : rhs_index - reference_index;
 
             return lhs_distance < rhs_distance;
         }
 
         //***************************************************
-        friend bool operator<=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs > rhs);
-        }
+        friend bool operator<=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs > rhs); }
 
         //***************************************************
-        friend bool operator>(const const_iterator& lhs,
-                              const const_iterator& rhs) {
-            return (rhs < lhs);
-        }
+        friend bool operator>(const const_iterator& lhs, const const_iterator& rhs) { return (rhs < lhs); }
 
         //***************************************************
-        friend bool operator>=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs < rhs);
-        }
+        friend bool operator>=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs < rhs); }
 
         //***************************************************
         difference_type get_index() const { return index; }
@@ -569,14 +497,11 @@ class ideque : public etl::deque_base {
         pointer get_buffer() const { return p_buffer; }
 
         //***************************************************
-        void swap(const_iterator& other) {
-            ETL_OR_STD::swap(index, other.index);
-        }
+        void swap(const_iterator& other) { ETL_OR_STD::swap(index, other.index); }
 
        private:
         //***************************************************
-        difference_type distance(difference_type firstIndex,
-                                 difference_type index_) const {
+        difference_type distance(difference_type firstIndex, difference_type index_) const {
             if (index_ < firstIndex) {
                 return p_deque->BUFFER_SIZE + index_ - firstIndex;
             } else {
@@ -585,8 +510,7 @@ class ideque : public etl::deque_base {
         }
 
         //***************************************************
-        const_iterator(difference_type index_, ideque& the_deque,
-                       pointer p_buffer_)
+        const_iterator(difference_type index_, ideque& the_deque, pointer p_buffer_)
             : index(index_), p_deque(&the_deque), p_buffer(p_buffer_) {}
 
         difference_type index;
@@ -601,8 +525,8 @@ class ideque : public etl::deque_base {
     /// Assigns a range to the deque.
     //*************************************************************************
     template <typename TIterator>
-    typename etl::enable_if<!etl::is_integral<TIterator>::value, void>::type
-    assign(TIterator range_begin, TIterator range_end) {
+    typename etl::enable_if<!etl::is_integral<TIterator>::value, void>::type assign(TIterator range_begin,
+                                                                                    TIterator range_end) {
         initialise();
 
         while (range_begin != range_end) {
@@ -827,8 +751,7 @@ class ideque : public etl::deque_base {
             position = _end - 1;
         } else {
             // Are we closer to the front?
-            if (etl::distance(_begin, position) <
-                etl::distance(position, _end - 1)) {
+            if (etl::distance(_begin, position) < etl::distance(position, _end - 1)) {
                 // Construct the _begin.
                 create_element_front(*_begin);
 
@@ -872,8 +795,7 @@ class ideque : public etl::deque_base {
             position = _end - 1;
         } else {
             // Are we closer to the front?
-            if (etl::distance(_begin, position) <
-                etl::distance(position, _end - 1)) {
+            if (etl::distance(_begin, position) < etl::distance(position, _end - 1)) {
                 // Construct the _begin.
                 create_element_front(etl::move(*_begin));
 
@@ -926,8 +848,7 @@ class ideque : public etl::deque_base {
             position = _end - 1;
         } else {
             // Are we closer to the front?
-            if (etl::distance(_begin, position) <
-                etl::distance(position, _end - 1)) {
+            if (etl::distance(_begin, position) < etl::distance(position, _end - 1)) {
                 // Construct the _begin.
                 create_element_front(*_begin);
 
@@ -985,8 +906,7 @@ class ideque : public etl::deque_base {
             position = _end - 1;
         } else {
             // Are we closer to the front?
-            if (etl::distance(_begin, position) <
-                etl::distance(position, _end - 1)) {
+            if (etl::distance(_begin, position) < etl::distance(position, _end - 1)) {
                 // Construct the _begin.
                 create_element_front(*_begin);
 
@@ -1021,8 +941,7 @@ class ideque : public etl::deque_base {
     ///\param insert_position>The insert position.
     //*************************************************************************
     template <typename T1, typename T2>
-    iterator emplace(const_iterator insert_position, const T1& value1,
-                     const T2& value2) {
+    iterator emplace(const_iterator insert_position, const T1& value1, const T2& value2) {
         iterator position(insert_position.index, *this, p_buffer);
 
         ETL_ASSERT(!full(), ETL_ERROR(deque_full));
@@ -1043,8 +962,7 @@ class ideque : public etl::deque_base {
             position = _end - 1;
         } else {
             // Are we closer to the front?
-            if (etl::distance(_begin, position) <
-                etl::distance(position, _end - 1)) {
+            if (etl::distance(_begin, position) < etl::distance(position, _end - 1)) {
                 // Construct the _begin.
                 create_element_front(*_begin);
 
@@ -1079,8 +997,7 @@ class ideque : public etl::deque_base {
     ///\param insert_position>The insert position.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    iterator emplace(const_iterator insert_position, const T1& value1,
-                     const T2& value2, const T3& value3) {
+    iterator emplace(const_iterator insert_position, const T1& value1, const T2& value2, const T3& value3) {
         iterator position(insert_position.index, *this, p_buffer);
 
         ETL_ASSERT(!full(), ETL_ERROR(deque_full));
@@ -1101,8 +1018,7 @@ class ideque : public etl::deque_base {
             position = _end - 1;
         } else {
             // Are we closer to the front?
-            if (etl::distance(_begin, position) <
-                etl::distance(position, _end - 1)) {
+            if (etl::distance(_begin, position) < etl::distance(position, _end - 1)) {
                 // Construct the _begin.
                 create_element_front(*_begin);
 
@@ -1137,8 +1053,8 @@ class ideque : public etl::deque_base {
     ///\param insert_position>The insert position.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    iterator emplace(const_iterator insert_position, const T1& value1,
-                     const T2& value2, const T3& value3, const T4& value4) {
+    iterator emplace(const_iterator insert_position, const T1& value1, const T2& value2, const T3& value3,
+                     const T4& value4) {
         iterator position(insert_position.index, *this, p_buffer);
 
         ETL_ASSERT(!full(), ETL_ERROR(deque_full));
@@ -1159,8 +1075,7 @@ class ideque : public etl::deque_base {
             position = _end - 1;
         } else {
             // Are we closer to the front?
-            if (etl::distance(_begin, position) <
-                etl::distance(position, _end - 1)) {
+            if (etl::distance(_begin, position) < etl::distance(position, _end - 1)) {
                 // Construct the _begin.
                 create_element_front(*_begin);
 
@@ -1197,8 +1112,7 @@ class ideque : public etl::deque_base {
     ///\param n               The number of values to insert.
     ///\param value           The value to insert.
     //*************************************************************************
-    iterator insert(const_iterator insert_position, size_type n,
-                    const value_type& value) {
+    iterator insert(const_iterator insert_position, size_type n, const value_type& value) {
         iterator position;
 
         ETL_ASSERT((current_size + n) <= CAPACITY, ETL_ERROR(deque_full));
@@ -1220,15 +1134,12 @@ class ideque : public etl::deque_base {
             position = iterator(insert_position.index, *this, p_buffer);
 
             // Are we closer to the front?
-            if (distance(_begin, insert_position) <=
-                difference_type(current_size / 2)) {
+            if (distance(_begin, insert_position) <= difference_type(current_size / 2)) {
                 size_t n_insert = n;
                 size_t n_move = etl::distance(begin(), position);
                 size_t n_create_copy = etl::min(n_insert, n_move);
-                size_t n_create_new =
-                    (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
-                size_t n_copy_new =
-                    (n_insert > n_create_new) ? n_insert - n_create_new : 0;
+                size_t n_create_new = (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
+                size_t n_copy_new = (n_insert > n_create_new) ? n_insert - n_create_new : 0;
                 size_t n_copy_old = n_move - n_create_copy;
 
                 // Remember the original start.
@@ -1260,10 +1171,8 @@ class ideque : public etl::deque_base {
                 size_t n_insert = n;
                 size_t n_move = etl::distance(position, end());
                 size_t n_create_copy = etl::min(n_insert, n_move);
-                size_t n_create_new =
-                    (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
-                size_t n_copy_new =
-                    (n_insert > n_create_new) ? n_insert - n_create_new : 0;
+                size_t n_create_new = (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
+                size_t n_copy_new = (n_insert > n_create_new) ? n_insert - n_create_new : 0;
                 size_t n_copy_old = n_move - n_create_copy;
 
                 // Create new.
@@ -1280,8 +1189,7 @@ class ideque : public etl::deque_base {
                 }
 
                 // Move old.
-                etl::move_backward(position, position + n_copy_old,
-                                   position + n_insert + n_copy_old);
+                etl::move_backward(position, position + n_copy_old, position + n_insert + n_copy_old);
 
                 // Copy new.
                 etl::fill_n(position, n_copy_new, value);
@@ -1299,9 +1207,9 @@ class ideque : public etl::deque_base {
     ///\param range_end   The end of the range to insert.
     //*************************************************************************
     template <typename TIterator>
-    typename enable_if<!etl::is_integral<TIterator>::value, iterator>::type
-    insert(const_iterator insert_position, TIterator range_begin,
-           TIterator range_end) {
+    typename enable_if<!etl::is_integral<TIterator>::value, iterator>::type insert(const_iterator insert_position,
+                                                                                   TIterator range_begin,
+                                                                                   TIterator range_end) {
         iterator position;
 
         difference_type n = etl::distance(range_begin, range_end);
@@ -1324,15 +1232,12 @@ class ideque : public etl::deque_base {
             position = iterator(insert_position.index, *this, p_buffer);
 
             // Are we closer to the front?
-            if (distance(_begin, insert_position) <
-                difference_type(current_size / 2)) {
+            if (distance(_begin, insert_position) < difference_type(current_size / 2)) {
                 size_t n_insert = n;
                 size_t n_move = etl::distance(begin(), position);
                 size_t n_create_copy = etl::min(n_insert, n_move);
-                size_t n_create_new =
-                    (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
-                size_t n_copy_new =
-                    (n_insert > n_create_new) ? n_insert - n_create_new : 0;
+                size_t n_create_new = (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
+                size_t n_copy_new = (n_insert > n_create_new) ? n_insert - n_create_new : 0;
                 size_t n_copy_old = n_move - n_create_copy;
 
                 // Remember the original start.
@@ -1360,10 +1265,8 @@ class ideque : public etl::deque_base {
                 size_t n_insert = n;
                 size_t n_move = etl::distance(position, end());
                 size_t n_create_copy = etl::min(n_insert, n_move);
-                size_t n_create_new =
-                    (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
-                size_t n_copy_new =
-                    (n_insert > n_create_new) ? n_insert - n_create_new : 0;
+                size_t n_create_new = (n_insert > n_create_copy) ? n_insert - n_create_copy : 0;
+                size_t n_copy_new = (n_insert > n_create_new) ? n_insert - n_create_new : 0;
                 size_t n_copy_old = n_move - n_create_copy;
 
                 // Create new.
@@ -1382,8 +1285,7 @@ class ideque : public etl::deque_base {
                 }
 
                 // Move old.
-                etl::move_backward(position, position + n_copy_old,
-                                   position + n_insert + n_copy_old);
+                etl::move_backward(position, position + n_copy_old, position + n_insert + n_copy_old);
 
                 // Copy new.
                 item = range_begin;
@@ -1403,8 +1305,7 @@ class ideque : public etl::deque_base {
         iterator position(to_iterator(erase_position));
         //iterator position(erase_position.index, *this, p_buffer);
 
-        ETL_ASSERT(distance(position) <= difference_type(current_size),
-                   ETL_ERROR(deque_out_of_bounds));
+        ETL_ASSERT(distance(position) <= difference_type(current_size), ETL_ERROR(deque_out_of_bounds));
 
         if (position == _begin) {
             destroy_element_front();
@@ -1414,8 +1315,7 @@ class ideque : public etl::deque_base {
             position = end();
         } else {
             // Are we closer to the front?
-            if (distance(_begin, position) <
-                difference_type(current_size / 2)) {
+            if (distance(_begin, position) < difference_type(current_size / 2)) {
                 etl::move_backward(_begin, position, position + 1);
                 destroy_element_front();
                 ++position;
@@ -1462,8 +1362,7 @@ class ideque : public etl::deque_base {
         } else {
             // Copy the smallest number of items.
             // Are we closer to the front?
-            if (distance(_begin, position) <
-                difference_type(current_size / 2)) {
+            if (distance(_begin, position) < difference_type(current_size / 2)) {
                 // Move the items.
                 etl::move_backward(_begin, position, position + length);
 
@@ -1585,8 +1484,7 @@ class ideque : public etl::deque_base {
     /// If asserts or exceptions are enabled, throws an etl::deque_full if the deque is already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    void emplace_back(const T1& value1, const T2& value2, const T3& value3,
-                      const T4& value4) {
+    void emplace_back(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
 #if defined(ETL_CHECK_PUSH_POP)
         ETL_ASSERT(!full(), ETL_ERROR(deque_full));
 #endif
@@ -1706,8 +1604,7 @@ class ideque : public etl::deque_base {
     /// If asserts or exceptions are enabled, throws an etl::deque_full if the deque is already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    void emplace_front(const T1& value1, const T2& value2, const T3& value3,
-                       const T4& value4) {
+    void emplace_front(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
 #if defined(ETL_CHECK_PUSH_POP)
         ETL_ASSERT(!full(), ETL_ERROR(deque_full));
 #endif
@@ -1764,24 +1661,21 @@ class ideque : public etl::deque_base {
     //*************************************************************************
     /// - operator for const_iterator
     //*************************************************************************
-    friend difference_type operator-(const const_iterator& lhs,
-                                     const const_iterator& rhs) {
+    friend difference_type operator-(const const_iterator& lhs, const const_iterator& rhs) {
         return distance(rhs, lhs);
     }
 
     //*************************************************************************
     /// - operator for reverse_iterator
     //*************************************************************************
-    friend difference_type operator-(const reverse_iterator& lhs,
-                                     const reverse_iterator& rhs) {
+    friend difference_type operator-(const reverse_iterator& lhs, const reverse_iterator& rhs) {
         return distance(lhs.base(), rhs.base());
     }
 
     //*************************************************************************
     /// - operator for const_reverse_iterator
     //*************************************************************************
-    friend difference_type operator-(const const_reverse_iterator& lhs,
-                                     const const_reverse_iterator& rhs) {
+    friend difference_type operator-(const const_reverse_iterator& lhs, const const_reverse_iterator& rhs) {
         return distance(lhs.base(), rhs.base());
     }
 
@@ -1970,8 +1864,7 @@ class ideque : public etl::deque_base {
     /// Measures the distance between two iterators.
     //*************************************************************************
     template <typename TIterator1, typename TIterator2>
-    static difference_type distance(const TIterator1& range_begin,
-                                    const TIterator2& range_end) {
+    static difference_type distance(const TIterator1& range_begin, const TIterator2& range_end) {
         difference_type distance1 = distance(range_begin);
         difference_type distance2 = distance(range_end);
 
@@ -2007,8 +1900,7 @@ class ideque : public etl::deque_base {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_DEQUE) || defined(ETL_POLYMORPHIC_CONTAINERS) || \
-    defined(ETL_IDEQUE_REPAIR_ENABLE)
+#if defined(ETL_POLYMORPHIC_DEQUE) || defined(ETL_POLYMORPHIC_CONTAINERS) || defined(ETL_IDEQUE_REPAIR_ENABLE)
    public:
     virtual ~ideque() {}
 #else
@@ -2039,17 +1931,12 @@ class deque : public etl::ideque<T> {
     typedef T& reference;
     typedef const T& const_reference;
     typedef size_t size_type;
-    typedef
-        typename etl::iterator_traits<pointer>::difference_type difference_type;
+    typedef typename etl::iterator_traits<pointer>::difference_type difference_type;
 
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    deque()
-        : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE,
-                         BUFFER_SIZE) {
-        this->initialise();
-    }
+    deque() : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, BUFFER_SIZE) { this->initialise(); }
 
     //*************************************************************************
     /// Destructor.
@@ -2059,9 +1946,7 @@ class deque : public etl::ideque<T> {
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
-    deque(const deque& other)
-        : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE,
-                         BUFFER_SIZE) {
+    deque(const deque& other) : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, BUFFER_SIZE) {
         if (this != &other) {
             this->assign(other.begin(), other.end());
         }
@@ -2071,9 +1956,7 @@ class deque : public etl::ideque<T> {
     //*************************************************************************
     /// Move constructor.
     //*************************************************************************
-    deque(deque&& other)
-        : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE,
-                         BUFFER_SIZE) {
+    deque(deque&& other) : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, BUFFER_SIZE) {
         if (this != &other) {
             this->initialise();
 
@@ -2090,11 +1973,8 @@ class deque : public etl::ideque<T> {
     /// Assigns data to the deque.
     //*************************************************************************
     template <typename TIterator>
-    deque(TIterator begin_, TIterator end_,
-          typename etl::enable_if<!etl::is_integral<TIterator>::value,
-                                  int>::type = 0)
-        : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE,
-                         BUFFER_SIZE) {
+    deque(TIterator begin_, TIterator end_, typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0)
+        : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, BUFFER_SIZE) {
         this->assign(begin_, end_);
     }
 
@@ -2102,8 +1982,7 @@ class deque : public etl::ideque<T> {
     /// Assigns data to the deque.
     //*************************************************************************
     explicit deque(size_t n, const_reference value = value_type())
-        : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE,
-                         BUFFER_SIZE) {
+        : etl::ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, BUFFER_SIZE) {
         this->assign(n, value);
     }
 
@@ -2111,8 +1990,7 @@ class deque : public etl::ideque<T> {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    deque(std::initializer_list<T> init)
-        : ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, BUFFER_SIZE) {
+    deque(std::initializer_list<T> init) : ideque<T>(reinterpret_cast<T*>(buffer.raw), MAX_SIZE, BUFFER_SIZE) {
         this->assign(init.begin(), init.end());
     }
 #endif
@@ -2159,8 +2037,7 @@ class deque : public etl::ideque<T> {
 #endif
     {
 #if ETL_CPP11_TYPE_TRAITS_IS_TRIVIAL_SUPPORTED
-        ETL_ASSERT(etl::is_trivially_copyable<T>::value,
-                   ETL_ERROR(etl::deque_incompatible_type));
+        ETL_ASSERT(etl::is_trivially_copyable<T>::value, ETL_ERROR(etl::deque_incompatible_type));
 #endif
 
         etl::ideque<T>::repair_buffer(reinterpret_cast<T*>(buffer.raw));
@@ -2184,8 +2061,7 @@ deque(T...) -> deque<typename etl::common_type_t<T...>, sizeof...(T)>;
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
 template <typename T, typename... TValues>
-constexpr auto make_deque(TValues&&... values)
-    -> etl::deque<T, sizeof...(TValues)> {
+constexpr auto make_deque(TValues&&... values) -> etl::deque<T, sizeof...(TValues)> {
     return {{etl::forward<T>(values)...}};
 }
 #endif
@@ -2199,8 +2075,7 @@ constexpr auto make_deque(TValues&&... values)
 //***************************************************************************
 template <typename T>
 bool operator==(const etl::ideque<T>& lhs, const etl::ideque<T>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -2224,8 +2099,7 @@ bool operator!=(const etl::ideque<T>& lhs, const etl::ideque<T>& rhs) {
 //***************************************************************************
 template <typename T>
 bool operator<(const etl::ideque<T>& lhs, const etl::ideque<T>& rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                        rhs.end());
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //***************************************************************************

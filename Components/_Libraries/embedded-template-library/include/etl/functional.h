@@ -51,8 +51,7 @@ class reference_wrapper {
 
     ETL_CONSTEXPR20 explicit reference_wrapper(T& t_) ETL_NOEXCEPT : t(&t_) {}
 
-    ETL_CONSTEXPR20 reference_wrapper<T>& operator=(
-        const reference_wrapper& rhs) ETL_NOEXCEPT {
+    ETL_CONSTEXPR20 reference_wrapper<T>& operator=(const reference_wrapper& rhs) ETL_NOEXCEPT {
         t = rhs.t;
         return *this;
     }
@@ -97,8 +96,7 @@ struct unary_function {
 };
 
 //***************************************************************************
-template <typename TFirstArgumentType, typename TSecondArgumentType,
-          typename TResultType>
+template <typename TFirstArgumentType, typename TSecondArgumentType, typename TResultType>
 struct binary_function {
     typedef TFirstArgumentType first_argument_type;
     typedef TSecondArgumentType second_argument_type;
@@ -110,9 +108,7 @@ template <typename T = void>
 struct less : public etl::binary_function<T, T, bool> {
     typedef T value_type;
 
-    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const {
-        return (lhs < rhs);
-    }
+    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const { return (lhs < rhs); }
 };
 
 #if ETL_USING_CPP11
@@ -121,8 +117,7 @@ struct less<void> : public etl::binary_function<void, void, bool> {
     typedef int is_transparent;
 
     template <typename T1, typename T2>
-    constexpr auto operator()(T1&& lhs, T2&& rhs) const
-        -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
+    constexpr auto operator()(T1&& lhs, T2&& rhs) const -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
         return static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs);
     }
 };
@@ -133,9 +128,7 @@ template <typename T = void>
 struct less_equal : public etl::binary_function<T, T, bool> {
     typedef T value_type;
 
-    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const {
-        return !(rhs < lhs);
-    }
+    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const { return !(rhs < lhs); }
 };
 
 #if ETL_USING_CPP11
@@ -144,8 +137,7 @@ struct less_equal<void> : public etl::binary_function<void, void, bool> {
     typedef int is_transparent;
 
     template <typename T1, typename T2>
-    constexpr auto operator()(T1&& lhs, T2&& rhs) const
-        -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
+    constexpr auto operator()(T1&& lhs, T2&& rhs) const -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
         return !(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs));
     }
 };
@@ -156,9 +148,7 @@ template <typename T = void>
 struct greater : public etl::binary_function<T, T, bool> {
     typedef T value_type;
 
-    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const {
-        return (rhs < lhs);
-    }
+    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const { return (rhs < lhs); }
 };
 
 #if ETL_USING_CPP11
@@ -167,8 +157,7 @@ struct greater<void> : public etl::binary_function<void, void, bool> {
     typedef int is_transparent;
 
     template <typename T1, typename T2>
-    constexpr auto operator()(T1&& lhs, T2&& rhs) const
-        -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
+    constexpr auto operator()(T1&& lhs, T2&& rhs) const -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
         return static_cast<T1&&>(rhs) < static_cast<T2&&>(lhs);
     }
 };
@@ -179,9 +168,7 @@ template <typename T = void>
 struct greater_equal : public etl::binary_function<T, T, bool> {
     typedef T value_type;
 
-    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const {
-        return !(lhs < rhs);
-    }
+    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const { return !(lhs < rhs); }
 };
 
 #if ETL_USING_CPP11
@@ -190,8 +177,7 @@ struct greater_equal<void> : public etl::binary_function<void, void, bool> {
     typedef int is_transparent;
 
     template <typename T1, typename T2>
-    constexpr auto operator()(T1&& lhs, T2&& rhs) const
-        -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
+    constexpr auto operator()(T1&& lhs, T2&& rhs) const -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
         return static_cast<T1&&>(rhs) < static_cast<T2&&>(lhs);
     }
 };
@@ -202,9 +188,7 @@ template <typename T = void>
 struct equal_to : public etl::binary_function<T, T, bool> {
     typedef T value_type;
 
-    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const {
-        return lhs == rhs;
-    }
+    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const { return lhs == rhs; }
 };
 
 #if ETL_USING_CPP11
@@ -214,8 +198,7 @@ struct equal_to<void> : public etl::binary_function<void, void, bool> {
     typedef int is_transparent;
 
     template <typename T1, typename T2>
-    constexpr auto operator()(T1&& lhs, T2&& rhs) const
-        -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
+    constexpr auto operator()(T1&& lhs, T2&& rhs) const -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
         return static_cast<T1&&>(lhs) == static_cast<T2&&>(rhs);
     }
 };
@@ -226,9 +209,7 @@ template <typename T = void>
 struct not_equal_to : public etl::binary_function<T, T, bool> {
     typedef T value_type;
 
-    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const {
-        return !(lhs == rhs);
-    }
+    ETL_CONSTEXPR bool operator()(const T& lhs, const T& rhs) const { return !(lhs == rhs); }
 };
 
 #if ETL_USING_CPP11
@@ -237,8 +218,7 @@ struct not_equal_to<void> : public etl::binary_function<void, void, bool> {
     typedef int is_transparent;
 
     template <typename T1, typename T2>
-    constexpr auto operator()(T1&& lhs, T2&& rhs) const
-        -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
+    constexpr auto operator()(T1&& lhs, T2&& rhs) const -> decltype(static_cast<T1&&>(lhs) < static_cast<T2&&>(rhs)) {
         return !(static_cast<T1&&>(lhs) == static_cast<T2&&>(rhs));
     }
 };
@@ -247,24 +227,19 @@ struct not_equal_to<void> : public etl::binary_function<void, void, bool> {
 //***************************************************************************
 template <typename TFunction>
 class binder1st
-    : public etl::unary_function<typename TFunction::second_argument_type,
-                                 typename TFunction::result_type> {
+    : public etl::unary_function<typename TFunction::second_argument_type, typename TFunction::result_type> {
    protected:
     TFunction operation;
     typename TFunction::first_argument_type value;
 
    public:
-    binder1st(const TFunction& f,
-              const typename TFunction::first_argument_type& v)
-        : operation(f), value(v) {}
+    binder1st(const TFunction& f, const typename TFunction::first_argument_type& v) : operation(f), value(v) {}
 
-    typename TFunction::result_type operator()(
-        typename TFunction::second_argument_type& x) const {
+    typename TFunction::result_type operator()(typename TFunction::second_argument_type& x) const {
         return operation(value, x);
     }
 
-    typename TFunction::result_type operator()(
-        const typename TFunction::second_argument_type& x) const {
+    typename TFunction::result_type operator()(const typename TFunction::second_argument_type& x) const {
         return operation(value, x);
     }
 };
@@ -276,25 +251,19 @@ binder1st<F> bind1st(const F& f, const T& x) {
 
 //***************************************************************************
 template <typename TFunction>
-class binder2nd
-    : public etl::unary_function<typename TFunction::first_argument_type,
-                                 typename TFunction::result_type> {
+class binder2nd : public etl::unary_function<typename TFunction::first_argument_type, typename TFunction::result_type> {
    protected:
     TFunction operation;
     typename TFunction::second_argument_type value;
 
    public:
-    binder2nd(const TFunction& f,
-              const typename TFunction::second_argument_type& v)
-        : operation(f), value(v) {}
+    binder2nd(const TFunction& f, const typename TFunction::second_argument_type& v) : operation(f), value(v) {}
 
-    typename TFunction::result_type operator()(
-        typename TFunction::first_argument_type& x) const {
+    typename TFunction::result_type operator()(typename TFunction::first_argument_type& x) const {
         return operation(x, value);
     }
 
-    typename TFunction::result_type operator()(
-        const typename TFunction::first_argument_type& x) const {
+    typename TFunction::result_type operator()(const typename TFunction::first_argument_type& x) const {
         return operation(x, value);
     }
 };
@@ -311,9 +280,7 @@ struct plus {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs + rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs + rhs; }
 };
 
 //***************************************************************************
@@ -323,9 +290,7 @@ struct minus {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs - rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs - rhs; }
 };
 
 //***************************************************************************
@@ -344,9 +309,7 @@ struct multiplies {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs * rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs * rhs; }
 };
 
 //***************************************************************************
@@ -356,9 +319,7 @@ struct divides {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs / rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs / rhs; }
 };
 
 //***************************************************************************
@@ -368,9 +329,7 @@ struct modulus {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs % rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs % rhs; }
 };
 
 //***************************************************************************
@@ -380,9 +339,7 @@ struct logical_and {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs && rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs && rhs; }
 };
 
 //***************************************************************************
@@ -392,9 +349,7 @@ struct logical_or {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs || rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs || rhs; }
 };
 
 //***************************************************************************
@@ -414,9 +369,7 @@ struct bit_and {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs & rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs & rhs; }
 };
 
 //***************************************************************************
@@ -426,9 +379,7 @@ struct bit_or {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs | rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs | rhs; }
 };
 
 //***************************************************************************
@@ -438,9 +389,7 @@ struct bit_xor {
     typedef T second_argument_type;
     typedef T result_type;
 
-    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const {
-        return lhs ^ rhs;
-    }
+    ETL_CONSTEXPR T operator()(const T& lhs, const T& rhs) const { return lhs ^ rhs; }
 };
 
 //***************************************************************************

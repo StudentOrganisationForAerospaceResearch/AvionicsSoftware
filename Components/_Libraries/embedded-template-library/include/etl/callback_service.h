@@ -51,9 +51,7 @@ class callback_service {
     /// Reset the callback service.
     /// Sets all callbacks to the internal default.
     //*************************************************************************
-    callback_service() : unhandled_callback(*this), p_unhandled(ETL_NULLPTR) {
-        lookup.fill(&unhandled_callback);
-    }
+    callback_service() : unhandled_callback(*this), p_unhandled(ETL_NULLPTR) { lookup.fill(&unhandled_callback); }
 
     //*************************************************************************
     /// Registers a callback for the specified id.
@@ -85,9 +83,7 @@ class callback_service {
     /// Registers an alternative callback for unhandled ids.
     /// \param callback A reference to the user supplied 'unhandled' callback.
     //*************************************************************************
-    void register_unhandled_callback(etl::ifunction<size_t>& callback) {
-        p_unhandled = &callback;
-    }
+    void register_unhandled_callback(etl::ifunction<size_t>& callback) { p_unhandled = &callback; }
 
     //*************************************************************************
     /// Executes the callback function for the index.
@@ -126,8 +122,7 @@ class callback_service {
     }
 
     /// The default callback for unhandled ids.
-    etl::function_mp<callback_service<RANGE, OFFSET>, size_t,
-                     &callback_service<RANGE, OFFSET>::unhandled>
+    etl::function_mp<callback_service<RANGE, OFFSET>, size_t, &callback_service<RANGE, OFFSET>::unhandled>
         unhandled_callback;
 
     /// Pointer to the user defined 'unhandled' callback.

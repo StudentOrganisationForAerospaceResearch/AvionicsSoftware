@@ -70,8 +70,7 @@ class SPIFlash : public Flash {
     *         is greater than the sector size.
     */
     bool Write(uint32_t offset, uint8_t* data, uint32_t len) override {
-        if (offset + len >= (w25qxx.SectorSize * w25qxx.SectorCount) ||
-            len > w25qxx.SectorSize)
+        if (offset + len >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
             return false;
 
         uint32_t SectorAddr = (offset / GetSectorSize());
@@ -90,8 +89,7 @@ class SPIFlash : public Flash {
      *         than the sector size.
      */
     bool Read(uint32_t offset, uint8_t* data, uint32_t len) override {
-        if (offset + len >= (w25qxx.SectorSize * w25qxx.SectorCount) ||
-            len > w25qxx.SectorSize)
+        if (offset + len >= (w25qxx.SectorSize * w25qxx.SectorCount) || len > w25qxx.SectorSize)
             return false;
 
         uint32_t SectorAddr = (offset / GetSectorSize());
@@ -131,9 +129,7 @@ class SPIFlash : public Flash {
     /**
      * @brief Gets if the flash is initialized or not
      */
-    bool GetInitialized() {
-        return (isInitialized_ && (w25qxx.Lock == 0) && (w25qxx.ID == W25Q512));
-    }
+    bool GetInitialized() { return (isInitialized_ && (w25qxx.Lock == 0) && (w25qxx.ID == W25Q512)); }
 
    private:
     // Private Functions

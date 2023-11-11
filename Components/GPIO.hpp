@@ -89,23 +89,20 @@ inline void Close() {
 }
 
 inline bool IsOpen() {
-    return HAL_GPIO_ReadPin(VENT_CONTROL_GPIO_Port, VENT_CONTROL_Pin) ==
-           GPIO_PIN_RESET;
+    return HAL_GPIO_ReadPin(VENT_CONTROL_GPIO_Port, VENT_CONTROL_Pin) == GPIO_PIN_RESET;
 }
 }  // namespace Vent
 
 namespace Drain {
 inline void Open() {
-    HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin,
-                      GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_RESET);
 }
 inline void Close() {
     HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_SET);
 }
 
 inline bool IsOpen() {
-    return HAL_GPIO_ReadPin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin) ==
-           GPIO_PIN_RESET;
+    return HAL_GPIO_ReadPin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin) == GPIO_PIN_RESET;
 }
 }  // namespace Drain
 
@@ -121,8 +118,7 @@ inline void Toggle() {
 }
 
 inline bool IsInternal() {
-    return HAL_GPIO_ReadPin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin) ==
-           GPIO_PIN_SET;
+    return HAL_GPIO_ReadPin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin) == GPIO_PIN_SET;
 }
 }  // namespace PowerSelect
 }  // namespace GPIO

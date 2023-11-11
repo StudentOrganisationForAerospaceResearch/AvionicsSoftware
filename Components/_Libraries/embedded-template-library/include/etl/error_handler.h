@@ -63,21 +63,16 @@ class error_handler {
     /// Callback class for member handler functions. Deprecated.
     //*************************************************************************
     template <typename TObject>
-    struct member_function
-        : public etl::function<TObject, const etl::exception&> {
-        member_function(TObject& object_,
-                        void (TObject::*p_function_)(const etl::exception&))
-            : etl::function<TObject, const etl::exception&>(object_,
-                                                            p_function_) {}
+    struct member_function : public etl::function<TObject, const etl::exception&> {
+        member_function(TObject& object_, void (TObject::*p_function_)(const etl::exception&))
+            : etl::function<TObject, const etl::exception&>(object_, p_function_) {}
     };
 
     //*****************************************************************************
     /// Sets the error callback function. Deprecated.
     ///\param f A reference to an etl::function object that will handler errors.
     //*****************************************************************************
-    static void set_callback(ifunction<const etl::exception&>& f) {
-        create((void*)(&f), ifunction_stub);
-    }
+    static void set_callback(ifunction<const etl::exception&>& f) { create((void*)(&f), ifunction_stub); }
 
     //*************************************************************************
     /// Create from function (Compile time).
@@ -114,8 +109,7 @@ class error_handler {
     //*************************************************************************
     /// Create from const instance method (Compile time).
     //*************************************************************************
-    template <typename T, T const& Instance,
-              void (T::*Method)(const etl::exception&) const>
+    template <typename T, T const& Instance, void (T::*Method)(const etl::exception&) const>
     static void set_callback() {
         create(const_method_instance_stub<T, Instance, Method>);
     }
@@ -205,8 +199,7 @@ class error_handler {
     //*************************************************************************
     /// Stub call for a const member function. Compile time instance.
     //*************************************************************************
-    template <typename T, const T& Instance,
-              void (T::*Method)(const etl::exception&) const>
+    template <typename T, const T& Instance, void (T::*Method)(const etl::exception&) const>
     static void const_method_instance_stub(void*, const etl::exception& e) {
         (Instance.*Method)(e);
     }
@@ -223,8 +216,7 @@ class error_handler {
     /// Stub call for a ifunction. Run time instance.
     //*************************************************************************
     static void ifunction_stub(void* object, const etl::exception& e) {
-        etl::ifunction<const etl::exception&>* p =
-            static_cast<etl::ifunction<const etl::exception&>*>(object);
+        etl::ifunction<const etl::exception&>* p = static_cast<etl::ifunction<const etl::exception&>*>(object);
         p->operator()(e);
     }
 };
@@ -415,20 +407,15 @@ class error_handler {
 #endif
 
 #if defined(ETL_VERBOSE_ERRORS)
-#define ETL_ERROR(e) \
-    (e(__FILE__,     \
-       __LINE__))  // Make an exception with the file name and line number.
+#define ETL_ERROR(e) (e(__FILE__, __LINE__))  // Make an exception with the file name and line number.
 #else
-#define ETL_ERROR(e) \
-    (e("", __LINE__))  // Make an exception with the line number.
+#define ETL_ERROR(e) (e("", __LINE__))  // Make an exception with the line number.
 #endif
 
 #if defined(ETL_VERBOSE_ERRORS)
-#define ETL_ERROR_TEXT(verbose_text, terse_text) \
-    (verbose_text)  // Use the verbose text.
+#define ETL_ERROR_TEXT(verbose_text, terse_text) (verbose_text)  // Use the verbose text.
 #else
-#define ETL_ERROR_TEXT(verbose_text, terse_text) \
-    (terse_text)  // Use the terse text.
+#define ETL_ERROR_TEXT(verbose_text, terse_text) (terse_text)  // Use the terse text.
 #endif
 
 #endif

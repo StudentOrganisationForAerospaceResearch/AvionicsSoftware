@@ -47,8 +47,7 @@ namespace etl {
 //***************************************************************************
 class message_bus_exception : public etl::exception {
    public:
-    message_bus_exception(string_type reason_, string_type file_name_,
-                          numeric_type line_number_)
+    message_bus_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
@@ -57,12 +56,9 @@ class message_bus_exception : public etl::exception {
 //***************************************************************************
 class message_bus_too_many_subscribers : public etl::message_bus_exception {
    public:
-    message_bus_too_many_subscribers(string_type file_name_,
-                                     numeric_type line_number_)
-        : message_bus_exception(
-              ETL_ERROR_TEXT("message bus:too many subscribers",
-                             ETL_MESSAGE_BUS_FILE_ID "A"),
-              file_name_, line_number_) {}
+    message_bus_too_many_subscribers(string_type file_name_, numeric_type line_number_)
+        : message_bus_exception(ETL_ERROR_TEXT("message bus:too many subscribers", ETL_MESSAGE_BUS_FILE_ID "A"),
+                                file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -88,9 +84,8 @@ class imessage_bus : public etl::imessage_router {
             ETL_ASSERT(ok, ETL_ERROR(etl::message_bus_too_many_subscribers));
 
             if (ok) {
-                router_list_t::iterator irouter = etl::upper_bound(
-                    router_list.begin(), router_list.end(),
-                    router.get_message_router_id(), compare_router_id());
+                router_list_t::iterator irouter = etl::upper_bound(router_list.begin(), router_list.end(),
+                                                                   router.get_message_router_id(), compare_router_id());
 
                 router_list.insert(irouter, &router);
             }
@@ -106,9 +101,8 @@ class imessage_bus : public etl::imessage_router {
         if (id == etl::imessage_bus::ALL_MESSAGE_ROUTERS) {
             clear();
         } else {
-            ETL_OR_STD::pair<router_list_t::iterator, router_list_t::iterator>
-                range = etl::equal_range(router_list.begin(), router_list.end(),
-                                         id, compare_router_id());
+            ETL_OR_STD::pair<router_list_t::iterator, router_list_t::iterator> range =
+                etl::equal_range(router_list.begin(), router_list.end(), id, compare_router_id());
 
             router_list.erase(range.first, range.second);
         }
@@ -116,8 +110,7 @@ class imessage_bus : public etl::imessage_router {
 
     //*******************************************
     void unsubscribe(etl::imessage_router& router) {
-        router_list_t::iterator irouter =
-            etl::find(router_list.begin(), router_list.end(), &router);
+        router_list_t::iterator irouter = etl::find(router_list.begin(), router_list.end(), &router);
 
         if (irouter != router_list.end()) {
             router_list.erase(irouter);
@@ -135,8 +128,7 @@ class imessage_bus : public etl::imessage_router {
     }
 
     //********************************************
-    virtual void receive(etl::message_router_id_t destination_router_id,
-                         etl::shared_message shared_msg) ETL_OVERRIDE {
+    virtual void receive(etl::message_router_id_t destination_router_id, etl::shared_message shared_msg) ETL_OVERRIDE {
         switch (destination_router_id) {
             //*****************************
             // Broadcast to all routers.
@@ -147,8 +139,7 @@ class imessage_bus : public etl::imessage_router {
                 while (irouter != router_list.end()) {
                     etl::imessage_router& router = **irouter;
 
-                    if (router.accepts(
-                            shared_msg.get_message().get_message_id())) {
+                    if (router.accepts(shared_msg.get_message().get_message_id())) {
                         router.receive(shared_msg);
                     }
 
@@ -162,17 +153,12 @@ class imessage_bus : public etl::imessage_router {
             // Must be an addressed message.
             default: {
                 // Find routers with the id.
-                ETL_OR_STD::pair<router_list_t::iterator,
-                                 router_list_t::iterator>
-                    range = etl::equal_range(
-                        router_list.begin(), router_list.end(),
-                        destination_router_id, compare_router_id());
+                ETL_OR_STD::pair<router_list_t::iterator, router_list_t::iterator> range = etl::equal_range(
+                    router_list.begin(), router_list.end(), destination_router_id, compare_router_id());
 
                 // Call all of them.
                 while (range.first != range.second) {
-                    if ((*(range.first))
-                            ->accepts(
-                                shared_msg.get_message().get_message_id())) {
+                    if ((*(range.first))->accepts(shared_msg.get_message().get_message_id())) {
                         (*(range.first))->receive(shared_msg);
                     }
 
@@ -181,9 +167,8 @@ class imessage_bus : public etl::imessage_router {
 
                 // Do any message buses.
                 // These are always at the end of the list.
-                router_list_t::iterator irouter = etl::lower_bound(
-                    router_list.begin(), router_list.end(),
-                    etl::imessage_bus::MESSAGE_BUS, compare_router_id());
+                router_list_t::iterator irouter = etl::lower_bound(router_list.begin(), router_list.end(),
+                                                                   etl::imessage_bus::MESSAGE_BUS, compare_router_id());
 
                 while (irouter != router_list.end()) {
                     // So pass it on.
@@ -206,8 +191,7 @@ class imessage_bus : public etl::imessage_router {
     }
 
     //*******************************************
-    virtual void receive(etl::message_router_id_t destination_router_id,
-                         const etl::imessage& message) ETL_OVERRIDE {
+    virtual void receive(etl::message_router_id_t destination_router_id, const etl::imessage& message) ETL_OVERRIDE {
         switch (destination_router_id) {
             //*****************************
             // Broadcast to all routers.
@@ -234,11 +218,8 @@ class imessage_bus : public etl::imessage_router {
                 router_list_t::iterator irouter = router_list.begin();
 
                 // Find routers with the id.
-                ETL_OR_STD::pair<router_list_t::iterator,
-                                 router_list_t::iterator>
-                    range = etl::equal_range(
-                        router_list.begin(), router_list.end(),
-                        destination_router_id, compare_router_id());
+                ETL_OR_STD::pair<router_list_t::iterator, router_list_t::iterator> range = etl::equal_range(
+                    router_list.begin(), router_list.end(), destination_router_id, compare_router_id());
 
                 // Call all of them.
                 while (range.first != range.second) {
@@ -251,9 +232,8 @@ class imessage_bus : public etl::imessage_router {
 
                 // Do any message buses.
                 // These are always at the end of the list.
-                irouter = etl::lower_bound(
-                    router_list.begin(), router_list.end(),
-                    etl::imessage_bus::MESSAGE_BUS, compare_router_id());
+                irouter = etl::lower_bound(router_list.begin(), router_list.end(), etl::imessage_bus::MESSAGE_BUS,
+                                           compare_router_id());
 
                 while (irouter != router_list.end()) {
                     // So pass it on.
@@ -302,29 +282,24 @@ class imessage_bus : public etl::imessage_router {
     //*******************************************
     /// Constructor.
     //*******************************************
-    imessage_bus(router_list_t& list)
-        : imessage_router(etl::imessage_router::MESSAGE_BUS),
-          router_list(list) {}
+    imessage_bus(router_list_t& list) : imessage_router(etl::imessage_router::MESSAGE_BUS), router_list(list) {}
 
     //*******************************************
     /// Constructor.
     //*******************************************
     imessage_bus(router_list_t& list, etl::imessage_router& successor)
-        : imessage_router(etl::imessage_router::MESSAGE_BUS, successor),
-          router_list(list) {}
+        : imessage_router(etl::imessage_router::MESSAGE_BUS, successor), router_list(list) {}
 
    private:
     //*******************************************
     // How to compare routers to router ids.
     //*******************************************
     struct compare_router_id {
-        bool operator()(const etl::imessage_router* prouter,
-                        etl::message_router_id_t id) const {
+        bool operator()(const etl::imessage_router* prouter, etl::message_router_id_t id) const {
             return prouter->get_message_router_id() < id;
         }
 
-        bool operator()(etl::message_router_id_t id,
-                        const etl::imessage_router* prouter) const {
+        bool operator()(etl::message_router_id_t id, const etl::imessage_router* prouter) const {
             return id < prouter->get_message_router_id();
         }
     };
@@ -346,8 +321,7 @@ class message_bus : public etl::imessage_bus {
     //*******************************************
     /// Constructor.
     //*******************************************
-    message_bus(etl::imessage_router& successor)
-        : imessage_bus(router_list, successor) {}
+    message_bus(etl::imessage_router& successor) : imessage_bus(router_list, successor) {}
 
    private:
     etl::vector<etl::imessage_router*, MAX_ROUTERS_> router_list;

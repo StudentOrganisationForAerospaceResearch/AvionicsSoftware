@@ -64,8 +64,7 @@ namespace etl {
 //***************************************************************************
 class multimap_exception : public etl::exception {
    public:
-    multimap_exception(string_type reason_, string_type file_name_,
-                       numeric_type line_number_)
+    multimap_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -76,9 +75,8 @@ class multimap_exception : public etl::exception {
 class multimap_full : public etl::multimap_exception {
    public:
     multimap_full(string_type file_name_, numeric_type line_number_)
-        : etl::multimap_exception(
-              ETL_ERROR_TEXT("multimap:full", ETL_MULTIMAP_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : etl::multimap_exception(ETL_ERROR_TEXT("multimap:full", ETL_MULTIMAP_FILE_ID "A"), file_name_, line_number_) {
+    }
 };
 
 //***************************************************************************
@@ -88,9 +86,8 @@ class multimap_full : public etl::multimap_exception {
 class multimap_out_of_bounds : public etl::multimap_exception {
    public:
     multimap_out_of_bounds(string_type file_name_, numeric_type line_number_)
-        : etl::multimap_exception(
-              ETL_ERROR_TEXT("multimap:bounds", ETL_MULTIMAP_FILE_ID "B"),
-              file_name_, line_number_) {}
+        : etl::multimap_exception(ETL_ERROR_TEXT("multimap:bounds", ETL_MULTIMAP_FILE_ID "B"), file_name_,
+                                  line_number_) {}
 };
 
 //***************************************************************************
@@ -100,9 +97,8 @@ class multimap_out_of_bounds : public etl::multimap_exception {
 class multimap_iterator : public etl::multimap_exception {
    public:
     multimap_iterator(string_type file_name_, numeric_type line_number_)
-        : etl::multimap_exception(
-              ETL_ERROR_TEXT("multimap:iterator", ETL_MULTIMAP_FILE_ID "C"),
-              file_name_, line_number_) {}
+        : etl::multimap_exception(ETL_ERROR_TEXT("multimap:iterator", ETL_MULTIMAP_FILE_ID "C"), file_name_,
+                                  line_number_) {}
 };
 
 //***************************************************************************
@@ -111,8 +107,7 @@ class multimap_iterator : public etl::multimap_exception {
 //***************************************************************************
 class multimap_base {
    public:
-    typedef size_t
-        size_type;  ///< The type used for determining the size of map.
+    typedef size_t size_type;  ///< The type used for determining the size of map.
 
     //*************************************************************************
     /// Gets the size of the map.
@@ -156,10 +151,7 @@ class multimap_base {
         //***********************************************************************
         /// Constructor
         //***********************************************************************
-        Node()
-            : parent(ETL_NULLPTR),
-              weight((uint_least8_t)kNeither),
-              dir((uint_least8_t)kNeither) {
+        Node() : parent(ETL_NULLPTR), weight((uint_least8_t)kNeither), dir((uint_least8_t)kNeither) {
             children[0] = ETL_NULLPTR;
             children[1] = ETL_NULLPTR;
         }
@@ -184,8 +176,7 @@ class multimap_base {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    multimap_base(size_type max_size_)
-        : current_size(0), CAPACITY(max_size_), root_node(ETL_NULLPTR) {}
+    multimap_base(size_type max_size_) : current_size(0), CAPACITY(max_size_), root_node(ETL_NULLPTR) {}
 
     //*************************************************************************
     /// The constructor that is called from derived classes.
@@ -230,17 +221,14 @@ class multimap_base {
         else {
             // If critical node matches child node direction then perform a two
             // node rotate in the direction of the critical node
-            if (critical_node->weight ==
-                critical_node->children[critical_node->dir]->dir) {
+            if (critical_node->weight == critical_node->children[critical_node->dir]->dir) {
                 rotate_2node(critical_node, critical_node->dir);
             }
             // Otherwise perform a three node rotation in the direction of the
             // critical node
             else {
                 rotate_3node(critical_node, critical_node->dir,
-                             critical_node->children[critical_node->dir]
-                                 ->children[1 - critical_node->dir]
-                                 ->dir);
+                             critical_node->children[critical_node->dir]->children[1 - critical_node->dir]->dir);
             }
         }
     }
@@ -304,9 +292,7 @@ class multimap_base {
         Node* new_root = position->children[dir]->children[1 - dir];
         // Set weight factor for B or C based on F or G existing and being a different than dir
         position->children[dir]->weight =
-            third != (uint_least8_t)kNeither && third != dir
-                ? dir
-                : (uint_least8_t)kNeither;
+            third != (uint_least8_t)kNeither && third != dir ? dir : (uint_least8_t)kNeither;
 
         // Detach new root from its tree (replace with new roots child)
         position->children[dir]->children[1 - dir] = new_root->children[dir];
@@ -320,9 +306,7 @@ class multimap_base {
         position->children[dir]->parent = new_root;
 
         // Set weight factor for A based on F or G
-        position->weight = third != (uint_least8_t)kNeither && third == dir
-                               ? 1 - dir
-                               : (uint_least8_t)kNeither;
+        position->weight = third != (uint_least8_t)kNeither && third == dir ? 1 - dir : (uint_least8_t)kNeither;
 
         // Move new root's right tree to current roots left tree
         position->children[dir] = new_root->children[1 - dir];
@@ -350,8 +334,7 @@ class multimap_base {
             // Is there a tree on the right? then find the minimum of that tree
             if (position->children[(uint_least8_t)kRight]) {
                 // Return minimum node found
-                position = find_limit_node(
-                    position->children[(uint_least8_t)kRight], kLeft);
+                position = find_limit_node(position->children[(uint_least8_t)kRight], kLeft);
             }
             // Otherwise find the parent of this node
             else {
@@ -361,12 +344,9 @@ class multimap_base {
                     // Update current position as previous parent
                     position = parent;
                     // Find parent of current position
-                    parent =
-                        position
-                            ->parent;  // find_parent_node(root_node, position);
-                        // Repeat while previous position was on right side of parent tree
-                } while (parent &&
-                         parent->children[(uint_least8_t)kRight] == position);
+                    parent = position->parent;  // find_parent_node(root_node, position);
+                                                // Repeat while previous position was on right side of parent tree
+                } while (parent && parent->children[(uint_least8_t)kRight] == position);
 
                 // Set parent node as the next position
                 position = parent;
@@ -382,8 +362,7 @@ class multimap_base {
             // Is there a tree on the right? then find the minimum of that tree
             if (position->children[(uint_least8_t)kRight]) {
                 // Return minimum node found
-                position = find_limit_node(
-                    position->children[(uint_least8_t)kRight], kLeft);
+                position = find_limit_node(position->children[(uint_least8_t)kRight], kLeft);
             }
             // Otherwise find the parent of this node
             else {
@@ -395,8 +374,7 @@ class multimap_base {
                     // Find parent of current position
                     parent = position->parent;
                     // Repeat while previous position was on right side of parent tree
-                } while (parent &&
-                         parent->children[(uint_least8_t)kRight] == position);
+                } while (parent && parent->children[(uint_least8_t)kRight] == position);
 
                 // Set parent node as the next position
                 position = parent;
@@ -416,8 +394,7 @@ class multimap_base {
             // Is there a tree on the left? then find the maximum of that tree
             if (position->children[(uint_least8_t)kLeft]) {
                 // Return maximum node found
-                position = find_limit_node(
-                    position->children[(uint_least8_t)kLeft], kRight);
+                position = find_limit_node(position->children[(uint_least8_t)kLeft], kRight);
             }
             // Otherwise find the parent of this node
             else {
@@ -429,8 +406,7 @@ class multimap_base {
                     // Find parent of current position
                     parent = position->parent;
                     // Repeat while previous position was on left side of parent tree
-                } while (parent &&
-                         parent->children[(uint_least8_t)kLeft] == position);
+                } while (parent && parent->children[(uint_least8_t)kLeft] == position);
 
                 // Set parent node as the next position
                 position = parent;
@@ -450,8 +426,7 @@ class multimap_base {
             // Is there a tree on the left? then find the maximum of that tree
             if (position->children[(uint_least8_t)kLeft]) {
                 // Return maximum node found
-                position = find_limit_node(
-                    position->children[(uint_least8_t)kLeft], kRight);
+                position = find_limit_node(position->children[(uint_least8_t)kLeft], kRight);
             }
             // Otherwise find the parent of this node
             else {
@@ -463,8 +438,7 @@ class multimap_base {
                     // Find parent of current position
                     parent = position->parent;
                     // Repeat while previous position was on left side of parent tree
-                } while (parent &&
-                         parent->children[(uint_least8_t)kLeft] == position);
+                } while (parent && parent->children[(uint_least8_t)kLeft] == position);
 
                 // Set parent node as the next position
                 position = parent;
@@ -527,10 +501,8 @@ class multimap_base {
 
         // Point swap node to detached node's parent, children and weight
         swap->parent = detached->parent;
-        swap->children[(uint_least8_t)kLeft] =
-            detached->children[(uint_least8_t)kLeft];
-        swap->children[(uint_least8_t)kRight] =
-            detached->children[(uint_least8_t)kRight];
+        swap->children[(uint_least8_t)kLeft] = detached->children[(uint_least8_t)kLeft];
+        swap->children[(uint_least8_t)kRight] = detached->children[(uint_least8_t)kRight];
         if (swap->children[(uint_least8_t)kLeft]) {
             swap->children[(uint_least8_t)kLeft]->parent = swap;
         }
@@ -550,8 +522,7 @@ class multimap_base {
 /// A templated base for all etl::multimap types.
 ///\ingroup map
 //***************************************************************************
-template <typename TKey, typename TMapped,
-          typename TKeyCompare = etl::less<TKey>>
+template <typename TKey, typename TMapped, typename TKeyCompare = etl::less<TKey>>
 class imultimap : public etl::multimap_base {
    public:
     typedef ETL_OR_STD::pair<const TKey, TMapped> value_type;
@@ -569,9 +540,7 @@ class imultimap : public etl::multimap_base {
 
     class value_compare {
        public:
-        bool operator()(const_reference lhs, const_reference rhs) const {
-            return (kcompare(lhs.first, rhs.first));
-        }
+        bool operator()(const_reference lhs, const_reference rhs) const { return (kcompare(lhs.first, rhs.first)); }
 
        private:
         key_compare kcompare;
@@ -606,14 +575,12 @@ class imultimap : public etl::multimap_base {
     }
 
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const Data_Node& node, const K& key) const {
         return kcompare(node.value.first, key);
     }
 
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const K& key, const Data_Node& node) const {
         return kcompare(key, node.value.first);
     }
@@ -658,23 +625,18 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// iterator.
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               value_type> {
+    class iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, value_type> {
        public:
         friend class imultimap;
         friend class const_iterator;
 
         iterator() : p_multimap(ETL_NULLPTR), p_node(ETL_NULLPTR) {}
 
-        iterator(imultimap& multimap)
-            : p_multimap(&multimap), p_node(ETL_NULLPTR) {}
+        iterator(imultimap& multimap) : p_multimap(&multimap), p_node(ETL_NULLPTR) {}
 
-        iterator(imultimap& multimap, Node* node)
-            : p_multimap(&multimap), p_node(node) {}
+        iterator(imultimap& multimap, Node* node) : p_multimap(&multimap), p_node(node) {}
 
-        iterator(const iterator& other)
-            : p_multimap(other.p_multimap), p_node(other.p_node) {}
+        iterator(const iterator& other) : p_multimap(other.p_multimap), p_node(other.p_node) {}
 
         ~iterator() {}
 
@@ -706,25 +668,17 @@ class imultimap : public etl::multimap_base {
             return *this;
         }
 
-        reference operator*() const {
-            return imultimap::data_cast(p_node)->value;
-        }
+        reference operator*() const { return imultimap::data_cast(p_node)->value; }
 
-        pointer operator&() const {
-            return &(imultimap::data_cast(p_node)->value);
-        }
+        pointer operator&() const { return &(imultimap::data_cast(p_node)->value); }
 
-        pointer operator->() const {
-            return &(imultimap::data_cast(p_node)->value);
-        }
+        pointer operator->() const { return &(imultimap::data_cast(p_node)->value); }
 
         friend bool operator==(const iterator& lhs, const iterator& rhs) {
             return lhs.p_multimap == rhs.p_multimap && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Pointer to multimap associated with this iterator
@@ -738,25 +692,20 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// const_iterator
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               const value_type> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, const value_type> {
        public:
         friend class imultimap;
 
         const_iterator() : p_multimap(ETL_NULLPTR), p_node(ETL_NULLPTR) {}
 
-        const_iterator(const imultimap& multimap)
-            : p_multimap(&multimap), p_node(ETL_NULLPTR) {}
+        const_iterator(const imultimap& multimap) : p_multimap(&multimap), p_node(ETL_NULLPTR) {}
 
-        const_iterator(const imultimap& multimap, const Node* node)
-            : p_multimap(&multimap), p_node(node) {}
+        const_iterator(const imultimap& multimap, const Node* node) : p_multimap(&multimap), p_node(node) {}
 
         const_iterator(const typename imultimap::iterator& other)
             : p_multimap(other.p_multimap), p_node(other.p_node) {}
 
-        const_iterator(const const_iterator& other)
-            : p_multimap(other.p_multimap), p_node(other.p_node) {}
+        const_iterator(const const_iterator& other) : p_multimap(other.p_multimap), p_node(other.p_node) {}
 
         ~const_iterator() {}
 
@@ -788,33 +737,22 @@ class imultimap : public etl::multimap_base {
             return *this;
         }
 
-        const_reference operator*() const {
-            return imultimap::data_cast(p_node)->value;
-        }
+        const_reference operator*() const { return imultimap::data_cast(p_node)->value; }
 
-        const_pointer operator&() const {
-            return imultimap::data_cast(p_node)->value;
-        }
+        const_pointer operator&() const { return imultimap::data_cast(p_node)->value; }
 
-        const_pointer operator->() const {
-            return &(imultimap::data_cast(p_node)->value);
-        }
+        const_pointer operator->() const { return &(imultimap::data_cast(p_node)->value); }
 
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.p_multimap == rhs.p_multimap && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Convert to an iterator.
         imultimap::iterator to_iterator() const {
-            return imultimap::iterator(const_cast<imultimap&>(*p_multimap),
-                                       const_cast<Node*>(p_node));
+            return imultimap::iterator(const_cast<imultimap&>(*p_multimap), const_cast<Node*>(p_node));
         }
 
         // Pointer to multimap associated with this iterator
@@ -825,8 +763,7 @@ class imultimap : public etl::multimap_base {
     };
     friend class const_iterator;
 
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -891,16 +828,14 @@ class imultimap : public etl::multimap_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     reverse_iterator rend() {
-        return reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator rend() const {
-        return const_reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
@@ -914,8 +849,7 @@ class imultimap : public etl::multimap_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator crend() const {
-        return const_reverse_iterator(
-            const_iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(const_iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*********************************************************************
@@ -949,8 +883,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type count(const K& key) const {
         return count_nodes(key);
     }
@@ -961,19 +894,16 @@ class imultimap : public etl::multimap_base {
     /// provided
     //*************************************************************************
     ETL_OR_STD::pair<iterator, iterator> equal_range(key_parameter_t key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     ETL_OR_STD::pair<iterator, iterator> equal_range(const K& key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 #endif
 
@@ -981,8 +911,7 @@ class imultimap : public etl::multimap_base {
     /// Returns two const iterators with bounding (lower bound, upper bound)
     /// the key provided.
     //*************************************************************************
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -990,10 +919,8 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        const K& key) const {
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(const K& key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -1046,15 +973,12 @@ class imultimap : public etl::multimap_base {
 
     //*************************************************************************
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type erase(K&& key) {
         // Number of nodes removed
         size_type d = 0;
-        const_iterator lower(*this,
-                             find_lower_node(root_node, etl::forward<K>(key)));
-        const_iterator upper(*this,
-                             find_upper_node(root_node, etl::forward<K>(key)));
+        const_iterator lower(*this, find_lower_node(root_node, etl::forward<K>(key)));
+        const_iterator upper(*this, find_upper_node(root_node, etl::forward<K>(key)));
         while (lower != upper) {
             // Increment count for each node removed
             ++d;
@@ -1089,8 +1013,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator find(const K& k) {
         return iterator(*this, find_node(root_node, k));
     }
@@ -1107,8 +1030,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator find(const K& k) const {
         return const_iterator(*this, find_node(root_node, k));
     }
@@ -1209,8 +1131,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator lower_bound(const K& key) {
         return iterator(*this, find_lower_node(root_node, key));
     }
@@ -1228,8 +1149,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator lower_bound(const K& key) const {
         return const_iterator(*this, find_lower_node(root_node, key));
     }
@@ -1247,8 +1167,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator upper_bound(const K& key) {
         return iterator(*this, find_upper_node(root_node, key));
     }
@@ -1266,8 +1185,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator upper_bound(const K& key) const {
         return const_iterator(*this, find_upper_node(root_node, key));
     }
@@ -1329,8 +1247,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool contains(const K& k) const {
         return find(k) != end();
     }
@@ -1340,8 +1257,7 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    imultimap(etl::ipool& node_pool, size_t max_size_)
-        : multimap_base(max_size_), p_node_pool(&node_pool) {}
+    imultimap(etl::ipool& node_pool, size_t max_size_) : multimap_base(max_size_), p_node_pool(&node_pool) {}
 
     //*************************************************************************
     /// Initialise the multimap.
@@ -1425,8 +1341,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type count_nodes(const K& key) const {
         // Number of nodes that match the key provided result
         size_type result = 0;
@@ -1482,8 +1397,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_node(Node* position, const K& key) {
         Node* found = ETL_NULLPTR;
         while (position) {
@@ -1538,8 +1452,7 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// Find the value matching the node provided
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const Node* find_node(const Node* position, const K& key) const {
         const Node* found = ETL_NULLPTR;
         while (position) {
@@ -1597,8 +1510,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_lower_node(Node* position, const K& key) const {
         // Something at this position? keep going
         Node* lower_node = ETL_NULLPTR;
@@ -1663,8 +1575,7 @@ class imultimap : public etl::multimap_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_upper_node(Node* position, const K& key) const {
         // Keep track of parent of last upper node
         Node* upper_node = ETL_NULLPTR;
@@ -1738,8 +1649,7 @@ class imultimap : public etl::multimap_base {
                 if (found->children[found->dir]) {
                     // Will this node be the parent of the next critical node whose
                     // weight factor is set to (uint_least8_t) kNeither (balanced)?
-                    if ((uint_least8_t)kNeither !=
-                        found->children[found->dir]->weight) {
+                    if ((uint_least8_t)kNeither != found->children[found->dir]->weight) {
                         critical_parent_node = found;
                     }
 
@@ -1759,16 +1669,13 @@ class imultimap : public etl::multimap_base {
 
             // Was a critical node found that should be checked for balance?
             if (critical_node) {
-                if (critical_parent_node == ETL_NULLPTR &&
-                    critical_node == root_node) {
+                if (critical_parent_node == ETL_NULLPTR && critical_node == root_node) {
                     balance_node(root_node);
-                } else if (critical_parent_node == ETL_NULLPTR &&
-                           critical_node == position) {
+                } else if (critical_parent_node == ETL_NULLPTR && critical_node == position) {
                     balance_node(position);
                 } else {
                     if (critical_parent_node != ETL_NULLPTR) {
-                        balance_node(critical_parent_node
-                                         ->children[critical_parent_node->dir]);
+                        balance_node(critical_parent_node->children[critical_parent_node->dir]);
                     }
                 }
             }
@@ -1804,10 +1711,8 @@ class imultimap : public etl::multimap_base {
             while (node) {
                 if (node->parent) {
                     // Which direction does parent use to get to this node?
-                    node->parent->dir =
-                        node->parent->children[(uint_least8_t)kLeft] == node
-                            ? (uint_least8_t)kLeft
-                            : (uint_least8_t)kRight;
+                    node->parent->dir = node->parent->children[(uint_least8_t)kLeft] == node ? (uint_least8_t)kLeft
+                                                                                             : (uint_least8_t)kRight;
 
                     // Make this nodes parent the next node
                     node = node->parent;
@@ -1825,9 +1730,7 @@ class imultimap : public etl::multimap_base {
                 // Did we reach the node provided originally (found) then go to step 3
                 if (node == found) {
                     // Update the direction towards a replacement node at the found node
-                    node->dir = node->children[(uint_least8_t)kLeft]
-                                    ? (uint_least8_t)kLeft
-                                    : (uint_least8_t)kRight;
+                    node->dir = node->children[(uint_least8_t)kLeft] ? (uint_least8_t)kLeft : (uint_least8_t)kRight;
 
                     // Exit loop and proceed with step 3
                     break;
@@ -1838,8 +1741,7 @@ class imultimap : public etl::multimap_base {
                     // ancestors will not require rebalancing
                     if ((node->weight == (uint_least8_t)kNeither) ||
                         (node->weight == (1 - node->dir) &&
-                         node->children[1 - node->dir]->weight ==
-                             (uint_least8_t)kNeither)) {
+                         node->children[1 - node->dir]->weight == (uint_least8_t)kNeither)) {
                         // Update balance node to this node
                         balance = node;
                     }
@@ -1869,8 +1771,7 @@ class imultimap : public etl::multimap_base {
                 // ancestors will not require rebalancing
                 if ((node->weight == (uint_least8_t)kNeither) ||
                     (node->weight == (1 - node->dir) &&
-                     node->children[1 - node->dir]->weight ==
-                         (uint_least8_t)kNeither)) {
+                     node->children[1 - node->dir]->weight == (uint_least8_t)kNeither)) {
                     // Update balance node to this node
                     balance = node;
                 }
@@ -1890,9 +1791,7 @@ class imultimap : public etl::multimap_base {
                     node->dir = (uint_least8_t)kRight;
                 } else {
                     // Update the direction to the replace node
-                    node->dir = node->children[(uint_least8_t)kLeft]
-                                    ? (uint_least8_t)kLeft
-                                    : (uint_least8_t)kRight;
+                    node->dir = node->children[(uint_least8_t)kLeft] ? (uint_least8_t)kLeft : (uint_least8_t)kRight;
                 }
             }  // while(node)
 
@@ -1922,16 +1821,10 @@ class imultimap : public etl::multimap_base {
                         // Is the root node being rebalanced (no parent)
                         if (balance->parent == ETL_NULLPTR) {
                             rotate_3node(root_node, 1 - balance->dir,
-                                         balance->children[1 - balance->dir]
-                                             ->children[balance->dir]
-                                             ->weight);
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         } else {
-                            rotate_3node(
-                                balance->parent->children[balance->parent->dir],
-                                1 - balance->dir,
-                                balance->children[1 - balance->dir]
-                                    ->children[balance->dir]
-                                    ->weight);
+                            rotate_3node(balance->parent->children[balance->parent->dir], 1 - balance->dir,
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         }
                     }
                     // Already balanced, rebalance and make it heavy in opposite
@@ -1946,11 +1839,8 @@ class imultimap : public etl::multimap_base {
                             // to old parent so its weight can be updated after the 2 node
                             // rotate is completed
                             Node* old_parent = balance->parent;
-                            rotate_2node(
-                                balance->parent->children[balance->parent->dir],
-                                1 - balance->dir);
-                            old_parent->children[old_parent->dir]->weight =
-                                balance->dir;
+                            rotate_2node(balance->parent->children[balance->parent->dir], 1 - balance->dir);
+                            old_parent->children[old_parent->dir]->weight = balance->dir;
                         }
                         // Update balance node weight in opposite direction of node removed
                         balance->weight = 1 - balance->dir;
@@ -1961,9 +1851,7 @@ class imultimap : public etl::multimap_base {
                         if (balance->parent == ETL_NULLPTR) {
                             rotate_2node(root_node, 1 - balance->dir);
                         } else {
-                            rotate_2node(
-                                balance->parent->children[balance->parent->dir],
-                                1 - balance->dir);
+                            rotate_2node(balance->parent->children[balance->parent->dir], 1 - balance->dir);
                         }
                     }
                 }
@@ -1975,15 +1863,13 @@ class imultimap : public etl::multimap_base {
             // Step 5: Swap found with node (replacement)
             if (found->parent) {
                 // Handle traditional case
-                detach_node(found->parent->children[found->parent->dir],
-                            node->parent->children[node->parent->dir]);
+                detach_node(found->parent->children[found->parent->dir], node->parent->children[node->parent->dir]);
             }
             // Handle root node removal
             else {
                 // Valid replacement node for root node being removed?
                 if (node->parent) {
-                    detach_node(root_node,
-                                node->parent->children[node->parent->dir]);
+                    detach_node(root_node, node->parent->children[node->parent->dir]);
                 } else {
                     // Found node and replacement node are both root node
                     detach_node(root_node, root_node);
@@ -2016,8 +1902,7 @@ class imultimap : public etl::multimap_base {
 //*************************************************************************
 /// A templated multimap implementation that uses a fixed size buffer.
 //*************************************************************************
-template <typename TKey, typename TValue, const size_t MAX_SIZE_,
-          typename TCompare = etl::less<TKey>>
+template <typename TKey, typename TValue, const size_t MAX_SIZE_, typename TCompare = etl::less<TKey>>
 class multimap : public etl::imultimap<TKey, TValue, TCompare> {
    public:
     static ETL_CONSTANT size_t MAX_SIZE = MAX_SIZE_;
@@ -2025,15 +1910,12 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    multimap() : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
-        this->initialise();
-    }
+    multimap() : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) { this->initialise(); }
 
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
-    multimap(const multimap& other)
-        : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
+    multimap(const multimap& other) : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         if (this != &other) {
             this->assign(other.cbegin(), other.cend());
         }
@@ -2043,15 +1925,12 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Move constructor.
     //*************************************************************************
-    multimap(multimap&& other)
-        : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
+    multimap(multimap&& other) : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         if (this != &other) {
-            typename etl::imultimap<TKey, TValue, TCompare>::iterator from =
-                other.begin();
+            typename etl::imultimap<TKey, TValue, TCompare>::iterator from = other.begin();
 
             while (from != other.end()) {
-                typename etl::imultimap<TKey, TValue, TCompare>::iterator temp =
-                    from;
+                typename etl::imultimap<TKey, TValue, TCompare>::iterator temp = from;
                 ++temp;
 
                 this->insert(etl::move(*from));
@@ -2068,8 +1947,7 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    multimap(TIterator first, TIterator last)
-        : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
+    multimap(TIterator first, TIterator last) : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         this->assign(first, last);
     }
 
@@ -2077,9 +1955,7 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Constructor, from an initializer_list.
     //*************************************************************************
-    multimap(std::initializer_list<
-             typename etl::imultimap<TKey, TValue, TCompare>::value_type>
-                 init)
+    multimap(std::initializer_list<typename etl::imultimap<TKey, TValue, TCompare>::value_type> init)
         : etl::imultimap<TKey, TValue, TCompare>(node_pool, MAX_SIZE) {
         this->assign(init.begin(), init.end());
     }
@@ -2110,12 +1986,10 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
     //*************************************************************************
     multimap& operator=(multimap&& rhs) {
         if (this != &rhs) {
-            typename etl::imultimap<TKey, TValue, TCompare>::iterator from =
-                rhs.begin();
+            typename etl::imultimap<TKey, TValue, TCompare>::iterator from = rhs.begin();
 
             while (from != rhs.end()) {
-                typename etl::imultimap<TKey, TValue, TCompare>::iterator temp =
-                    from;
+                typename etl::imultimap<TKey, TValue, TCompare>::iterator temp = from;
                 ++temp;
 
                 this->insert(etl::move(*from));
@@ -2129,9 +2003,7 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
 
    private:
     /// The pool of data nodes used for the multimap.
-    etl::pool<typename etl::imultimap<TKey, TValue, TCompare>::Data_Node,
-              MAX_SIZE>
-        node_pool;
+    etl::pool<typename etl::imultimap<TKey, TValue, TCompare>::Data_Node, MAX_SIZE> node_pool;
 };
 
 //*************************************************************************
@@ -2139,20 +2011,16 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
 //*************************************************************************
 #if ETL_USING_CPP17 && ETL_HAS_INITIALIZER_LIST
 template <typename... TPairs>
-multimap(TPairs...)
-    -> multimap<typename etl::nth_type_t<0, TPairs...>::first_type,
-                typename etl::nth_type_t<0, TPairs...>::second_type,
-                sizeof...(TPairs)>;
+multimap(TPairs...) -> multimap<typename etl::nth_type_t<0, TPairs...>::first_type,
+                                typename etl::nth_type_t<0, TPairs...>::second_type, sizeof...(TPairs)>;
 #endif
 
 //*************************************************************************
 /// Make
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
-template <typename TKey, typename TMapped,
-          typename TKeyCompare = etl::less<TKey>, typename... TPairs>
-constexpr auto make_multimap(TPairs&&... pairs)
-    -> etl::multimap<TKey, TMapped, sizeof...(TPairs), TKeyCompare> {
+template <typename TKey, typename TMapped, typename TKeyCompare = etl::less<TKey>, typename... TPairs>
+constexpr auto make_multimap(TPairs&&... pairs) -> etl::multimap<TKey, TMapped, sizeof...(TPairs), TKeyCompare> {
     return {{etl::forward<TPairs>(pairs)...}};
 }
 #endif
@@ -2167,8 +2035,7 @@ constexpr auto make_multimap(TPairs&&... pairs)
 template <typename TKey, typename TMapped, typename TKeyCompare>
 bool operator==(const etl::imultimap<TKey, TMapped, TKeyCompare>& lhs,
                 const etl::imultimap<TKey, TMapped, TKeyCompare>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -2194,8 +2061,7 @@ bool operator!=(const etl::imultimap<TKey, TMapped, TKeyCompare>& lhs,
 template <typename TKey, typename TMapped, typename TKeyCompare>
 bool operator<(const etl::imultimap<TKey, TMapped, TKeyCompare>& lhs,
                const etl::imultimap<TKey, TMapped, TKeyCompare>& rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                        rhs.end());
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //*************************************************************************

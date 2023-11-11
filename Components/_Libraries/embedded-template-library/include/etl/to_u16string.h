@@ -45,8 +45,7 @@ namespace etl {
 /// !etl::iu16string && !etl::u16string_view
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value &&
-                            !etl::is_same<T, etl::u16string_view>::value,
+typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value && !etl::is_same<T, etl::u16string_view>::value,
                         const etl::iu16string&>::type
 to_string(const T value, etl::iu16string& str, bool append = false) {
     etl::u16format_spec format;
@@ -59,11 +58,9 @@ to_string(const T value, etl::iu16string& str, bool append = false) {
 /// !etl::iu16string && !etl::u16string_view
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value &&
-                            !etl::is_same<T, etl::u16string_view>::value,
+typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value && !etl::is_same<T, etl::u16string_view>::value,
                         const etl::iu16string&>::type
-to_string(const T value, etl::iu16string& str,
-          const etl::u16format_spec& format, bool append = false) {
+to_string(const T value, etl::iu16string& str, const etl::u16format_spec& format, bool append = false) {
     return private_to_string::to_string(value, str, format, append);
 }
 
@@ -72,15 +69,12 @@ to_string(const T value, etl::iu16string& str,
 /// !etl::iu16string && !etl::u16string_view
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value &&
-                            !etl::is_same<T, etl::u16string_view>::value,
+typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value && !etl::is_same<T, etl::u16string_view>::value,
                         const etl::iu16string&>::type
-to_string(const T value, uint32_t denominator_exponent, etl::iu16string& str,
-          bool append = false) {
+to_string(const T value, uint32_t denominator_exponent, etl::iu16string& str, bool append = false) {
     etl::u16format_spec format;
 
-    return private_to_string::to_string(value, denominator_exponent, str,
-                                        format, append);
+    return private_to_string::to_string(value, denominator_exponent, str, format, append);
 }
 
 //***************************************************************************
@@ -88,13 +82,11 @@ to_string(const T value, uint32_t denominator_exponent, etl::iu16string& str,
 /// !etl::u16string_view && !etl::u16string_view
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value &&
-                            !etl::is_same<T, etl::u16string_view>::value,
+typename etl::enable_if<!etl::is_same<T, etl::iu16string>::value && !etl::is_same<T, etl::u16string_view>::value,
                         const etl::iu16string&>::type
-to_string(const T value, uint32_t denominator_exponent, etl::iu16string& str,
-          const etl::u16format_spec& format, bool append = false) {
-    return private_to_string::to_string(value, denominator_exponent, str,
-                                        format, append);
+to_string(const T value, uint32_t denominator_exponent, etl::iu16string& str, const etl::u16format_spec& format,
+          bool append = false) {
+    return private_to_string::to_string(value, denominator_exponent, str, format, append);
 }
 
 //***************************************************************************
@@ -102,9 +94,8 @@ to_string(const T value, uint32_t denominator_exponent, etl::iu16string& str,
 /// etl::iu16string
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<etl::is_same<T, etl::iu16string>::value,
-                        const etl::iu16string&>::type
-to_string(const T& value, etl::iu16string& str, bool append = false) {
+typename etl::enable_if<etl::is_same<T, etl::iu16string>::value, const etl::iu16string&>::type to_string(
+    const T& value, etl::iu16string& str, bool append = false) {
     etl::u16format_spec format;
 
     private_to_string::add_string(value, str, format, append);
@@ -117,10 +108,8 @@ to_string(const T& value, etl::iu16string& str, bool append = false) {
 /// etl::iu16string
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<etl::is_same<T, etl::iu16string>::value,
-                        const etl::iu16string&>::type
-to_string(const etl::iu16string& value, T& str,
-          const etl::u16format_spec& format, bool append = false) {
+typename etl::enable_if<etl::is_same<T, etl::iu16string>::value, const etl::iu16string&>::type to_string(
+    const etl::iu16string& value, T& str, const etl::u16format_spec& format, bool append = false) {
     private_to_string::add_string(value, str, format, append);
 
     return str;
@@ -131,9 +120,8 @@ to_string(const etl::iu16string& value, T& str,
 /// etl::u16string_view
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<etl::is_same<T, etl::u16string_view>::value,
-                        const etl::iu16string&>::type
-to_string(T value, etl::iu16string& str, bool append = false) {
+typename etl::enable_if<etl::is_same<T, etl::u16string_view>::value, const etl::iu16string&>::type to_string(
+    T value, etl::iu16string& str, bool append = false) {
     etl::u16format_spec format;
 
     private_to_string::add_string_view(value, str, format, append);
@@ -146,10 +134,8 @@ to_string(T value, etl::iu16string& str, bool append = false) {
 /// etl::u16string_view
 //***************************************************************************
 template <typename T>
-typename etl::enable_if<etl::is_same<T, etl::u16string_view>::value,
-                        const etl::iu16string&>::type
-to_string(T value, etl::iu16string& str, const etl::u16format_spec& format,
-          bool append = false) {
+typename etl::enable_if<etl::is_same<T, etl::u16string_view>::value, const etl::iu16string&>::type to_string(
+    T value, etl::iu16string& str, const etl::u16format_spec& format, bool append = false) {
     private_to_string::add_string_view(value, str, format, append);
 
     return str;

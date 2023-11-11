@@ -134,8 +134,7 @@ class checksum : public etl::frame_check_sequence<etl::checksum_policy_sum<T>> {
 /// BSD Checksum.
 //*************************************************************************
 template <typename T>
-class bsd_checksum
-    : public etl::frame_check_sequence<etl::checksum_policy_bsd<T>> {
+class bsd_checksum : public etl::frame_check_sequence<etl::checksum_policy_bsd<T>> {
    public:
     //*************************************************************************
     /// Default constructor.
@@ -158,8 +157,7 @@ class bsd_checksum
 /// XOR Checksum.
 //*************************************************************************
 template <typename T>
-class xor_checksum
-    : public etl::frame_check_sequence<etl::checksum_policy_xor<T>> {
+class xor_checksum : public etl::frame_check_sequence<etl::checksum_policy_xor<T>> {
    public:
     //*************************************************************************
     /// Default constructor.
@@ -182,8 +180,7 @@ class xor_checksum
 /// XOR-shift Checksum.
 //*************************************************************************
 template <typename T>
-class xor_rotate_checksum
-    : public etl::frame_check_sequence<etl::checksum_policy_xor_rotate<T>> {
+class xor_rotate_checksum : public etl::frame_check_sequence<etl::checksum_policy_xor_rotate<T>> {
    public:
     //*************************************************************************
     /// Default constructor.
@@ -206,8 +203,7 @@ class xor_rotate_checksum
 /// Parity Checksum.
 //*************************************************************************
 template <typename T>
-class parity_checksum
-    : public etl::frame_check_sequence<etl::checksum_policy_parity<T>> {
+class parity_checksum : public etl::frame_check_sequence<etl::checksum_policy_parity<T>> {
    public:
     //*************************************************************************
     /// Default constructor.

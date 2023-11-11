@@ -39,10 +39,8 @@ constexpr int CMD_TIMEOUT = 150;
 #define G1_CTRL_REGISTER_ADDR 0x10   // CTRL_REG1_G (10h)
 #define XL6_CTRL_REGISTER_ADDR 0x20  // CTRL_REG6_XL (20h)
 #define M3_CTRL_REGISTER_ADDR 0x22   // CTRL_REG3_M (22h)
-#define WHOAMI_REGISTER_ADDR \
-    0x0F  // WHO_AM_I_A/G (Accel/Gyro - expected value is 104)
-#define WHOAMIM_REGISTER_ADDR \
-    0x0F  // WHO_AM_I_M (Magnetometer - expected value is 61)
+#define WHOAMI_REGISTER_ADDR 0x0F    // WHO_AM_I_A/G (Accel/Gyro - expected value is 104)
+#define WHOAMIM_REGISTER_ADDR 0x0F   // WHO_AM_I_M (Magnetometer - expected value is 61)
 
 #define GYRO_X_G_LOW_REGISTER_ADDR 0x18
 #define ACCEL_X_LOW_REGISTER_ADDR 0x28
@@ -65,16 +63,11 @@ static uint8_t ACTIVATE_MAGNETO_CMD = M3_CTRL_REGISTER_ADDR | WRITE_CMD_MASK;
 // 1 0 0 00 0 00 -> I2C Disable, Low power mode disabled, SPI write enable, Continuous-conversion mode
 static uint8_t ACTIVATE_MAGNETO_DATA = 0x80;
 
-static uint8_t READ_GYRO_X_G_LOW_CMD =
-    GYRO_X_G_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
-static uint8_t READ_ACCEL_X_LOW_CMD =
-    ACCEL_X_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
-static uint8_t READ_MAGNETO_X_LOW_CMD =
-    MAGNETO_X_LOW_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
-static uint8_t READ_WHOAMI_CMD =
-    WHOAMI_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
-static uint8_t READ_WHOAMIM_CMD =
-    WHOAMIM_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
+static uint8_t READ_GYRO_X_G_LOW_CMD = GYRO_X_G_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
+static uint8_t READ_ACCEL_X_LOW_CMD = ACCEL_X_LOW_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
+static uint8_t READ_MAGNETO_X_LOW_CMD = MAGNETO_X_LOW_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
+static uint8_t READ_WHOAMI_CMD = WHOAMI_REGISTER_ADDR | READ_CMD_MASK | ACCEL_GYRO_MASK;
+static uint8_t READ_WHOAMIM_CMD = WHOAMIM_REGISTER_ADDR | READ_CMD_MASK | MAGNETO_MASK;
 
 /* Variables -----------------------------------------------------------------*/
 
@@ -96,14 +89,12 @@ void IMUTask::InitTask() {
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize IMU task twice");
 
     // Start the task
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)IMUTask::RunTask, (const char*)"IMUTask",
-        (uint16_t)TASK_IMU_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)TASK_IMU_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue =
+        xTaskCreate((TaskFunction_t)IMUTask::RunTask, (const char*)"IMUTask", (uint16_t)TASK_IMU_STACK_DEPTH_WORDS,
+                    (void*)this, (UBaseType_t)TASK_IMU_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS,
-                "IMUTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "IMUTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -147,8 +138,7 @@ void IMUTask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("IMUTask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("IMUTask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -175,16 +165,13 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand) {
             break;
         case IMU_REQUEST_DEBUG:
             SOAR_PRINT("\t-- IMU Data --\n");
-            SOAR_PRINT(" Accel (x,y,z) : (%d, %d, %d) milli-Gs\n",
-                       data->accelX_, data->accelY_, data->accelZ_);
-            SOAR_PRINT(" Gyro (x,y,z)  : (%d, %d, %d) milli-deg/s\n",
-                       data->gyroX_, data->gyroY_, data->gyroZ_);
-            SOAR_PRINT(" Mag (x,y,z)   : (%d, %d, %d) milli-gauss\n",
-                       data->magnetoX_, data->magnetoY_, data->magnetoZ_);
+            SOAR_PRINT(" Accel (x,y,z) : (%d, %d, %d) milli-Gs\n", data->accelX_, data->accelY_, data->accelZ_);
+            SOAR_PRINT(" Gyro (x,y,z)  : (%d, %d, %d) milli-deg/s\n", data->gyroX_, data->gyroY_, data->gyroZ_);
+            SOAR_PRINT(" Mag (x,y,z)   : (%d, %d, %d) milli-gauss\n", data->magnetoX_, data->magnetoY_,
+                       data->magnetoZ_);
             break;
         default:
-            SOAR_PRINT("IMUTask - Received Unsupported REQUEST_COMMAND {%d}\n",
-                       taskCommand);
+            SOAR_PRINT("IMUTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
             break;
     }
 }
@@ -212,13 +199,11 @@ void IMUTask::TransmitProtocolData() {
     imuData.set_magz(data->magnetoZ_);
     msg.set_imu(imuData);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
     // Send the barometer data
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
 
 /**
@@ -226,8 +211,7 @@ void IMUTask::TransmitProtocolData() {
  */
 void IMUTask::LogDataToFlash() {
     Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
-    flashCommand.CopyDataToCommand((uint8_t*)data,
-                                   sizeof(AccelGyroMagnetismData));
+    flashCommand.CopyDataToCommand((uint8_t*)data, sizeof(AccelGyroMagnetismData));
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }
 
@@ -245,8 +229,7 @@ void IMUTask::SampleIMU() {
 
     //READ------------------------------------------------------
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_SPI_Receive(SystemHandles::SPI_IMU, &dataBuffer[0], 6, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_SET);
     gyroX = (dataBuffer[1] << 8) | (dataBuffer[0]);
@@ -254,8 +237,7 @@ void IMUTask::SampleIMU() {
     gyroZ = (dataBuffer[5] << 8) | (dataBuffer[4]);
 
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_ACCEL_X_LOW_CMD, 1,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_ACCEL_X_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_SPI_Receive(SystemHandles::SPI_IMU, &dataBuffer[0], 6, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_SET);
     accelX = (dataBuffer[1] << 8) | (dataBuffer[0]);
@@ -263,8 +245,7 @@ void IMUTask::SampleIMU() {
     accelZ = (dataBuffer[5] << 8) | (dataBuffer[4]);
 
     HAL_GPIO_WritePin(IMU_MAG_CS_GPIO_Port, IMU_MAG_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_MAGNETO_X_LOW_CMD, 1,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_MAGNETO_X_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_SPI_Receive(SystemHandles::SPI_IMU, &dataBuffer[0], 6, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_MAG_CS_GPIO_Port, IMU_MAG_CS_Pin, GPIO_PIN_SET);
     magnetoX = (dataBuffer[1] << 8) | (dataBuffer[0]);
@@ -290,22 +271,17 @@ void IMUTask::SampleIMU() {
 uint8_t IMUTask::SetupIMU() {
     /* Setup the Accel / Gyro */
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &READ_GYRO_X_G_LOW_CMD, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_SET);
 
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_GYRO_ACCEL_CMD, 1,
-                     CMD_TIMEOUT);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_GYRO_ACCEL_DATA, 1,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_GYRO_ACCEL_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_GYRO_ACCEL_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_SET);
 
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &SET_ACCEL_SCALE_CMD, 1,
-                     CMD_TIMEOUT);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &SET_ACCEL_SCALE_DATA, 1,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &SET_ACCEL_SCALE_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &SET_ACCEL_SCALE_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_XL_GY_CS_GPIO_Port, IMU_XL_GY_CS_Pin, GPIO_PIN_SET);
 
     /* Read WHO AM I register for verification, should read 104. */
@@ -317,10 +293,8 @@ uint8_t IMUTask::SetupIMU() {
 
     /* Setup the Magnetometer */
     HAL_GPIO_WritePin(IMU_MAG_CS_GPIO_Port, IMU_MAG_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_MAGNETO_CMD, 1,
-                     CMD_TIMEOUT);
-    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_MAGNETO_DATA, 1,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_MAGNETO_CMD, 1, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_IMU, &ACTIVATE_MAGNETO_DATA, 1, CMD_TIMEOUT);
     HAL_GPIO_WritePin(IMU_MAG_CS_GPIO_Port, IMU_MAG_CS_Pin, GPIO_PIN_SET);
 
     /* Read WHO AM I MAG register for verification, should read 61. */

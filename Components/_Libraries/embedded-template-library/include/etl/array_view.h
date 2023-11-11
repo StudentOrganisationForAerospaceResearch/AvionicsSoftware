@@ -56,8 +56,7 @@ namespace etl {
 //***************************************************************************
 class array_view_exception : public exception {
    public:
-    array_view_exception(string_type reason_, string_type file_name_,
-                         numeric_type line_number_)
+    array_view_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -68,9 +67,8 @@ class array_view_exception : public exception {
 class array_view_bounds : public array_view_exception {
    public:
     array_view_bounds(string_type file_name_, numeric_type line_number_)
-        : array_view_exception(
-              ETL_ERROR_TEXT("array_view:bounds", ETL_ARRAY_VIEW_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : array_view_exception(ETL_ERROR_TEXT("array_view:bounds", ETL_ARRAY_VIEW_FILE_ID "A"), file_name_,
+                               line_number_) {}
 };
 
 //***************************************************************************
@@ -80,9 +78,8 @@ class array_view_bounds : public array_view_exception {
 class array_view_uninitialised : public array_view_exception {
    public:
     array_view_uninitialised(string_type file_name_, numeric_type line_number_)
-        : array_view_exception(ETL_ERROR_TEXT("array_view:uninitialised",
-                                              ETL_ARRAY_VIEW_FILE_ID "B"),
-                               file_name_, line_number_) {}
+        : array_view_exception(ETL_ERROR_TEXT("array_view:uninitialised", ETL_ARRAY_VIEW_FILE_ID "B"), file_name_,
+                               line_number_) {}
 };
 
 //***************************************************************************
@@ -119,24 +116,18 @@ class array_view {
     //*************************************************************************
     /// Construct from etl::array.
     //*************************************************************************
-    template <typename U, size_t N,
-              typename = typename etl::enable_if<
-                  etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value,
-                  void>::type>
-    ETL_CONSTEXPR array_view(etl::array<U, N>& a) ETL_NOEXCEPT
-        : mbegin(a.data()),
-          mend(a.data() + a.size()) {}
+    template <
+        typename U, size_t N,
+        typename = typename etl::enable_if<etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value, void>::type>
+    ETL_CONSTEXPR array_view(etl::array<U, N>& a) ETL_NOEXCEPT : mbegin(a.data()), mend(a.data() + a.size()) {}
 
     //*************************************************************************
     /// Construct from etl::array.
     //*************************************************************************
-    template <typename U, size_t N,
-              typename = typename etl::enable_if<
-                  etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value,
-                  void>::type>
-    ETL_CONSTEXPR array_view(const etl::array<U, N>& a) ETL_NOEXCEPT
-        : mbegin(a.data()),
-          mend(a.data() + a.size()) {}
+    template <
+        typename U, size_t N,
+        typename = typename etl::enable_if<etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value, void>::type>
+    ETL_CONSTEXPR array_view(const etl::array<U, N>& a) ETL_NOEXCEPT : mbegin(a.data()), mend(a.data() + a.size()) {}
 #else
     //*************************************************************************
     /// Construct from etl::array.
@@ -144,11 +135,9 @@ class array_view {
     template <typename U, size_t N>
     ETL_CONSTEXPR array_view(
         etl::array<U, N>& a,
-        typename etl::enable_if<
-            etl::is_same<typename etl::remove_cv<T>::type,
-                         typename etl::remove_cv<U>::type>::value,
-            void>::type) ETL_NOEXCEPT : mbegin(a.data()),
-                                        mend(a.data() + a.size()) {}
+        typename etl::enable_if<etl::is_same<typename etl::remove_cv<T>::type, typename etl::remove_cv<U>::type>::value,
+                                void>::type) ETL_NOEXCEPT : mbegin(a.data()),
+                                                            mend(a.data() + a.size()) {}
 
     //*************************************************************************
     /// Construct from etl::array.
@@ -156,35 +145,27 @@ class array_view {
     template <typename U, size_t N>
     ETL_CONSTEXPR array_view(
         const etl::array<U, N>& a,
-        typename etl::enable_if<
-            etl::is_same<typename etl::remove_cv<T>::type,
-                         typename etl::remove_cv<U>::type>::value,
-            void>::type) ETL_NOEXCEPT : mbegin(a.data()),
-                                        mend(a.data() + a.size()) {}
+        typename etl::enable_if<etl::is_same<typename etl::remove_cv<T>::type, typename etl::remove_cv<U>::type>::value,
+                                void>::type) ETL_NOEXCEPT : mbegin(a.data()),
+                                                            mend(a.data() + a.size()) {}
 #endif
 
 #if ETL_USING_STL && ETL_USING_CPP11
     //*************************************************************************
     /// Construct from std::array.
     //*************************************************************************
-    template <typename U, size_t N,
-              typename = typename etl::enable_if<
-                  etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value,
-                  void>::type>
-    ETL_CONSTEXPR array_view(std::array<U, N>& a) ETL_NOEXCEPT
-        : mbegin(a.data()),
-          mend(a.data() + a.size()) {}
+    template <
+        typename U, size_t N,
+        typename = typename etl::enable_if<etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value, void>::type>
+    ETL_CONSTEXPR array_view(std::array<U, N>& a) ETL_NOEXCEPT : mbegin(a.data()), mend(a.data() + a.size()) {}
 
     //*************************************************************************
     /// Construct from std::array.
     //*************************************************************************
-    template <typename U, size_t N,
-              typename = typename etl::enable_if<
-                  etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value,
-                  void>::type>
-    ETL_CONSTEXPR array_view(const std::array<U, N>& a) ETL_NOEXCEPT
-        : mbegin(a.data()),
-          mend(a.data() + a.size()) {}
+    template <
+        typename U, size_t N,
+        typename = typename etl::enable_if<etl::is_same<etl::remove_cv_t<T>, etl::remove_cv_t<U>>::value, void>::type>
+    ETL_CONSTEXPR array_view(const std::array<U, N>& a) ETL_NOEXCEPT : mbegin(a.data()), mend(a.data() + a.size()) {}
 #endif
 
 #if ETL_USING_CPP11
@@ -192,18 +173,14 @@ class array_view {
     /// Construct from a container or other type that supports
     /// data() and size() member functions.
     //*************************************************************************
-    template <
-        typename TContainer,
-        typename = typename etl::enable_if<
-            !etl::is_pointer<etl::remove_reference_t<TContainer>>::value &&
-                !etl::is_array<etl::remove_reference_t<TContainer>>::value &&
-                etl::is_same<etl::remove_cv_t<T>,
-                             etl::remove_cv_t<typename etl::remove_reference_t<
-                                 TContainer>::value_type>>::value,
-            void>::type>
-    ETL_CONSTEXPR array_view(TContainer&& a) ETL_NOEXCEPT
-        : mbegin(a.data()),
-          mend(a.data() + a.size()) {}
+    template <typename TContainer,
+              typename = typename etl::enable_if<
+                  !etl::is_pointer<etl::remove_reference_t<TContainer>>::value &&
+                      !etl::is_array<etl::remove_reference_t<TContainer>>::value &&
+                      etl::is_same<etl::remove_cv_t<T>,
+                                   etl::remove_cv_t<typename etl::remove_reference_t<TContainer>::value_type>>::value,
+                  void>::type>
+    ETL_CONSTEXPR array_view(TContainer&& a) ETL_NOEXCEPT : mbegin(a.data()), mend(a.data() + a.size()) {}
 #else
     //*************************************************************************
     /// Construct from a container or other type that supports
@@ -213,13 +190,10 @@ class array_view {
     ETL_CONSTEXPR array_view(
         TContainer& a,
         typename etl::enable_if<
-            !etl::is_pointer<
-                typename etl::remove_reference<TContainer>::type>::value &&
+            !etl::is_pointer<typename etl::remove_reference<TContainer>::type>::value &&
                 !etl::is_array<TContainer>::value &&
-                etl::is_same<
-                    typename etl::remove_cv<T>::type,
-                    typename etl::remove_cv<typename etl::remove_reference<
-                        TContainer>::type::value_type>::type>::value,
+                etl::is_same<typename etl::remove_cv<T>::type, typename etl::remove_cv<typename etl::remove_reference<
+                                                                   TContainer>::type::value_type>::type>::value,
             void>::type) ETL_NOEXCEPT : mbegin(a.data()),
                                         mend(a.data() + a.size()) {}
 
@@ -231,13 +205,10 @@ class array_view {
     ETL_CONSTEXPR array_view(
         const TContainer& a,
         typename etl::enable_if<
-            !etl::is_pointer<
-                typename etl::remove_reference<TContainer>::type>::value &&
+            !etl::is_pointer<typename etl::remove_reference<TContainer>::type>::value &&
                 !etl::is_array<TContainer>::value &&
-                etl::is_same<
-                    typename etl::remove_cv<T>::type,
-                    typename etl::remove_cv<typename etl::remove_reference<
-                        TContainer>::type::value_type>::type>::value,
+                etl::is_same<typename etl::remove_cv<T>::type, typename etl::remove_cv<typename etl::remove_reference<
+                                                                   TContainer>::type::value_type>::type>::value,
             void>::type) ETL_NOEXCEPT : mbegin(a.data()),
                                         mend(a.data() + a.size()) {}
 #endif
@@ -247,29 +218,25 @@ class array_view {
     //*************************************************************************
     template <typename TIterator>
     ETL_CONSTEXPR array_view(const TIterator begin_, const TIterator end_)
-        : mbegin(etl::addressof(*begin_)),
-          mend(etl::addressof(*begin_) + etl::distance(begin_, end_)) {}
+        : mbegin(etl::addressof(*begin_)), mend(etl::addressof(*begin_) + etl::distance(begin_, end_)) {}
 
     //*************************************************************************
     /// Construct from C array
     //*************************************************************************
     template <typename TIterator, typename TSize>
     ETL_CONSTEXPR array_view(const TIterator begin_, const TSize size_)
-        : mbegin(etl::addressof(*begin_)),
-          mend(etl::addressof(*begin_) + size_) {}
+        : mbegin(etl::addressof(*begin_)), mend(etl::addressof(*begin_) + size_) {}
 
     //*************************************************************************
     /// Construct from C array
     //*************************************************************************
     template <size_t ARRAY_SIZE>
-    ETL_CONSTEXPR array_view(T (&begin_)[ARRAY_SIZE])
-        : mbegin(begin_), mend(begin_ + ARRAY_SIZE) {}
+    ETL_CONSTEXPR array_view(T (&begin_)[ARRAY_SIZE]) : mbegin(begin_), mend(begin_ + ARRAY_SIZE) {}
 
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    ETL_CONSTEXPR array_view(const array_view& other)
-        : mbegin(other.mbegin), mend(other.mend) {}
+    ETL_CONSTEXPR array_view(const array_view& other) : mbegin(other.mbegin), mend(other.mend) {}
 
     //*************************************************************************
     /// Returns a reference to the first element.
@@ -466,8 +433,7 @@ class array_view {
     /// Returns a reference to the indexed value.
     //*************************************************************************
     reference at(const size_t i) {
-        ETL_ASSERT((mbegin != ETL_NULLPTR && mend != ETL_NULLPTR),
-                   ETL_ERROR(array_view_uninitialised));
+        ETL_ASSERT((mbegin != ETL_NULLPTR && mend != ETL_NULLPTR), ETL_ERROR(array_view_uninitialised));
         ETL_ASSERT(i < size(), ETL_ERROR(array_view_bounds));
         return mbegin[i];
     }
@@ -477,8 +443,7 @@ class array_view {
     /// Returns a const reference to the indexed value.
     //*************************************************************************
     const_reference at(const size_t i) const {
-        ETL_ASSERT((mbegin != ETL_NULLPTR && mend != ETL_NULLPTR),
-                   ETL_ERROR(array_view_uninitialised));
+        ETL_ASSERT((mbegin != ETL_NULLPTR && mend != ETL_NULLPTR), ETL_ERROR(array_view_uninitialised));
         ETL_ASSERT(i < size(), ETL_ERROR(array_view_bounds));
         return mbegin[i];
     }
@@ -524,8 +489,7 @@ class array_view {
     /// Equality for array views.
     //*************************************************************************
     friend bool operator==(const array_view<T>& lhs, const array_view<T>& rhs) {
-        return (lhs.size() == rhs.size()) &&
-               etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+        return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
     }
 
     //*************************************************************************
@@ -539,8 +503,7 @@ class array_view {
     /// Less-than for array views.
     //*************************************************************************
     friend bool operator<(const array_view<T>& lhs, const array_view<T>& rhs) {
-        return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                            rhs.end());
+        return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
     }
 
     //*************************************************************************
@@ -577,12 +540,10 @@ template <typename TArray>
 array_view(TArray& a) -> array_view<typename TArray::value_type>;
 
 template <typename TIterator>
-array_view(const TIterator begin_, const TIterator end_)
-    -> array_view<etl::remove_pointer_t<TIterator>>;
+array_view(const TIterator begin_, const TIterator end_) -> array_view<etl::remove_pointer_t<TIterator>>;
 
 template <typename TIterator, typename TSize>
-array_view(const TIterator begin_, const TSize size_)
-    -> array_view<etl::remove_pointer_t<TIterator>>;
+array_view(const TIterator begin_, const TSize size_) -> array_view<etl::remove_pointer_t<TIterator>>;
 #endif
 
 //*************************************************************************
@@ -592,9 +553,8 @@ array_view(const TIterator begin_, const TSize size_)
 template <typename T>
 struct hash<etl::array_view<T>> {
     size_t operator()(const etl::array_view<T>& view) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&view[0]),
-            reinterpret_cast<const uint8_t*>(&view[view.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&view[0]),
+                                                       reinterpret_cast<const uint8_t*>(&view[view.size()]));
     }
 };
 #endif

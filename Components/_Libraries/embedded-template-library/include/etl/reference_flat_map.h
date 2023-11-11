@@ -61,8 +61,7 @@ namespace etl {
 //***************************************************************************
 class flat_map_exception : public etl::exception {
    public:
-    flat_map_exception(string_type reason_, string_type file_name_,
-                       numeric_type line_number_)
+    flat_map_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -73,9 +72,8 @@ class flat_map_exception : public etl::exception {
 class flat_map_full : public etl::flat_map_exception {
    public:
     flat_map_full(string_type file_name_, numeric_type line_number_)
-        : flat_map_exception(ETL_ERROR_TEXT("flat_map: full",
-                                            ETL_REFERENCE_FLAT_MAP_FILE_ID "A"),
-                             file_name_, line_number_) {}
+        : flat_map_exception(ETL_ERROR_TEXT("flat_map: full", ETL_REFERENCE_FLAT_MAP_FILE_ID "A"), file_name_,
+                             line_number_) {}
 };
 
 //***************************************************************************
@@ -85,9 +83,8 @@ class flat_map_full : public etl::flat_map_exception {
 class flat_map_out_of_bounds : public etl::flat_map_exception {
    public:
     flat_map_out_of_bounds(string_type file_name_, numeric_type line_number_)
-        : flat_map_exception(ETL_ERROR_TEXT("flat_map:bounds",
-                                            ETL_REFERENCE_FLAT_MAP_FILE_ID "B"),
-                             file_name_, line_number_) {}
+        : flat_map_exception(ETL_ERROR_TEXT("flat_map:bounds", ETL_REFERENCE_FLAT_MAP_FILE_ID "B"), file_name_,
+                             line_number_) {}
 };
 
 //***************************************************************************
@@ -95,8 +92,7 @@ class flat_map_out_of_bounds : public etl::flat_map_exception {
 /// Can be used as a reference type for all reference_flat_maps containing a specific type.
 ///\ingroup reference_flat_map
 //***************************************************************************
-template <typename TKey, typename TMapped,
-          typename TKeyCompare = etl::less<TKey>>
+template <typename TKey, typename TMapped, typename TKeyCompare = etl::less<TKey>>
 class ireference_flat_map {
    public:
     typedef ETL_OR_STD::pair<const TKey, TMapped> value_type;
@@ -117,9 +113,7 @@ class ireference_flat_map {
     class const_iterator;
 
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               value_type> {
+    class iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, value_type> {
        public:
         friend class ireference_flat_map;
         friend class ireference_flat_map::const_iterator;
@@ -163,37 +157,28 @@ class ireference_flat_map {
 
         pointer operator->() const { return etl::addressof(*(*ilookup)); }
 
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return lhs.ilookup == rhs.ilookup;
-        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.ilookup == rhs.ilookup; }
 
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         typename lookup_t::iterator ilookup;
     };
 
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               const value_type> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, const value_type> {
        public:
         friend class ireference_flat_map;
 
         const_iterator() {}
 
-        const_iterator(typename lookup_t::const_iterator ilookup_)
-            : ilookup(ilookup_) {}
+        const_iterator(typename lookup_t::const_iterator ilookup_) : ilookup(ilookup_) {}
 
-        const_iterator(const typename ireference_flat_map::iterator& other)
-            : ilookup(other.ilookup) {}
+        const_iterator(const typename ireference_flat_map::iterator& other) : ilookup(other.ilookup) {}
 
         const_iterator(const const_iterator& other) : ilookup(other.ilookup) {}
 
-        const_iterator& operator=(
-            const typename ireference_flat_map::iterator& other) {
+        const_iterator& operator=(const typename ireference_flat_map::iterator& other) {
             ilookup = other.ilookup;
             return *this;
         }
@@ -231,15 +216,11 @@ class ireference_flat_map {
 
         const_pointer operator->() const { return etl::addressof(*(*ilookup)); }
 
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.ilookup == rhs.ilookup;
         }
 
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         typename lookup_t::const_iterator ilookup;
@@ -247,8 +228,7 @@ class ireference_flat_map {
 
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
    protected:
     typedef const TKey& key_parameter_t;
@@ -259,25 +239,19 @@ class ireference_flat_map {
     //*********************************************************************
     class Compare {
        public:
-        bool operator()(const value_type& element, const key_type& key) const {
-            return comp(element.first, key);
-        }
+        bool operator()(const value_type& element, const key_type& key) const { return comp(element.first, key); }
 
-        bool operator()(const key_type& key, const value_type& element) const {
-            return comp(key, element.first);
-        }
+        bool operator()(const key_type& key, const value_type& element) const { return comp(key, element.first); }
 
 #if ETL_USING_CPP11
-        template <
-            typename K, typename KC = TKeyCompare,
-            etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+        template <typename K, typename KC = TKeyCompare,
+                  etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
         bool operator()(const value_type& element, const K& key) const {
             return comp(element.first, key);
         }
 
-        template <
-            typename K, typename KC = TKeyCompare,
-            etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+        template <typename K, typename KC = TKeyCompare,
+                  etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
         bool operator()(const K& key, const value_type& element) const {
             return comp(key, element.first);
         }
@@ -391,9 +365,7 @@ class ireference_flat_map {
     mapped_type& operator[](key_parameter_t key) {
         iterator i_element = lower_bound(key);
 
-        ETL_ASSERT(
-            (i_element != end()) && keys_are_equal(i_element->first, key),
-            ETL_ERROR(flat_map_out_of_bounds));
+        ETL_ASSERT((i_element != end()) && keys_are_equal(i_element->first, key), ETL_ERROR(flat_map_out_of_bounds));
 
         return i_element->second;
     }
@@ -406,9 +378,7 @@ class ireference_flat_map {
     const mapped_type& operator[](key_parameter_t key) const {
         iterator i_element = lower_bound(key);
 
-        ETL_ASSERT(
-            (i_element != end()) && keys_are_equal(i_element->first, key),
-            ETL_ERROR(flat_map_out_of_bounds));
+        ETL_ASSERT((i_element != end()) && keys_are_equal(i_element->first, key), ETL_ERROR(flat_map_out_of_bounds));
 
         return i_element->second;
     }
@@ -422,23 +392,18 @@ class ireference_flat_map {
     mapped_type& at(key_parameter_t key) {
         iterator i_element = lower_bound(key);
 
-        ETL_ASSERT(
-            (i_element != end()) && keys_are_equal(i_element->first, key),
-            ETL_ERROR(flat_map_out_of_bounds));
+        ETL_ASSERT((i_element != end()) && keys_are_equal(i_element->first, key), ETL_ERROR(flat_map_out_of_bounds));
 
         return i_element->second;
     }
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     mapped_type& at(const K& key) {
         iterator i_element = lower_bound(key);
 
-        ETL_ASSERT(
-            (i_element != end()) && keys_are_equal(i_element->first, key),
-            ETL_ERROR(flat_map_out_of_bounds));
+        ETL_ASSERT((i_element != end()) && keys_are_equal(i_element->first, key), ETL_ERROR(flat_map_out_of_bounds));
 
         return i_element->second;
     }
@@ -453,23 +418,18 @@ class ireference_flat_map {
     const mapped_type& at(key_parameter_t key) const {
         const_iterator i_element = lower_bound(key);
 
-        ETL_ASSERT(
-            (i_element != end()) && keys_are_equal(i_element->first, key),
-            ETL_ERROR(flat_map_out_of_bounds));
+        ETL_ASSERT((i_element != end()) && keys_are_equal(i_element->first, key), ETL_ERROR(flat_map_out_of_bounds));
 
         return i_element->second;
     }
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const mapped_type& at(const K& key) const {
         const_iterator i_element = lower_bound(key);
 
-        ETL_ASSERT(
-            (i_element != end()) && keys_are_equal(i_element->first, key),
-            ETL_ERROR(flat_map_out_of_bounds));
+        ETL_ASSERT((i_element != end()) && keys_are_equal(i_element->first, key), ETL_ERROR(flat_map_out_of_bounds));
 
         return i_element->second;
     }
@@ -484,10 +444,8 @@ class ireference_flat_map {
     //*********************************************************************
     template <typename TIterator>
     void assign(TIterator first, TIterator last) {
-        ETL_STATIC_ASSERT(
-            (etl::is_same<value_type, typename etl::iterator_traits<
-                                          TIterator>::value_type>::value),
-            "Incompatible data for assign");
+        ETL_STATIC_ASSERT((etl::is_same<value_type, typename etl::iterator_traits<TIterator>::value_type>::value),
+                          "Incompatible data for assign");
 
 #if ETL_IS_DEBUG_BUILD
         difference_type d = etl::distance(first, last);
@@ -556,8 +514,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_t erase(K&& key) {
         iterator i_element = find(etl::forward<K>(key));
 
@@ -625,8 +582,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator find(const K& key) {
         iterator itr = lower_bound(key);
 
@@ -663,8 +619,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator find(const K& key) const {
         const_iterator itr = lower_bound(key);
 
@@ -691,8 +646,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_t count(const K& key) const {
         return (find(key) == end()) ? 0U : 1U;
     }
@@ -709,8 +663,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator lower_bound(const K& key) {
         return etl::lower_bound(begin(), end(), key, compare);
     }
@@ -727,8 +680,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator lower_bound(const K& key) const {
         return etl::lower_bound(cbegin(), cend(), key, compare);
     }
@@ -745,8 +697,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator upper_bound(const K& key) {
         return etl::upper_bound(begin(), end(), key, compare);
     }
@@ -763,8 +714,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator upper_bound(const K& key) const {
         return etl::upper_bound(begin(), end(), key, compare);
     }
@@ -778,19 +728,16 @@ class ireference_flat_map {
     ETL_OR_STD::pair<iterator, iterator> equal_range(key_parameter_t key) {
         iterator i_lower = etl::lower_bound(begin(), end(), key, compare);
 
-        return ETL_OR_STD::make_pair(
-            i_lower, etl::upper_bound(i_lower, end(), key, compare));
+        return ETL_OR_STD::make_pair(i_lower, etl::upper_bound(i_lower, end(), key, compare));
     }
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     ETL_OR_STD::pair<iterator, iterator> equal_range(const K& key) {
         iterator i_lower = etl::lower_bound(begin(), end(), key, compare);
 
-        return ETL_OR_STD::make_pair(
-            i_lower, etl::upper_bound(i_lower, end(), key, compare));
+        return ETL_OR_STD::make_pair(i_lower, etl::upper_bound(i_lower, end(), key, compare));
     }
 #endif
 
@@ -799,26 +746,19 @@ class ireference_flat_map {
     ///\param key The key to search for.
     ///\return An iterator pair.
     //*********************************************************************
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
-        const_iterator i_lower =
-            etl::lower_bound(cbegin(), cend(), key, compare);
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
+        const_iterator i_lower = etl::lower_bound(cbegin(), cend(), key, compare);
 
-        return ETL_OR_STD::make_pair(
-            i_lower, etl::upper_bound(i_lower, cend(), key, compare));
+        return ETL_OR_STD::make_pair(i_lower, etl::upper_bound(i_lower, cend(), key, compare));
     }
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        const K& key) const {
-        const_iterator i_lower =
-            etl::lower_bound(cbegin(), cend(), key, compare);
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(const K& key) const {
+        const_iterator i_lower = etl::lower_bound(cbegin(), cend(), key, compare);
 
-        return ETL_OR_STD::make_pair(
-            i_lower, etl::upper_bound(i_lower, cend(), key, compare));
+        return ETL_OR_STD::make_pair(i_lower, etl::upper_bound(i_lower, cend(), key, compare));
     }
 #endif
 
@@ -831,8 +771,7 @@ class ireference_flat_map {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TKeyCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TKeyCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool contains(const K& k) const {
         return find(k) != end();
     }
@@ -897,8 +836,7 @@ class ireference_flat_map {
     ///\param i_element The place to insert.
     ///\param value     The value to insert.
     //*********************************************************************
-    ETL_OR_STD::pair<iterator, bool> insert_at(iterator i_element,
-                                               value_type& value) {
+    ETL_OR_STD::pair<iterator, bool> insert_at(iterator i_element, value_type& value) {
         ETL_OR_STD::pair<iterator, bool> result(end(), false);
 
         if (i_element == end()) {
@@ -952,8 +890,7 @@ class ireference_flat_map {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_REFERENCE_FLAT_MAP) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_REFERENCE_FLAT_MAP) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual ~ireference_flat_map() {}
 #else
@@ -970,11 +907,9 @@ class ireference_flat_map {
 ///\ingroup reference_flat_map
 //***************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator==(
-    const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& lhs,
-    const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& lhs,
+                const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -985,9 +920,8 @@ bool operator==(
 ///\ingroup reference_flat_map
 //***************************************************************************
 template <typename TKey, typename TMapped, typename TKeyCompare>
-bool operator!=(
-    const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& lhs,
-    const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& rhs) {
+bool operator!=(const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& lhs,
+                const etl::ireference_flat_map<TKey, TMapped, TKeyCompare>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -999,8 +933,7 @@ bool operator!=(
 ///\tparam MAX_SIZE_ The maximum number of elements that can be stored.
 ///\ingroup reference_flat_map
 //***************************************************************************
-template <typename TKey, typename TValue, const size_t MAX_SIZE_,
-          typename TCompare = etl::less<TKey>>
+template <typename TKey, typename TValue, const size_t MAX_SIZE_, typename TCompare = etl::less<TKey>>
 class reference_flat_map : public ireference_flat_map<TKey, TValue, TCompare> {
    public:
     static ETL_CONSTANT size_t MAX_SIZE = MAX_SIZE_;
@@ -1008,8 +941,7 @@ class reference_flat_map : public ireference_flat_map<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    reference_flat_map()
-        : ireference_flat_map<TKey, TValue, TCompare>(lookup) {}
+    reference_flat_map() : ireference_flat_map<TKey, TValue, TCompare>(lookup) {}
 
     //*************************************************************************
     /// Constructor, from an iterator range.
@@ -1018,25 +950,21 @@ class reference_flat_map : public ireference_flat_map<TKey, TValue, TCompare> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    reference_flat_map(TIterator first, TIterator last)
-        : ireference_flat_map<TKey, TValue, TCompare>(lookup) {
+    reference_flat_map(TIterator first, TIterator last) : ireference_flat_map<TKey, TValue, TCompare>(lookup) {
         ireference_flat_map<TKey, TValue, TCompare>::assign(first, last);
     }
 
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~reference_flat_map() {
-        ireference_flat_map<TKey, TValue, TCompare>::clear();
-    }
+    ~reference_flat_map() { ireference_flat_map<TKey, TValue, TCompare>::clear(); }
 
     //*************************************************************************
     /// Assignment operator.
     //*************************************************************************
     reference_flat_map& operator=(const reference_flat_map& rhs) {
         if (&rhs != this) {
-            ireference_flat_map<TKey, TValue, TCompare>::assign(rhs.cbegin(),
-                                                                rhs.cend());
+            ireference_flat_map<TKey, TValue, TCompare>::assign(rhs.cbegin(), rhs.cend());
         }
 
         return *this;
@@ -1045,8 +973,7 @@ class reference_flat_map : public ireference_flat_map<TKey, TValue, TCompare> {
    private:
     reference_flat_map(const reference_flat_map&);
 
-    typedef
-        typename ireference_flat_map<TKey, TValue, TCompare>::value_type node_t;
+    typedef typename ireference_flat_map<TKey, TValue, TCompare>::value_type node_t;
 
     // The vector that stores pointers to the nodes.
     etl::vector<node_t*, MAX_SIZE> lookup;
@@ -1059,16 +986,14 @@ class reference_flat_map : public ireference_flat_map<TKey, TValue, TCompare> {
 template <typename... TPairs>
 reference_flat_map(TPairs...)
     -> reference_flat_map<typename etl::nth_type_t<0, TPairs...>::first_type,
-                          typename etl::nth_type_t<0, TPairs...>::second_type,
-                          sizeof...(TPairs)>;
+                          typename etl::nth_type_t<0, TPairs...>::second_type, sizeof...(TPairs)>;
 #endif
 
 //*************************************************************************
 /// Make
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
-template <typename TKey, typename TMapped,
-          typename TKeyCompare = etl::less<TKey>, typename... TPairs>
+template <typename TKey, typename TMapped, typename TKeyCompare = etl::less<TKey>, typename... TPairs>
 constexpr auto make_reference_flat_map(TPairs&&... pairs)
     -> etl::reference_flat_map<TKey, TMapped, sizeof...(TPairs), TKeyCompare> {
     return {{etl::forward<TPairs>(pairs)...}};

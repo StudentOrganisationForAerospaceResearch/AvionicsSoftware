@@ -83,21 +83,12 @@ class debounce_base {
     bool is_repeating() const { return ((flags & State) == Repeating); }
 
    protected:
-    enum states {
-        Off = 0,
-        On = 1,
-        Held = 2,
-        Repeating = 3,
-        State = 0x03U,
-        Sample = 4,
-        Change = 8
-    };
+    enum states { Off = 0, On = 1, Held = 2, Repeating = 3, State = 0x03U, Sample = 4, Change = 8 };
 
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    debounce_base(bool initial_state)
-        : flags(initial_state ? On : Off), count(0) {}
+    debounce_base(bool initial_state) : flags(initial_state ? On : Off), count(0) {}
 
     //*************************************************************************
     /// Destructor.
@@ -107,11 +98,9 @@ class debounce_base {
     //*************************************************************************
     /// Gets the next state based on the inputs.
     //*************************************************************************
-    void get_next(bool sample, bool condition_set, bool condition_clear,
-                  const uint_least8_t state_table[][2]) {
+    void get_next(bool sample, bool condition_set, bool condition_clear, const uint_least8_t state_table[][2]) {
         int index1 = ((flags & State) * 2) + (sample ? 1 : 0);
-        int index2 =
-            (sample ? (condition_set ? 0 : 1) : (condition_clear ? 0 : 1));
+        int index2 = (sample ? (condition_set ? 0 : 1) : (condition_clear ? 0 : 1));
 
         flags_t next = flags;
 
@@ -209,13 +198,12 @@ class debounce3 : public debounce_base {
     ///
     //*************************************************************************
     void set_state(bool sample, bool condition_set, bool condition_clear) {
-        static ETL_CONSTANT uint_least8_t state_table[6][2] = {
-            /* Off  0 */ {debounce_base::Off, debounce_base::Off},
-            /* Off  1 */ {debounce_base::On, debounce_base::Off},
-            /* On   0 */ {debounce_base::Off, debounce_base::On},
-            /* On   1 */ {debounce_base::Held, debounce_base::On},
-            /* Held 0 */ {debounce_base::Off, debounce_base::Held},
-            /* Held 1 */ {debounce_base::Held, debounce_base::Held}};
+        static ETL_CONSTANT uint_least8_t state_table[6][2] = {/* Off  0 */ {debounce_base::Off, debounce_base::Off},
+                                                               /* Off  1 */ {debounce_base::On, debounce_base::Off},
+                                                               /* On   0 */ {debounce_base::Off, debounce_base::On},
+                                                               /* On   1 */ {debounce_base::Held, debounce_base::On},
+                                                               /* Held 0 */ {debounce_base::Off, debounce_base::Held},
+                                                               /* Held 1 */ {debounce_base::Held, debounce_base::Held}};
 
         get_next(sample, condition_set, condition_clear, state_table);
     }
@@ -295,8 +283,7 @@ class debounce4 : public debounce_base {
     //*************************************************************************
     ///
     //*************************************************************************
-    bool process(bool sample, count_t valid_count, count_t hold_count,
-                 count_t repeat_count) {
+    bool process(bool sample, count_t valid_count, count_t hold_count, count_t repeat_count) {
         add_sample(sample);
 
         if (count < UINT16_MAX) {
@@ -351,8 +338,7 @@ class debounce4 : public debounce_base {
 /// A class to debounce signals.
 /// Fixed Valid/Hold/Repeating values.
 //***************************************************************************
-template <const uint16_t VALID_COUNT = 0, const uint16_t HOLD_COUNT = 0,
-          const uint16_t REPEAT_COUNT = 0>
+template <const uint16_t VALID_COUNT = 0, const uint16_t HOLD_COUNT = 0, const uint16_t REPEAT_COUNT = 0>
 class debounce : public private_debounce::debounce4 {
    public:
     //*************************************************************************
@@ -366,9 +352,7 @@ class debounce : public private_debounce::debounce4 {
     ///\param sample The new sample.
     ///\return 'true' if the debouncer changed state.
     //*************************************************************************
-    bool add(bool sample) {
-        return process(sample, VALID_COUNT, HOLD_COUNT, REPEAT_COUNT);
-    }
+    bool add(bool sample) { return process(sample, VALID_COUNT, HOLD_COUNT, REPEAT_COUNT); }
 };
 
 //***************************************************************************
@@ -376,8 +360,7 @@ class debounce : public private_debounce::debounce4 {
 /// Fixed Valid/Hold values.
 //***************************************************************************
 template <const uint16_t VALID_COUNT, const uint16_t HOLD_COUNT>
-class debounce<VALID_COUNT, HOLD_COUNT, 0>
-    : public private_debounce::debounce3 {
+class debounce<VALID_COUNT, HOLD_COUNT, 0> : public private_debounce::debounce3 {
    public:
     //*************************************************************************
     /// Constructor.
@@ -430,11 +413,7 @@ class debounce<0, 0, 0> : public private_debounce::debounce4 {
     /// Constructor.
     ///\param initial_state The initial state. Default = false.
     //*************************************************************************
-    debounce(bool initial_state = false)
-        : debounce4(initial_state),
-          valid_count(1),
-          hold_count(0),
-          repeat_count(0) {}
+    debounce(bool initial_state = false) : debounce4(initial_state), valid_count(1), hold_count(0), repeat_count(0) {}
 
     //*************************************************************************
     /// Constructor.
@@ -442,10 +421,7 @@ class debounce<0, 0, 0> : public private_debounce::debounce4 {
     ///\param hold_count    The count after valid_count for a hold state. Default = 0.
     ///\param repeat_count  The count after hold_count for a key repeat. Default = 0.
     //*************************************************************************
-    debounce(count_t valid, count_t hold = 0, count_t repeat = 0)
-        : debounce4(false) {
-        set(valid, hold, repeat);
-    }
+    debounce(count_t valid, count_t hold = 0, count_t repeat = 0) : debounce4(false) { set(valid, hold, repeat); }
 
     //*************************************************************************
     /// Constructor.
@@ -466,9 +442,7 @@ class debounce<0, 0, 0> : public private_debounce::debounce4 {
     ///\param sample The new sample.
     ///\return 'true' if the debouncer changed state.
     //*************************************************************************
-    bool add(bool sample) {
-        return process(sample, valid_count, hold_count, repeat_count);
-    }
+    bool add(bool sample) { return process(sample, valid_count, hold_count, repeat_count); }
 
    private:
     count_t valid_count;

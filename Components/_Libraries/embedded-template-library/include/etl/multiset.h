@@ -64,8 +64,7 @@ namespace etl {
 //***************************************************************************
 class multiset_exception : public etl::exception {
    public:
-    multiset_exception(string_type reason_, string_type file_name_,
-                       numeric_type line_number_)
+    multiset_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
@@ -76,9 +75,8 @@ class multiset_exception : public etl::exception {
 class multiset_full : public etl::multiset_exception {
    public:
     multiset_full(string_type file_name_, numeric_type line_number_)
-        : etl::multiset_exception(
-              ETL_ERROR_TEXT("multiset:full", ETL_MULTISET_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : etl::multiset_exception(ETL_ERROR_TEXT("multiset:full", ETL_MULTISET_FILE_ID "A"), file_name_, line_number_) {
+    }
 };
 
 //***************************************************************************
@@ -88,9 +86,8 @@ class multiset_full : public etl::multiset_exception {
 class multiset_out_of_bounds : public etl::multiset_exception {
    public:
     multiset_out_of_bounds(string_type file_name_, numeric_type line_number_)
-        : etl::multiset_exception(
-              ETL_ERROR_TEXT("multiset:bounds", ETL_MULTISET_FILE_ID "B"),
-              file_name_, line_number_) {}
+        : etl::multiset_exception(ETL_ERROR_TEXT("multiset:bounds", ETL_MULTISET_FILE_ID "B"), file_name_,
+                                  line_number_) {}
 };
 
 //***************************************************************************
@@ -100,9 +97,8 @@ class multiset_out_of_bounds : public etl::multiset_exception {
 class multiset_iterator : public etl::multiset_exception {
    public:
     multiset_iterator(string_type file_name_, numeric_type line_number_)
-        : etl::multiset_exception(
-              ETL_ERROR_TEXT("multiset:iterator", ETL_MULTISET_FILE_ID "C"),
-              file_name_, line_number_) {}
+        : etl::multiset_exception(ETL_ERROR_TEXT("multiset:iterator", ETL_MULTISET_FILE_ID "C"), file_name_,
+                                  line_number_) {}
 };
 
 //***************************************************************************
@@ -111,8 +107,7 @@ class multiset_iterator : public etl::multiset_exception {
 //***************************************************************************
 class multiset_base {
    public:
-    typedef size_t
-        size_type;  ///< The type used for determining the size of set.
+    typedef size_t size_type;  ///< The type used for determining the size of set.
 
     //*************************************************************************
     /// Gets the size of the set.
@@ -181,8 +176,7 @@ class multiset_base {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    multiset_base(size_type max_size_)
-        : current_size(0), CAPACITY(max_size_), root_node(ETL_NULLPTR) {}
+    multiset_base(size_type max_size_) : current_size(0), CAPACITY(max_size_), root_node(ETL_NULLPTR) {}
 
     //*************************************************************************
     /// Destructor.
@@ -278,17 +272,14 @@ class multiset_base {
         else {
             // If critical node matches child node direction then perform a two
             // node rotate in the direction of the critical node
-            if (critical_node->weight ==
-                critical_node->children[critical_node->dir]->dir) {
+            if (critical_node->weight == critical_node->children[critical_node->dir]->dir) {
                 rotate_2node(critical_node, critical_node->dir);
             }
             // Otherwise perform a three node rotation in the direction of the
             // critical node
             else {
                 rotate_3node(critical_node, critical_node->dir,
-                             critical_node->children[critical_node->dir]
-                                 ->children[1 - critical_node->dir]
-                                 ->dir);
+                             critical_node->children[critical_node->dir]->children[1 - critical_node->dir]->dir);
             }
         }
     }
@@ -326,10 +317,8 @@ class multiset_base {
                     // Update current position as previous parent
                     position = parent;
                     // Find parent of current position
-                    parent =
-                        position
-                            ->parent;  // find_parent_node(root_node, position);
-                        // Repeat while previous position was on right side of parent tree
+                    parent = position->parent;  // find_parent_node(root_node, position);
+                                                // Repeat while previous position was on right side of parent tree
                 } while (parent && parent->children[kRight] == position);
 
                 // Set parent node as the next position
@@ -488,8 +477,7 @@ class multiset_base {
         // Capture new root (either E or D depending on dir)
         Node* new_root = position->children[dir]->children[1 - dir];
         // Set weight factor for B or C based on F or G existing and being a different than dir
-        position->children[dir]->weight =
-            third != kNeither && third != dir ? dir : uint_least8_t(kNeither);
+        position->children[dir]->weight = third != kNeither && third != dir ? dir : uint_least8_t(kNeither);
 
         // Detach new root from its tree (replace with new roots child)
         position->children[dir]->children[1 - dir] = new_root->children[dir];
@@ -503,8 +491,7 @@ class multiset_base {
         position->children[dir]->parent = new_root;
 
         // Set weight factor for A based on F or G
-        position->weight =
-            third != kNeither && third == dir ? 1 - dir : kNeither;
+        position->weight = third != kNeither && third == dir ? 1 - dir : kNeither;
 
         // Move new root's right tree to current roots left tree
         position->children[dir] = new_root->children[1 - dir];
@@ -579,14 +566,12 @@ class imultiset : public etl::multiset_base {
     }
 
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const Data_Node& node, const K& key) const {
         return compare(node.value, key);
     }
 
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool node_comp(const K& key, const Data_Node& node) const {
         return compare(key, node.value);
     }
@@ -630,23 +615,18 @@ class imultiset : public etl::multiset_base {
     //*************************************************************************
     /// iterator.
     //*************************************************************************
-    class iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               value_type> {
+    class iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, value_type> {
        public:
         friend class imultiset;
         friend class const_iterator;
 
         iterator() : p_multiset(ETL_NULLPTR), p_node(ETL_NULLPTR) {}
 
-        iterator(imultiset& multiset)
-            : p_multiset(&multiset), p_node(ETL_NULLPTR) {}
+        iterator(imultiset& multiset) : p_multiset(&multiset), p_node(ETL_NULLPTR) {}
 
-        iterator(imultiset& multiset, Node* node)
-            : p_multiset(&multiset), p_node(node) {}
+        iterator(imultiset& multiset, Node* node) : p_multiset(&multiset), p_node(node) {}
 
-        iterator(const iterator& other)
-            : p_multiset(other.p_multiset), p_node(other.p_node) {}
+        iterator(const iterator& other) : p_multiset(other.p_multiset), p_node(other.p_node) {}
 
         ~iterator() {}
 
@@ -678,25 +658,17 @@ class imultiset : public etl::multiset_base {
             return *this;
         }
 
-        reference operator*() const {
-            return imultiset::data_cast(p_node)->value;
-        }
+        reference operator*() const { return imultiset::data_cast(p_node)->value; }
 
-        pointer operator&() const {
-            return &(imultiset::data_cast(p_node)->value);
-        }
+        pointer operator&() const { return &(imultiset::data_cast(p_node)->value); }
 
-        pointer operator->() const {
-            return &(imultiset::data_cast(p_node)->value);
-        }
+        pointer operator->() const { return &(imultiset::data_cast(p_node)->value); }
 
         friend bool operator==(const iterator& lhs, const iterator& rhs) {
             return lhs.p_multiset == rhs.p_multiset && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Pointer to multiset associated with this iterator
@@ -711,25 +683,20 @@ class imultiset : public etl::multiset_base {
     //*************************************************************************
     /// const_iterator
     //*************************************************************************
-    class const_iterator
-        : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag,
-                               const value_type> {
+    class const_iterator : public etl::iterator<ETL_OR_STD::bidirectional_iterator_tag, const value_type> {
        public:
         friend class imultiset;
 
         const_iterator() : p_multiset(ETL_NULLPTR), p_node(ETL_NULLPTR) {}
 
-        const_iterator(const imultiset& multiset)
-            : p_multiset(&multiset), p_node(ETL_NULLPTR) {}
+        const_iterator(const imultiset& multiset) : p_multiset(&multiset), p_node(ETL_NULLPTR) {}
 
-        const_iterator(const imultiset& multiset, const Node* node)
-            : p_multiset(&multiset), p_node(node) {}
+        const_iterator(const imultiset& multiset, const Node* node) : p_multiset(&multiset), p_node(node) {}
 
         const_iterator(const typename imultiset::iterator& other)
             : p_multiset(other.p_multiset), p_node(other.p_node) {}
 
-        const_iterator(const const_iterator& other)
-            : p_multiset(other.p_multiset), p_node(other.p_node) {}
+        const_iterator(const const_iterator& other) : p_multiset(other.p_multiset), p_node(other.p_node) {}
 
         ~const_iterator() {}
 
@@ -761,33 +728,22 @@ class imultiset : public etl::multiset_base {
             return *this;
         }
 
-        const_reference operator*() const {
-            return imultiset::data_cast(p_node)->value;
-        }
+        const_reference operator*() const { return imultiset::data_cast(p_node)->value; }
 
-        const_pointer operator&() const {
-            return imultiset::data_cast(p_node)->value;
-        }
+        const_pointer operator&() const { return imultiset::data_cast(p_node)->value; }
 
-        const_pointer operator->() const {
-            return &(imultiset::data_cast(p_node)->value);
-        }
+        const_pointer operator->() const { return &(imultiset::data_cast(p_node)->value); }
 
-        friend bool operator==(const const_iterator& lhs,
-                               const const_iterator& rhs) {
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) {
             return lhs.p_multiset == rhs.p_multiset && lhs.p_node == rhs.p_node;
         }
 
-        friend bool operator!=(const const_iterator& lhs,
-                               const const_iterator& rhs) {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
 
        private:
         // Convert to an iterator.
         imultiset::iterator to_iterator() const {
-            return imultiset::iterator(const_cast<imultiset&>(*p_multiset),
-                                       const_cast<Node*>(p_node));
+            return imultiset::iterator(const_cast<imultiset&>(*p_multiset), const_cast<Node*>(p_node));
         }
 
         // Pointer to multiset associated with this iterator
@@ -799,8 +755,7 @@ class imultiset : public etl::multiset_base {
 
     friend class const_iterator;
 
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -865,16 +820,14 @@ class imultiset : public etl::multiset_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     reverse_iterator rend() {
-        return reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator rend() const {
-        return const_reverse_iterator(
-            iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*************************************************************************
@@ -888,8 +841,7 @@ class imultiset : public etl::multiset_base {
     /// Gets the reverse end of the list.
     //*************************************************************************
     const_reverse_iterator crend() const {
-        return const_reverse_iterator(
-            const_iterator(*this, find_limit_node(root_node, kLeft)));
+        return const_reverse_iterator(const_iterator(*this, find_limit_node(root_node, kLeft)));
     }
 
     //*********************************************************************
@@ -923,8 +875,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type count(const K& key) const {
         return count_nodes(key);
     }
@@ -935,19 +886,16 @@ class imultiset : public etl::multiset_base {
     /// provided
     //*************************************************************************
     ETL_OR_STD::pair<iterator, iterator> equal_range(key_parameter_t key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     ETL_OR_STD::pair<iterator, iterator> equal_range(const K& key) {
-        return ETL_OR_STD::make_pair<iterator, iterator>(
-            iterator(*this, find_lower_node(root_node, key)),
-            iterator(*this, find_upper_node(root_node, key)));
+        return ETL_OR_STD::make_pair<iterator, iterator>(iterator(*this, find_lower_node(root_node, key)),
+                                                         iterator(*this, find_upper_node(root_node, key)));
     }
 #endif
 
@@ -955,8 +903,7 @@ class imultiset : public etl::multiset_base {
     /// Returns two const iterators with bounding (lower bound, upper bound)
     /// the key provided.
     //*************************************************************************
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -964,10 +911,8 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
-    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(
-        key_parameter_t key) const {
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    ETL_OR_STD::pair<const_iterator, const_iterator> equal_range(key_parameter_t key) const {
         return ETL_OR_STD::make_pair<const_iterator, const_iterator>(
             const_iterator(*this, find_lower_node(root_node, key)),
             const_iterator(*this, find_upper_node(root_node, key)));
@@ -1020,15 +965,12 @@ class imultiset : public etl::multiset_base {
 
     //*************************************************************************
 #if ETL_USING_CPP11
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type erase(K&& key_value) {
         // Number of nodes removed
         size_type d = 0;
-        const_iterator lower(
-            *this, find_lower_node(root_node, etl::forward<K>(key_value)));
-        const_iterator upper(
-            *this, find_upper_node(root_node, etl::forward<K>(key_value)));
+        const_iterator lower(*this, find_lower_node(root_node, etl::forward<K>(key_value)));
+        const_iterator upper(*this, find_upper_node(root_node, etl::forward<K>(key_value)));
         while (lower != upper) {
             // Increment count for each node removed
             ++d;
@@ -1064,8 +1006,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator find(const K& k) {
         return iterator(*this, find_node(root_node, k));
     }
@@ -1082,8 +1023,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator find(const K& k) const {
         return const_iterator(*this, find_node(root_node, k));
     }
@@ -1184,8 +1124,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator lower_bound(const K& key) {
         return iterator(*this, find_lower_node(root_node, key));
     }
@@ -1203,8 +1142,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator lower_bound(const K& key) const {
         return const_iterator(*this, find_lower_node(root_node, key));
     }
@@ -1222,8 +1160,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     iterator upper_bound(const K& key) {
         return iterator(*this, find_upper_node(root_node, key));
     }
@@ -1241,8 +1178,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*********************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const_iterator upper_bound(const K& key) const {
         return const_iterator(*this, find_upper_node(root_node, key));
     }
@@ -1267,8 +1203,7 @@ class imultiset : public etl::multiset_base {
     imultiset& operator=(imultiset&& rhs) {
         // Skip if doing self assignment
         if (this != &rhs) {
-            typename etl::imultiset<TKey, TCompare>::iterator from =
-                rhs.begin();
+            typename etl::imultiset<TKey, TCompare>::iterator from = rhs.begin();
 
             while (from != rhs.end()) {
                 typename etl::imultiset<TKey, TCompare>::iterator temp = from;
@@ -1306,8 +1241,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     bool contains(const K& k) const {
         return find(k) != end();
     }
@@ -1317,8 +1251,7 @@ class imultiset : public etl::multiset_base {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    imultiset(etl::ipool& node_pool, size_t max_size_)
-        : etl::multiset_base(max_size_), p_node_pool(&node_pool) {}
+    imultiset(etl::ipool& node_pool, size_t max_size_) : etl::multiset_base(max_size_), p_node_pool(&node_pool) {}
 
     //*************************************************************************
     /// Initialise the multiset.
@@ -1402,8 +1335,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     size_type count_nodes(const K& key) const {
         // Number of nodes that match the key provided result
         size_type result = 0;
@@ -1459,8 +1391,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_node(Node* position, const K& key) {
         Node* found = ETL_NULLPTR;
         while (position) {
@@ -1513,8 +1444,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     const Node* find_node(const Node* position, const K& key) const {
         const Node* found = ETL_NULLPTR;
         while (position) {
@@ -1572,8 +1502,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_lower_node(Node* position, const K& key) const {
         // Something at this position? keep going
         Node* lower_node = ETL_NULLPTR;
@@ -1638,8 +1567,7 @@ class imultiset : public etl::multiset_base {
 
 #if ETL_USING_CPP11
     //*************************************************************************
-    template <typename K, typename KC = TCompare,
-              etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
+    template <typename K, typename KC = TCompare, etl::enable_if_t<comparator_is_transparent<KC>::value, int> = 0>
     Node* find_upper_node(Node* position, const K& key) const {
         // Keep track of parent of last upper node
         Node* upper_node = ETL_NULLPTR;
@@ -1733,16 +1661,13 @@ class imultiset : public etl::multiset_base {
 
             // Was a critical node found that should be checked for balance?
             if (critical_node) {
-                if (critical_parent_node == ETL_NULLPTR &&
-                    critical_node == root_node) {
+                if (critical_parent_node == ETL_NULLPTR && critical_node == root_node) {
                     balance_node(root_node);
-                } else if (critical_parent_node == ETL_NULLPTR &&
-                           critical_node == position) {
+                } else if (critical_parent_node == ETL_NULLPTR && critical_node == position) {
                     balance_node(position);
                 } else {
                     if (critical_parent_node != ETL_NULLPTR) {
-                        balance_node(critical_parent_node
-                                         ->children[critical_parent_node->dir]);
+                        balance_node(critical_parent_node->children[critical_parent_node->dir]);
                     }
                 }
             }
@@ -1778,8 +1703,7 @@ class imultiset : public etl::multiset_base {
             while (node) {
                 if (node->parent) {
                     // Which direction does parent use to get to this node?
-                    node->parent->dir =
-                        node->parent->children[kLeft] == node ? kLeft : kRight;
+                    node->parent->dir = node->parent->children[kLeft] == node ? kLeft : kRight;
 
                     // Make this nodes parent the next node
                     node = node->parent;
@@ -1807,8 +1731,7 @@ class imultiset : public etl::multiset_base {
                     // we need to update the balance node to this node but all our
                     // ancestors will not require rebalancing
                     if ((node->weight == kNeither) ||
-                        (node->weight == (1 - node->dir) &&
-                         node->children[1 - node->dir]->weight == kNeither)) {
+                        (node->weight == (1 - node->dir) && node->children[1 - node->dir]->weight == kNeither)) {
                         // Update balance node to this node
                         balance = node;
                     }
@@ -1837,8 +1760,7 @@ class imultiset : public etl::multiset_base {
                 // we need to update the balance node to this node but all our
                 // ancestors will not require rebalancing
                 if ((node->weight == kNeither) ||
-                    (node->weight == (1 - node->dir) &&
-                     node->children[1 - node->dir]->weight == kNeither)) {
+                    (node->weight == (1 - node->dir) && node->children[1 - node->dir]->weight == kNeither)) {
                     // Update balance node to this node
                     balance = node;
                 }
@@ -1888,16 +1810,10 @@ class imultiset : public etl::multiset_base {
                         // Is the root node being rebalanced (no parent)
                         if (balance->parent == ETL_NULLPTR) {
                             rotate_3node(root_node, 1 - balance->dir,
-                                         balance->children[1 - balance->dir]
-                                             ->children[balance->dir]
-                                             ->weight);
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         } else {
-                            rotate_3node(
-                                balance->parent->children[balance->parent->dir],
-                                1 - balance->dir,
-                                balance->children[1 - balance->dir]
-                                    ->children[balance->dir]
-                                    ->weight);
+                            rotate_3node(balance->parent->children[balance->parent->dir], 1 - balance->dir,
+                                         balance->children[1 - balance->dir]->children[balance->dir]->weight);
                         }
                     }
                     // Already balanced, rebalance and make it heavy in opposite
@@ -1912,11 +1828,8 @@ class imultiset : public etl::multiset_base {
                             // to old parent so its weight can be updated after the 2 node
                             // rotate is completed
                             Node* old_parent = balance->parent;
-                            rotate_2node(
-                                balance->parent->children[balance->parent->dir],
-                                1 - balance->dir);
-                            old_parent->children[old_parent->dir]->weight =
-                                balance->dir;
+                            rotate_2node(balance->parent->children[balance->parent->dir], 1 - balance->dir);
+                            old_parent->children[old_parent->dir]->weight = balance->dir;
                         }
                         // Update balance node weight in opposite direction of node removed
                         balance->weight = 1 - balance->dir;
@@ -1927,9 +1840,7 @@ class imultiset : public etl::multiset_base {
                         if (balance->parent == ETL_NULLPTR) {
                             rotate_2node(root_node, 1 - balance->dir);
                         } else {
-                            rotate_2node(
-                                balance->parent->children[balance->parent->dir],
-                                1 - balance->dir);
+                            rotate_2node(balance->parent->children[balance->parent->dir], 1 - balance->dir);
                         }
                     }
                 }
@@ -1941,15 +1852,13 @@ class imultiset : public etl::multiset_base {
             // Step 5: Swap found with node (replacement)
             if (found->parent) {
                 // Handle traditional case
-                detach_node(found->parent->children[found->parent->dir],
-                            node->parent->children[node->parent->dir]);
+                detach_node(found->parent->children[found->parent->dir], node->parent->children[node->parent->dir]);
             }
             // Handle root node removal
             else {
                 // Valid replacement node for root node being removed?
                 if (node->parent) {
-                    detach_node(root_node,
-                                node->parent->children[node->parent->dir]);
+                    detach_node(root_node, node->parent->children[node->parent->dir]);
                 } else {
                     // Found node and replacement node are both root node
                     detach_node(root_node, root_node);
@@ -1982,8 +1891,7 @@ class imultiset : public etl::multiset_base {
 //*************************************************************************
 /// A templated multiset implementation that uses a fixed size buffer.
 //*************************************************************************
-template <typename TKey, const size_t MAX_SIZE_,
-          typename TCompare = ETL_OR_STD::less<TKey>>
+template <typename TKey, const size_t MAX_SIZE_, typename TCompare = ETL_OR_STD::less<TKey>>
 class multiset : public etl::imultiset<TKey, TCompare> {
    public:
     static ETL_CONSTANT size_t MAX_SIZE = MAX_SIZE_;
@@ -1991,15 +1899,12 @@ class multiset : public etl::imultiset<TKey, TCompare> {
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    multiset() : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
-        this->initialise();
-    }
+    multiset() : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) { this->initialise(); }
 
     //*************************************************************************
     /// Copy constructor.
     //*************************************************************************
-    multiset(const multiset& other)
-        : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
+    multiset(const multiset& other) : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
         this->assign(other.cbegin(), other.cend());
     }
 
@@ -2007,11 +1912,9 @@ class multiset : public etl::imultiset<TKey, TCompare> {
     //*************************************************************************
     /// Move constructor.
     //*************************************************************************
-    multiset(multiset&& other)
-        : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
+    multiset(multiset&& other) : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
         if (this != &other) {
-            typename etl::imultiset<TKey, TCompare>::iterator from =
-                other.begin();
+            typename etl::imultiset<TKey, TCompare>::iterator from = other.begin();
 
             while (from != other.end()) {
                 typename etl::imultiset<TKey, TCompare>::iterator temp = from;
@@ -2031,8 +1934,7 @@ class multiset : public etl::imultiset<TKey, TCompare> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    multiset(TIterator first, TIterator last)
-        : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
+    multiset(TIterator first, TIterator last) : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
         this->assign(first, last);
     }
 
@@ -2040,9 +1942,7 @@ class multiset : public etl::imultiset<TKey, TCompare> {
     //*************************************************************************
     /// Constructor, from an initializer_list.
     //*************************************************************************
-    multiset(std::initializer_list<
-             typename etl::imultiset<TKey, TCompare>::value_type>
-                 init)
+    multiset(std::initializer_list<typename etl::imultiset<TKey, TCompare>::value_type> init)
         : etl::imultiset<TKey, TCompare>(node_pool, MAX_SIZE) {
         this->assign(init.begin(), init.end());
     }
@@ -2075,8 +1975,7 @@ class multiset : public etl::imultiset<TKey, TCompare> {
         if (this != &rhs) {
             this->clear();
 
-            typename etl::imultiset<TKey, TCompare>::iterator from =
-                rhs.begin();
+            typename etl::imultiset<TKey, TCompare>::iterator from = rhs.begin();
 
             while (from != rhs.end()) {
                 this->insert(etl::move(*from));
@@ -2090,8 +1989,7 @@ class multiset : public etl::imultiset<TKey, TCompare> {
 
    private:
     /// The pool of data nodes used for the multiset.
-    etl::pool<typename etl::imultiset<TKey, TCompare>::Data_Node, MAX_SIZE>
-        node_pool;
+    etl::pool<typename etl::imultiset<TKey, TCompare>::Data_Node, MAX_SIZE> node_pool;
 };
 
 //*************************************************************************
@@ -2107,8 +2005,7 @@ multiset(T...) -> multiset<etl::nth_type_t<0, T...>, sizeof...(T)>;
 //*************************************************************************
 #if ETL_USING_CPP11 && ETL_HAS_INITIALIZER_LIST
 template <typename TKey, typename TKeyCompare = etl::less<TKey>, typename... T>
-constexpr auto make_multiset(T&&... keys)
-    -> etl::multiset<TKey, sizeof...(T), TKeyCompare> {
+constexpr auto make_multiset(T&&... keys) -> etl::multiset<TKey, sizeof...(T), TKeyCompare> {
     return {{etl::forward<T>(keys)...}};
 }
 #endif
@@ -2121,10 +2018,8 @@ constexpr auto make_multiset(T&&... keys)
 ///\ingroup lookup
 //***************************************************************************
 template <typename TKey, typename TCompare>
-bool operator==(const etl::imultiset<TKey, TCompare>& lhs,
-                const etl::imultiset<TKey, TCompare>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           ETL_OR_STD::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const etl::imultiset<TKey, TCompare>& lhs, const etl::imultiset<TKey, TCompare>& rhs) {
+    return (lhs.size() == rhs.size()) && ETL_OR_STD::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -2135,8 +2030,7 @@ bool operator==(const etl::imultiset<TKey, TCompare>& lhs,
 ///\ingroup lookup
 //***************************************************************************
 template <typename TKey, typename TCompare>
-bool operator!=(const etl::imultiset<TKey, TCompare>& lhs,
-                const etl::imultiset<TKey, TCompare>& rhs) {
+bool operator!=(const etl::imultiset<TKey, TCompare>& lhs, const etl::imultiset<TKey, TCompare>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -2148,10 +2042,8 @@ bool operator!=(const etl::imultiset<TKey, TCompare>& lhs,
 /// second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator<(const etl::imultiset<TKey, TCompare>& lhs,
-               const etl::imultiset<TKey, TCompare>& rhs) {
-    return ETL_OR_STD::lexicographical_compare(lhs.begin(), lhs.end(),
-                                               rhs.begin(), rhs.end());
+bool operator<(const etl::imultiset<TKey, TCompare>& lhs, const etl::imultiset<TKey, TCompare>& rhs) {
+    return ETL_OR_STD::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //*************************************************************************
@@ -2162,8 +2054,7 @@ bool operator<(const etl::imultiset<TKey, TCompare>& lhs,
 /// second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator>(const etl::imultiset<TKey, TCompare>& lhs,
-               const etl::imultiset<TKey, TCompare>& rhs) {
+bool operator>(const etl::imultiset<TKey, TCompare>& lhs, const etl::imultiset<TKey, TCompare>& rhs) {
     return (rhs < lhs);
 }
 
@@ -2175,8 +2066,7 @@ bool operator>(const etl::imultiset<TKey, TCompare>& lhs,
 /// to the second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator<=(const etl::imultiset<TKey, TCompare>& lhs,
-                const etl::imultiset<TKey, TCompare>& rhs) {
+bool operator<=(const etl::imultiset<TKey, TCompare>& lhs, const etl::imultiset<TKey, TCompare>& rhs) {
     return !(lhs > rhs);
 }
 
@@ -2188,8 +2078,7 @@ bool operator<=(const etl::imultiset<TKey, TCompare>& lhs,
 /// equal to the second, otherwise <b>false</b>.
 //*************************************************************************
 template <typename TKey, typename TCompare>
-bool operator>=(const etl::imultiset<TKey, TCompare>& lhs,
-                const etl::imultiset<TKey, TCompare>& rhs) {
+bool operator>=(const etl::imultiset<TKey, TCompare>& lhs, const etl::imultiset<TKey, TCompare>& rhs) {
     return !(lhs < rhs);
 }
 }  // namespace etl

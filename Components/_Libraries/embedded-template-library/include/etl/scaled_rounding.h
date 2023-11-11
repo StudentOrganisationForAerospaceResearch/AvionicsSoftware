@@ -39,8 +39,7 @@ namespace etl {
 
 template <typename T>
 struct scaled_rounding_t {
-    typedef typename etl::conditional<etl::is_signed<T>::value, int32_t,
-                                      uint32_t>::type type;
+    typedef typename etl::conditional<etl::is_signed<T>::value, int32_t, uint32_t>::type type;
 };
 
 //*****************************************************************************
@@ -125,8 +124,7 @@ T round_floor_scaled(T value) {
 template <const size_t SCALING, typename T>
 T round_half_up_unscaled(T value) {
     ETL_STATIC_ASSERT(etl::is_integral<T>::value, "Type must be an integral");
-    ETL_STATIC_ASSERT((((SCALING / 2U) * 2U) == SCALING),
-                      "Scaling must be divisible by 2");
+    ETL_STATIC_ASSERT((((SCALING / 2U) * 2U) == SCALING), "Scaling must be divisible by 2");
     typedef typename scaled_rounding_t<T>::type scale_t;
 
     if (value >= 0) {
@@ -158,8 +156,7 @@ T round_half_up_scaled(T value) {
 template <const size_t SCALING, typename T>
 T round_half_down_unscaled(T value) {
     ETL_STATIC_ASSERT(etl::is_integral<T>::value, "Type must be an integral");
-    ETL_STATIC_ASSERT((((SCALING / 2U) * 2U) == SCALING),
-                      "Scaling must be divisible by 2");
+    ETL_STATIC_ASSERT((((SCALING / 2U) * 2U) == SCALING), "Scaling must be divisible by 2");
     typedef typename scaled_rounding_t<T>::type scale_t;
 
     if (value >= 0) {

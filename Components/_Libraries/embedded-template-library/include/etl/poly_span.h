@@ -79,8 +79,7 @@ class iterator {
     iterator() : ptr(ETL_NULLPTR), element_size(0U) {}
 
     //*****************************************
-    iterator(const iterator& other)
-        : ptr(other.ptr), element_size(other.element_size) {}
+    iterator(const iterator& other) : ptr(other.ptr), element_size(other.element_size) {}
 
     //*****************************************
     iterator& operator=(const iterator& rhs) {
@@ -98,47 +97,39 @@ class iterator {
 
     //*****************************************
     iterator& operator++() {
-        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) +
-                                        element_size);
+        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) + element_size);
         return *this;
     }
 
     //*****************************************
     iterator operator++(int) {
         iterator temp(*this);
-        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) +
-                                        element_size);
+        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) + element_size);
         return temp;
     }
 
     //*****************************************
     iterator& operator--() {
-        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) -
-                                        element_size);
+        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) - element_size);
         return *this;
     }
 
     //*****************************************
     iterator operator--(int) {
         iterator temp(*this);
-        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) -
-                                        element_size);
+        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) - element_size);
         return temp;
     }
 
     //***************************************************
     iterator& operator+=(difference_type offset) {
-        ptr =
-            reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) +
-                                      (offset * difference_type(element_size)));
+        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) + (offset * difference_type(element_size)));
         return *this;
     }
 
     //***************************************************
     iterator& operator-=(difference_type offset) {
-        ptr =
-            reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) -
-                                      (offset * difference_type(element_size)));
+        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(ptr) - (offset * difference_type(element_size)));
         return *this;
     }
 
@@ -148,29 +139,19 @@ class iterator {
     }
 
     //***************************************************
-    friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-        return !(lhs == rhs);
-    }
+    friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
 
     //***************************************************
-    friend bool operator<(const iterator& lhs, const iterator& rhs) {
-        return lhs.ptr < rhs.ptr;
-    }
+    friend bool operator<(const iterator& lhs, const iterator& rhs) { return lhs.ptr < rhs.ptr; }
 
     //***************************************************
-    friend bool operator<=(const iterator& lhs, const iterator& rhs) {
-        return !(lhs > rhs);
-    }
+    friend bool operator<=(const iterator& lhs, const iterator& rhs) { return !(lhs > rhs); }
 
     //***************************************************
-    friend bool operator>(const iterator& lhs, const iterator& rhs) {
-        return (rhs < lhs);
-    }
+    friend bool operator>(const iterator& lhs, const iterator& rhs) { return (rhs < lhs); }
 
     //***************************************************
-    friend bool operator>=(const iterator& lhs, const iterator& rhs) {
-        return !(lhs < rhs);
-    }
+    friend bool operator>=(const iterator& lhs, const iterator& rhs) { return !(lhs < rhs); }
 
     //***************************************************
     friend iterator operator+(const iterator& lhs, difference_type offset) {
@@ -201,16 +182,12 @@ class iterator {
     }
 
     //***************************************************
-    friend difference_type operator-(const iterator& lhs, const iterator& rhs) {
-        return lhs.ptr - rhs.ptr;
-    }
+    friend difference_type operator-(const iterator& lhs, const iterator& rhs) { return lhs.ptr - rhs.ptr; }
 
    private:
     //***************************************************
-    iterator(TBase* pbegin_, size_t index_, size_t element_size_)
-        : element_size(element_size_) {
-        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(pbegin_) +
-                                        (index_ * element_size));
+    iterator(TBase* pbegin_, size_t index_, size_t element_size_) : element_size(element_size_) {
+        ptr = reinterpret_cast<pointer>(reinterpret_cast<char*>(pbegin_) + (index_ * element_size));
     }
 
     TBase* ptr;
@@ -243,27 +220,21 @@ class poly_span {
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    ETL_CONSTEXPR poly_span() ETL_NOEXCEPT : pbegin(ETL_NULLPTR),
-                                             element_size(0U) {}
+    ETL_CONSTEXPR poly_span() ETL_NOEXCEPT : pbegin(ETL_NULLPTR), element_size(0U) {}
 
     //*************************************************************************
     /// Construct from iterator + size
     //*************************************************************************
     template <typename TIterator, typename TSize>
-    ETL_CONSTEXPR poly_span(const TIterator begin_,
-                            const TSize /*size_*/) ETL_NOEXCEPT
+    ETL_CONSTEXPR poly_span(const TIterator begin_, const TSize /*size_*/) ETL_NOEXCEPT
         : pbegin(etl::addressof(*begin_)),
-          element_size(
-              sizeof(typename etl::iterator_traits<TIterator>::value_type)) {
+          element_size(sizeof(typename etl::iterator_traits<TIterator>::value_type)) {
         typedef typename etl::iterator_traits<TIterator>::value_type data_type;
 
-        ETL_STATIC_ASSERT(
-            (etl::is_same<ETL_OR_STD::random_access_iterator_tag,
-                          typename etl::iterator_traits<
-                              TIterator>::iterator_category>::value),
-            "Not a random access iterator");
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value ||
-                           etl::is_same<TBase, data_type>::value),
+        ETL_STATIC_ASSERT((etl::is_same<ETL_OR_STD::random_access_iterator_tag,
+                                        typename etl::iterator_traits<TIterator>::iterator_category>::value),
+                          "Not a random access iterator");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value || etl::is_same<TBase, data_type>::value),
                           "TBase not a base of the data type");
     }
 
@@ -272,18 +243,13 @@ class poly_span {
     //*************************************************************************
     template <typename TIterator>
     ETL_CONSTEXPR poly_span(const TIterator begin_, const TIterator /*end_*/)
-        : pbegin(etl::addressof(*begin_)),
-          element_size(
-              sizeof(typename etl::iterator_traits<TIterator>::value_type)) {
+        : pbegin(etl::addressof(*begin_)), element_size(sizeof(typename etl::iterator_traits<TIterator>::value_type)) {
         typedef typename etl::iterator_traits<TIterator>::value_type data_type;
-        typedef typename etl::iterator_traits<TIterator>::iterator_category
-            iterator_category;
+        typedef typename etl::iterator_traits<TIterator>::iterator_category iterator_category;
 
-        ETL_STATIC_ASSERT((etl::is_same<ETL_OR_STD::random_access_iterator_tag,
-                                        iterator_category>::value),
+        ETL_STATIC_ASSERT((etl::is_same<ETL_OR_STD::random_access_iterator_tag, iterator_category>::value),
                           "Not a random access iterator");
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value ||
-                           etl::is_same<TBase, data_type>::value),
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value || etl::is_same<TBase, data_type>::value),
                           "TBase not a base of the data type");
     }
 
@@ -291,39 +257,30 @@ class poly_span {
     /// Construct from C array
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(U (&begin_)[N]) ETL_NOEXCEPT
-        : pbegin(begin_),
-          element_size(sizeof(U)) {
+    ETL_CONSTEXPR poly_span(U (&begin_)[N]) ETL_NOEXCEPT : pbegin(begin_), element_size(sizeof(U)) {
         ETL_STATIC_ASSERT(N <= Extent, "Array data overflow");
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of the data type");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
+                          "TBase not a base of the data type");
     }
 
     //*************************************************************************
     /// Construct from etl::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(etl::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)) {
+    ETL_CONSTEXPR poly_span(etl::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()), element_size(sizeof(U)) {
         ETL_STATIC_ASSERT(N <= Extent, "Array data overflow");
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of the data type");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
+                          "TBase not a base of the data type");
     }
 
     //*************************************************************************
     /// Construct from etl::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(const etl::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)) {
+    ETL_CONSTEXPR poly_span(const etl::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()), element_size(sizeof(U)) {
         ETL_STATIC_ASSERT(N <= Extent, "Array data overflow");
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of the data type");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
+                          "TBase not a base of the data type");
     }
 
 #if ETL_USING_STL && ETL_USING_CPP11
@@ -331,43 +288,33 @@ class poly_span {
     /// Construct from std::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(std::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)) {
+    ETL_CONSTEXPR poly_span(std::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()), element_size(sizeof(U)) {
         ETL_STATIC_ASSERT(N <= Extent, "Array data overflow");
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of U");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value), "TBase not a base of U");
     }
 
     //*************************************************************************
     /// Construct from std::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(const std::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)) {
+    ETL_CONSTEXPR poly_span(const std::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()), element_size(sizeof(U)) {
         ETL_STATIC_ASSERT(N <= Extent, "Array data overflow");
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of U");
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value), "TBase not a base of U");
     }
 #endif
 
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    ETL_CONSTEXPR poly_span(const poly_span<TBase, Extent>& other) ETL_NOEXCEPT
-        : pbegin(other.pbegin),
-          element_size(other.element_size) {}
+    ETL_CONSTEXPR poly_span(const poly_span<TBase, Extent>& other) ETL_NOEXCEPT : pbegin(other.pbegin),
+                                                                                  element_size(other.element_size) {}
 
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
     template <typename UBase>
-    ETL_CONSTEXPR poly_span(const poly_span<UBase, Extent>& other) ETL_NOEXCEPT
-        : pbegin(other.pbegin),
-          element_size(other.element_size) {}
+    ETL_CONSTEXPR poly_span(const poly_span<UBase, Extent>& other) ETL_NOEXCEPT : pbegin(other.pbegin),
+                                                                                  element_size(other.element_size) {}
 
     //*************************************************************************
     /// Returns a reference to the first element.
@@ -459,8 +406,7 @@ class poly_span {
     /// Assign from a poly_span.
     //*************************************************************************
     template <typename UBase>
-    ETL_CONSTEXPR14 poly_span& operator=(const poly_span<UBase, Extent>& other)
-        ETL_NOEXCEPT {
+    ETL_CONSTEXPR14 poly_span& operator=(const poly_span<UBase, Extent>& other) ETL_NOEXCEPT {
         pbegin = other.pbegin;
         element_size = other.element_size;
         return *this;
@@ -477,40 +423,31 @@ class poly_span {
     /// Obtains a poly_span that is a view over the first COUNT elements of this poly_span.
     //*************************************************************************
     template <size_t COUNT>
-    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> first()
-        const ETL_NOEXCEPT {
-        return etl::poly_span<element_type, COUNT>(pbegin, 0U, COUNT,
-                                                   element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> first() const ETL_NOEXCEPT {
+        return etl::poly_span<element_type, COUNT>(pbegin, 0U, COUNT, element_size);
     }
 
     //*************************************************************************
     /// Obtains a poly_span that is a view over the first count elements of this poly_span.
     //*************************************************************************
-    ETL_NODISCARD ETL_CONSTEXPR
-        etl::poly_span<element_type, etl::dynamic_extent>
-        first(size_t count) const {
-        return etl::poly_span<element_type, etl::dynamic_extent>(
-            pbegin, 0U, count, element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, etl::dynamic_extent> first(size_t count) const {
+        return etl::poly_span<element_type, etl::dynamic_extent>(pbegin, 0U, count, element_size);
     }
 
     //*************************************************************************
     /// Obtains a poly_span that is a view over the last COUNT elements of this poly_span.
     //*************************************************************************
     template <size_t COUNT>
-    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> last() const
-        ETL_NOEXCEPT {
-        return etl::poly_span<element_type, COUNT>(pbegin, Extent - COUNT,
-                                                   COUNT, element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> last() const ETL_NOEXCEPT {
+        return etl::poly_span<element_type, COUNT>(pbegin, Extent - COUNT, COUNT, element_size);
     }
 
     //*************************************************************************
     /// Obtains a poly_span that is a view over the last count elements of this poly_span.
     //*************************************************************************
-    ETL_NODISCARD ETL_CONSTEXPR
-        etl::poly_span<element_type, etl::dynamic_extent>
-        last(size_t count) const ETL_NOEXCEPT {
-        return etl::poly_span<element_type, etl::dynamic_extent>(
-            pbegin, Extent - count, count, element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, etl::dynamic_extent> last(size_t count) const
+        ETL_NOEXCEPT {
+        return etl::poly_span<element_type, etl::dynamic_extent>(pbegin, Extent - count, count, element_size);
     }
 
 #if ETL_USING_CPP11
@@ -518,37 +455,25 @@ class poly_span {
     /// Obtains a poly_span that is a view from OFFSET over the next COUNT elements of this poly_span.
     //*************************************************************************
     template <const size_t OFFSET, size_t COUNT = etl::dynamic_extent>
-    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<
-        element_type, COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET>
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET>
     subspan() const ETL_NOEXCEPT {
         return (COUNT == etl::dynamic_extent) ? etl::poly_span < element_type,
-               COUNT != etl::dynamic_extent
-                   ? COUNT
-                   : Extent - OFFSET > (pbegin, OFFSET, Extent, element_size)
+               COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET > (pbegin, OFFSET, Extent, element_size)
                                               : etl::poly_span < element_type,
-               COUNT != etl::dynamic_extent
-                   ? COUNT
-                   : Extent - OFFSET > (pbegin, OFFSET, COUNT, element_size);
+               COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET > (pbegin, OFFSET, COUNT, element_size);
     }
 #else
     //*************************************************************************
     /// Obtains a poly_span that is a view from OFFSET over the next COUNT elements of this poly_span.
     //*************************************************************************
     template <const size_t OFFSET, size_t COUNT>
-    etl::poly_span<element_type,
-                   COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET>
-    subspan() const {
+    etl::poly_span<element_type, COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET> subspan() const {
         if (COUNT == etl::dynamic_extent) {
             return etl::poly_span < element_type,
-                   COUNT != etl::dynamic_extent
-                       ? COUNT
-                       : Extent - OFFSET >
-                             (pbegin, OFFSET, Extent, element_size);
+                   COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET > (pbegin, OFFSET, Extent, element_size);
         } else {
             return etl::poly_span < element_type,
-                   COUNT != etl::dynamic_extent
-                       ? COUNT
-                       : Extent - OFFSET > (pbegin, OFFSET, element_size);
+                   COUNT != etl::dynamic_extent ? COUNT : Extent - OFFSET > (pbegin, OFFSET, element_size);
         }
     }
 #endif
@@ -556,23 +481,18 @@ class poly_span {
     //*************************************************************************
     /// Obtains a poly_span that is a view from 'offset' over the next 'count' elements of this poly_span.
     //*************************************************************************
-    ETL_NODISCARD ETL_CONSTEXPR
-        etl::poly_span<element_type, etl::dynamic_extent>
-        subspan(size_t offset,
-                size_t count = etl::dynamic_extent) const ETL_NOEXCEPT {
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, etl::dynamic_extent> subspan(
+        size_t offset, size_t count = etl::dynamic_extent) const ETL_NOEXCEPT {
         return (count == etl::dynamic_extent)
-                   ? etl::poly_span<element_type, etl::dynamic_extent>(
-                         pbegin, offset, Extent, element_size)
-                   : etl::poly_span<element_type, etl::dynamic_extent>(
-                         pbegin, offset, count, element_size);
+                   ? etl::poly_span<element_type, etl::dynamic_extent>(pbegin, offset, Extent, element_size)
+                   : etl::poly_span<element_type, etl::dynamic_extent>(pbegin, offset, count, element_size);
     }
 
    protected:
     //***************************************************************************
     template <typename TFrom>
     struct char_ptr_type {
-        typedef typename etl::conditional<etl::is_const<TFrom>::value,
-                                          const char*, char*>::type type;
+        typedef typename etl::conditional<etl::is_const<TFrom>::value, const char*, char*>::type type;
     };
 
     typedef typename char_ptr_type<TBase>::type char_ptr_t;
@@ -587,11 +507,8 @@ class poly_span {
     /// Construct from iterator + offset + element size
     /// extent_ is ignored.
     //*************************************************************************
-    ETL_CONSTEXPR poly_span(TBase* pbegin_, size_t offset_, size_t /*extent_*/,
-                            size_t element_size_) ETL_NOEXCEPT
-        : pbegin(
-              reinterpret_cast<pointer>(reinterpret_cast<char_ptr_t>(pbegin_) +
-                                        (offset_ * element_size_))),
+    ETL_CONSTEXPR poly_span(TBase* pbegin_, size_t offset_, size_t /*extent_*/, size_t element_size_) ETL_NOEXCEPT
+        : pbegin(reinterpret_cast<pointer>(reinterpret_cast<char_ptr_t>(pbegin_) + (offset_ * element_size_))),
           element_size(element_size_) {}
 
    private:
@@ -623,29 +540,22 @@ class poly_span<TBase, etl::dynamic_extent> {
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    ETL_CONSTEXPR poly_span() ETL_NOEXCEPT : pbegin(ETL_NULLPTR),
-                                             element_size(0U),
-                                             span_extent(0U) {}
+    ETL_CONSTEXPR poly_span() ETL_NOEXCEPT : pbegin(ETL_NULLPTR), element_size(0U), span_extent(0U) {}
 
     //*************************************************************************
     /// Construct from iterator + size
     //*************************************************************************
     template <typename TIterator, typename TSize>
-    ETL_CONSTEXPR poly_span(const TIterator begin_,
-                            const TSize size_) ETL_NOEXCEPT
+    ETL_CONSTEXPR poly_span(const TIterator begin_, const TSize size_) ETL_NOEXCEPT
         : pbegin(etl::addressof(*begin_)),
-          element_size(
-              sizeof(typename etl::iterator_traits<TIterator>::value_type)),
+          element_size(sizeof(typename etl::iterator_traits<TIterator>::value_type)),
           span_extent(size_) {
         typedef typename etl::iterator_traits<TIterator>::value_type data_type;
-        typedef typename etl::iterator_traits<TIterator>::iterator_category
-            iterator_category;
+        typedef typename etl::iterator_traits<TIterator>::iterator_category iterator_category;
 
-        ETL_STATIC_ASSERT((etl::is_same<ETL_OR_STD::random_access_iterator_tag,
-                                        iterator_category>::value),
+        ETL_STATIC_ASSERT((etl::is_same<ETL_OR_STD::random_access_iterator_tag, iterator_category>::value),
                           "Not a random access iterator");
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value ||
-                           etl::is_same<TBase, data_type>::value),
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value || etl::is_same<TBase, data_type>::value),
                           "TBase not a base of the data type");
     }
 
@@ -655,18 +565,14 @@ class poly_span<TBase, etl::dynamic_extent> {
     template <typename TIterator>
     ETL_CONSTEXPR poly_span(const TIterator begin_, const TIterator end_)
         : pbegin(etl::addressof(*begin_)),
-          element_size(
-              sizeof(typename etl::iterator_traits<TIterator>::value_type)),
+          element_size(sizeof(typename etl::iterator_traits<TIterator>::value_type)),
           span_extent(size_t(etl::distance(begin_, end_))) {
         typedef typename etl::iterator_traits<TIterator>::value_type data_type;
-        typedef typename etl::iterator_traits<TIterator>::iterator_category
-            iterator_category;
+        typedef typename etl::iterator_traits<TIterator>::iterator_category iterator_category;
 
-        ETL_STATIC_ASSERT((etl::is_same<ETL_OR_STD::random_access_iterator_tag,
-                                        iterator_category>::value),
+        ETL_STATIC_ASSERT((etl::is_same<ETL_OR_STD::random_access_iterator_tag, iterator_category>::value),
                           "Not a random access iterator");
-        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value ||
-                           etl::is_same<TBase, data_type>::value),
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, data_type>::value || etl::is_same<TBase, data_type>::value),
                           "TBase not a base of the data type");
     }
 
@@ -674,39 +580,31 @@ class poly_span<TBase, etl::dynamic_extent> {
     /// Construct from C array
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(U (&begin_)[N]) ETL_NOEXCEPT
-        : pbegin(begin_),
-          element_size(sizeof(U)),
-          span_extent(N) {
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of the data type");
+    ETL_CONSTEXPR poly_span(U (&begin_)[N]) ETL_NOEXCEPT : pbegin(begin_), element_size(sizeof(U)), span_extent(N) {
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
+                          "TBase not a base of the data type");
     }
 
     //*************************************************************************
     /// Construct from etl::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(etl::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)),
-          span_extent(N) {
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of the data type");
+    ETL_CONSTEXPR poly_span(etl::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()),
+                                                                element_size(sizeof(U)),
+                                                                span_extent(N) {
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
+                          "TBase not a base of the data type");
     }
 
     //*************************************************************************
     /// Construct from etl::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(const etl::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)),
-          span_extent(N) {
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of the data type");
+    ETL_CONSTEXPR poly_span(const etl::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()),
+                                                                      element_size(sizeof(U)),
+                                                                      span_extent(N) {
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
+                          "TBase not a base of the data type");
     }
 
 #if ETL_USING_STL && ETL_USING_CPP11
@@ -714,45 +612,39 @@ class poly_span<TBase, etl::dynamic_extent> {
     /// Construct from std::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(std::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)),
-          span_extent(N) {
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of U");
+    ETL_CONSTEXPR poly_span(std::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()),
+                                                                element_size(sizeof(U)),
+                                                                span_extent(N) {
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value), "TBase not a base of U");
     }
 
     //*************************************************************************
     /// Construct from std::array.
     //*************************************************************************
     template <typename U, size_t N>
-    ETL_CONSTEXPR poly_span(const std::array<U, N>& a) ETL_NOEXCEPT
-        : pbegin(a.data()),
-          element_size(sizeof(U)),
-          span_extent(N) {
-        ETL_STATIC_ASSERT(
-            (etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value),
-            "TBase not a base of U");
+    ETL_CONSTEXPR poly_span(const std::array<U, N>& a) ETL_NOEXCEPT : pbegin(a.data()),
+                                                                      element_size(sizeof(U)),
+                                                                      span_extent(N) {
+        ETL_STATIC_ASSERT((etl::is_base_of<TBase, U>::value || etl::is_same<TBase, U>::value), "TBase not a base of U");
     }
 #endif
 
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    ETL_CONSTEXPR poly_span(const poly_span<TBase, etl::dynamic_extent>& other)
-        ETL_NOEXCEPT : pbegin(other.pbegin),
-                       element_size(other.element_size),
-                       span_extent(other.span_extent) {}
+    ETL_CONSTEXPR poly_span(const poly_span<TBase, etl::dynamic_extent>& other) ETL_NOEXCEPT
+        : pbegin(other.pbegin),
+          element_size(other.element_size),
+          span_extent(other.span_extent) {}
 
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
     template <typename UBase>
-    ETL_CONSTEXPR poly_span(const poly_span<UBase, etl::dynamic_extent>& other)
-        ETL_NOEXCEPT : pbegin(other.pbegin),
-                       element_size(other.element_size),
-                       span_extent(other.span_extent) {}
+    ETL_CONSTEXPR poly_span(const poly_span<UBase, etl::dynamic_extent>& other) ETL_NOEXCEPT
+        : pbegin(other.pbegin),
+          element_size(other.element_size),
+          span_extent(other.span_extent) {}
 
     //*************************************************************************
     /// Returns a reference to the first element.
@@ -845,8 +737,7 @@ class poly_span<TBase, etl::dynamic_extent> {
     /// Assign from a poly_span.
     //*************************************************************************
     template <typename UBase>
-    ETL_CONSTEXPR14 poly_span& operator=(
-        const poly_span<UBase, etl::dynamic_extent>& other) ETL_NOEXCEPT {
+    ETL_CONSTEXPR14 poly_span& operator=(const poly_span<UBase, etl::dynamic_extent>& other) ETL_NOEXCEPT {
         pbegin = other.pbegin;
         element_size = other.element_size;
         span_extent = other.span_extent;
@@ -864,40 +755,32 @@ class poly_span<TBase, etl::dynamic_extent> {
     /// Obtains a poly_span that is a view over the first COUNT elements of this poly_span.
     //*************************************************************************
     template <size_t COUNT>
-    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> first()
-        const ETL_NOEXCEPT {
-        return etl::poly_span<element_type, COUNT>(pbegin, 0U, COUNT,
-                                                   element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> first() const ETL_NOEXCEPT {
+        return etl::poly_span<element_type, COUNT>(pbegin, 0U, COUNT, element_size);
     }
 
     //*************************************************************************
     /// Obtains a poly_span that is a view over the first count elements of this poly_span.
     //*************************************************************************
-    ETL_NODISCARD ETL_CONSTEXPR
-        etl::poly_span<element_type, etl::dynamic_extent>
-        first(size_t count) const ETL_NOEXCEPT {
-        return etl::poly_span<element_type, etl::dynamic_extent>(
-            pbegin, 0U, count, element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, etl::dynamic_extent> first(size_t count) const
+        ETL_NOEXCEPT {
+        return etl::poly_span<element_type, etl::dynamic_extent>(pbegin, 0U, count, element_size);
     }
 
     //*************************************************************************
     /// Obtains a poly_span that is a view over the last COUNT elements of this poly_span.
     //*************************************************************************
     template <size_t COUNT>
-    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> last() const
-        ETL_NOEXCEPT {
-        return etl::poly_span<element_type, COUNT>(pbegin, span_extent - COUNT,
-                                                   COUNT, element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT> last() const ETL_NOEXCEPT {
+        return etl::poly_span<element_type, COUNT>(pbegin, span_extent - COUNT, COUNT, element_size);
     }
 
     //*************************************************************************
     /// Obtains a poly_span that is a view over the last count elements of this poly_span.
     //*************************************************************************
-    ETL_NODISCARD ETL_CONSTEXPR
-        etl::poly_span<element_type, etl::dynamic_extent>
-        last(size_t count) const ETL_NOEXCEPT {
-        return etl::poly_span<element_type, etl::dynamic_extent>(
-            pbegin, span_extent - count, count, element_size);
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, etl::dynamic_extent> last(size_t count) const
+        ETL_NOEXCEPT {
+        return etl::poly_span<element_type, etl::dynamic_extent>(pbegin, span_extent - count, count, element_size);
     }
 
 #if ETL_USING_CPP11
@@ -905,41 +788,27 @@ class poly_span<TBase, etl::dynamic_extent> {
     /// Obtains a poly_span that is a view from OFFSET over the next COUNT elements of this poly_span.
     //*************************************************************************
     template <const size_t OFFSET, size_t COUNT = etl::dynamic_extent>
-    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<
-        element_type,
-        COUNT != etl::dynamic_extent ? COUNT : etl::dynamic_extent>
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, COUNT != etl::dynamic_extent ? COUNT : etl::dynamic_extent>
     subspan() const ETL_NOEXCEPT {
         return (COUNT == etl::dynamic_extent) ? etl::poly_span < element_type,
-               COUNT != etl::dynamic_extent
-                   ? COUNT
-                   : etl::dynamic_extent >
-                         (pbegin, OFFSET, span_extent, element_size)
+               COUNT != etl::dynamic_extent ? COUNT : etl::dynamic_extent > (pbegin, OFFSET, span_extent, element_size)
                                               : etl::poly_span < element_type,
-               COUNT != etl::dynamic_extent
-                   ? COUNT
-                   : etl::dynamic_extent >
-                         (pbegin, OFFSET, COUNT, element_size);
+               COUNT != etl::dynamic_extent ? COUNT : etl::dynamic_extent > (pbegin, OFFSET, COUNT, element_size);
     }
 #else
     //*************************************************************************
     /// Obtains a poly_span that is a view from OFFSET over the next COUNT elements of this poly_span.
     //*************************************************************************
     template <const size_t OFFSET, size_t COUNT>
-    etl::poly_span<element_type,
-                   COUNT != etl::dynamic_extent ? COUNT : etl::dynamic_extent>
-    subspan() const {
+    etl::poly_span<element_type, COUNT != etl::dynamic_extent ? COUNT : etl::dynamic_extent> subspan() const {
         if (COUNT == etl::dynamic_extent) {
             return etl::poly_span < element_type,
-                   COUNT != etl::dynamic_extent
-                       ? COUNT
-                       : etl::dynamic_extent >
-                             (pbegin, OFFSET, span_extent, element_size);
+                   COUNT != etl::dynamic_extent ? COUNT
+                                                : etl::dynamic_extent > (pbegin, OFFSET, span_extent, element_size);
         } else {
             return etl::poly_span < element_type,
-                   COUNT != etl::dynamic_extent
-                       ? COUNT
-                       : etl::dynamic_extent >
-                             (pbegin, OFFSET, span_extent, element_size);
+                   COUNT != etl::dynamic_extent ? COUNT
+                                                : etl::dynamic_extent > (pbegin, OFFSET, span_extent, element_size);
         }
     }
 #endif
@@ -947,26 +816,20 @@ class poly_span<TBase, etl::dynamic_extent> {
     //*************************************************************************
     /// Obtains a poly_span that is a view from 'offset' over the next 'count' elements of this poly_span.
     //*************************************************************************
-    ETL_NODISCARD ETL_CONSTEXPR
-        etl::poly_span<element_type, etl::dynamic_extent>
-        subspan(size_t offset,
-                size_t count = etl::dynamic_extent) const ETL_NOEXCEPT {
+    ETL_NODISCARD ETL_CONSTEXPR etl::poly_span<element_type, etl::dynamic_extent> subspan(
+        size_t offset, size_t count = etl::dynamic_extent) const ETL_NOEXCEPT {
         return (count == etl::dynamic_extent)
-                   ? etl::poly_span<element_type, etl::dynamic_extent>(
-                         pbegin, offset, span_extent - offset, element_size)
-                   : etl::poly_span<element_type, etl::dynamic_extent>(
-                         pbegin, offset, count, element_size);
+                   ? etl::poly_span<element_type, etl::dynamic_extent>(pbegin, offset, span_extent - offset,
+                                                                       element_size)
+                   : etl::poly_span<element_type, etl::dynamic_extent>(pbegin, offset, count, element_size);
     }
 
    protected:
     //*************************************************************************
     /// Construct from iterator + offset + size + element size
     //*************************************************************************
-    ETL_CONSTEXPR poly_span(TBase* pbegin_, size_t offset_, size_t extent_,
-                            size_t element_size_) ETL_NOEXCEPT
-        : pbegin(
-              reinterpret_cast<pointer>(reinterpret_cast<char_ptr_t>(pbegin_) +
-                                        (offset_ * element_size_))),
+    ETL_CONSTEXPR poly_span(TBase* pbegin_, size_t offset_, size_t extent_, size_t element_size_) ETL_NOEXCEPT
+        : pbegin(reinterpret_cast<pointer>(reinterpret_cast<char_ptr_t>(pbegin_) + (offset_ * element_size_))),
           element_size(element_size_),
           span_extent(extent_) {}
 
@@ -974,8 +837,7 @@ class poly_span<TBase, etl::dynamic_extent> {
     //***************************************************************************
     template <typename TFrom>
     struct char_ptr_type {
-        typedef typename etl::conditional<etl::is_const<TFrom>::value,
-                                          const char*, char*>::type type;
+        typedef typename etl::conditional<etl::is_const<TFrom>::value, const char*, char*>::type type;
     };
 
     typedef typename char_ptr_type<TBase>::type char_ptr_t;
@@ -1028,9 +890,8 @@ poly_span(const std::array<T, N>&) -> poly_span<const T, N>;
 template <typename TBase, size_t Extent>
 struct hash<etl::poly_span<TBase, Extent>> {
     size_t operator()(const etl::poly_span<TBase, Extent>& view) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&view[0]),
-            reinterpret_cast<const uint8_t*>(&view[view.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&view[0]),
+                                                       reinterpret_cast<const uint8_t*>(&view[view.size()]));
     }
 };
 #endif

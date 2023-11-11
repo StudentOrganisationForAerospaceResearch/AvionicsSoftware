@@ -39,8 +39,7 @@ template <typename T, typename = void>
 struct comparator_is_transparent : etl::false_type {};
 
 template <typename T>
-struct comparator_is_transparent<T, void_t<typename T::is_transparent>>
-    : etl::true_type {};
+struct comparator_is_transparent<T, void_t<typename T::is_transparent>> : etl::true_type {};
 #endif
 }  // namespace etl
 

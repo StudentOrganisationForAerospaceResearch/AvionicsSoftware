@@ -71,18 +71,14 @@ class message_packet {
    private:
     template <typename T>
     static constexpr bool IsMessagePacket =
-        etl::is_same_v<etl::remove_const_t<etl::remove_reference_t<T>>,
-                       etl::message_packet<TMessageTypes...>>;
+        etl::is_same_v<etl::remove_const_t<etl::remove_reference_t<T>>, etl::message_packet<TMessageTypes...>>;
 
     template <typename T>
     static constexpr bool IsInMessageList =
-        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<T>>,
-                         TMessageTypes...>;
+        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<T>>, TMessageTypes...>;
 
     template <typename T>
-    static constexpr bool IsIMessage =
-        etl::is_same_v<remove_const_t<etl::remove_reference_t<T>>,
-                       etl::imessage>;
+    static constexpr bool IsIMessage = etl::is_same_v<remove_const_t<etl::remove_reference_t<T>>, etl::imessage>;
 
    public:
     //********************************************
@@ -107,8 +103,7 @@ class message_packet {
         } else if constexpr (IsMessagePacket<T>) {
             copy(etl::forward<T>(msg));
         } else {
-            ETL_STATIC_ASSERT(IsInMessageList<T>,
-                              "Message not in packet type list");
+            ETL_STATIC_ASSERT(IsInMessageList<T>, "Message not in packet type list");
         }
     }
 
@@ -156,27 +151,19 @@ class message_packet {
     ~message_packet() { delete_current_message(); }
 
     //********************************************
-    etl::imessage& get() ETL_NOEXCEPT {
-        return *static_cast<etl::imessage*>(data);
-    }
+    etl::imessage& get() ETL_NOEXCEPT { return *static_cast<etl::imessage*>(data); }
 
     //********************************************
-    const etl::imessage& get() const ETL_NOEXCEPT {
-        return *static_cast<const etl::imessage*>(data);
-    }
+    const etl::imessage& get() const ETL_NOEXCEPT { return *static_cast<const etl::imessage*>(data); }
 
     //********************************************
     bool is_valid() const { return valid; }
 
     //**********************************************
-    static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return (accepts_message<TMessageTypes::ID>(id) || ...);
-    }
+    static ETL_CONSTEXPR bool accepts(etl::message_id_t id) { return (accepts_message<TMessageTypes::ID>(id) || ...); }
 
     //**********************************************
-    static ETL_CONSTEXPR bool accepts(const etl::imessage& msg) {
-        return accepts(msg.get_message_id());
-    }
+    static ETL_CONSTEXPR bool accepts(const etl::imessage& msg) { return accepts(msg.get_message_id()); }
 
     //**********************************************
     template <etl::message_id_t Id>
@@ -186,17 +173,12 @@ class message_packet {
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         return accepts<TMessage::ID>();
     }
 
-    enum {
-        SIZE = etl::largest<TMessageTypes...>::size,
-        ALIGNMENT = etl::largest<TMessageTypes...>::alignment
-    };
+    enum { SIZE = etl::largest<TMessageTypes...>::size, ALIGNMENT = etl::largest<TMessageTypes...>::alignment };
 
    private:
     //**********************************************
@@ -221,27 +203,19 @@ class message_packet {
     }
 
     //********************************************
-    void add_new_message(const etl::imessage& msg) {
-        (add_new_message_type<TMessageTypes>(msg) || ...);
-    }
+    void add_new_message(const etl::imessage& msg) { (add_new_message_type<TMessageTypes>(msg) || ...); }
 
     //********************************************
-    void add_new_message(etl::imessage&& msg) {
-        (add_new_message_type<TMessageTypes>(etl::move(msg)) || ...);
-    }
+    void add_new_message(etl::imessage&& msg) { (add_new_message_type<TMessageTypes>(etl::move(msg)) || ...); }
 
     //********************************************
     /// Only enabled for types that are in the typelist.
     //********************************************
     template <typename TMessage>
-    etl::enable_if_t<
-        etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<TMessage>>,
-                         TMessageTypes...>,
-        void>
+    etl::enable_if_t<etl::is_one_of_v<etl::remove_const_t<etl::remove_reference_t<TMessage>>, TMessageTypes...>, void>
     add_new_message_type(TMessage&& msg) {
         void* p = data;
-        new (p)
-            etl::remove_reference_t<TMessage>((etl::forward<TMessage>(msg)));
+        new (p) etl::remove_reference_t<TMessage>((etl::forward<TMessage>(msg)));
     }
 
     typename etl::aligned_storage<SIZE, ALIGNMENT>::type data;
@@ -277,11 +251,9 @@ class message_packet {
 //***************************************************************************
 // The definition for all 16 message types.
 //***************************************************************************
-template <typename T1, typename T2 = void, typename T3 = void,
-          typename T4 = void, typename T5 = void, typename T6 = void,
-          typename T7 = void, typename T8 = void, typename T9 = void,
-          typename T10 = void, typename T11 = void, typename T12 = void,
-          typename T13 = void, typename T14 = void, typename T15 = void,
+template <typename T1, typename T2 = void, typename T3 = void, typename T4 = void, typename T5 = void,
+          typename T6 = void, typename T7 = void, typename T8 = void, typename T9 = void, typename T10 = void,
+          typename T11 = void, typename T12 = void, typename T13 = void, typename T14 = void, typename T15 = void,
           typename T16 = void>
 class message_packet {
    public:
@@ -314,35 +286,26 @@ class message_packet {
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                    T11, T12, T13, T14, T15, T16>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13, T14, T15, T16>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15,
+                                                    T16>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                      T9, T10, T11, T12, T13, T14, T15, T16>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<
                  typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13, T14, T15, T16>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                            T14, T15, T16>::value);
+                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13, T14, T15, T16>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -354,34 +317,27 @@ class message_packet {
         typename etl::enable_if<
             !etl::is_same<
                 typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                    T11, T12, T13, T14, T15, T16>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13, T14, T15, T16>::value,
+                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                                T11, T12, T13, T14, T15, T16>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<
                  typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13, T14, T15, T16>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                            T14, T15, T16>::value);
+                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13, T14, T15, T16>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -442,11 +398,9 @@ class message_packet {
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id || T14::ID == id ||
-               T15::ID == id || T16::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id || T14::ID == id || T15::ID == id || T16::ID == id;
     }
 
     //**********************************************
@@ -457,33 +411,25 @@ class message_packet {
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id || T10::ID == Id || T11::ID == Id ||
-               T12::ID == Id || T13::ID == Id || T14::ID == Id ||
-               T15::ID == Id || T16::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id || T10::ID == Id || T11::ID == Id || T12::ID == Id ||
+               T13::ID == Id || T14::ID == Id || T15::ID == Id || T16::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id || T14::ID == id ||
-               T15::ID == id || T16::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id || T14::ID == id || T15::ID == id || T16::ID == id;
     }
 
     enum {
-        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
-                            T13, T14, T15, T16>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                 T12, T13, T14, T15, T16>::alignment
+        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::size,
+        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::alignment
     };
 
    private:
@@ -625,11 +571,9 @@ class message_packet {
 //***************************************************************************
 // Specialisation for 15 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12, typename T13, typename T14, typename T15>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                     T14, T15, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12, typename T13, typename T14, typename T15>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -660,35 +604,26 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                    T11, T12, T13, T14, T15>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13, T14, T15>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<
+                      typename etl::remove_reference<TMessage>::type,
+                      etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                      T9, T10, T11, T12, T13, T14, T15>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<
                  typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13, T14, T15>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                            T14, T15>::value);
+                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13, T14, T15>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -700,34 +635,27 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
         typename etl::enable_if<
             !etl::is_same<
                 typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                    T11, T12, T13, T14, T15>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13, T14, T15>::value,
+                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                                T11, T12, T13, T14, T15>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<
                  typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13, T14, T15>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                            T14, T15>::value);
+                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13, T14, T15>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -788,10 +716,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id || T14::ID == id || T15::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id || T14::ID == id || T15::ID == id;
     }
 
     //**********************************************
@@ -802,31 +729,25 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id || T10::ID == Id || T11::ID == Id ||
-               T12::ID == Id || T13::ID == Id || T14::ID == Id || T15::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id || T10::ID == Id || T11::ID == Id || T12::ID == Id ||
+               T13::ID == Id || T14::ID == Id || T15::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id || T14::ID == id || T15::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id || T14::ID == id || T15::ID == id;
     }
 
     enum {
-        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
-                            T13, T14, T15>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                 T12, T13, T14, T15>::alignment
+        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>::size,
+        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>::alignment
     };
 
    private:
@@ -960,11 +881,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 //***************************************************************************
 // Specialisation for 14 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12, typename T13, typename T14>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                     T14, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12, typename T13, typename T14>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -995,35 +914,25 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
     template <
         typename TMessage,
         typename = typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                    T11, T12, T13, T14>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13, T14>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                                T11, T12, T13, T14>::value,
             int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13, T14>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                            T14>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13, T14>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -1033,36 +942,27 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     explicit message_packet(
         const TMessage& /*msg*/,
         typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                    T11, T12, T13, T14>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13, T14>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                                T11, T12, T13, T14>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13, T14>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                            T14>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13, T14>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -1123,10 +1023,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id || T14::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id || T14::ID == id;
     }
 
     //**********************************************
@@ -1137,31 +1036,25 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id || T10::ID == Id || T11::ID == Id ||
-               T12::ID == Id || T13::ID == Id || T14::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id || T10::ID == Id || T11::ID == Id || T12::ID == Id ||
+               T13::ID == Id || T14::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id || T14::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id || T14::ID == id;
     }
 
     enum {
-        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
-                            T13, T14>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                 T12, T13, T14>::alignment
+        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>::size,
+        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>::alignment
     };
 
    private:
@@ -1289,11 +1182,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 //***************************************************************************
 // Specialisation for 13 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12, typename T13>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                     void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12, typename T13>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -1324,34 +1215,24 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10, T11, T12, T13>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                      T9, T10, T11, T12, T13>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
-                            T13>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -1362,34 +1243,26 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
         const TMessage& /*msg*/,
         typename etl::enable_if<
             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10, T11, T12, T13>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12, T13>::value,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                                T11, T12, T13>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                     T11, T12, T13>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
-                            T13>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12, T13>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -1450,10 +1323,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id;
     }
 
     //**********************************************
@@ -1464,31 +1336,25 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id || T10::ID == Id || T11::ID == Id ||
-               T12::ID == Id || T13::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id || T10::ID == Id || T11::ID == Id || T12::ID == Id ||
+               T13::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id ||
-               T12::ID == id || T13::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id ||
+               T13::ID == id;
     }
 
     enum {
-        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
-                            T13>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                 T12, T13>::alignment
+        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>::size,
+        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>::alignment
     };
 
    private:
@@ -1610,11 +1476,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 //***************************************************************************
 // Specialisation for 12 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11, typename T12>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
-                     void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11, typename T12>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -1645,33 +1509,24 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10, T11, T12>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                      T9, T10, T11, T12>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9, T10, T11, T12>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -1682,33 +1537,26 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
         const TMessage& /*msg*/,
         typename etl::enable_if<
             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10, T11, T12>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                T12>::value,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                                T11, T12>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9, T10, T11, T12>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11, T12>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -1769,9 +1617,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id;
     }
 
     //**********************************************
@@ -1782,29 +1629,23 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id || T10::ID == Id || T11::ID == Id || T12::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id || T10::ID == Id || T11::ID == Id || T12::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id || T12::ID == id;
     }
 
     enum {
-        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                            T12>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
-                                 T12>::alignment
+        SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>::size,
+        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>::alignment
     };
 
    private:
@@ -1920,11 +1761,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
 //***************************************************************************
 // Specialisation for 11 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10,
-          typename T11>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
-                     void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10, typename T11>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -1955,32 +1794,24 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10, T11>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                T11>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                      T9, T10, T11>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9, T10, T11>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -1991,32 +1822,26 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
         const TMessage& /*msg*/,
         typename etl::enable_if<
             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10, T11>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
                                 T11>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9, T10, T11>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
+                            T11>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -2077,9 +1902,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id;
     }
 
     //**********************************************
@@ -2090,28 +1914,23 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id || T10::ID == Id || T11::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id || T10::ID == Id || T11::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id || T11::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id || T11::ID == id;
     }
 
     enum {
         SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10,
-                                 T11>::alignment
+        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>::alignment
     };
 
    private:
@@ -2221,10 +2040,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
 //***************************************************************************
 // Specialisation for 10 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9, typename T10>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
-                     void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9, typename T10>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -2255,31 +2073,24 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                      T9, T10>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9, T10>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9,
+                            T10>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -2290,31 +2101,26 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
         const TMessage& /*msg*/,
         typename etl::enable_if<
             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9, T10>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>::value,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9,
+                                T10>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9, T10>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9, T10>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9,
+                            T10>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -2375,9 +2181,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id;
     }
 
     //**********************************************
@@ -2388,28 +2193,23 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id || T10::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id || T10::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id || T10::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id || T10::ID == id;
     }
 
     enum {
         SIZE = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>::size,
-        ALIGNMENT =
-            etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>::alignment
+        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>::alignment
     };
 
    private:
@@ -2513,10 +2313,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
 //***************************************************************************
 // Specialisation for 9 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8, typename T9>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
-                     void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8,
+          typename T9>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -2547,31 +2346,23 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                      T9>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -2582,31 +2373,25 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
         const TMessage& /*msg*/,
         typename etl::enable_if<
             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                              T9>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8, T9>::value,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8,
+                                T9>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8,
-                                               T9>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8, T9>::value);
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8, T9>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -2667,9 +2452,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id;
     }
 
     //**********************************************
@@ -2680,22 +2464,18 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id ||
-               T9::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id || T9::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id ||
-               T9::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id || T9::ID == id;
     }
 
     enum {
@@ -2798,10 +2578,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
 //***************************************************************************
 // Specialisation for 8 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7, typename T8>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
-                     void, void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -2832,31 +2610,23 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
     template <
         typename TMessage,
         typename = typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8>::value,
             int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -2866,32 +2636,25 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
     explicit message_packet(
         const TMessage& /*msg*/,
         typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7, T8>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7, T8>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7, T8>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7, T8>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -2952,8 +2715,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id;
     }
 
     //**********************************************
@@ -2964,20 +2727,18 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id || T8::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id || T8::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id || T8::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id || T8::ID == id;
     }
 
     enum {
@@ -3074,10 +2835,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
 //***************************************************************************
 // Specialisation for 7 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6, typename T7>
-class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
-                     void, void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
+class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -3108,31 +2867,23 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
     template <
         typename TMessage,
         typename = typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7>::value,
             int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -3142,32 +2893,25 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
     explicit message_packet(
         const TMessage& /*msg*/,
         typename etl::enable_if<
-            !etl::is_same<
-                typename etl::remove_reference<TMessage>::type,
-                etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6, T7>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                          etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6, T7>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6, T7>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6, T7>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -3228,8 +2972,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id;
     }
 
     //**********************************************
@@ -3240,20 +2984,18 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id || T7::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id ||
+               T7::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id || T7::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id ||
+               T7::ID == id;
     }
 
     enum {
@@ -3344,10 +3086,8 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
 //***************************************************************************
 // Specialisation for 6 message types.
 //***************************************************************************
-template <typename T1, typename T2, typename T3, typename T4, typename T5,
-          typename T6>
-class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
-                     void, void, void, void> {
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
+class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -3378,30 +3118,22 @@ class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5, T6>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5, T6>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -3413,29 +3145,23 @@ class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
         typename etl::enable_if<
             !etl::is_same<typename etl::remove_reference<TMessage>::type,
                           etl::message_packet<T1, T2, T3, T4, T5, T6>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5, T6>::value,
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<
-                 typename etl::remove_reference<TMessage>::type,
-                 etl::message_packet<T1, T2, T3, T4, T5, T6>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5, T6>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
+                           etl::message_packet<T1, T2, T3, T4, T5, T6>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5, T6>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -3496,8 +3222,7 @@ class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id;
     }
 
     //**********************************************
@@ -3508,20 +3233,16 @@ class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id || T6::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id || T6::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id || T6::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id || T6::ID == id;
     }
 
     enum {
@@ -3607,8 +3328,7 @@ class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
 // Specialisation for 5 message types.
 //***************************************************************************
 template <typename T1, typename T2, typename T3, typename T4, typename T5>
-class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
-                     void, void, void, void, void> {
+class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -3639,29 +3359,22 @@ class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4, T5>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type,
+                                etl::message_packet<T1, T2, T3, T4, T5>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
                            etl::message_packet<T1, T2, T3, T4, T5>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5>::value);
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -3673,28 +3386,23 @@ class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
         typename etl::enable_if<
             !etl::is_same<typename etl::remove_reference<TMessage>::type,
                           etl::message_packet<T1, T2, T3, T4, T5>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4, T5>::value,
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
                            etl::message_packet<T1, T2, T3, T4, T5>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4, T5>::value);
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4, T5>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -3755,8 +3463,7 @@ class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id;
     }
 
     //**********************************************
@@ -3767,26 +3474,19 @@ class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
     //**********************************************
     template <etl::message_id_t Id>
     static ETL_CONSTEXPR bool accepts() {
-        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id ||
-               T5::ID == Id;
+        return T1::ID == Id || T2::ID == Id || T3::ID == Id || T4::ID == Id || T5::ID == Id;
     }
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
-        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id ||
-               T5::ID == id;
+        return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id || T5::ID == id;
     }
 
-    enum {
-        SIZE = etl::largest<T1, T2, T3, T4, T5>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4, T5>::alignment
-    };
+    enum { SIZE = etl::largest<T1, T2, T3, T4, T5>::size, ALIGNMENT = etl::largest<T1, T2, T3, T4, T5>::alignment };
 
    private:
     //********************************************
@@ -3860,8 +3560,7 @@ class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
 // Specialisation for 4 message types.
 //***************************************************************************
 template <typename T1, typename T2, typename T3, typename T4>
-class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void,
-                     void, void, void, void, void> {
+class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -3892,29 +3591,22 @@ class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
     template <
         typename TMessage,
         typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2, T3, T4>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4>::value,
             int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
                            etl::message_packet<T1, T2, T3, T4>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4>::value);
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -3924,30 +3616,24 @@ class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void,
     explicit message_packet(
         const TMessage& /*msg*/,
         typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3, T4>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3, T4>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2, T3, T4>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
             (!etl::is_same<typename etl::remove_reference<TMessage>::type,
                            etl::message_packet<T1, T2, T3, T4>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3, T4>::value);
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3, T4>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -4024,19 +3710,14 @@ class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void,
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
         return T1::ID == id || T2::ID == id || T3::ID == id || T4::ID == id;
     }
 
-    enum {
-        SIZE = etl::largest<T1, T2, T3, T4>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3, T4>::alignment
-    };
+    enum { SIZE = etl::largest<T1, T2, T3, T4>::size, ALIGNMENT = etl::largest<T1, T2, T3, T4>::alignment };
 
    private:
     //********************************************
@@ -4104,8 +3785,7 @@ class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void,
 // Specialisation for 3 message types.
 //***************************************************************************
 template <typename T1, typename T2, typename T3>
-class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void,
-                     void, void, void, void, void> {
+class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -4136,29 +3816,21 @@ class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
     template <
         typename TMessage,
         typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2, T3>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3>::value,
             int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2, T3>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -4168,30 +3840,23 @@ class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void,
     explicit message_packet(
         const TMessage& /*msg*/,
         typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2, T3>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2, T3>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2, T3>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2, T3>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2, T3>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2, T3>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2, T3>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -4268,19 +3933,14 @@ class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void,
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
         return T1::ID == id || T2::ID == id || T3::ID == id;
     }
 
-    enum {
-        SIZE = etl::largest<T1, T2, T3>::size,
-        ALIGNMENT = etl::largest<T1, T2, T3>::alignment
-    };
+    enum { SIZE = etl::largest<T1, T2, T3>::size, ALIGNMENT = etl::largest<T1, T2, T3>::alignment };
 
    private:
     //********************************************
@@ -4342,8 +4002,7 @@ class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void,
 // Specialisation for 2 message types.
 //***************************************************************************
 template <typename T1, typename T2>
-class message_packet<T1, T2, void, void, void, void, void, void, void, void,
-                     void, void, void, void, void, void> {
+class message_packet<T1, T2, void, void, void, void, void, void, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -4374,29 +4033,20 @@ class message_packet<T1, T2, void, void, void, void, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -4406,30 +4056,23 @@ class message_packet<T1, T2, void, void, void, void, void, void, void, void,
     explicit message_packet(
         const TMessage& /*msg*/,
         typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1, T2>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1, T2>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1, T2>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1,
-                            T2>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1, T2>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1, T2>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -4506,19 +4149,14 @@ class message_packet<T1, T2, void, void, void, void, void, void, void, void,
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
         return T1::ID == id || T2::ID == id;
     }
 
-    enum {
-        SIZE = etl::largest<T1, T2>::size,
-        ALIGNMENT = etl::largest<T1, T2>::alignment
-    };
+    enum { SIZE = etl::largest<T1, T2>::size, ALIGNMENT = etl::largest<T1, T2>::alignment };
 
    private:
     //********************************************
@@ -4574,8 +4212,7 @@ class message_packet<T1, T2, void, void, void, void, void, void, void, void,
 // Specialisation for 1 message type.
 //***************************************************************************
 template <typename T1>
-class message_packet<T1, void, void, void, void, void, void, void, void, void,
-                     void, void, void, void, void, void> {
+class message_packet<T1, void, void, void, void, void, void, void, void, void, void, void, void, void, void, void> {
    public:
     //********************************************
     message_packet() : data(), valid(false) {}
@@ -4606,29 +4243,20 @@ class message_packet<T1, void, void, void, void, void, void, void, void, void,
     }
 #endif
 
-#if ETL_USING_CPP11 &&                                         \
-    !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && \
-    !defined(ETL_COMPILER_GREEN_HILLS)
+#if ETL_USING_CPP11 && !defined(ETL_MESSAGE_PACKET_FORCE_CPP03_IMPLEMENTATION) && !defined(ETL_COMPILER_GREEN_HILLS)
     //********************************************
-    template <
-        typename TMessage,
-        typename = typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1>::value,
-            int>::type>
+    template <typename TMessage,
+              typename = typename etl::enable_if<
+                  !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1>>::value &&
+                      !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                      !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1>::value,
+                  int>::type>
     explicit message_packet(TMessage&& msg) : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static constexpr bool Enabled =
-            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                            T1>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
@@ -4638,30 +4266,23 @@ class message_packet<T1, void, void, void, void, void, void, void, void, void,
     explicit message_packet(
         const TMessage& /*msg*/,
         typename etl::enable_if<
-            !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                          etl::message_packet<T1>>::value &&
-                !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                              etl::imessage>::value &&
-                !etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                                T1>::value,
+            !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1>>::value &&
+                !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+                !etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1>::value,
             int>::type = 0)
         : data(), valid(true) {
         // Not etl::message_packet, not etl::imessage and in typelist.
         static const bool Enabled =
-            (!etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::message_packet<T1>>::value &&
-             !etl::is_same<typename etl::remove_reference<TMessage>::type,
-                           etl::imessage>::value &&
-             etl::is_one_of<typename etl::remove_reference<TMessage>::type,
-                            T1>::value);
+            (!etl::is_same<typename etl::remove_reference<TMessage>::type, etl::message_packet<T1>>::value &&
+             !etl::is_same<typename etl::remove_reference<TMessage>::type, etl::imessage>::value &&
+             etl::is_one_of<typename etl::remove_reference<TMessage>::type, T1>::value);
 
         ETL_STATIC_ASSERT(Enabled, "Message not in packet type list");
     }
 #endif
 
     //**********************************************
-    message_packet(const message_packet& other)
-        : data(), valid(other.is_valid()) {
+    message_packet(const message_packet& other) : data(), valid(other.is_valid()) {
         if (valid) {
             add_new_message(other.get());
         }
@@ -4738,19 +4359,14 @@ class message_packet<T1, void, void, void, void, void, void, void, void, void,
 
     //**********************************************
     template <typename TMessage>
-    static ETL_CONSTEXPR
-        typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value,
-                                bool>::type
-        accepts() {
+    static ETL_CONSTEXPR typename etl::enable_if<etl::is_base_of<etl::imessage, TMessage>::value, bool>::type
+    accepts() {
         ETL_CONSTANT etl::message_id_t id = TMessage::ID;
 
         return T1::ID == id;
     }
 
-    enum {
-        SIZE = etl::largest<T1>::size,
-        ALIGNMENT = etl::largest<T1>::alignment
-    };
+    enum { SIZE = etl::largest<T1>::size, ALIGNMENT = etl::largest<T1>::alignment };
 
    private:
     //********************************************

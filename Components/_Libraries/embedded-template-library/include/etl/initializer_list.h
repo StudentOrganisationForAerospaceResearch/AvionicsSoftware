@@ -42,8 +42,7 @@ SOFTWARE.
 #include <stddef.h>
 
 // Use the compiler's std::initializer_list?
-#if (ETL_USING_STL && ETL_NOT_USING_STLPORT &&    \
-     !defined(ETL_FORCE_ETL_INITIALIZER_LIST)) || \
+#if (ETL_USING_STL && ETL_NOT_USING_STLPORT && !defined(ETL_FORCE_ETL_INITIALIZER_LIST)) || \
     defined(ETL_IN_UNIT_TEST) || defined(ETL_FORCE_STD_INITIALIZER_LIST)
 
 #include <initializer_list>
@@ -75,8 +74,7 @@ class initializer_list {
     //*************************************************************************
     /// Constructor
     //*************************************************************************
-    constexpr initializer_list(const T* pfirst_, const T* plast_) noexcept
-        : pfirst(pfirst_), plast(plast_) {}
+    constexpr initializer_list(const T* pfirst_, const T* plast_) noexcept : pfirst(pfirst_), plast(plast_) {}
 
     //*************************************************************************
     /// Get the beginning of the list.
@@ -91,9 +89,7 @@ class initializer_list {
     //*************************************************************************
     /// Get the size of the list.
     //*************************************************************************
-    constexpr size_t size() const noexcept {
-        return static_cast<size_t>(plast - pfirst);
-    }
+    constexpr size_t size() const noexcept { return static_cast<size_t>(plast - pfirst); }
 
    private:
     const T* pfirst;
@@ -116,9 +112,8 @@ constexpr const T* end(initializer_list<T> init) noexcept {
     return init.end();
 }
 
-#elif defined(ETL_COMPILER_GCC) || defined(ETL_COMPILER_CLANG) ||           \
-    defined(ETL_COMPILER_ARM6) || defined(ETL_COMPILER_ARM7) ||             \
-    defined(ETL_COMPILER_IAR) || defined(ETL_COMPILER_TEXAS_INSTRUMENTS) || \
+#elif defined(ETL_COMPILER_GCC) || defined(ETL_COMPILER_CLANG) || defined(ETL_COMPILER_ARM6) ||           \
+    defined(ETL_COMPILER_ARM7) || defined(ETL_COMPILER_IAR) || defined(ETL_COMPILER_TEXAS_INSTRUMENTS) || \
     defined(ETL_COMPILER_INTEL)
 
 ///**************************************************************************
@@ -158,8 +153,7 @@ class initializer_list {
     //*************************************************************************
     /// Constructor
     //*************************************************************************
-    constexpr initializer_list(const T* pfirst_, size_t length_) noexcept
-        : pfirst(pfirst_), length(length_) {}
+    constexpr initializer_list(const T* pfirst_, size_t length_) noexcept : pfirst(pfirst_), length(length_) {}
 
     const T* pfirst;
     size_t length;

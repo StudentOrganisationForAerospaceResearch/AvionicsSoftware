@@ -49,11 +49,9 @@ namespace etl {
 ///\ingroup pool
 //*************************************************************************
 template <typename T, const size_t VSize>
-class pool
-    : public etl::generic_pool<sizeof(T), etl::alignment_of<T>::value, VSize> {
+class pool : public etl::generic_pool<sizeof(T), etl::alignment_of<T>::value, VSize> {
    private:
-    typedef etl::generic_pool<sizeof(T), etl::alignment_of<T>::value, VSize>
-        base_t;
+    typedef etl::generic_pool<sizeof(T), etl::alignment_of<T>::value, VSize> base_t;
 
    public:
     using base_t::ALIGNMENT;
@@ -120,8 +118,7 @@ class pool
     /// etl::pool_no_allocation if thrown, otherwise a null pointer is returned.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    T* create(const T1& value1, const T2& value2, const T3& value3,
-              const T4& value4) {
+    T* create(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         return base_t::template create<T>(value1, value2, value3, value4);
     }
 #else
@@ -143,9 +140,8 @@ class pool
     //*************************************************************************
     template <typename U>
     void release(const U* const p_object) {
-        ETL_STATIC_ASSERT(
-            (etl::is_same<U, T>::value || etl::is_base_of<U, T>::value),
-            "Pool does not contain this type");
+        ETL_STATIC_ASSERT((etl::is_same<U, T>::value || etl::is_base_of<U, T>::value),
+                          "Pool does not contain this type");
         base_t::release(p_object);
     }
 
@@ -156,8 +152,7 @@ class pool
     //*************************************************************************
     template <typename U>
     void destroy(const U* const p_object) {
-        ETL_STATIC_ASSERT((etl::is_base_of<U, T>::value),
-                          "Pool does not contain this type");
+        ETL_STATIC_ASSERT((etl::is_base_of<U, T>::value), "Pool does not contain this type");
         base_t::destroy(p_object);
     }
 
@@ -173,11 +168,9 @@ class pool
 ///\ingroup pool
 //*************************************************************************
 template <typename T>
-class pool_ext
-    : public etl::generic_pool_ext<sizeof(T), etl::alignment_of<T>::value> {
+class pool_ext : public etl::generic_pool_ext<sizeof(T), etl::alignment_of<T>::value> {
    private:
-    typedef etl::generic_pool_ext<sizeof(T), etl::alignment_of<T>::value>
-        base_t;
+    typedef etl::generic_pool_ext<sizeof(T), etl::alignment_of<T>::value> base_t;
 
    public:
     using base_t::ALIGNMENT;
@@ -186,8 +179,7 @@ class pool_ext
     //*************************************************************************
     /// Constructor
     //*************************************************************************
-    pool_ext(typename base_t::element* buffer, size_t size)
-        : base_t(buffer, size) {}
+    pool_ext(typename base_t::element* buffer, size_t size) : base_t(buffer, size) {}
 
     //*************************************************************************
     /// Allocate an object from the pool.
@@ -244,8 +236,7 @@ class pool_ext
     /// etl::pool_no_allocation if thrown, otherwise a null pointer is returned.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    T* create(const T1& value1, const T2& value2, const T3& value3,
-              const T4& value4) {
+    T* create(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         return base_t::template create<T>(value1, value2, value3, value4);
     }
 #else
@@ -267,9 +258,8 @@ class pool_ext
     //*************************************************************************
     template <typename U>
     void release(const U* const p_object) {
-        ETL_STATIC_ASSERT(
-            (etl::is_same<U, T>::value || etl::is_base_of<U, T>::value),
-            "Pool does not contain this type");
+        ETL_STATIC_ASSERT((etl::is_same<U, T>::value || etl::is_base_of<U, T>::value),
+                          "Pool does not contain this type");
         base_t::release(p_object);
     }
 
@@ -280,8 +270,7 @@ class pool_ext
     //*************************************************************************
     template <typename U>
     void destroy(const U* const p_object) {
-        ETL_STATIC_ASSERT((etl::is_base_of<U, T>::value),
-                          "Pool does not contain this type");
+        ETL_STATIC_ASSERT((etl::is_base_of<U, T>::value), "Pool does not contain this type");
         base_t::destroy(p_object);
     }
 

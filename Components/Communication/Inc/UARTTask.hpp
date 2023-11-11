@@ -42,8 +42,8 @@ class UARTTask : public Task {
 
    private:
     UARTTask() : Task(UART_TASK_QUEUE_DEPTH_OBJS) {}  // Private constructor
-    UARTTask(const UARTTask&);             // Prevent copy-construction
-    UARTTask& operator=(const UARTTask&);  // Prevent assignment
+    UARTTask(const UARTTask&);                        // Prevent copy-construction
+    UARTTask& operator=(const UARTTask&);             // Prevent assignment
 };
 
 /* Utility Functions ------------------------------------------------------------------*/

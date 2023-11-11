@@ -142,8 +142,7 @@ class queue_lockable_base {
     size_type max_size() const { return Max_Size; }
 
    protected:
-    queue_lockable_base(size_type max_size_)
-        : write_index(0), read_index(0), current_size(0), Max_Size(max_size_) {}
+    queue_lockable_base(size_type max_size_) : write_index(0), read_index(0), current_size(0), Max_Size(max_size_) {}
 
     //*************************************************************************
     /// Calculate the next index.
@@ -174,9 +173,7 @@ class queue_lockable_base {
     //*************************************************************************
     /// How much free space available in the queue.
     //*************************************************************************
-    size_type available_implementation() const {
-        return Max_Size - current_size;
-    }
+    size_type available_implementation() const { return Max_Size - current_size; }
 
     //*************************************************************************
     /// Is the queue empty?
@@ -203,23 +200,19 @@ class queue_lockable_base {
 /// This queue supports concurrent access by one producer and one consumer.
 /// \tparam T The type of value that the queue_lockable holds.
 //***************************************************************************
-template <typename T,
-          const size_t VMemory_Model = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, const size_t VMemory_Model = etl::memory_model::MEMORY_MODEL_LARGE>
 class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
    private:
     typedef queue_lockable_base<VMemory_Model> base_t;
 
    public:
-    typedef T value_type;  ///< The type stored in the queue.
-    typedef T& reference;  ///< A reference to the type used in the queue.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the queue.
+    typedef T value_type;              ///< The type stored in the queue.
+    typedef T& reference;              ///< A reference to the type used in the queue.
+    typedef const T& const_reference;  ///< A const reference to the type used in the queue.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue reference to the type used in the queue.
+    typedef T&& rvalue_reference;  ///< An rvalue reference to the type used in the queue.
 #endif
-    typedef typename base_t::size_type
-        size_type;  ///< The type used for determining the size of the queue.
+    typedef typename base_t::size_type size_type;  ///< The type used for determining the size of the queue.
 
     //*************************************************************************
     /// Push a value to the queue without locking.
@@ -241,8 +234,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
         return result;
     }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Push a value to the queue without locking.
     //*************************************************************************
@@ -264,8 +256,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
@@ -308,8 +299,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    bool emplace_unlocked(const T1& value1, const T2& value2,
-                          const T3& value3) {
+    bool emplace_unlocked(const T1& value1, const T2& value2, const T3& value3) {
         return emplace_implementation(value1, value2, value3);
     }
 
@@ -317,8 +307,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace_unlocked(const T1& value1, const T2& value2, const T3& value3,
-                          const T4& value4) {
+    bool emplace_unlocked(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         return emplace_implementation(value1, value2, value3, value4);
     }
 
@@ -368,8 +357,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    bool emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         this->lock();
 
         bool result = emplace_implementation(value1, value2, value3, value4);
@@ -486,8 +474,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    iqueue_lockable(T* p_buffer_, size_type max_size_)
-        : base_t(max_size_), p_buffer(p_buffer_) {}
+    iqueue_lockable(T* p_buffer_, size_type max_size_) : base_t(max_size_), p_buffer(p_buffer_) {}
 
    private:
     //*************************************************************************
@@ -497,8 +484,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
         if (this->current_size != this->Max_Size) {
             ::new (&p_buffer[this->write_index]) T(value);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->Max_Size);
+            this->write_index = this->get_next_index(this->write_index, this->Max_Size);
 
             ++this->current_size;
 
@@ -509,8 +495,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
         return false;
     }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Push a value to the queue without locking.
     //*************************************************************************
@@ -518,8 +503,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
         if (this->current_size != this->Max_Size) {
             ::new (&p_buffer[this->write_index]) T(etl::move(value));
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->Max_Size);
+            this->write_index = this->get_next_index(this->write_index, this->Max_Size);
 
             ++this->current_size;
 
@@ -531,8 +515,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
@@ -541,8 +524,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
         if (this->current_size != this->Max_Size) {
             ::new (&p_buffer[this->write_index]) T(etl::forward<Args>(args)...);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->Max_Size);
+            this->write_index = this->get_next_index(this->write_index, this->Max_Size);
 
             ++this->current_size;
 
@@ -561,8 +543,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
         if (this->current_size != this->Max_Size) {
             ::new (&p_buffer[this->write_index]) T(value1);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->Max_Size);
+            this->write_index = this->get_next_index(this->write_index, this->Max_Size);
 
             ++this->current_size;
 
@@ -581,8 +562,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
         if (this->current_size != this->Max_Size) {
             ::new (&p_buffer[this->write_index]) T(value1, value2);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->Max_Size);
+            this->write_index = this->get_next_index(this->write_index, this->Max_Size);
 
             ++this->current_size;
 
@@ -597,13 +577,11 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3) {
         if (this->current_size != this->Max_Size) {
             ::new (&p_buffer[this->write_index]) T(value1, value2, value3);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->Max_Size);
+            this->write_index = this->get_next_index(this->write_index, this->Max_Size);
 
             ++this->current_size;
 
@@ -618,14 +596,11 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3, const T4& value4) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         if (this->current_size != this->Max_Size) {
-            ::new (&p_buffer[this->write_index])
-                T(value1, value2, value3, value4);
+            ::new (&p_buffer[this->write_index]) T(value1, value2, value3, value4);
 
-            this->write_index =
-                this->get_next_index(this->write_index, this->Max_Size);
+            this->write_index = this->get_next_index(this->write_index, this->Max_Size);
 
             ++this->current_size;
 
@@ -648,8 +623,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
 
         p_buffer[this->read_index].~T();
 
-        this->read_index =
-            this->get_next_index(this->read_index, this->Max_Size);
+        this->read_index = this->get_next_index(this->read_index, this->Max_Size);
 
         --this->current_size;
 
@@ -665,8 +639,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
             return false;
         }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
         value = etl::move(p_buffer[this->read_index]);
 #else
         value = p_buffer[this->read_index];
@@ -674,8 +647,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
 
         p_buffer[this->read_index].~T();
 
-        this->read_index =
-            this->get_next_index(this->read_index, this->Max_Size);
+        this->read_index = this->get_next_index(this->read_index, this->Max_Size);
 
         --this->current_size;
 
@@ -717,8 +689,7 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
 /// \tparam VSize         The maximum capacity of the queue.
 /// \tparam VMemory_Model The memory model for the queue. Determines the type of the internal counter variables.
 //***************************************************************************
-template <typename T, size_t VSize,
-          size_t VMemory_Model = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, size_t VSize, size_t VMemory_Model = etl::memory_model::MEMORY_MODEL_LARGE>
 class queue_lockable : public etl::iqueue_lockable<T, VMemory_Model> {
    private:
     typedef etl::iqueue_lockable<T, VMemory_Model> base_t;
@@ -726,8 +697,7 @@ class queue_lockable : public etl::iqueue_lockable<T, VMemory_Model> {
    public:
     typedef typename base_t::size_type size_type;
 
-    ETL_STATIC_ASSERT((VSize <= etl::integral_limits<size_type>::max),
-                      "Size too large for memory model");
+    ETL_STATIC_ASSERT((VSize <= etl::integral_limits<size_type>::max), "Size too large for memory model");
 
     static ETL_CONSTANT size_type Max_Size = size_type(VSize);
     static ETL_CONSTANT size_type Memory_Model = size_type(VMemory_Model);

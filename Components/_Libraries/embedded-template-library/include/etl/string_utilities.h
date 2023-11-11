@@ -97,10 +97,8 @@ inline constexpr const TChar* whitespace_v = whitespace<TChar>::value();
 /// Trim left of trim_characters
 //***************************************************************************
 template <typename TIString>
-void trim_from_left(TIString& s,
-                    typename TIString::const_pointer trim_characters) {
-    typename TIString::size_type position =
-        s.find_first_not_of(trim_characters);
+void trim_from_left(TIString& s, typename TIString::const_pointer trim_characters) {
+    typename TIString::size_type position = s.find_first_not_of(trim_characters);
     s.erase(0U, position);
 }
 
@@ -118,11 +116,8 @@ void trim_whitespace_left(TIString& s) {
 /// Trim left of trim_characters
 //***************************************************************************
 template <typename TStringView>
-TStringView trim_from_view_left(
-    const TStringView& view,
-    typename TStringView::const_pointer trim_characters) {
-    typename TStringView::size_type first =
-        view.find_first_not_of(trim_characters);
+TStringView trim_from_view_left(const TStringView& view, typename TStringView::const_pointer trim_characters) {
+    typename TStringView::size_type first = view.find_first_not_of(trim_characters);
 
     typename TStringView::const_pointer pbegin = view.data() + view.size();
 
@@ -130,8 +125,7 @@ TStringView trim_from_view_left(
         pbegin = view.data() + first;
     }
 
-    return TStringView(pbegin,
-                       etl::distance(pbegin, view.data() + view.size()));
+    return TStringView(pbegin, etl::distance(pbegin, view.data() + view.size()));
 }
 
 //***************************************************************************
@@ -140,8 +134,7 @@ TStringView trim_from_view_left(
 //***************************************************************************
 template <typename TStringView>
 TStringView trim_view_whitespace_left(TStringView& s) {
-    return trim_from_view_left(
-        s, whitespace<typename TStringView::value_type>::value());
+    return trim_from_view_left(s, whitespace<typename TStringView::value_type>::value());
 }
 
 //***************************************************************************
@@ -164,8 +157,7 @@ void trim_left(TIString& s, typename TIString::const_pointer delimiters) {
 /// View trim left, up to, but not including, delimiters.
 //***************************************************************************
 template <typename TStringView>
-TStringView trim_view_left(const TStringView& view,
-                           typename TStringView::const_pointer delimiters) {
+TStringView trim_view_left(const TStringView& view, typename TStringView::const_pointer delimiters) {
     typename TStringView::size_type first = view.find_first_of(delimiters);
 
     typename TStringView::const_pointer pbegin = view.data();
@@ -183,8 +175,7 @@ TStringView trim_view_left(const TStringView& view,
 /// Trim right of trim_characters
 //***************************************************************************
 template <typename TIString>
-void trim_from_right(TIString& s,
-                     typename TIString::const_pointer trim_characters) {
+void trim_from_right(TIString& s, typename TIString::const_pointer trim_characters) {
     s.erase(s.find_last_not_of(trim_characters) + 1);
 }
 
@@ -202,11 +193,8 @@ void trim_whitespace_right(TIString& s) {
 /// Trim right of trim_characters
 //***************************************************************************
 template <typename TStringView>
-TStringView trim_from_view_right(
-    const TStringView& view,
-    typename TStringView::const_pointer trim_characters) {
-    typename TStringView::size_type last =
-        view.find_last_not_of(trim_characters) + 1;
+TStringView trim_from_view_right(const TStringView& view, typename TStringView::const_pointer trim_characters) {
+    typename TStringView::size_type last = view.find_last_not_of(trim_characters) + 1;
 
     typename TStringView::const_pointer pend = view.data();
 
@@ -223,8 +211,7 @@ TStringView trim_from_view_right(
 //***************************************************************************
 template <typename TStringView>
 TStringView trim_view_whitespace_right(TStringView& view) {
-    return trim_from_view_right(
-        view, whitespace<typename TStringView::value_type>::value());
+    return trim_from_view_right(view, whitespace<typename TStringView::value_type>::value());
 }
 
 //***************************************************************************
@@ -249,8 +236,7 @@ void trim_right(TIString& s, typename TIString::const_pointer delimiters) {
 /// trim_view_right
 //***************************************************************************
 template <typename TStringView>
-TStringView trim_view_right(const TStringView& view,
-                            typename TStringView::const_pointer delimiters) {
+TStringView trim_view_right(const TStringView& view, typename TStringView::const_pointer delimiters) {
     typename TStringView::size_type last = view.find_last_of(delimiters) + 1;
 
     typename TStringView::const_pointer pend = view.data();
@@ -287,13 +273,9 @@ void trim_whitespace(TIString& s) {
 /// Trim left and right of trim_characters
 //***************************************************************************
 template <typename TStringView>
-TStringView trim_from_view(
-    const TStringView& view,
-    typename TStringView::const_pointer trim_characters) {
-    typename TStringView::size_type first =
-        view.find_first_not_of(trim_characters);
-    typename TStringView::size_type last =
-        view.find_last_not_of(trim_characters) + 1;
+TStringView trim_from_view(const TStringView& view, typename TStringView::const_pointer trim_characters) {
+    typename TStringView::size_type first = view.find_first_not_of(trim_characters);
+    typename TStringView::size_type last = view.find_last_not_of(trim_characters) + 1;
 
     typename TStringView::const_pointer pbegin = view.data();
     typename TStringView::const_pointer pend = view.data();
@@ -315,8 +297,7 @@ TStringView trim_from_view(
 //***************************************************************************
 template <typename TStringView>
 TStringView trim_view_whitespace(const TStringView& view) {
-    return trim_from_view(
-        view, whitespace<typename TStringView::value_type>::value());
+    return trim_from_view(view, whitespace<typename TStringView::value_type>::value());
 }
 
 //***************************************************************************
@@ -334,8 +315,7 @@ void trim(TIString& s, typename TIString::const_pointer delimiters) {
 /// Trim left and right of trim_characters
 //***************************************************************************
 template <typename TStringView>
-TStringView trim_view(const TStringView& view,
-                      typename TStringView::const_pointer delimiters) {
+TStringView trim_view(const TStringView& view, typename TStringView::const_pointer delimiters) {
     typename TStringView::size_type first = view.find_first_of(delimiters);
     typename TStringView::size_type last = view.find_last_of(delimiters) + 1;
 
@@ -367,8 +347,7 @@ void left_n(TIString& s, typename TIString::size_type n) {
 /// Get a view of up to the first n characters.
 //***************************************************************************
 template <typename TStringView>
-TStringView left_n_view(const TStringView& view,
-                        typename TStringView::size_type n) {
+TStringView left_n_view(const TStringView& view, typename TStringView::size_type n) {
     n = (n > view.size()) ? view.size() : n;
 
     return TStringView(etl::addressof(*view.begin()), n);
@@ -388,8 +367,7 @@ void right_n(TIString& s, typename TIString::size_type n) {
 /// Get a view of up to the last n characters.
 //***************************************************************************
 template <typename TStringView>
-TStringView right_n_view(const TStringView& view,
-                         typename TStringView::size_type n) {
+TStringView right_n_view(const TStringView& view, typename TStringView::size_type n) {
     n = (n > view.size()) ? view.size() : n;
 
     return TStringView(view.data() + view.size() - n, n);
@@ -408,8 +386,7 @@ void reverse(TIString& s) {
 /// replace_characters
 //***************************************************************************
 template <typename TIString, typename TPair>
-void replace_characters(TIString& s, const TPair* pairsbegin,
-                        const TPair* pairsend) {
+void replace_characters(TIString& s, const TPair* pairsbegin, const TPair* pairsend) {
     while (pairsbegin != pairsend) {
         etl::replace(s.begin(), s.end(), pairsbegin->first, pairsbegin->second);
         ++pairsbegin;
@@ -420,8 +397,7 @@ void replace_characters(TIString& s, const TPair* pairsbegin,
 /// replace_strings
 //***************************************************************************
 template <typename TIString, typename TPair>
-void replace_strings(TIString& s, const TPair* pairsbegin,
-                     const TPair* pairsend) {
+void replace_strings(TIString& s, const TPair* pairsbegin, const TPair* pairsend) {
     while (pairsbegin != pairsend) {
         const typename TIString::value_type* p_old = pairsbegin->first;
         const typename TIString::value_type* p_new = pairsbegin->second;
@@ -431,9 +407,8 @@ void replace_strings(TIString& s, const TPair* pairsbegin,
         do {
             position = s.find(p_old, position);
             if (position != TIString::npos) {
-                s.replace(
-                    position, typename TIString::size_type(etl::strlen(p_old)),
-                    p_new, typename TIString::size_type(etl::strlen(p_new)));
+                s.replace(position, typename TIString::size_type(etl::strlen(p_old)), p_new,
+                          typename TIString::size_type(etl::strlen(p_new)));
                 position += typename TIString::size_type(etl::strlen(p_new));
             }
         } while (position != TIString::npos);
@@ -478,8 +453,7 @@ typename TIString::iterator find_first_of(TIString& s, TPointer delimiters) {
 /// Find first of any of delimiters within the string
 //*********************************************************************
 template <typename TIString, typename TPointer>
-typename TIString::const_iterator find_first_of(const TIString& s,
-                                                TPointer delimiters) {
+typename TIString::const_iterator find_first_of(const TIString& s, TPointer delimiters) {
     return find_first_of(s.begin(), s.end(), delimiters);
 }
 
@@ -487,8 +461,7 @@ typename TIString::const_iterator find_first_of(const TIString& s,
 /// Find first not of any of delimiters within the string
 //*********************************************************************
 template <typename TIterator, typename TPointer>
-TIterator find_first_not_of(TIterator first, TIterator last,
-                            TPointer delimiters) {
+TIterator find_first_not_of(TIterator first, TIterator last, TPointer delimiters) {
     TIterator itr(first);
 
     while (itr != last) {
@@ -519,8 +492,7 @@ TIterator find_first_not_of(TIterator first, TIterator last,
 /// Find first not of any of delimiters within the string
 //*********************************************************************
 template <typename TIString, typename TPointer>
-typename TIString::iterator find_first_not_of(TIString& s,
-                                              TPointer delimiters) {
+typename TIString::iterator find_first_not_of(TIString& s, TPointer delimiters) {
     return find_first_not_of(s.begin(), s.end(), delimiters);
 }
 
@@ -528,8 +500,7 @@ typename TIString::iterator find_first_not_of(TIString& s,
 /// Find first not of any of delimiters within the string
 //*********************************************************************
 template <typename TIString, typename TPointer>
-typename TIString::const_iterator find_first_not_of(const TIString& s,
-                                                    TPointer delimiters) {
+typename TIString::const_iterator find_first_not_of(const TIString& s, TPointer delimiters) {
     return find_first_not_of(s.begin(), s.end(), delimiters);
 }
 
@@ -574,8 +545,7 @@ typename TIString::iterator find_last_of(TIString& s, TPointer delimiters) {
 /// Find last of any of delimiters within the string
 //*********************************************************************
 template <typename TIString, typename TPointer>
-typename TIString::const_iterator find_last_of(const TIString& s,
-                                               TPointer delimiters) {
+typename TIString::const_iterator find_last_of(const TIString& s, TPointer delimiters) {
     return find_last_of(s.begin(), s.end(), delimiters);
 }
 
@@ -583,8 +553,7 @@ typename TIString::const_iterator find_last_of(const TIString& s,
 /// Find last not of any of delimiters within the string
 //*********************************************************************
 template <typename TIterator, typename TPointer>
-TIterator find_last_not_of(TIterator first, TIterator last,
-                           TPointer delimiters) {
+TIterator find_last_not_of(TIterator first, TIterator last, TPointer delimiters) {
     if (first == last) {
         return last;
     }
@@ -628,8 +597,7 @@ typename TIString::iterator find_last_not_of(TIString& s, TPointer delimiters) {
 /// Find last not of any of delimiters within the string
 //*********************************************************************
 template <typename TIString, typename TPointer>
-typename TIString::const_iterator find_last_not_of(const TIString& s,
-                                                   TPointer delimiters) {
+typename TIString::const_iterator find_last_not_of(const TIString& s, TPointer delimiters) {
     return find_last_not_of(s.begin(), s.end(), delimiters);
 }
 
@@ -637,9 +605,8 @@ typename TIString::const_iterator find_last_not_of(const TIString& s,
 /// get_token
 //***************************************************************************
 template <typename TInput, typename TStringView>
-etl::optional<TStringView> get_token(
-    const TInput& input, typename TInput::const_pointer delimiters,
-    const etl::optional<TStringView>& last_view, bool ignore_empty_tokens) {
+etl::optional<TStringView> get_token(const TInput& input, typename TInput::const_pointer delimiters,
+                                     const etl::optional<TStringView>& last_view, bool ignore_empty_tokens) {
     typedef typename TInput::const_pointer const_pointer;
 
     bool token_found = false;
@@ -680,8 +647,7 @@ etl::optional<TStringView> get_token(
 /// pad_left
 //***************************************************************************
 template <typename TIString>
-void pad_left(TIString& s, typename TIString::size_type required_size,
-              typename TIString::value_type pad_char) {
+void pad_left(TIString& s, typename TIString::size_type required_size, typename TIString::value_type pad_char) {
     required_size = etl::min(required_size, s.max_size());
 
     if (required_size > s.size()) {
@@ -694,8 +660,7 @@ void pad_left(TIString& s, typename TIString::size_type required_size,
 /// pad_right
 //***************************************************************************
 template <typename TIString>
-void pad_right(TIString& s, typename TIString::size_type required_size,
-               typename TIString::value_type pad_char) {
+void pad_right(TIString& s, typename TIString::size_type required_size, typename TIString::value_type pad_char) {
     required_size = etl::min(required_size, s.max_size());
 
     if (required_size > s.size()) {
@@ -708,8 +673,7 @@ void pad_right(TIString& s, typename TIString::size_type required_size,
 /// pad
 //***************************************************************************
 template <typename TIString>
-void pad(TIString& s, typename TIString::size_type required_size,
-         string_pad_direction pad_direction,
+void pad(TIString& s, typename TIString::size_type required_size, string_pad_direction pad_direction,
          typename TIString::value_type pad_char) {
     switch (int(pad_direction)) {
         case string_pad_direction::LEFT: {

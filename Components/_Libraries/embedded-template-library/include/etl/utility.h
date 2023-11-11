@@ -60,10 +60,8 @@ constexpr T&& forward(typename etl::remove_reference<T>::type& t) ETL_NOEXCEPT {
 }
 
 template <typename T>
-constexpr T&& forward(typename etl::remove_reference<T>::type&& t)
-    ETL_NOEXCEPT {
-    ETL_STATIC_ASSERT(!etl::is_lvalue_reference<T>::value,
-                      "Invalid rvalue to lvalue conversion");
+constexpr T&& forward(typename etl::remove_reference<T>::type&& t) ETL_NOEXCEPT {
+    ETL_STATIC_ASSERT(!etl::is_lvalue_reference<T>::value, "Invalid rvalue to lvalue conversion");
     return static_cast<T&&>(t);
 }
 #endif
@@ -106,25 +104,21 @@ struct pair {
 #if ETL_USING_CPP11
     /// Move constructor from parameters
     template <typename U1, typename U2>
-    ETL_CONSTEXPR14 pair(U1&& a, U2&& b)
-        : first(etl::forward<U1>(a)), second(etl::forward<U2>(b)) {}
+    ETL_CONSTEXPR14 pair(U1&& a, U2&& b) : first(etl::forward<U1>(a)), second(etl::forward<U2>(b)) {}
 #endif
 
     /// Copy constructor
     template <typename U1, typename U2>
-    ETL_CONSTEXPR14 pair(const pair<U1, U2>& other)
-        : first(other.first), second(other.second) {}
+    ETL_CONSTEXPR14 pair(const pair<U1, U2>& other) : first(other.first), second(other.second) {}
 
     /// Copy constructor
-    pair(const pair<T1, T2>& other)
-        : first(other.first), second(other.second) {}
+    pair(const pair<T1, T2>& other) : first(other.first), second(other.second) {}
 
 #if ETL_USING_CPP11
     /// Move constructor
     template <typename U1, typename U2>
     ETL_CONSTEXPR14 pair(pair<U1, U2>&& other)
-        : first(etl::forward<U1>(other.first)),
-          second(etl::forward<U2>(other.second)) {}
+        : first(etl::forward<U1>(other.first)), second(etl::forward<U2>(other.second)) {}
 #endif
 
 #if defined(ETL_IN_UNIT_TEST) || ETL_USING_STL
@@ -136,15 +130,12 @@ struct pair {
 
     /// Constructing from std::pair
     template <typename U1, typename U2>
-    pair(const std::pair<U1, U2>& other)
-        : first(other.first), second(other.second) {}
+    pair(const std::pair<U1, U2>& other) : first(other.first), second(other.second) {}
 
 #if ETL_USING_CPP11
     /// Constructing to etl::pair
     template <typename U1, typename U2>
-    pair(std::pair<U1, U2>&& other)
-        : first(etl::forward<U1>(other.first)),
-          second(etl::forward<U2>(other.second)) {}
+    pair(std::pair<U1, U2>&& other) : first(etl::forward<U1>(other.first)), second(etl::forward<U2>(other.second)) {}
 #endif
 #endif
 
@@ -220,8 +211,7 @@ inline bool operator!=(const pair<T1, T2>& a, const pair<T1, T2>& b) {
 
 template <typename T1, typename T2>
 inline bool operator<(const pair<T1, T2>& a, const pair<T1, T2>& b) {
-    return (a.first < b.first) ||
-           (!(b.first < a.first) && (a.second < b.second));
+    return (a.first < b.first) || (!(b.first < a.first) && (a.second < b.second));
 }
 
 template <typename T1, typename T2>
@@ -285,9 +275,7 @@ class integer_sequence {
 
     typedef T value_type;
 
-    static ETL_CONSTEXPR size_t size() ETL_NOEXCEPT {
-        return sizeof...(Integers);
-    }
+    static ETL_CONSTEXPR size_t size() ETL_NOEXCEPT { return sizeof...(Integers); }
 };
 
 namespace private_integer_sequence {
@@ -296,8 +284,7 @@ struct make_index_sequence;
 
 template <size_t N, size_t... Indices>
 struct make_index_sequence<N, etl::integer_sequence<size_t, Indices...>> {
-    typedef typename make_index_sequence<
-        N - 1, etl::integer_sequence<size_t, N - 1, Indices...>>::type type;
+    typedef typename make_index_sequence<N - 1, etl::integer_sequence<size_t, N - 1, Indices...>>::type type;
 };
 
 template <size_t... Indices>
@@ -309,8 +296,7 @@ struct make_index_sequence<0, etl::integer_sequence<size_t, Indices...>> {
 //***********************************
 template <size_t N>
 using make_index_sequence =
-    typename private_integer_sequence::make_index_sequence<
-        N, etl::integer_sequence<size_t>>::type;
+    typename private_integer_sequence::make_index_sequence<N, etl::integer_sequence<size_t>>::type;
 
 //***********************************
 template <size_t... Indices>
@@ -330,9 +316,7 @@ struct coordinate_2d {
         return (lhs.x == rhs.x) && (lhs.y == rhs.y);
     }
 
-    friend bool operator!=(const coordinate_2d& lhs, const coordinate_2d& rhs) {
-        return !(lhs == rhs);
-    }
+    friend bool operator!=(const coordinate_2d& lhs, const coordinate_2d& rhs) { return !(lhs == rhs); }
 
     T x;
     T y;
@@ -388,9 +372,7 @@ class functor {
     //*********************************
     /// Const function operator.
     //*********************************
-    constexpr TReturn operator()(TParams... args) const {
-        return ptr(etl::forward<TParams>(args)...);
-    }
+    constexpr TReturn operator()(TParams... args) const { return ptr(etl::forward<TParams>(args)...); }
 
    private:
     /// The pointer to the function.

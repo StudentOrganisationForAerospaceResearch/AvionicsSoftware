@@ -69,8 +69,7 @@ const nullopt_t nullopt = {};
 //***************************************************************************
 class optional_exception : public exception {
    public:
-    optional_exception(string_type reason_, string_type file_name_,
-                       numeric_type line_number_)
+    optional_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -119,8 +118,7 @@ class optional {
     //***************************************************************************
     optional(optional&& other) : valid(bool(other)) {
         if (valid) {
-            ::new (storage.template get_address<T>())
-                T(etl::move(other.value()));
+            ::new (storage.template get_address<T>()) T(etl::move(other.value()));
         }
     }
 #endif
@@ -196,11 +194,9 @@ class optional {
                 valid = false;
             } else if (bool(other)) {
                 if (valid) {
-                    storage.template get_reference<T>() =
-                        etl::move(other.value());
+                    storage.template get_reference<T>() = etl::move(other.value());
                 } else {
-                    ::new (storage.template get_address<T>())
-                        T(etl::move(other.value()));
+                    ::new (storage.template get_address<T>()) T(etl::move(other.value()));
                     valid = true;
                 }
             }
@@ -346,8 +342,7 @@ class optional {
         }
     }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_OPTIONAL_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_OPTIONAL_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Emplaces a value.
     ///\param args The arguments to construct with.
@@ -359,8 +354,7 @@ class optional {
             storage.template get_reference<T>().~T();
         }
 
-        ::new (storage.template get_address<T>())
-            T(ETL_OR_STD::forward<Args>(args)...);
+        ::new (storage.template get_address<T>()) T(ETL_OR_STD::forward<Args>(args)...);
         valid = true;
     }
 #else
@@ -414,15 +408,13 @@ class optional {
     /// 4 parameters.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    void emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    void emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         if (valid) {
             // Destroy the old one.
             storage.template get_reference<T>().~T();
         }
 
-        ::new (storage.template get_address<T>())
-            T(value1, value2, value3, value4);
+        ::new (storage.template get_address<T>()) T(value1, value2, value3, value4);
         valid = true;
     }
 #endif

@@ -15,9 +15,9 @@
 enum BARO_TASK_COMMANDS {
     BARO_NONE = 0,
     BARO_REQUEST_NEW_SAMPLE,  // Get a new barometer sample, task will be blocked for polling time
-    BARO_REQUEST_TRANSMIT,  // Send the current barometer data over the Radio and Log to Flash
-    BARO_REQUEST_DEBUG,  // Send the current barometer data over the Debug UART
-    BARO_REQUEST_FLASH_LOG,  // Log the current barometer data to flash
+    BARO_REQUEST_TRANSMIT,    // Send the current barometer data over the Radio and Log to Flash
+    BARO_REQUEST_DEBUG,       // Send the current barometer data over the Debug UART
+    BARO_REQUEST_FLASH_LOG,   // Log the current barometer data to flash
 };
 
 /* Class ------------------------------------------------------------------*/
@@ -52,8 +52,8 @@ class BarometerTask : public Task {
     BarometerData* data;
 
    private:
-    BarometerTask();                      // Private constructor
-    BarometerTask(const BarometerTask&);  // Prevent copy-construction
+    BarometerTask();                                 // Private constructor
+    BarometerTask(const BarometerTask&);             // Prevent copy-construction
     BarometerTask& operator=(const BarometerTask&);  // Prevent assignment
 };
 

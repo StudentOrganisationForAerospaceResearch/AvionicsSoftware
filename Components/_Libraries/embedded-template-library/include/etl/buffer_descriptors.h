@@ -46,8 +46,7 @@ namespace etl {
 //***************************************************************************
 /// buffer_descriptors
 //***************************************************************************
-template <typename TBuffer, size_t BUFFER_SIZE_, size_t N_BUFFERS_,
-          typename TFlag = bool>
+template <typename TBuffer, size_t BUFFER_SIZE_, size_t N_BUFFERS_, typename TFlag = bool>
 class buffer_descriptors {
    private:
     struct descriptor_item;
@@ -68,8 +67,7 @@ class buffer_descriptors {
        public:
         friend class buffer_descriptors;
 
-        static ETL_CONSTANT size_type MAX_SIZE =
-            buffer_descriptors::BUFFER_SIZE;
+        static ETL_CONSTANT size_type MAX_SIZE = buffer_descriptors::BUFFER_SIZE;
 
         //*********************************
         descriptor() : pdesc_item(ETL_NULLPTR) {}
@@ -131,8 +129,7 @@ class buffer_descriptors {
         notification() : desc(), count(0U) {}
 
         //*********************************
-        notification(descriptor desc_, size_t count_)
-            : desc(desc_), count(count_) {}
+        notification(descriptor desc_, size_t count_) : desc(desc_), count(count_) {}
 
         //*********************************
         ETL_NODISCARD
@@ -151,9 +148,7 @@ class buffer_descriptors {
     typedef etl::delegate<void(notification)> callback_type;
 
     //*********************************
-    buffer_descriptors(TBuffer* pbuffers_,
-                       callback_type callback_ = callback_type())
-        : callback(callback_) {
+    buffer_descriptors(TBuffer* pbuffers_, callback_type callback_ = callback_type()) : callback(callback_) {
         for (size_t i = 0UL; i < N_BUFFERS; ++i) {
             descriptor_items[i].pbuffer = pbuffers_ + (i * BUFFER_SIZE);
             descriptor_items[i].in_use = false;

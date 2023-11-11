@@ -29,17 +29,13 @@ TelemetryTask::TelemetryTask() : Task(TELEMETRY_TASK_QUEUE_DEPTH_OBJS) {
  */
 void TelemetryTask::InitTask() {
     // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr,
-                "Cannot initialize telemetry task twice");
+    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize telemetry task twice");
 
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)TelemetryTask::RunTask, (const char*)"TelemetryTask",
-        (uint16_t)TELEMETRY_TASK_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)TELEMETRY_TASK_RTOS_PRIORITY,
-        (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)TelemetryTask::RunTask, (const char*)"TelemetryTask",
+                                     (uint16_t)TELEMETRY_TASK_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)TELEMETRY_TASK_RTOS_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
-    SOAR_ASSERT(rtValue == pdPASS,
-                "TelemetryTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "TelemetryTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -70,8 +66,7 @@ void TelemetryTask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("TelemetryTask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("TelemetryTask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -85,8 +80,7 @@ void TelemetryTask::HandleCommand(Command& cm) {
  */
 void TelemetryTask::RunLogSequence() {
     // Flight State
-    FlightTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
+    FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
 
     // GPIO
     SendVentDrainStatus();
@@ -107,20 +101,16 @@ void TelemetryTask::RunLogSequence() {
  */
 void TelemetryTask::RequestSample() {
     // Battery
-    BatteryTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
 
     // Barometer
-    BarometerTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
 
     // IMU
-    IMUTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
 
     // Pressure Transducer
-    PressureTransducerTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 }
 
 /**
@@ -128,24 +118,19 @@ void TelemetryTask::RequestSample() {
  */
 void TelemetryTask::RequestTransmit() {
     // Battery
-    BatteryTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
+    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
 
     // Barometer
-    BarometerTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
 
     // IMU
-    IMUTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Pressure Transducer
-    PressureTransducerTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
 
     // GPS
-    GPSTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));
+    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));
 }
 
 /**
@@ -153,16 +138,13 @@ void TelemetryTask::RequestTransmit() {
  */
 void TelemetryTask::RequestLogToFlash() {
     // Barometer
-    BarometerTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_FLASH_LOG));
+    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_FLASH_LOG));
 
     // IMU
-    IMUTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_FLASH_LOG));
+    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_FLASH_LOG));
 
     // GPS
-    GPSTask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_FLASH_LOG));
+    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_FLASH_LOG));
 }
 
 /**
@@ -178,11 +160,9 @@ void TelemetryTask::SendVentDrainStatus() {
     gpioMsg.set_mev_power_enable(GPIO::MEV_EN::IsOn());
     teleMsg.set_gpio(gpioMsg);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     teleMsg.serialize(writeBuffer);
 
     // Send the control message
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }

@@ -55,10 +55,8 @@ class imessage_timer_interrupt {
     /// Register a timer.
     //*******************************************
     etl::timer::id::type register_timer(
-        const etl::imessage& message_, etl::imessage_router& router_,
-        uint32_t period_, bool repeating_,
-        etl::message_router_id_t destination_router_id_ =
-            etl::imessage_router::ALL_MESSAGE_ROUTERS) {
+        const etl::imessage& message_, etl::imessage_router& router_, uint32_t period_, bool repeating_,
+        etl::message_router_id_t destination_router_id_ = etl::imessage_router::ALL_MESSAGE_ROUTERS) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (number_of_registered_timers < MAX_TIMERS);
@@ -75,9 +73,7 @@ class imessage_timer_interrupt {
                         (void)guard;  // Silence 'unused variable warnings.
 
                         // Create in-place.
-                        new (&timer)
-                            timer_data(i, message_, router_, period_,
-                                       repeating_, destination_router_id_);
+                        new (&timer) timer_data(i, message_, router_, period_, repeating_, destination_router_id_);
                         ++number_of_registered_timers;
                         id = i;
                         break;
@@ -165,8 +161,7 @@ class imessage_timer_interrupt {
                     active_list.remove(timer.id, true);
 
                     if (timer.p_router != ETL_NULLPTR) {
-                        timer.p_router->receive(timer.destination_router_id,
-                                                *(timer.p_message));
+                        timer.p_router->receive(timer.destination_router_id, *(timer.p_message));
                     }
 
                     if (timer.repeating) {
@@ -289,11 +284,9 @@ class imessage_timer_interrupt {
               repeating(true) {}
 
         //*******************************************
-        timer_data(etl::timer::id::type id_, const etl::imessage& message_,
-                   etl::imessage_router& irouter_, uint32_t period_,
-                   bool repeating_,
-                   etl::message_router_id_t destination_router_id_ =
-                       etl::imessage_bus::ALL_MESSAGE_ROUTERS)
+        timer_data(etl::timer::id::type id_, const etl::imessage& message_, etl::imessage_router& irouter_,
+                   uint32_t period_, bool repeating_,
+                   etl::message_router_id_t destination_router_id_ = etl::imessage_bus::ALL_MESSAGE_ROUTERS)
             : p_message(&message_),
               p_router(&irouter_),
               period(period_),
@@ -333,8 +326,7 @@ class imessage_timer_interrupt {
     //*******************************************
     /// Constructor.
     //*******************************************
-    imessage_timer_interrupt(timer_data* const timer_array_,
-                             const uint_least8_t MAX_TIMERS_)
+    imessage_timer_interrupt(timer_data* const timer_array_, const uint_least8_t MAX_TIMERS_)
         : timer_array(timer_array_),
           active_list(timer_array_),
           enabled(false),
@@ -506,24 +498,19 @@ class imessage_timer_interrupt {
 /// The message timer
 //***************************************************************************
 template <uint_least8_t MAX_TIMERS_, typename TInterruptGuard>
-class message_timer_interrupt
-    : public etl::imessage_timer_interrupt<TInterruptGuard> {
+class message_timer_interrupt : public etl::imessage_timer_interrupt<TInterruptGuard> {
    public:
-    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254,
-                      "No more than 254 timers are allowed");
+    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254, "No more than 254 timers are allowed");
 
-    typedef typename imessage_timer_interrupt<TInterruptGuard>::callback_type
-        callback_type;
+    typedef typename imessage_timer_interrupt<TInterruptGuard>::callback_type callback_type;
 
     //*******************************************
     /// Constructor.
     //*******************************************
-    message_timer_interrupt()
-        : imessage_timer_interrupt<TInterruptGuard>(timer_array, MAX_TIMERS_) {}
+    message_timer_interrupt() : imessage_timer_interrupt<TInterruptGuard>(timer_array, MAX_TIMERS_) {}
 
    private:
-    typename etl::imessage_timer_interrupt<TInterruptGuard>::timer_data
-        timer_array[MAX_TIMERS_];
+    typename etl::imessage_timer_interrupt<TInterruptGuard>::timer_data timer_array[MAX_TIMERS_];
 };
 }  // namespace etl
 

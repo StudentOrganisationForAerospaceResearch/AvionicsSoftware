@@ -78,12 +78,10 @@ class smallest_type {
    public:
     // Set 'type' to be the smallest of the first parameter and any of the others.
     // This is recursive.
-    using type = typename etl::conditional<
-        (etl::size_of<T1>::value <
-         etl::size_of<smallest_other>::value),  // Boolean
-        T1,                                     // TrueType
-        smallest_other>                         // FalseType
-        ::type;                                 // The smallest type of the two.
+    using type = typename etl::conditional<(etl::size_of<T1>::value < etl::size_of<smallest_other>::value),  // Boolean
+                                           T1,                                                               // TrueType
+                                           smallest_other>  // FalseType
+        ::type;                                             // The smallest type of the two.
 
     // The size of the smallest type.
     enum { size = etl::size_of<type>::value };
@@ -118,11 +116,9 @@ constexpr size_t smallest_type_v = smallest_type<T...>::size;
 /// Defines 'size' which is the size of the smallest parameter.
 ///\ingroup smallest
 //***************************************************************************
-template <typename T1, typename T2 = void, typename T3 = void,
-          typename T4 = void, typename T5 = void, typename T6 = void,
-          typename T7 = void, typename T8 = void, typename T9 = void,
-          typename T10 = void, typename T11 = void, typename T12 = void,
-          typename T13 = void, typename T14 = void, typename T15 = void,
+template <typename T1, typename T2 = void, typename T3 = void, typename T4 = void, typename T5 = void,
+          typename T6 = void, typename T7 = void, typename T8 = void, typename T9 = void, typename T10 = void,
+          typename T11 = void, typename T12 = void, typename T13 = void, typename T14 = void, typename T15 = void,
           typename T16 = void>
 struct smallest_type {
    private:
@@ -147,16 +143,14 @@ struct smallest_type {
    public:
     // Define 'smallest_other' as 'smallest_type' with all but the first parameter.
     typedef
-        typename smallest_type<T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
-                               T13, T14, T15, T16>::type smallest_other;
+        typename smallest_type<T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::type smallest_other;
 
     // Set 'type' to be the smallest of the first parameter and any of the others.
     // This is recursive.
-    typedef
-        typename choose_type<(sizeof(T1) < sizeof(smallest_other)),  // Boolean
-                             T1,                                     // TrueType
-                             smallest_other>  // FalseType
-        ::type type;                          // The smallest type of the two.
+    typedef typename choose_type<(sizeof(T1) < sizeof(smallest_other)),  // Boolean
+                                 T1,                                     // TrueType
+                                 smallest_other>                         // FalseType
+        ::type type;                                                     // The smallest type of the two.
 
     // The size of the smallest type.
     enum { size = sizeof(type) };
@@ -166,8 +160,7 @@ struct smallest_type {
 // Specialisation for one template parameter.
 //***************************************************************************
 template <typename T1>
-struct smallest_type<T1, void, void, void, void, void, void, void, void, void,
-                     void, void, void, void, void, void> {
+struct smallest_type<T1, void, void, void, void, void, void, void, void, void, void, void, void, void, void, void> {
     typedef T1 type;
 
     enum { size = sizeof(type) };
@@ -262,12 +255,10 @@ template <size_t NBITS>
 struct smallest_uint_for_bits {
    private:
     // Determines the index of the best unsigned type for the required number of bits.
-    static ETL_CONSTANT int TYPE_INDEX =
-        ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
+    static ETL_CONSTANT int TYPE_INDEX = ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
 
    public:
-    typedef
-        typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
+    typedef typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
 };
 
 #if ETL_USING_CPP11
@@ -285,8 +276,7 @@ template <size_t NBITS>
 struct smallest_int_for_bits {
    private:
     // Determines the index of the best unsigned type for the required number of bits.
-    static ETL_CONSTANT int TYPE_INDEX =
-        ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
+    static ETL_CONSTANT int TYPE_INDEX = ((NBITS > 8) ? 1 : 0) + ((NBITS > 16) ? 1 : 0) + ((NBITS > 32) ? 1 : 0);
 
    public:
     typedef typename private_smallest::best_fit_int_type<TYPE_INDEX>::type type;
@@ -307,13 +297,11 @@ template <uintmax_t VALUE>
 struct smallest_uint_for_value {
    private:
     // Determines the index of the best unsigned type for the required value.
-    static ETL_CONSTANT int TYPE_INDEX = ((VALUE > UINT_LEAST8_MAX) ? 1 : 0) +
-                                         ((VALUE > UINT16_MAX) ? 1 : 0) +
-                                         ((VALUE > UINT32_MAX) ? 1 : 0);
+    static ETL_CONSTANT int TYPE_INDEX =
+        ((VALUE > UINT_LEAST8_MAX) ? 1 : 0) + ((VALUE > UINT16_MAX) ? 1 : 0) + ((VALUE > UINT32_MAX) ? 1 : 0);
 
    public:
-    typedef
-        typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
+    typedef typename private_smallest::best_fit_uint_type<TYPE_INDEX>::type type;
 };
 
 #if ETL_USING_CPP11
@@ -332,14 +320,9 @@ struct smallest_int_for_value {
    private:
     // Determines the index of the best signed type for the required value.
     static ETL_CONSTANT int TYPE_INDEX =
-        (((VALUE > intmax_t(INT_LEAST8_MAX)) ||
-          (VALUE < intmax_t(INT_LEAST8_MIN)))
-             ? 1
-             : 0) +
-        (((VALUE > intmax_t(INT16_MAX)) || (VALUE < intmax_t(INT16_MIN))) ? 1
-                                                                          : 0) +
-        (((VALUE > intmax_t(INT32_MAX)) || (VALUE < intmax_t(INT32_MIN))) ? 1
-                                                                          : 0);
+        (((VALUE > intmax_t(INT_LEAST8_MAX)) || (VALUE < intmax_t(INT_LEAST8_MIN))) ? 1 : 0) +
+        (((VALUE > intmax_t(INT16_MAX)) || (VALUE < intmax_t(INT16_MIN))) ? 1 : 0) +
+        (((VALUE > intmax_t(INT32_MAX)) || (VALUE < intmax_t(INT32_MIN))) ? 1 : 0);
 
    public:
     typedef typename private_smallest::best_fit_int_type<TYPE_INDEX>::type type;

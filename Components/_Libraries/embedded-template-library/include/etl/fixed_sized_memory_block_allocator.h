@@ -62,10 +62,8 @@ class fixed_sized_memory_block_allocator : public imemory_block_allocator {
     //*************************************************************************
     /// The overridden virtual function to allocate a block.
     //*************************************************************************
-    virtual void* allocate_block(size_t required_size,
-                                 size_t required_alignment) ETL_OVERRIDE {
-        if ((required_alignment <= Alignment) &&
-            (required_size <= Block_Size) && !pool.full()) {
+    virtual void* allocate_block(size_t required_size, size_t required_alignment) ETL_OVERRIDE {
+        if ((required_alignment <= Alignment) && (required_size <= Block_Size) && !pool.full()) {
             return pool.template allocate<block>();
         } else {
             return ETL_NULLPTR;
@@ -87,10 +85,7 @@ class fixed_sized_memory_block_allocator : public imemory_block_allocator {
     //*************************************************************************
     /// Returns true if the allocator is the owner of the block.
     //*************************************************************************
-    virtual bool is_owner_of_block(const void* const pblock) const
-        ETL_OVERRIDE {
-        return pool.is_in_pool(pblock);
-    }
+    virtual bool is_owner_of_block(const void* const pblock) const ETL_OVERRIDE { return pool.is_in_pool(pblock); }
 
     /// The generic pool from which allocate memory blocks.
     etl::generic_pool<Block_Size, Alignment, Size> pool;

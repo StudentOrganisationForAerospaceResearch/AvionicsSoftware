@@ -64,8 +64,7 @@ class queue_mpmc_mutex_base {
     size_type max_size() const { return MAX_SIZE; }
 
    protected:
-    queue_mpmc_mutex_base(size_type max_size_)
-        : write_index(0), read_index(0), current_size(0), MAX_SIZE(max_size_) {}
+    queue_mpmc_mutex_base(size_type max_size_) : write_index(0), read_index(0), current_size(0), MAX_SIZE(max_size_) {}
 
     //*************************************************************************
     /// Calculate the next index.
@@ -89,8 +88,7 @@ class queue_mpmc_mutex_base {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_MPMC_QUEUE_MUTEX) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_MPMC_QUEUE_MUTEX) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual ~queue_mpmc_mutex_base() {}
 #else
@@ -110,23 +108,19 @@ class queue_mpmc_mutex_base {
 /// This queue supports concurrent access by one producer and one consumer.
 /// \tparam T The type of value that the queue_mpmc_mutex holds.
 //***************************************************************************
-template <typename T,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
    private:
     typedef etl::queue_mpmc_mutex_base<MEMORY_MODEL> base_t;
 
    public:
-    typedef T value_type;  ///< The type stored in the queue.
-    typedef T& reference;  ///< A reference to the type used in the queue.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the queue.
+    typedef T value_type;              ///< The type stored in the queue.
+    typedef T& reference;              ///< A reference to the type used in the queue.
+    typedef const T& const_reference;  ///< A const reference to the type used in the queue.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue reference to the type used in the queue.
+    typedef T&& rvalue_reference;  ///< An rvalue reference to the type used in the queue.
 #endif
-    typedef typename base_t::size_type
-        size_type;  ///< The type used for determining the size of the queue.
+    typedef typename base_t::size_type size_type;  ///< The type used for determining the size of the queue.
 
     using base_t::current_size;
     using base_t::get_next_index;
@@ -162,8 +156,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_MPMC_MUTEX_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_MPMC_MUTEX_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
@@ -229,8 +222,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
     /// If asserts or exceptions are enabled, throws an etl::queue_full if the queue if already full.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    bool emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         access.lock();
 
         bool result = emplace_implementation(value1, value2, value3, value4);
@@ -362,8 +354,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    iqueue_mpmc_mutex(T* p_buffer_, size_type max_size_)
-        : base_t(max_size_), p_buffer(p_buffer_) {}
+    iqueue_mpmc_mutex(T* p_buffer_, size_type max_size_) : base_t(max_size_), p_buffer(p_buffer_) {}
 
    private:
     //*************************************************************************
@@ -384,8 +375,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
         return false;
     }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_MPMC_MUTEX_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_MPMC_MUTEX_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Push a value to the queue.
     //*************************************************************************
@@ -405,8 +395,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_MPMC_MUTEX_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_MPMC_MUTEX_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
@@ -468,8 +457,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3) {
         if (current_size != MAX_SIZE) {
             ::new (&p_buffer[write_index]) T(value1, value2, value3);
 
@@ -488,8 +476,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
     /// Constructs a value in the queue 'in place'.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    bool emplace_implementation(const T1& value1, const T2& value2,
-                                const T3& value3, const T4& value4) {
+    bool emplace_implementation(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         if (current_size != MAX_SIZE) {
             ::new (&p_buffer[write_index]) T(value1, value2, value3, value4);
 
@@ -514,8 +501,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
             return false;
         }
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_QUEUE_LOCKABLE_FORCE_CPP03_IMPLEMENTATION)
         value = etl::move(p_buffer[read_index]);
 #else
         value = p_buffer[read_index];
@@ -579,8 +565,7 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
 /// \tparam SIZE         The maximum capacity of the queue.
 /// \tparam MEMORY_MODEL The memory model for the queue. Determines the type of the internal counter variables.
 //***************************************************************************
-template <typename T, size_t SIZE,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, size_t SIZE, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class queue_mpmc_mutex : public etl::iqueue_mpmc_mutex<T, MEMORY_MODEL> {
    private:
     typedef etl::iqueue_mpmc_mutex<T, MEMORY_MODEL> base_t;
@@ -588,8 +573,7 @@ class queue_mpmc_mutex : public etl::iqueue_mpmc_mutex<T, MEMORY_MODEL> {
    public:
     typedef typename base_t::size_type size_type;
 
-    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max),
-                      "Size too large for memory model");
+    ETL_STATIC_ASSERT((SIZE <= etl::integral_limits<size_type>::max), "Size too large for memory model");
 
     static ETL_CONSTANT size_type MAX_SIZE = size_type(SIZE);
 
@@ -613,8 +597,7 @@ class queue_mpmc_mutex : public etl::iqueue_mpmc_mutex<T, MEMORY_MODEL> {
 #endif
 
     /// The uninitialised buffer of T used in the queue_mpmc_mutex.
-    typename etl::aligned_storage<sizeof(T), etl::alignment_of<T>::value>::type
-        buffer[MAX_SIZE];
+    typename etl::aligned_storage<sizeof(T), etl::alignment_of<T>::value>::type buffer[MAX_SIZE];
 };
 }  // namespace etl
 

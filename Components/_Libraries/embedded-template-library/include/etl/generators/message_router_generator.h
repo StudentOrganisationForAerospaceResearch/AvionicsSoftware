@@ -85,8 +85,7 @@ namespace etl {
 //***************************************************************************
 class message_router_exception : public etl::exception {
    public:
-    message_router_exception(string_type reason_, string_type file_name_,
-                             numeric_type line_number_)
+    message_router_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : etl::exception(reason_, file_name_, line_number_) {}
 };
 
@@ -96,10 +95,8 @@ class message_router_exception : public etl::exception {
 class message_router_illegal_id : public etl::message_router_exception {
    public:
     message_router_illegal_id(string_type file_name_, numeric_type line_number_)
-        : message_router_exception(
-              ETL_ERROR_TEXT("message router:illegal id",
-                             ETL_MESSAGE_ROUTER_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : message_router_exception(ETL_ERROR_TEXT("message router:illegal id", ETL_MESSAGE_ROUTER_FILE_ID "A"),
+                                   file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -122,8 +119,7 @@ class imessage_router : public etl::successor<imessage_router> {
     virtual bool is_consumer() const = 0;
 
     //********************************************
-    virtual void receive(etl::message_router_id_t destination_router_id,
-                         const etl::imessage& message) {
+    virtual void receive(etl::message_router_id_t destination_router_id, const etl::imessage& message) {
         if ((destination_router_id == get_message_router_id()) ||
             (destination_router_id == imessage_router::ALL_MESSAGE_ROUTERS)) {
             receive(message);
@@ -131,13 +127,10 @@ class imessage_router : public etl::successor<imessage_router> {
     }
 
     //********************************************
-    virtual void receive(etl::shared_message shared_msg) {
-        receive(shared_msg.get_message());
-    }
+    virtual void receive(etl::shared_message shared_msg) { receive(shared_msg.get_message()); }
 
     //********************************************
-    virtual void receive(etl::message_router_id_t destination_router_id,
-                         etl::shared_message shared_msg) {
+    virtual void receive(etl::message_router_id_t destination_router_id, etl::shared_message shared_msg) {
         if ((destination_router_id == get_message_router_id()) ||
             (destination_router_id == imessage_router::ALL_MESSAGE_ROUTERS)) {
             receive(shared_msg);
@@ -145,14 +138,10 @@ class imessage_router : public etl::successor<imessage_router> {
     }
 
     //********************************************
-    bool accepts(const etl::imessage& msg) const {
-        return accepts(msg.get_message_id());
-    }
+    bool accepts(const etl::imessage& msg) const { return accepts(msg.get_message_id()); }
 
     //********************************************
-    etl::message_router_id_t get_message_router_id() const {
-        return message_router_id;
-    }
+    etl::message_router_id_t get_message_router_id() const { return message_router_id; }
 
     enum {
         NULL_MESSAGE_ROUTER = 255,
@@ -183,8 +172,7 @@ class imessage_router : public etl::successor<imessage_router> {
 class null_message_router : public imessage_router {
    public:
     //********************************************
-    null_message_router()
-        : imessage_router(imessage_router::NULL_MESSAGE_ROUTER) {}
+    null_message_router() : imessage_router(imessage_router::NULL_MESSAGE_ROUTER) {}
 
     //********************************************
     null_message_router(etl::imessage_router& successor)
@@ -238,8 +226,7 @@ inline etl::imessage_router& get_null_message_router() {
 class message_producer : public imessage_router {
    public:
     //********************************************
-    message_producer()
-        : imessage_router(etl::imessage_router::MESSAGE_ROUTER) {}
+    message_producer() : imessage_router(etl::imessage_router::MESSAGE_ROUTER) {}
 
     //********************************************
     message_producer(etl::imessage_router& successor)
@@ -247,16 +234,12 @@ class message_producer : public imessage_router {
 
     //********************************************
     message_producer(etl::message_router_id_t id_) : imessage_router(id_) {
-        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER,
-                   ETL_ERROR(etl::message_router_illegal_id));
+        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER, ETL_ERROR(etl::message_router_illegal_id));
     }
 
     //********************************************
-    message_producer(etl::message_router_id_t id_,
-                     etl::imessage_router& successor)
-        : imessage_router(id_, successor) {
-        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER,
-                   ETL_ERROR(etl::message_router_illegal_id));
+    message_producer(etl::message_router_id_t id_, etl::imessage_router& successor) : imessage_router(id_, successor) {
+        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER, ETL_ERROR(etl::message_router_illegal_id));
     }
 
     //********************************************
@@ -292,24 +275,21 @@ class message_producer : public imessage_router {
 //***************************************************************************
 /// Send a message to a router.
 //***************************************************************************
-static inline void send_message(etl::imessage_router& destination,
-                                const etl::imessage& message) {
+static inline void send_message(etl::imessage_router& destination, const etl::imessage& message) {
     destination.receive(message);
 }
 
 //***************************************************************************
 /// Send a shared message to a router.
 //***************************************************************************
-static inline void send_message(etl::imessage_router& destination,
-                                etl::shared_message message) {
+static inline void send_message(etl::imessage_router& destination, etl::shared_message message) {
     destination.receive(message);
 }
 
 //***************************************************************************
 /// Send a message to a router with a particular id.
 //***************************************************************************
-static inline void send_message(etl::imessage_router& destination,
-                                etl::message_router_id_t id,
+static inline void send_message(etl::imessage_router& destination, etl::message_router_id_t id,
                                 const etl::imessage& message) {
     destination.receive(id, message);
 }
@@ -317,8 +297,7 @@ static inline void send_message(etl::imessage_router& destination,
 //***************************************************************************
 /// Send a shared message to a router with a particular id.
 //***************************************************************************
-static inline void send_message(etl::imessage_router& destination,
-                                etl::message_router_id_t id,
+static inline void send_message(etl::imessage_router& destination, etl::message_router_id_t id,
                                 etl::shared_message message) {
     destination.receive(id, message);
 }
@@ -344,24 +323,19 @@ class message_router : public imessage_router {
 
     //**********************************************
     message_router(etl::message_router_id_t id_) : imessage_router(id_) {
-        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER,
-                   ETL_ERROR(etl::message_router_illegal_id));
+        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER, ETL_ERROR(etl::message_router_illegal_id));
     }
 
     //**********************************************
-    message_router(etl::message_router_id_t id_,
-                   etl::imessage_router& successor_)
-        : imessage_router(id_, successor_) {
-        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER,
-                   ETL_ERROR(etl::message_router_illegal_id));
+    message_router(etl::message_router_id_t id_, etl::imessage_router& successor_) : imessage_router(id_, successor_) {
+        ETL_ASSERT(id_ <= etl::imessage_router::MAX_MESSAGE_ROUTER, ETL_ERROR(etl::message_router_illegal_id));
     }
 
     //**********************************************
     using etl::imessage_router::receive;
 
     void receive(const etl::imessage& msg) ETL_OVERRIDE {
-        const bool was_handled =
-            (receive_message_type<TMessageTypes>(msg) || ...);
+        const bool was_handled = (receive_message_type<TMessageTypes>(msg) || ...);
 
         if (!was_handled) {
             if (has_successor()) {
@@ -372,9 +346,7 @@ class message_router : public imessage_router {
         }
     }
 
-    template <typename TMessage,
-              typename etl::enable_if<
-                  etl::is_base_of<imessage, TMessage>::value, int>::type = 0>
+    template <typename TMessage, typename etl::enable_if<etl::is_base_of<imessage, TMessage>::value, int>::type = 0>
     void receive(const TMessage& msg) {
         if constexpr (etl::is_one_of<TMessage, TMessageTypes...>::value) {
             static_cast<TDerived*>(this)->on_receive(msg);
@@ -390,9 +362,7 @@ class message_router : public imessage_router {
     //**********************************************
     using imessage_router::accepts;
 
-    bool accepts(etl::message_id_t id) const ETL_OVERRIDE {
-        return (accepts_type<TMessageTypes>(id) || ...);
-    }
+    bool accepts(etl::message_id_t id) const ETL_OVERRIDE { return (accepts_type<TMessageTypes>(id) || ...); }
 
     //********************************************
     ETL_DEPRECATED bool is_null_router() const ETL_OVERRIDE { return false; }
@@ -408,8 +378,7 @@ class message_router : public imessage_router {
     template <typename TMessage>
     bool receive_message_type(const etl::imessage& msg) {
         if (TMessage::ID == msg.get_message_id()) {
-            static_cast<TDerived*>(this)->on_receive(
-                static_cast<const TMessage&>(msg));
+            static_cast<TDerived*>(this)->on_receive(static_cast<const TMessage&>(msg));
             return true;
         } else {
             return false;

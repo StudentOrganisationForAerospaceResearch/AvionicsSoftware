@@ -51,8 +51,7 @@ namespace etl {
 //***************************************************************************
 class mem_cast_exception : public etl::exception {
    public:
-    mem_cast_exception(string_type reason_, string_type file_name_,
-                       numeric_type line_number_)
+    mem_cast_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -62,9 +61,7 @@ class mem_cast_exception : public etl::exception {
 class mem_cast_size_exception : public etl::mem_cast_exception {
    public:
     mem_cast_size_exception(string_type file_name_, numeric_type line_number_)
-        : mem_cast_exception(
-              ETL_ERROR_TEXT("mem_cast:size", ETL_MEM_CAST_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : mem_cast_exception(ETL_ERROR_TEXT("mem_cast:size", ETL_MEM_CAST_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -72,11 +69,9 @@ class mem_cast_size_exception : public etl::mem_cast_exception {
 //***************************************************************************
 class mem_cast_nullptr_exception : public etl::mem_cast_exception {
    public:
-    mem_cast_nullptr_exception(string_type file_name_,
-                               numeric_type line_number_)
-        : mem_cast_exception(
-              ETL_ERROR_TEXT("mem_cast:null pointer", ETL_MEM_CAST_FILE_ID "B"),
-              file_name_, line_number_) {}
+    mem_cast_nullptr_exception(string_type file_name_, numeric_type line_number_)
+        : mem_cast_exception(ETL_ERROR_TEXT("mem_cast:null pointer", ETL_MEM_CAST_FILE_ID "B"), file_name_,
+                             line_number_) {}
 };
 
 //*****************************************************************************
@@ -88,8 +83,7 @@ class mem_cast {
     static ETL_CONSTANT size_t Size = Size_;
     static ETL_CONSTANT size_t Alignment = Alignment_;
 
-    ETL_STATIC_ASSERT((Alignment == 1) || etl::is_power_of_2<Alignment>::value,
-                      "Alignment must be a power of 2");
+    ETL_STATIC_ASSERT((Alignment == 1) || etl::is_power_of_2<Alignment>::value, "Alignment must be a power of 2");
 
     //***********************************
     /// Default constructor
@@ -134,8 +128,7 @@ class mem_cast {
     template <typename T>
     void assign_at_offset(size_t offset, const T& value) {
         char* p = static_cast<char*>(buffer) + offset;
-        ETL_ASSERT(sizeof(T) <= (Size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (Size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (p) T(value);
     }
@@ -146,8 +139,7 @@ class mem_cast {
     template <typename T, size_t Offset>
     void assign_at_offset(const T& value) {
         char* p = static_cast<char*>(buffer) + Offset;
-        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset),
-                          "Type size is too large");
+        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset), "Type size is too large");
 
         ::new (p) T(value);
     }
@@ -169,8 +161,7 @@ class mem_cast {
     template <typename T, typename... TArgs>
     void emplace_at_offset(size_t offset, TArgs... args) {
         char* p = static_cast<char*>(buffer) + offset;
-        ETL_ASSERT(sizeof(T) <= (Size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (Size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (p) T(etl::forward<TArgs>(args)...);
     }
@@ -181,8 +172,7 @@ class mem_cast {
     template <typename T, size_t Offset, typename... TArgs>
     void emplace_at_offset(TArgs... args) {
         char* p = static_cast<char*>(buffer) + Offset;
-        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset),
-                          "Type size is too large");
+        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset), "Type size is too large");
 
         ::new (p) T(etl::forward<TArgs>(args)...);
     }
@@ -213,8 +203,7 @@ class mem_cast {
     //***********************************
     template <typename T>
     ETL_NODISCARD T& ref_at_offset(size_t offset) {
-        ETL_ASSERT(sizeof(T) <= (Size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (Size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         char* p = buffer + offset;
 
@@ -226,8 +215,7 @@ class mem_cast {
     //***********************************
     template <typename T>
     ETL_NODISCARD const T& ref_at_offset(size_t offset) const {
-        ETL_ASSERT(sizeof(T) <= (Size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (Size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         char* p = buffer + offset;
 
@@ -239,8 +227,7 @@ class mem_cast {
     //***********************************
     template <typename T, size_t Offset>
     ETL_NODISCARD T& ref_at_offset() {
-        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset),
-                          "Size of T is too large");
+        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset), "Size of T is too large");
 
         char* p = buffer + Offset;
 
@@ -252,8 +239,7 @@ class mem_cast {
     //***********************************
     template <typename T, size_t Offset>
     ETL_NODISCARD const T& ref_at_offset() const {
-        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset),
-                          "Size of T is too large");
+        ETL_STATIC_ASSERT(sizeof(T) <= (Size - Offset), "Size of T is too large");
 
         char* p = buffer + Offset;
 
@@ -298,8 +284,7 @@ class mem_cast {
 //*****************************************************************************
 class mem_cast_ptr {
    public:
-    static ETL_CONSTANT size_t Undefined_Size =
-        etl::integral_limits<size_t>::max;
+    static ETL_CONSTANT size_t Undefined_Size = etl::integral_limits<size_t>::max;
 
     //***********************************
     /// Default constructor
@@ -309,14 +294,12 @@ class mem_cast_ptr {
     //***********************************
     /// Construct with pointer to buffer and optional size
     //***********************************
-    mem_cast_ptr(char* pbuffer_, size_t buffer_size_ = Undefined_Size)
-        : pbuffer(pbuffer_), buffer_size(buffer_size_) {}
+    mem_cast_ptr(char* pbuffer_, size_t buffer_size_ = Undefined_Size) : pbuffer(pbuffer_), buffer_size(buffer_size_) {}
 
     //***********************************
     /// Copy construct
     //***********************************
-    mem_cast_ptr(const mem_cast_ptr& other)
-        : pbuffer(other.pbuffer), buffer_size(other.buffer_size) {}
+    mem_cast_ptr(const mem_cast_ptr& other) : pbuffer(other.pbuffer), buffer_size(other.buffer_size) {}
 
     //***********************************
     /// Assignment operator
@@ -333,10 +316,8 @@ class mem_cast_ptr {
     //***********************************
     template <typename T>
     void assign(const T& value) {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
-        ETL_ASSERT(sizeof(T) <= buffer_size,
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT(sizeof(T) <= buffer_size, ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (pbuffer) T(value);
     }
@@ -346,11 +327,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T>
     void assign_at_offset(size_t offset, const T& value) {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (p) T(value);
     }
@@ -360,11 +339,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T, size_t Offset>
     void assign_at_offset(const T& value) {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + Offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (p) T(value);
     }
@@ -375,10 +352,8 @@ class mem_cast_ptr {
     //***********************************
     template <typename T, typename... TArgs>
     void emplace(TArgs... args) {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
-        ETL_ASSERT(sizeof(T) <= buffer_size,
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT(sizeof(T) <= buffer_size, ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (pbuffer) T(etl::forward<TArgs>(args)...);
     }
@@ -388,11 +363,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T, typename... TArgs>
     void emplace_at_offset(size_t offset, TArgs... args) {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (p) T(etl::forward<TArgs>(args)...);
     }
@@ -402,11 +375,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T, size_t Offset, typename... TArgs>
     void emplace_at_offset(TArgs... args) {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + Offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         ::new (p) T(etl::forward<TArgs>(args)...);
     }
@@ -417,10 +388,8 @@ class mem_cast_ptr {
     //***********************************
     template <typename T>
     ETL_NODISCARD T& ref() {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
-        ETL_ASSERT(sizeof(T) <= buffer_size,
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT(sizeof(T) <= buffer_size, ETL_ERROR(etl::mem_cast_size_exception));
 
         return *reinterpret_cast<T*>(pbuffer);
     }
@@ -430,10 +399,8 @@ class mem_cast_ptr {
     //***********************************
     template <typename T>
     ETL_NODISCARD const T& ref() const {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
-        ETL_ASSERT(sizeof(T) <= buffer_size,
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT(sizeof(T) <= buffer_size, ETL_ERROR(etl::mem_cast_size_exception));
 
         return *reinterpret_cast<const T*>(pbuffer);
     }
@@ -443,11 +410,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T>
     ETL_NODISCARD T& ref_at_offset(size_t offset) {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         return *reinterpret_cast<T*>(p);
     }
@@ -457,11 +422,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T>
     ETL_NODISCARD const T& ref_at_offset(size_t offset) const {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         return *reinterpret_cast<const T*>(p);
     }
@@ -471,11 +434,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T, size_t Offset>
     ETL_NODISCARD T& ref_at_offset() {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + Offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         return *reinterpret_cast<T*>(p);
     }
@@ -485,11 +446,9 @@ class mem_cast_ptr {
     //***********************************
     template <typename T, size_t Offset>
     ETL_NODISCARD const T& ref_at_offset() const {
-        ETL_ASSERT((pbuffer != ETL_NULLPTR),
-                   ETL_ERROR(etl::mem_cast_nullptr_exception));
+        ETL_ASSERT((pbuffer != ETL_NULLPTR), ETL_ERROR(etl::mem_cast_nullptr_exception));
         char* p = pbuffer + Offset;
-        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset),
-                   ETL_ERROR(etl::mem_cast_size_exception));
+        ETL_ASSERT(sizeof(T) <= (buffer_size - Offset), ETL_ERROR(etl::mem_cast_size_exception));
 
         return *reinterpret_cast<const T*>(p);
     }
@@ -505,8 +464,7 @@ class mem_cast_ptr {
     /// Get the alignment of the buffer
     //***********************************
     ETL_NODISCARD size_t alignment() const {
-        typedef typename etl::smallest_uint_for_bits<sizeof(uintptr_t) *
-                                                     CHAR_BIT>::type type;
+        typedef typename etl::smallest_uint_for_bits<sizeof(uintptr_t) * CHAR_BIT>::type type;
 
         const type p = reinterpret_cast<type>(pbuffer);
 
@@ -547,21 +505,16 @@ class mem_cast_ptr {
 //*****************************************************************************
 #if ETL_USING_CPP11 && !defined(ETL_MEM_CAST_FORCE_CPP03_IMPLEMENTATION)
 template <typename... TTypes>
-using mem_cast_types = etl::mem_cast<etl::largest<TTypes...>::size,
-                                     etl::largest<TTypes...>::alignment>;
+using mem_cast_types = etl::mem_cast<etl::largest<TTypes...>::size, etl::largest<TTypes...>::alignment>;
 #else
-template <typename T1, typename T2 = char, typename T3 = char,
-          typename T4 = char, typename T5 = char, typename T6 = char,
-          typename T7 = char, typename T8 = char, typename T9 = char,
-          typename T10 = char, typename T11 = char, typename T12 = char,
-          typename T13 = char, typename T14 = char, typename T15 = char,
+template <typename T1, typename T2 = char, typename T3 = char, typename T4 = char, typename T5 = char,
+          typename T6 = char, typename T7 = char, typename T8 = char, typename T9 = char, typename T10 = char,
+          typename T11 = char, typename T12 = char, typename T13 = char, typename T14 = char, typename T15 = char,
           typename T16 = char>
 struct mem_cast_types
     : public etl::mem_cast<
-          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                       T14, T15, T16>::size,
-          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
-                       T14, T15, T16>::alignment> {};
+          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::size,
+          etl::largest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>::alignment> {};
 #endif
 }  // namespace etl
 

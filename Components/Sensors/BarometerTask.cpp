@@ -68,14 +68,12 @@ void BarometerTask::InitTask() {
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize Baro task twice");
 
     // Start the task
-    BaseType_t rtValue = xTaskCreate(
-        (TaskFunction_t)BarometerTask::RunTask, (const char*)"BaroTask",
-        (uint16_t)TASK_BAROMETER_STACK_DEPTH_WORDS, (void*)this,
-        (UBaseType_t)TASK_BAROMETER_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
+    BaseType_t rtValue = xTaskCreate((TaskFunction_t)BarometerTask::RunTask, (const char*)"BaroTask",
+                                     (uint16_t)TASK_BAROMETER_STACK_DEPTH_WORDS, (void*)this,
+                                     (UBaseType_t)TASK_BAROMETER_PRIORITY, (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
-    SOAR_ASSERT(rtValue == pdPASS,
-                "BarometerTask::InitTask() - xTaskCreate() failed");
+    SOAR_ASSERT(rtValue == pdPASS, "BarometerTask::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -111,8 +109,7 @@ void BarometerTask::HandleCommand(Command& cm) {
             break;
         }
         default:
-            SOAR_PRINT("BarometerTask - Received Unsupported Command {%d}\n",
-                       cm.GetCommand());
+            SOAR_PRINT("BarometerTask - Received Unsupported Command {%d}\n", cm.GetCommand());
             break;
     }
 
@@ -139,16 +136,12 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand) {
             break;
         case BARO_REQUEST_DEBUG:
             SOAR_PRINT("\t-- Barometer Data --\n");
-            SOAR_PRINT(" Temp (C)       : %d.%d\n", data->temperature_ / 100,
-                       data->temperature_ % 100);
-            SOAR_PRINT(" Pressure (mbar): %d.%d\n", data->pressure_ / 100,
-                       data->pressure_ % 100);
-            SOAR_PRINT(" Pressure (kPa) : %d.%d\n\n", data->pressure_ / 1000,
-                       data->pressure_ % 1000);
+            SOAR_PRINT(" Temp (C)       : %d.%d\n", data->temperature_ / 100, data->temperature_ % 100);
+            SOAR_PRINT(" Pressure (mbar): %d.%d\n", data->pressure_ / 100, data->pressure_ % 100);
+            SOAR_PRINT(" Pressure (kPa) : %d.%d\n\n", data->pressure_ / 1000, data->pressure_ % 1000);
             break;
         default:
-            SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n",
-                       taskCommand);
+            SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
             break;
     }
 }
@@ -168,13 +161,11 @@ void BarometerTask::TransmitProtocolBaroData() {
     baroData.set_baro_temp(data->temperature_);
     msg.set_baro(baroData);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>
-        writeBuffer;
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
     // Send the barometer data
-    DMBProtocolTask::SendProtobufMessage(writeBuffer,
-                                         Proto::MessageID::MSG_TELEMETRY);
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
 
 /**
@@ -223,8 +214,7 @@ void BarometerTask::SampleBarometer() {
 
     // Reset the barometer
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &RESET_CMD, CMD_SIZE,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &RESET_CMD, CMD_SIZE, CMD_TIMEOUT);
     osDelay(4);  // 2.8ms reload after Reset command
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
@@ -247,30 +237,25 @@ void BarometerTask::SampleBarometer() {
 
     // Tell the barometer to convert the pressure to a digital value with an over-sampling ratio of 512
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D1_512_CONV_CMD,
-                     CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
     osDelay(2);  // 1.17ms max conversion time for an over-sampling ratio of 512
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
     // Read the first byte (bits 23-16)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     pressureReading = dataInBuffer << 16;
 
     // Read the second byte (bits 15-8)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     pressureReading += dataInBuffer << 8;
 
     // Read the third byte (bits 7-0)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     pressureReading += dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
@@ -279,30 +264,25 @@ void BarometerTask::SampleBarometer() {
 
     // Tell the barometer to convert the temperature to a digital value with an over-sampling ratio of 512
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D2_512_CONV_CMD,
-                     CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D2_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
     osDelay(2);  // 1.17ms max conversion time for an over-sampling ratio of 512
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
     // Read the first byte (bits 23-16)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     temperatureReading = dataInBuffer << 16;
 
     // Read the second byte (bits 15-8)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     temperatureReading += dataInBuffer << 8;
 
     // Read the third byte (bits 7-0)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &ADC_READ_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     temperatureReading += dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
@@ -311,9 +291,7 @@ void BarometerTask::SampleBarometer() {
 
     // Calibration coefficients need to be type cast to int64_t to avoid overflow during intermediate calculations
     int32_t dT = temperatureReading - ((int32_t)c5Tref << 8);
-    int32_t temp =
-        2000 + ((dT * (int64_t)c6Tempsens) >>
-                23);  // Divide this value by 100 to get degrees Celsius
+    int32_t temp = 2000 + ((dT * (int64_t)c6Tempsens) >> 23);  // Divide this value by 100 to get degrees Celsius
     int64_t off = ((int64_t)c2Off << 17) + ((dT * (int64_t)c4Tco) >> 6);
     int64_t sens = ((int64_t)c1Sens << 16) + ((dT * (int64_t)c3Tcs) >> 7);
 
@@ -336,8 +314,7 @@ void BarometerTask::SampleBarometer() {
         sens = sens - sens2;
     }
 
-    int32_t p = (((pressureReading * sens) >> 21) - off) >>
-                15;  // Divide this value by 100 to get millibars
+    int32_t p = (((pressureReading * sens) >> 21) - off) >> 15;  // Divide this value by 100 to get millibars
 
     /* Store Data --------------------------------------------------------*/
     data->pressure_ = p;
@@ -361,17 +338,14 @@ uint16_t BarometerTask::ReadCalibrationCoefficients(uint8_t PROM_READ_CMD) {
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
 
-    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &PROM_READ_CMD, CMD_SIZE,
-                     CMD_TIMEOUT);
+    HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &PROM_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
     // Read the first byte (bits 15-8)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     uint16_t coefficient = dataInBuffer << 8;
 
     // Read the second byte (bits 7-0)
-    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD,
-                            &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
+    HAL_SPI_TransmitReceive(SystemHandles::SPI_Barometer, &READ_BYTE_CMD, &dataInBuffer, CMD_SIZE, CMD_TIMEOUT);
     coefficient += dataInBuffer;
 
     HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);

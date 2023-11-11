@@ -65,8 +65,7 @@ namespace etl {
 //***************************************************************************
 class string_exception : public etl::exception {
    public:
-    string_exception(string_type reason_, string_type file_name_,
-                     numeric_type line_number_)
+    string_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -77,9 +76,7 @@ class string_exception : public etl::exception {
 class string_empty : public etl::string_exception {
    public:
     string_empty(string_type file_name_, numeric_type line_number_)
-        : string_exception(
-              ETL_ERROR_TEXT("string:empty", ETL_BASIC_STRING_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : string_exception(ETL_ERROR_TEXT("string:empty", ETL_BASIC_STRING_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -89,9 +86,7 @@ class string_empty : public etl::string_exception {
 class string_out_of_bounds : public etl::string_exception {
    public:
     string_out_of_bounds(string_type file_name_, numeric_type line_number_)
-        : string_exception(
-              ETL_ERROR_TEXT("string:bounds", ETL_BASIC_STRING_FILE_ID "B"),
-              file_name_, line_number_) {}
+        : string_exception(ETL_ERROR_TEXT("string:bounds", ETL_BASIC_STRING_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -101,9 +96,7 @@ class string_out_of_bounds : public etl::string_exception {
 class string_iterator : public etl::string_exception {
    public:
     string_iterator(string_type file_name_, numeric_type line_number_)
-        : string_exception(
-              ETL_ERROR_TEXT("string:iterator", ETL_BASIC_STRING_FILE_ID "C"),
-              file_name_, line_number_) {}
+        : string_exception(ETL_ERROR_TEXT("string:iterator", ETL_BASIC_STRING_FILE_ID "C"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -113,9 +106,7 @@ class string_iterator : public etl::string_exception {
 class string_truncation : public etl::string_exception {
    public:
     string_truncation(string_type file_name_, numeric_type line_number_)
-        : string_exception(
-              ETL_ERROR_TEXT("string:iterator", ETL_BASIC_STRING_FILE_ID "D"),
-              file_name_, line_number_) {}
+        : string_exception(ETL_ERROR_TEXT("string:iterator", ETL_BASIC_STRING_FILE_ID "D"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -254,9 +245,8 @@ class string_base {
     static ETL_CONSTANT uint_least8_t IS_TRUNCATED = etl::bit<0>::value;
     static ETL_CONSTANT uint_least8_t CLEAR_AFTER_USE = etl::bit<1>::value;
 
-    size_type current_size;  ///< The current number of elements in the string.
-    const size_type
-        CAPACITY;  ///< The maximum number of elements in the string.
+    size_type current_size;    ///< The current number of elements in the string.
+    const size_type CAPACITY;  ///< The maximum number of elements in the string.
 
 #if ETL_HAS_STRING_TRUNCATION_CHECKS || ETL_HAS_STRING_CLEAR_AFTER_USE
     etl::flags<uint_least8_t> flags;
@@ -283,8 +273,7 @@ class ibasic_string : public etl::string_base {
     typedef ETL_OR_STD::reverse_iterator<iterator> reverse_iterator;
     typedef ETL_OR_STD::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    typedef typename etl::iterator_traits<iterator>::difference_type
-        difference_type;
+    typedef typename etl::iterator_traits<iterator>::difference_type difference_type;
 
     //*********************************************************************
     /// Returns an iterator to the beginning of the string.
@@ -332,9 +321,7 @@ class ibasic_string : public etl::string_base {
     /// Returns a const reverse iterator to the reverse beginning of the string.
     ///\return Const iterator to the reverse beginning of the string.
     //*********************************************************************
-    const_reverse_iterator rbegin() const {
-        return const_reverse_iterator(end());
-    }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
 
     //*********************************************************************
     /// Returns a reverse iterator to the end + 1 of the string.
@@ -346,25 +333,19 @@ class ibasic_string : public etl::string_base {
     /// Returns a const reverse iterator to the end + 1 of the string.
     ///\return Const reverse iterator to the end + 1 of the string.
     //*********************************************************************
-    const_reverse_iterator rend() const {
-        return const_reverse_iterator(begin());
-    }
+    const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the string.
     ///\return Const reverse iterator to the reverse beginning of the string.
     //*********************************************************************
-    const_reverse_iterator crbegin() const {
-        return const_reverse_iterator(cend());
-    }
+    const_reverse_iterator crbegin() const { return const_reverse_iterator(cend()); }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the string.
     ///\return Const reverse iterator to the end + 1 of the string.
     //*********************************************************************
-    const_reverse_iterator crend() const {
-        return const_reverse_iterator(cbegin());
-    }
+    const_reverse_iterator crend() const { return const_reverse_iterator(cbegin()); }
 
     //*********************************************************************
     /// Resizes the string.
@@ -551,14 +532,12 @@ class ibasic_string : public etl::string_base {
     ///\param subposition The position to start from.
     ///\param sublength   The length to copy.
     //*********************************************************************
-    void assign(const etl::ibasic_string<T>& other, size_type subposition,
-                size_type sublength) {
+    void assign(const etl::ibasic_string<T>& other, size_type subposition, size_type sublength) {
         if (sublength == npos) {
             sublength = other.size() - subposition;
         }
 
-        ETL_ASSERT(subposition <= other.size(),
-                   ETL_ERROR(string_out_of_bounds));
+        ETL_ASSERT(subposition <= other.size(), ETL_ERROR(string_out_of_bounds));
 
         assign(other.begin() + subposition, sublength);
 
@@ -595,8 +574,7 @@ class ibasic_string : public etl::string_base {
         set_truncated(*other != 0);
 
 #if ETL_HAS_ERROR_ON_STRING_TRUNCATION
-        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false,
-                   ETL_ERROR(string_truncation))
+        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false, ETL_ERROR(string_truncation))
 #endif
 #endif
 
@@ -616,8 +594,7 @@ class ibasic_string : public etl::string_base {
         set_truncated(length_ > CAPACITY);
 
 #if ETL_HAS_ERROR_ON_STRING_TRUNCATION
-        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false,
-                   ETL_ERROR(string_truncation))
+        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false, ETL_ERROR(string_truncation))
 #endif
 #endif
 
@@ -655,8 +632,7 @@ class ibasic_string : public etl::string_base {
         set_truncated(first != last);
 
 #if ETL_HAS_ERROR_ON_STRING_TRUNCATION
-        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false,
-                   ETL_ERROR(string_truncation))
+        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false, ETL_ERROR(string_truncation))
 #endif
 #endif
     }
@@ -674,8 +650,7 @@ class ibasic_string : public etl::string_base {
         set_truncated(n > CAPACITY);
 
 #if ETL_HAS_ERROR_ON_STRING_TRUNCATION
-        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false,
-                   ETL_ERROR(string_truncation))
+        ETL_ASSERT(flags.test<IS_TRUNCATED>() == false, ETL_ERROR(string_truncation))
 #endif
 #endif
 
@@ -749,8 +724,7 @@ class ibasic_string : public etl::string_base {
     ///\param subposition The position in str.
     ///\param sublength The number of characters.
     //*********************************************************************
-    ibasic_string& append(const ibasic_string& str, size_type subposition,
-                          size_type sublength = npos) {
+    ibasic_string& append(const ibasic_string& str, size_type subposition, size_type sublength = npos) {
         ETL_ASSERT(subposition <= str.size(), ETL_ERROR(string_out_of_bounds));
 
         insert(size(), str, subposition, sublength);
@@ -890,10 +864,8 @@ class ibasic_string : public etl::string_base {
             const size_type shift_amount = n;
             const size_type to_position = start + shift_amount;
             const size_type remaining_characters = current_size - start;
-            const size_type max_shift_characters =
-                CAPACITY - start - shift_amount;
-            const size_type characters_to_shift =
-                etl::min(max_shift_characters, remaining_characters);
+            const size_type max_shift_characters = CAPACITY - start - shift_amount;
+            const size_type characters_to_shift = etl::min(max_shift_characters, remaining_characters);
 
             // Will the string truncate?
             if ((start + shift_amount + remaining_characters) > CAPACITY) {
@@ -910,8 +882,7 @@ class ibasic_string : public etl::string_base {
                 current_size += shift_amount;
             }
 
-            etl::copy_backward(insert_position,
-                               insert_position + characters_to_shift,
+            etl::copy_backward(insert_position, insert_position + characters_to_shift,
                                begin() + to_position + characters_to_shift);
             etl::fill(insert_position, insert_position + shift_amount, value);
         }
@@ -973,10 +944,8 @@ class ibasic_string : public etl::string_base {
             const size_type shift_amount = n;
             const size_type to_position = start + shift_amount;
             const size_type remaining_characters = current_size - start;
-            const size_type max_shift_characters =
-                CAPACITY - start - shift_amount;
-            const size_type characters_to_shift =
-                etl::min(max_shift_characters, remaining_characters);
+            const size_type max_shift_characters = CAPACITY - start - shift_amount;
+            const size_type characters_to_shift = etl::min(max_shift_characters, remaining_characters);
 
             // Will the string truncate?
             if ((start + shift_amount + remaining_characters) > CAPACITY) {
@@ -993,8 +962,7 @@ class ibasic_string : public etl::string_base {
                 current_size += shift_amount;
             }
 
-            etl::copy_backward(position_, position_ + characters_to_shift,
-                               begin() + to_position + characters_to_shift);
+            etl::copy_backward(position_, position_ + characters_to_shift, begin() + to_position + characters_to_shift);
 
             while (first != last) {
                 *position_++ = *first++;
@@ -1011,8 +979,7 @@ class ibasic_string : public etl::string_base {
     ///\param position The position to insert before.
     ///\param str      The string to insert.
     //*********************************************************************
-    etl::ibasic_string<T>& insert(size_type position,
-                                  const etl::ibasic_string<T>& str) {
+    etl::ibasic_string<T>& insert(size_type position, const etl::ibasic_string<T>& str) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         insert(begin() + position, str.cbegin(), str.cend());
@@ -1037,9 +1004,8 @@ class ibasic_string : public etl::string_base {
     ///\param subposition The subposition to start from.
     ///\param sublength   The number of characters to insert.
     //*********************************************************************
-    etl::ibasic_string<T>& insert(size_type position,
-                                  const etl::ibasic_string<T>& str,
-                                  size_type subposition, size_type sublength) {
+    etl::ibasic_string<T>& insert(size_type position, const etl::ibasic_string<T>& str, size_type subposition,
+                                  size_type sublength) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
         ETL_ASSERT(subposition <= str.size(), ETL_ERROR(string_out_of_bounds));
 
@@ -1047,8 +1013,7 @@ class ibasic_string : public etl::string_base {
             sublength = str.size() - subposition;
         }
 
-        insert(begin() + position, str.cbegin() + subposition,
-               str.cbegin() + subposition + sublength);
+        insert(begin() + position, str.cbegin() + subposition, str.cbegin() + subposition + sublength);
 
 #if ETL_HAS_STRING_TRUNCATION_CHECKS
         if (str.is_truncated()) {
@@ -1081,8 +1046,7 @@ class ibasic_string : public etl::string_base {
     ///\param s        The string to insert.
     ///\param n        The number of characters to insert.
     //*********************************************************************
-    etl::ibasic_string<T>& insert(size_type position, const_pointer s,
-                                  size_type n) {
+    etl::ibasic_string<T>& insert(size_type position, const_pointer s, size_type n) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         insert(begin() + position, s, s + n);
@@ -1095,8 +1059,7 @@ class ibasic_string : public etl::string_base {
     ///\param n        The number of characters to insert.
     ///\param c        The character to insert.
     //*********************************************************************
-    etl::ibasic_string<T>& insert(size_type position, size_type n,
-                                  value_type c) {
+    etl::ibasic_string<T>& insert(size_type position, size_type n, value_type c) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         insert(begin() + position, n, c);
@@ -1209,8 +1172,7 @@ class ibasic_string : public etl::string_base {
             return npos;
         }
 
-        const_iterator iposition =
-            etl::search(begin() + pos, end(), str.begin(), str.end());
+        const_iterator iposition = etl::search(begin() + pos, end(), str.begin(), str.end());
 
         if (iposition == end()) {
             return npos;
@@ -1231,8 +1193,7 @@ class ibasic_string : public etl::string_base {
         }
 #endif
 
-        const_iterator iposition =
-            etl::search(begin() + pos, end(), s, s + etl::strlen(s));
+        const_iterator iposition = etl::search(begin() + pos, end(), s, s + etl::strlen(s));
 
         if (iposition == end()) {
             return npos;
@@ -1283,8 +1244,7 @@ class ibasic_string : public etl::string_base {
     ///\param str The content to find
     ///\param pos The position to start searching from.
     //*********************************************************************
-    size_type rfind(const ibasic_string<T>& str,
-                    size_type position = npos) const {
+    size_type rfind(const ibasic_string<T>& str, size_type position = npos) const {
         if ((str.size()) > size()) {
             return npos;
         }
@@ -1295,8 +1255,7 @@ class ibasic_string : public etl::string_base {
 
         position = size() - position;
 
-        const_reverse_iterator iposition =
-            etl::search(rbegin() + position, rend(), str.rbegin(), str.rend());
+        const_reverse_iterator iposition = etl::search(rbegin() + position, rend(), str.rbegin(), str.rend());
 
         if (iposition == rend()) {
             return npos;
@@ -1326,8 +1285,7 @@ class ibasic_string : public etl::string_base {
         const_reverse_iterator srbegin(s + len);
         const_reverse_iterator srend(s);
 
-        const_reverse_iterator iposition =
-            etl::search(rbegin() + position, rend(), srbegin, srend);
+        const_reverse_iterator iposition = etl::search(rbegin() + position, rend(), srbegin, srend);
 
         if (iposition == rend()) {
             return npos;
@@ -1341,8 +1299,7 @@ class ibasic_string : public etl::string_base {
     ///\param str The content to find
     ///\param pos The position to start searching from.
     //*********************************************************************
-    size_type rfind(const_pointer s, size_type position,
-                    size_type length_) const {
+    size_type rfind(const_pointer s, size_type position, size_type length_) const {
         if (length_ > size()) {
             return npos;
         }
@@ -1356,8 +1313,7 @@ class ibasic_string : public etl::string_base {
         const_reverse_iterator srbegin(s + length_);
         const_reverse_iterator srend(s);
 
-        const_reverse_iterator iposition =
-            etl::search(rbegin() + position, rend(), srbegin, srend);
+        const_reverse_iterator iposition = etl::search(rbegin() + position, rend(), srbegin, srend);
 
         if (iposition == rend()) {
             return npos;
@@ -1393,8 +1349,7 @@ class ibasic_string : public etl::string_base {
     ///\param length   The number of characters to replace.
     ///\param str      The string to replace it with.
     //*********************************************************************
-    ibasic_string& replace(size_type position, size_type length_,
-                           const ibasic_string& str) {
+    ibasic_string& replace(size_type position, size_type length_, const ibasic_string& str) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         // Limit the length.
@@ -1415,8 +1370,7 @@ class ibasic_string : public etl::string_base {
     ///\param last  The one after the position to end at.
     ///\param str   The string to replace it with.
     //*********************************************************************
-    ibasic_string& replace(const_iterator first, const_iterator last,
-                           const ibasic_string& str) {
+    ibasic_string& replace(const_iterator first, const_iterator last, const ibasic_string& str) {
         // Quick hack, as iterators are pointers.
         iterator first_ = to_iterator(first);
         iterator last_ = to_iterator(last);
@@ -1443,8 +1397,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Replace characters from 'position' of 'length' with 'str' from 'subposition' of 'sublength'.
     //*********************************************************************
-    ibasic_string& replace(size_type position, size_type length_,
-                           const ibasic_string& str, size_type subposition,
+    ibasic_string& replace(size_type position, size_type length_, const ibasic_string& str, size_type subposition,
                            size_type sublength) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
         ETL_ASSERT(subposition <= str.size(), ETL_ERROR(string_out_of_bounds));
@@ -1475,8 +1428,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Replace characters from 'position' of 'length' with pointed to string.
     //*********************************************************************
-    ibasic_string& replace(size_type position, size_type length_,
-                           const_pointer s) {
+    ibasic_string& replace(size_type position, size_type length_, const_pointer s) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         // Limit the length.
@@ -1494,8 +1446,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Replace characters from 'first'  'last' with pointed to string.
     //*********************************************************************
-    ibasic_string& replace(const_iterator first, const_iterator last,
-                           const_pointer s) {
+    ibasic_string& replace(const_iterator first, const_iterator last, const_pointer s) {
         // Quick hack, as iterators are pointers.
         iterator first_ = to_iterator(first);
         iterator last_ = to_iterator(last);
@@ -1512,8 +1463,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Replace characters from 'position' of 'length' with 'n' characters from pointed to string.
     //*********************************************************************
-    ibasic_string& replace(size_type position, size_type length_,
-                           const_pointer s, size_type n) {
+    ibasic_string& replace(size_type position, size_type length_, const_pointer s, size_type n) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         // Limit the length.
@@ -1531,8 +1481,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Replace characters from 'first' to 'last' with 'n' characters from pointed to string.
     //*********************************************************************
-    ibasic_string& replace(const_iterator first, const_iterator last,
-                           const_pointer s, size_type n) {
+    ibasic_string& replace(const_iterator first, const_iterator last, const_pointer s, size_type n) {
         // Quick hack, as iterators are pointers.
         iterator first_ = to_iterator(first);
         iterator last_ = to_iterator(last);
@@ -1549,8 +1498,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Replace characters from 'position' of 'length' with 'n' copies of 'c'.
     //*********************************************************************
-    ibasic_string& replace(size_type position, size_type length_, size_type n,
-                           value_type c) {
+    ibasic_string& replace(size_type position, size_type length_, size_type n, value_type c) {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         // Limit the length.
@@ -1568,8 +1516,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Replace characters from 'first' of 'last' with 'n' copies of 'c'.
     //*********************************************************************
-    ibasic_string& replace(const_iterator first, const_iterator last,
-                           size_type n, value_type c) {
+    ibasic_string& replace(const_iterator first, const_iterator last, size_type n, value_type c) {
         // Quick hack, as iterators are pointers.
         iterator first_ = to_iterator(first);
         iterator last_ = to_iterator(last);
@@ -1587,8 +1534,7 @@ class ibasic_string : public etl::string_base {
     /// Replace characters from 'first' of 'last' with characters from 'first_replace' to 'last_replace'.
     //*********************************************************************
     template <typename TIterator>
-    ibasic_string& replace(const_iterator first, const_iterator last,
-                           TIterator first_replace, TIterator last_replace) {
+    ibasic_string& replace(const_iterator first, const_iterator last, TIterator first_replace, TIterator last_replace) {
         // Quick hack, as iterators are pointers.
         iterator first_ = to_iterator(first);
         iterator last_ = to_iterator(last);
@@ -1606,29 +1552,26 @@ class ibasic_string : public etl::string_base {
     /// Compare with string.
     //*************************************************************************
     int compare(const ibasic_string& str) const {
-        return compare(p_buffer, p_buffer + size(), str.p_buffer,
-                       str.p_buffer + str.size());
+        return compare(p_buffer, p_buffer + size(), str.p_buffer, str.p_buffer + str.size());
     }
 
     //*************************************************************************
     /// Compare position / length with string.
     //*************************************************************************
-    int compare(size_type position, size_type length_,
-                const ibasic_string& str) const {
+    int compare(size_type position, size_type length_, const ibasic_string& str) const {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
 
         // Limit the length.
         length_ = etl::min(length_, size() - position);
 
-        return compare(p_buffer + position, p_buffer + position + length_,
-                       str.p_buffer, str.p_buffer + str.size());
+        return compare(p_buffer + position, p_buffer + position + length_, str.p_buffer, str.p_buffer + str.size());
     }
 
     //*************************************************************************
     /// Compare position / length with string / subposition / sublength.
     //*************************************************************************
-    int compare(size_type position, size_type length_, const ibasic_string& str,
-                size_type subposition, size_type sublength) const {
+    int compare(size_type position, size_type length_, const ibasic_string& str, size_type subposition,
+                size_type sublength) const {
         ETL_ASSERT(position <= size(), ETL_ERROR(string_out_of_bounds));
         ETL_ASSERT(subposition <= str.size(), ETL_ERROR(string_out_of_bounds));
 
@@ -1636,8 +1579,7 @@ class ibasic_string : public etl::string_base {
         length_ = etl::min(length_, size() - position);
         sublength = etl::min(sublength, str.size() - subposition);
 
-        return compare(p_buffer + position, p_buffer + position + length_,
-                       str.p_buffer + subposition,
+        return compare(p_buffer + position, p_buffer + position + length_, str.p_buffer + subposition,
                        str.p_buffer + subposition + sublength);
     }
 
@@ -1652,17 +1594,14 @@ class ibasic_string : public etl::string_base {
     /// Compare position / length with C string.
     //*************************************************************************
     int compare(size_type position, size_type length_, const_pointer s) const {
-        return compare(p_buffer + position, p_buffer + position + length_, s,
-                       s + etl::strlen(s));
+        return compare(p_buffer + position, p_buffer + position + length_, s, s + etl::strlen(s));
     }
 
     //*************************************************************************
     /// Compare position / length with C string / n.
     //*************************************************************************
-    int compare(size_type position, size_type length_, const_pointer s,
-                size_type n) const {
-        return compare(p_buffer + position, p_buffer + position + length_, s,
-                       s + n);
+    int compare(size_type position, size_type length_, const_pointer s, size_type n) const {
+        return compare(p_buffer + position, p_buffer + position + length_, s, s + n);
     }
 
     //*********************************************************************
@@ -1670,8 +1609,7 @@ class ibasic_string : public etl::string_base {
     ///\param str The content to find
     ///\param pos The position to start searching from.
     //*********************************************************************
-    size_type find_first_of(const ibasic_string<T>& str,
-                            size_type position = 0) const {
+    size_type find_first_of(const ibasic_string<T>& str, size_type position = 0) const {
         return find_first_of(str.c_str(), position, str.size());
     }
 
@@ -1690,8 +1628,7 @@ class ibasic_string : public etl::string_base {
     ///\param pos The position to start searching from.
     ///\param n   The number of characters to search for.
     //*********************************************************************
-    size_type find_first_of(const_pointer s, size_type position,
-                            size_type n) const {
+    size_type find_first_of(const_pointer s, size_type position, size_type n) const {
         if (position < size()) {
             for (size_type i = position; i < size(); ++i) {
                 for (size_type j = 0; j < n; ++j) {
@@ -1727,8 +1664,7 @@ class ibasic_string : public etl::string_base {
     ///\param str The content to find
     ///\param pos The position to start searching from.
     //*********************************************************************
-    size_type find_last_of(const ibasic_string<T>& str,
-                           size_type position = npos) const {
+    size_type find_last_of(const ibasic_string<T>& str, size_type position = npos) const {
         return find_last_of(str.c_str(), position, str.size());
     }
 
@@ -1747,8 +1683,7 @@ class ibasic_string : public etl::string_base {
     ///\param pos The position to start searching from.
     ///\param n   The number of characters to search for.
     //*********************************************************************
-    size_type find_last_of(const_pointer s, size_type position,
-                           size_type n) const {
+    size_type find_last_of(const_pointer s, size_type position, size_type n) const {
         if (empty()) {
             return npos;
         }
@@ -1802,8 +1737,7 @@ class ibasic_string : public etl::string_base {
     ///\param str The content to find
     ///\param pos The position to start searching from.
     //*********************************************************************
-    size_type find_first_not_of(const ibasic_string<T>& str,
-                                size_type position = 0) const {
+    size_type find_first_not_of(const ibasic_string<T>& str, size_type position = 0) const {
         return find_first_not_of(str.c_str(), position, str.size());
     }
 
@@ -1822,8 +1756,7 @@ class ibasic_string : public etl::string_base {
     ///\param pos The position to start searching from.
     ///\param n   The number of characters to search for.
     //*********************************************************************
-    size_type find_first_not_of(const_pointer s, size_type position,
-                                size_type n) const {
+    size_type find_first_not_of(const_pointer s, size_type position, size_type n) const {
         if (position < size()) {
             for (size_type i = position; i < size(); ++i) {
                 bool found = false;
@@ -1865,8 +1798,7 @@ class ibasic_string : public etl::string_base {
     ///\param str The content to find
     ///\param pos The position to start searching from.
     //*********************************************************************
-    size_type find_last_not_of(const ibasic_string<T>& str,
-                               size_type position = npos) const {
+    size_type find_last_not_of(const ibasic_string<T>& str, size_type position = npos) const {
         return find_last_not_of(str.c_str(), position, str.size());
     }
 
@@ -1875,8 +1807,7 @@ class ibasic_string : public etl::string_base {
     ///\param s   The pointer to the content to find
     ///\param pos The position to start searching from.
     //*********************************************************************
-    size_type find_last_not_of(const_pointer s,
-                               size_type position = npos) const {
+    size_type find_last_not_of(const_pointer s, size_type position = npos) const {
         return find_last_not_of(s, position, etl::strlen(s));
     }
 
@@ -1886,8 +1817,7 @@ class ibasic_string : public etl::string_base {
     ///\param pos The position to start searching from.
     ///\param n   The number of characters to use.
     //*********************************************************************
-    size_type find_last_not_of(const_pointer s, size_type position,
-                               size_type n) const {
+    size_type find_last_not_of(const_pointer s, size_type position, size_type n) const {
         if (empty()) {
             return npos;
         }
@@ -2022,8 +1952,7 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Constructor.
     //*********************************************************************
-    ibasic_string(T* p_buffer_, size_type MAX_SIZE_)
-        : string_base(MAX_SIZE_), p_buffer(p_buffer_) {}
+    ibasic_string(T* p_buffer_, size_type MAX_SIZE_) : string_base(MAX_SIZE_), p_buffer(p_buffer_) {}
 
     //*********************************************************************
     /// Initialise the string.
@@ -2048,8 +1977,7 @@ class ibasic_string : public etl::string_base {
     //*************************************************************************
     /// Compare helper function
     //*************************************************************************
-    int compare(const_pointer first1, const_pointer last1, const_pointer first2,
-                const_pointer last2) const {
+    int compare(const_pointer first1, const_pointer last1, const_pointer first2, const_pointer last2) const {
         while ((first1 != last1) && (first2 != last2)) {
             if (*first1 < *first2) {
                 // Compared character is lower.
@@ -2082,8 +2010,7 @@ class ibasic_string : public etl::string_base {
     void cleanup() {
 #if ETL_HAS_STRING_CLEAR_AFTER_USE
         if (is_secure()) {
-            etl::memory_clear_range(&p_buffer[current_size],
-                                    &p_buffer[CAPACITY]);
+            etl::memory_clear_range(&p_buffer[current_size], &p_buffer[CAPACITY]);
         }
 #endif
     }
@@ -2101,8 +2028,7 @@ class ibasic_string : public etl::string_base {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-#if defined(ETL_POLYMORPHIC_STRINGS) || defined(ETL_POLYMORPHIC_CONTAINERS) || \
-    defined(ETL_ISTRING_REPAIR_ENABLE)
+#if defined(ETL_POLYMORPHIC_STRINGS) || defined(ETL_POLYMORPHIC_CONTAINERS) || defined(ETL_ISTRING_REPAIR_ENABLE)
    public:
     virtual
 #else
@@ -2133,10 +2059,8 @@ class ibasic_string : public etl::string_base {
 ///\ingroup string
 //***************************************************************************
 template <typename T>
-bool operator==(const etl::ibasic_string<T>& lhs,
-                const etl::ibasic_string<T>& rhs) {
-    return (lhs.size() == rhs.size()) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs.begin());
+bool operator==(const etl::ibasic_string<T>& lhs, const etl::ibasic_string<T>& rhs) {
+    return (lhs.size() == rhs.size()) && etl::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 //***************************************************************************
@@ -2148,8 +2072,7 @@ bool operator==(const etl::ibasic_string<T>& lhs,
 //***************************************************************************
 template <typename T>
 bool operator==(const etl::ibasic_string<T>& lhs, const T* rhs) {
-    return (lhs.size() == etl::strlen(rhs)) &&
-           etl::equal(lhs.begin(), lhs.end(), rhs);
+    return (lhs.size() == etl::strlen(rhs)) && etl::equal(lhs.begin(), lhs.end(), rhs);
 }
 
 //***************************************************************************
@@ -2161,8 +2084,7 @@ bool operator==(const etl::ibasic_string<T>& lhs, const T* rhs) {
 //***************************************************************************
 template <typename T>
 bool operator==(const T* lhs, const etl::ibasic_string<T>& rhs) {
-    return (rhs.size() == etl::strlen(lhs)) &&
-           etl::equal(rhs.begin(), rhs.end(), lhs);
+    return (rhs.size() == etl::strlen(lhs)) && etl::equal(rhs.begin(), rhs.end(), lhs);
 }
 
 //***************************************************************************
@@ -2173,8 +2095,7 @@ bool operator==(const T* lhs, const etl::ibasic_string<T>& rhs) {
 ///\ingroup string
 //***************************************************************************
 template <typename T>
-bool operator!=(const etl::ibasic_string<T>& lhs,
-                const etl::ibasic_string<T>& rhs) {
+bool operator!=(const etl::ibasic_string<T>& lhs, const etl::ibasic_string<T>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -2210,10 +2131,8 @@ bool operator!=(const T* lhs, const etl::ibasic_string<T>& rhs) {
 ///\ingroup string
 //***************************************************************************
 template <typename T>
-bool operator<(const etl::ibasic_string<T>& lhs,
-               const etl::ibasic_string<T>& rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                        rhs.end());
+bool operator<(const etl::ibasic_string<T>& lhs, const etl::ibasic_string<T>& rhs) {
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 //***************************************************************************
@@ -2225,8 +2144,7 @@ bool operator<(const etl::ibasic_string<T>& lhs,
 //***************************************************************************
 template <typename T>
 bool operator<(const etl::ibasic_string<T>& lhs, const T* rhs) {
-    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs,
-                                        rhs + etl::strlen(rhs));
+    return etl::lexicographical_compare(lhs.begin(), lhs.end(), rhs, rhs + etl::strlen(rhs));
 }
 
 //***************************************************************************
@@ -2238,8 +2156,7 @@ bool operator<(const etl::ibasic_string<T>& lhs, const T* rhs) {
 //***************************************************************************
 template <typename T>
 bool operator<(const T* lhs, const etl::ibasic_string<T>& rhs) {
-    return etl::lexicographical_compare(lhs, lhs + etl::strlen(lhs),
-                                        rhs.begin(), rhs.end());
+    return etl::lexicographical_compare(lhs, lhs + etl::strlen(lhs), rhs.begin(), rhs.end());
 }
 
 //***************************************************************************
@@ -2250,8 +2167,7 @@ bool operator<(const T* lhs, const etl::ibasic_string<T>& rhs) {
 ///\ingroup string
 //***************************************************************************
 template <typename T>
-bool operator>(const etl::ibasic_string<T>& lhs,
-               const etl::ibasic_string<T>& rhs) {
+bool operator>(const etl::ibasic_string<T>& lhs, const etl::ibasic_string<T>& rhs) {
     return (rhs < lhs);
 }
 
@@ -2287,8 +2203,7 @@ bool operator>(const T* lhs, const etl::ibasic_string<T>& rhs) {
 ///\ingroup string
 //***************************************************************************
 template <typename T>
-bool operator<=(const etl::ibasic_string<T>& lhs,
-                const etl::ibasic_string<T>& rhs) {
+bool operator<=(const etl::ibasic_string<T>& lhs, const etl::ibasic_string<T>& rhs) {
     return !(lhs > rhs);
 }
 
@@ -2324,8 +2239,7 @@ bool operator<=(const T* lhs, const etl::ibasic_string<T>& rhs) {
 ///\ingroup string
 //***************************************************************************
 template <typename T>
-bool operator>=(const etl::ibasic_string<T>& lhs,
-                const etl::ibasic_string<T>& rhs) {
+bool operator>=(const etl::ibasic_string<T>& lhs, const etl::ibasic_string<T>& rhs) {
     return !(lhs < rhs);
 }
 

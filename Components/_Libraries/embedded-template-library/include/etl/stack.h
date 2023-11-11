@@ -60,8 +60,7 @@ namespace etl {
 //***************************************************************************
 class stack_exception : public exception {
    public:
-    stack_exception(string_type reason_, string_type file_name_,
-                    numeric_type line_number_)
+    stack_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -72,8 +71,7 @@ class stack_exception : public exception {
 class stack_full : public stack_exception {
    public:
     stack_full(string_type file_name_, numeric_type line_number_)
-        : stack_exception(ETL_ERROR_TEXT("stack:full", ETL_STACK_FILE_ID "A"),
-                          file_name_, line_number_) {}
+        : stack_exception(ETL_ERROR_TEXT("stack:full", ETL_STACK_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -83,8 +81,7 @@ class stack_full : public stack_exception {
 class stack_empty : public stack_exception {
    public:
     stack_empty(string_type file_name_, numeric_type line_number_)
-        : stack_exception(ETL_ERROR_TEXT("stack:empty", ETL_STACK_FILE_ID "B"),
-                          file_name_, line_number_) {}
+        : stack_exception(ETL_ERROR_TEXT("stack:empty", ETL_STACK_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -94,8 +91,7 @@ class stack_empty : public stack_exception {
 //***************************************************************************
 class stack_base {
    public:
-    typedef size_t
-        size_type;  ///< The type used for determining the size of stack.
+    typedef size_t size_type;  ///< The type used for determining the size of stack.
 
     //*************************************************************************
     /// Checks to see if the stack is empty.
@@ -129,8 +125,7 @@ class stack_base {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    stack_base(size_type max_size_)
-        : top_index(0), current_size(0), CAPACITY(max_size_) {}
+    stack_base(size_type max_size_) : top_index(0), current_size(0), CAPACITY(max_size_) {}
 
     //*************************************************************************
     /// Destructor.
@@ -183,19 +178,15 @@ class stack_base {
 template <typename T>
 class istack : public etl::stack_base {
    public:
-    typedef T value_type;  ///< The type stored in the stack.
-    typedef T& reference;  ///< A reference to the type used in the stack.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the stack.
+    typedef T value_type;              ///< The type stored in the stack.
+    typedef T& reference;              ///< A reference to the type used in the stack.
+    typedef const T& const_reference;  ///< A const reference to the type used in the stack.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue reference to the type used in the stack.
+    typedef T&& rvalue_reference;  ///< An rvalue reference to the type used in the stack.
 #endif
-    typedef T* pointer;  ///< A pointer to the type used in the stack.
-    typedef const T*
-        const_pointer;  ///< A const pointer to the type used in the stack.
-    typedef stack_base::size_type
-        size_type;  ///< The type used for determining the size of the stack.
+    typedef T* pointer;                       ///< A pointer to the type used in the stack.
+    typedef const T* const_pointer;           ///< A const pointer to the type used in the stack.
+    typedef stack_base::size_type size_type;  ///< The type used for determining the size of the stack.
 
    private:
     typedef typename etl::stack_base base_t;
@@ -300,8 +291,7 @@ class istack : public etl::stack_base {
     ///\param value The value to push to the stack.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    void emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    void emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
 #if defined(ETL_CHECK_PUSH_POP)
         ETL_ASSERT(!full(), ETL_ERROR(stack_full));
 #endif
@@ -426,8 +416,7 @@ class istack : public etl::stack_base {
     //*************************************************************************
     /// The constructor that is called from derived classes.
     //*************************************************************************
-    istack(T* p_buffer_, size_type max_size_)
-        : stack_base(max_size_), p_buffer(p_buffer_) {}
+    istack(T* p_buffer_, size_type max_size_) : stack_base(max_size_), p_buffer(p_buffer_) {}
 
    private:
     // Disable copy construction.
@@ -457,8 +446,7 @@ class istack : public etl::stack_base {
 template <typename T, const size_t SIZE>
 class stack : public etl::istack<T> {
    public:
-    typedef typename etl::aligned_storage<
-        sizeof(T), etl::alignment_of<T>::value>::type container_type;
+    typedef typename etl::aligned_storage<sizeof(T), etl::alignment_of<T>::value>::type container_type;
 
     static ETL_CONSTANT size_t MAX_SIZE = SIZE;
 
@@ -470,17 +458,13 @@ class stack : public etl::istack<T> {
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    stack(const stack& rhs)
-        : etl::istack<T>(reinterpret_cast<T*>(&buffer[0]), SIZE) {
-        etl::istack<T>::clone(rhs);
-    }
+    stack(const stack& rhs) : etl::istack<T>(reinterpret_cast<T*>(&buffer[0]), SIZE) { etl::istack<T>::clone(rhs); }
 
 #if ETL_USING_CPP11
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    stack(stack&& rhs)
-        : etl::istack<T>(reinterpret_cast<T*>(&buffer[0]), SIZE) {
+    stack(stack&& rhs) : etl::istack<T>(reinterpret_cast<T*>(&buffer[0]), SIZE) {
         etl::istack<T>::clone(etl::move(rhs));
     }
 #endif

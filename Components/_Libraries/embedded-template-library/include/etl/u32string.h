@@ -60,16 +60,13 @@ class u32string : public iu32string {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    u32string() : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
-        this->initialise();
-    }
+    u32string() : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) { this->initialise(); }
 
     //*************************************************************************
     /// Copy constructor.
     ///\param other The other string.
     //*************************************************************************
-    u32string(const etl::u32string<MAX_SIZE_>& other)
-        : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    u32string(const etl::u32string<MAX_SIZE_>& other) : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(other);
     }
 
@@ -77,8 +74,7 @@ class u32string : public iu32string {
     /// From other iu32string.
     ///\param other The other iu32string.
     //*************************************************************************
-    u32string(const etl::iu32string& other)
-        : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    u32string(const etl::iu32string& other) : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(other);
     }
 
@@ -88,8 +84,7 @@ class u32string : public iu32string {
     ///\param position The position of the first character.
     ///\param length   The number of characters. Default = npos.
     //*************************************************************************
-    u32string(const etl::iu32string& other, size_type position,
-              size_type length = npos)
+    u32string(const etl::iu32string& other, size_type position, size_type length = npos)
         : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         ETL_ASSERT(position < other.size(), ETL_ERROR(string_out_of_bounds));
 
@@ -110,8 +105,7 @@ class u32string : public iu32string {
     ///\param text  The initial text of the u32string.
     ///\param count The number of characters to copy.
     //*************************************************************************
-    u32string(const value_type* text, size_type count)
-        : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    u32string(const value_type* text, size_type count) : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(text, text + count);
     }
 
@@ -120,8 +114,7 @@ class u32string : public iu32string {
     ///\param initialSize  The initial size of the u32string.
     ///\param value        The value to fill the u32string with.
     //*************************************************************************
-    u32string(size_type count, value_type c)
-        : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    u32string(size_type count, value_type c) : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->initialise();
         this->resize(count, c);
     }
@@ -134,8 +127,7 @@ class u32string : public iu32string {
     //*************************************************************************
     template <typename TIterator>
     u32string(TIterator first, TIterator last,
-              typename etl::enable_if<!etl::is_integral<TIterator>::value,
-                                      int>::type = 0)
+              typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0)
         : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(first, last);
     }
@@ -144,8 +136,7 @@ class u32string : public iu32string {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    u32string(std::initializer_list<value_type> init)
-        : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    u32string(std::initializer_list<value_type> init) : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(init.begin(), init.end());
     }
 #endif
@@ -154,8 +145,7 @@ class u32string : public iu32string {
     /// From string_view.
     ///\param view The string_view.
     //*************************************************************************
-    explicit u32string(const etl::u32string_view& view)
-        : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
+    explicit u32string(const etl::u32string_view& view) : iu32string(reinterpret_cast<value_type*>(&buffer), MAX_SIZE) {
         this->assign(view.begin(), view.end());
     }
 
@@ -164,8 +154,7 @@ class u32string : public iu32string {
     ///\param position The position of the first character. Default = 0.
     ///\param length   The number of characters. Default = npos.
     //*************************************************************************
-    etl::u32string<MAX_SIZE_> substr(size_type position = 0,
-                                     size_type length_ = npos) const {
+    etl::u32string<MAX_SIZE_> substr(size_type position = 0, size_type length_ = npos) const {
         etl::u32string<MAX_SIZE_> new_string;
 
         if (position != size()) {
@@ -228,8 +217,7 @@ class u32string_ext : public iu32string {
     //*************************************************************************
     /// Constructor.
     //*************************************************************************
-    u32string_ext(value_type* buffer, size_type buffer_size)
-        : iu32string(buffer, buffer_size - 1U) {
+    u32string_ext(value_type* buffer, size_type buffer_size) : iu32string(buffer, buffer_size - 1U) {
         this->initialise();
     }
 
@@ -237,8 +225,7 @@ class u32string_ext : public iu32string {
     /// Copy constructor.
     ///\param other The other u32string_ext.
     //*************************************************************************
-    u32string_ext(const etl::u32string_ext& other, value_type* buffer,
-                  size_type buffer_size)
+    u32string_ext(const etl::u32string_ext& other, value_type* buffer, size_type buffer_size)
         : iu32string(buffer, buffer_size - 1U) {
         this->assign(other);
     }
@@ -247,8 +234,7 @@ class u32string_ext : public iu32string {
     /// From other iu32string.
     ///\param other The other iu32string.
     //*************************************************************************
-    u32string_ext(const etl::iu32string& other, value_type* buffer,
-                  size_type buffer_size)
+    u32string_ext(const etl::iu32string& other, value_type* buffer, size_type buffer_size)
         : iu32string(buffer, buffer_size - 1U) {
         this->assign(other);
     }
@@ -259,8 +245,7 @@ class u32string_ext : public iu32string {
     ///\param position The position of the first character.
     ///\param length   The number of characters. Default = npos.
     //*************************************************************************
-    u32string_ext(const etl::iu32string& other, value_type* buffer,
-                  size_type buffer_size, size_type position,
+    u32string_ext(const etl::iu32string& other, value_type* buffer, size_type buffer_size, size_type position,
                   size_type length = npos)
         : iu32string(buffer, buffer_size - 1U) {
         ETL_ASSERT(position < other.size(), ETL_ERROR(string_out_of_bounds));
@@ -272,9 +257,7 @@ class u32string_ext : public iu32string {
     /// Constructor, from null terminated text.
     ///\param text The initial text of the u32string_ext.
     //*************************************************************************
-    ETL_EXPLICIT_STRING_FROM_CHAR u32string_ext(const value_type* text,
-                                                value_type* buffer,
-                                                size_type buffer_size)
+    ETL_EXPLICIT_STRING_FROM_CHAR u32string_ext(const value_type* text, value_type* buffer, size_type buffer_size)
         : iu32string(buffer, buffer_size - 1U) {
         // Is the initial text at the same address as the buffer?
         if (text == buffer) {
@@ -290,8 +273,7 @@ class u32string_ext : public iu32string {
     ///\param text  The initial text of the u32string_ext.
     ///\param count The number of characters to copy.
     //*************************************************************************
-    u32string_ext(const value_type* text, size_type count, value_type* buffer,
-                  size_type buffer_size)
+    u32string_ext(const value_type* text, size_type count, value_type* buffer, size_type buffer_size)
         : iu32string(buffer, buffer_size - 1U) {
         this->assign(text, text + count);
     }
@@ -301,8 +283,7 @@ class u32string_ext : public iu32string {
     ///\param initialSize  The initial size of the u32string_ext.
     ///\param value        The value to fill the u32string_ext with.
     //*************************************************************************
-    u32string_ext(size_type count, value_type c, value_type* buffer,
-                  size_type buffer_size)
+    u32string_ext(size_type count, value_type c, value_type* buffer, size_type buffer_size)
         : iu32string(buffer, buffer_size - 1U) {
         this->initialise();
         this->resize(count, c);
@@ -315,10 +296,8 @@ class u32string_ext : public iu32string {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    u32string_ext(TIterator first, TIterator last, value_type* buffer,
-                  size_type buffer_size,
-                  typename etl::enable_if<!etl::is_integral<TIterator>::value,
-                                          int>::type = 0)
+    u32string_ext(TIterator first, TIterator last, value_type* buffer, size_type buffer_size,
+                  typename etl::enable_if<!etl::is_integral<TIterator>::value, int>::type = 0)
         : iu32string(buffer, buffer_size - 1U) {
         this->assign(first, last);
     }
@@ -327,8 +306,7 @@ class u32string_ext : public iu32string {
     //*************************************************************************
     /// Construct from initializer_list.
     //*************************************************************************
-    u32string_ext(std::initializer_list<value_type> init, value_type* buffer,
-                  size_type buffer_size)
+    u32string_ext(std::initializer_list<value_type> init, value_type* buffer, size_type buffer_size)
         : iu32string(buffer, buffer_size - 1U) {
         this->assign(init.begin(), init.end());
     }
@@ -338,8 +316,7 @@ class u32string_ext : public iu32string {
     /// From u32string_view.
     ///\param view The u32string_view.
     //*************************************************************************
-    explicit u32string_ext(const etl::u32string_view& view, value_type* buffer,
-                           size_type buffer_size)
+    explicit u32string_ext(const etl::u32string_view& view, value_type* buffer, size_type buffer_size)
         : iu32string(buffer, buffer_size - 1U) {
         this->assign(view.begin(), view.end());
     }
@@ -399,27 +376,24 @@ class u32string_ext : public iu32string {
 template <>
 struct hash<etl::iu32string> {
     size_t operator()(const etl::iu32string& text) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&text[0]),
-            reinterpret_cast<const uint8_t*>(&text[text.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&text[0]),
+                                                       reinterpret_cast<const uint8_t*>(&text[text.size()]));
     }
 };
 
 template <const size_t SIZE>
 struct hash<etl::u32string<SIZE>> {
     size_t operator()(const etl::u32string<SIZE>& text) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&text[0]),
-            reinterpret_cast<const uint8_t*>(&text[text.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&text[0]),
+                                                       reinterpret_cast<const uint8_t*>(&text[text.size()]));
     }
 };
 
 template <>
 struct hash<etl::u32string_ext> {
     size_t operator()(const etl::u32string_ext& text) const {
-        return etl::private_hash::generic_hash<size_t>(
-            reinterpret_cast<const uint8_t*>(&text[0]),
-            reinterpret_cast<const uint8_t*>(&text[text.size()]));
+        return etl::private_hash::generic_hash<size_t>(reinterpret_cast<const uint8_t*>(&text[0]),
+                                                       reinterpret_cast<const uint8_t*>(&text[text.size()]));
     }
 };
 #endif
@@ -428,19 +402,15 @@ struct hash<etl::u32string_ext> {
 /// Make string from string literal or array
 //***************************************************************************
 template <size_t ARRAY_SIZE>
-etl::u32string<ARRAY_SIZE == 1 ? 1 : ARRAY_SIZE - 1> make_string(
-    const char32_t (&text)[ARRAY_SIZE]) {
-    return etl::u32string < ARRAY_SIZE == 1
-               ? 1
-               : ARRAY_SIZE - 1 > (text, etl::strlen(text));
+etl::u32string<ARRAY_SIZE == 1 ? 1 : ARRAY_SIZE - 1> make_string(const char32_t (&text)[ARRAY_SIZE]) {
+    return etl::u32string < ARRAY_SIZE == 1 ? 1 : ARRAY_SIZE - 1 > (text, etl::strlen(text));
 }
 
 //***************************************************************************
 /// Make string with max capacity from string literal or array
 //***************************************************************************
 template <const size_t MAX_SIZE, const size_t SIZE>
-etl::u32string<MAX_SIZE> make_string_with_capacity(
-    const char32_t (&text)[SIZE]) {
+etl::u32string<MAX_SIZE> make_string_with_capacity(const char32_t (&text)[SIZE]) {
     return etl::u32string<MAX_SIZE>(text, etl::strlen(text));
 }
 }  // namespace etl

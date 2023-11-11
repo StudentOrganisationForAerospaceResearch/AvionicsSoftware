@@ -38,8 +38,7 @@ namespace etl {
 // For signed types.
 //***************************************************************************
 template <typename T>
-ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, bool>::type
-is_negative(const T value) {
+ETL_CONSTEXPR typename etl::enable_if<etl::is_signed<T>::value, bool>::type is_negative(const T value) {
     return (value < T(0));
 }
 
@@ -47,8 +46,7 @@ is_negative(const T value) {
 // For unsigned types.
 //***************************************************************************
 template <typename T>
-ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, bool>::type
-is_negative(const T) {
+ETL_CONSTEXPR typename etl::enable_if<etl::is_unsigned<T>::value, bool>::type is_negative(const T) {
     return false;
 }
 }  // namespace etl

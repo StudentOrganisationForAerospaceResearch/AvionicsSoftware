@@ -61,8 +61,7 @@ ETL_CONSTEXPR17 T* addressof(T& t) {
 #if ETL_USING_STL && ETL_USING_CPP11
     return std::addressof(t);
 #else
-    return reinterpret_cast<T*>(
-        &const_cast<char&>(reinterpret_cast<const volatile char&>(t)));
+    return reinterpret_cast<T*>(&const_cast<char&>(reinterpret_cast<const volatile char&>(t)));
 #endif
 }
 
@@ -74,11 +73,9 @@ ETL_CONSTEXPR17 T* addressof(T& t) {
 //*****************************************************************************
 template <typename TOutputIterator, typename T>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
-                   const T& value) {
+uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end, const T& value) {
     etl::fill(o_begin, o_end, value);
 
     return o_end;
@@ -91,13 +88,10 @@ uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
 //*****************************************************************************
 template <typename TOutputIterator, typename T>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
-                   const T& value) {
-    typedef
-        typename etl::iterator_traits<TOutputIterator>::value_type value_type;
+uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end, const T& value) {
+    typedef typename etl::iterator_traits<TOutputIterator>::value_type value_type;
 
     while (o_begin != o_end) {
         ::new (static_cast<void*>(etl::addressof(*o_begin))) value_type(value);
@@ -115,11 +109,9 @@ uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
 //*****************************************************************************
 template <typename TOutputIterator, typename T, typename TCounter>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
-                   const T& value, TCounter& count) {
+uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end, const T& value, TCounter& count) {
     count += int32_t(etl::distance(o_begin, o_end));
 
     etl::fill(o_begin, o_end, value);
@@ -135,11 +127,9 @@ uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
 //*****************************************************************************
 template <typename TOutputIterator, typename T, typename TCounter>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
-                   const T& value, TCounter& count) {
+uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end, const T& value, TCounter& count) {
     count += int32_t(etl::distance(o_begin, o_end));
 
     etl::uninitialized_fill(o_begin, o_end, value);
@@ -154,8 +144,7 @@ uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename T>
-TOutputIterator uninitialized_fill(TOutputIterator o_begin,
-                                   TOutputIterator o_end, const T& value) {
+TOutputIterator uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end, const T& value) {
     std::uninitialized_fill(o_begin, o_end, value);
 
     return o_end;
@@ -168,9 +157,7 @@ TOutputIterator uninitialized_fill(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename T, typename TCounter>
-TOutputIterator uninitialized_fill(TOutputIterator o_begin,
-                                   TOutputIterator o_end, const T& value,
-                                   TCounter& count) {
+TOutputIterator uninitialized_fill(TOutputIterator o_begin, TOutputIterator o_end, const T& value, TCounter& count) {
     count += int32_t(etl::distance(o_begin, o_end));
 
     std::uninitialized_fill(o_begin, o_end, value);
@@ -186,8 +173,7 @@ TOutputIterator uninitialized_fill(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize, typename T>
-TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
-                                     const T& value) {
+TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n, const T& value) {
     return etl::uninitialized_fill(o_begin, o_begin + n, value);
 }
 
@@ -197,10 +183,8 @@ TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_fill_n
 ///\ingroup memory
 //*****************************************************************************
-template <typename TOutputIterator, typename TSize, typename T,
-          typename TCounter>
-TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
-                                     const T& value, TCounter& count) {
+template <typename TOutputIterator, typename TSize, typename T, typename TCounter>
+TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n, const T& value, TCounter& count) {
     count += n;
 
     return etl::uninitialized_fill(o_begin, o_begin + n, value);
@@ -212,8 +196,7 @@ TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize, typename T>
-TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
-                                     const T& value) {
+TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n, const T& value) {
     return std::uninitialized_fill_n(o_begin, n, value);
 }
 
@@ -223,10 +206,8 @@ TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_fill_n
 ///\ingroup memory
 //*****************************************************************************
-template <typename TOutputIterator, typename TSize, typename T,
-          typename TCounter>
-TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
-                                     const T& value, TCounter& count) {
+template <typename TOutputIterator, typename TSize, typename T, typename TCounter>
+TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n, const T& value, TCounter& count) {
     count += n;
 
     return std::uninitialized_fill_n(o_begin, n, value);
@@ -241,11 +222,9 @@ TOutputIterator uninitialized_fill_n(TOutputIterator o_begin, TSize n,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin) {
+uninitialized_copy(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin) {
     return etl::copy(i_begin, i_end, o_begin);
 }
 
@@ -256,13 +235,10 @@ uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin) {
-    typedef
-        typename etl::iterator_traits<TOutputIterator>::value_type value_type;
+uninitialized_copy(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin) {
+    typedef typename etl::iterator_traits<TOutputIterator>::value_type value_type;
 
     TOutputIterator o_end = o_begin;
 
@@ -283,11 +259,9 @@ uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin, TCounter& count) {
+uninitialized_copy(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin, TCounter& count) {
     TOutputIterator o_end = etl::copy(i_begin, i_end, o_begin);
     count += int32_t(etl::distance(i_begin, i_end));
 
@@ -302,11 +276,9 @@ uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin, TCounter& count) {
+uninitialized_copy(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin, TCounter& count) {
     TOutputIterator o_end = etl::uninitialized_copy(i_begin, i_end, o_begin);
 
     count += int32_t(etl::distance(i_begin, i_end));
@@ -320,8 +292,7 @@ uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator>
-TOutputIterator uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
-                                   TOutputIterator o_begin) {
+TOutputIterator uninitialized_copy(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin) {
     return std::uninitialized_copy(i_begin, i_end, o_begin);
 }
 
@@ -332,8 +303,8 @@ TOutputIterator uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator, typename TCounter>
-TOutputIterator uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
-                                   TOutputIterator o_begin, TCounter& count) {
+TOutputIterator uninitialized_copy(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin,
+                                   TCounter& count) {
     count += int32_t(etl::distance(i_begin, i_end));
 
     return std::uninitialized_copy(i_begin, i_end, o_begin);
@@ -347,8 +318,7 @@ TOutputIterator uninitialized_copy(TInputIterator i_begin, TInputIterator i_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TSize, typename TOutputIterator>
-TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin) {
+TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
     return etl::uninitialized_copy(i_begin, i_begin + n, o_begin);
 }
 
@@ -358,10 +328,8 @@ TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_copy_n
 ///\ingroup memory
 //*****************************************************************************
-template <typename TInputIterator, typename TSize, typename TOutputIterator,
-          typename TCounter>
-TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin, TCounter& count) {
+template <typename TInputIterator, typename TSize, typename TOutputIterator, typename TCounter>
+TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin, TCounter& count) {
     count += n;
 
     return etl::uninitialized_copy(i_begin, i_begin + n, o_begin);
@@ -373,8 +341,7 @@ TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TSize, typename TOutputIterator>
-TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin) {
+TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
     return std::uninitialized_copy_n(i_begin, n, o_begin);
 }
 
@@ -384,10 +351,8 @@ TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_copy_n
 ///\ingroup memory
 //*****************************************************************************
-template <typename TInputIterator, typename TSize, typename TOutputIterator,
-          typename TCounter>
-TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin, TCounter& count) {
+template <typename TInputIterator, typename TSize, typename TOutputIterator, typename TCounter>
+TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin, TCounter& count) {
     count += n;
 
     return std::uninitialized_copy_n(i_begin, n, o_begin);
@@ -403,11 +368,9 @@ TOutputIterator uninitialized_copy_n(TInputIterator i_begin, TSize n,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin) {
+uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin) {
     return etl::move(i_begin, i_end, o_begin);
 }
 
@@ -418,19 +381,15 @@ uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin) {
-    typedef
-        typename etl::iterator_traits<TOutputIterator>::value_type value_type;
+uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin) {
+    typedef typename etl::iterator_traits<TOutputIterator>::value_type value_type;
 
     TOutputIterator o_end = o_begin;
 
     while (i_begin != i_end) {
-        ::new (static_cast<void*>(etl::addressof(*o_end)))
-            value_type(etl::move(*i_begin));
+        ::new (static_cast<void*>(etl::addressof(*o_end))) value_type(etl::move(*i_begin));
         ++i_begin;
         ++o_end;
     }
@@ -446,11 +405,9 @@ uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin, TCounter& count) {
+uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin, TCounter& count) {
     TOutputIterator o_end = etl::move(i_begin, i_end, o_begin);
     count += int32_t(etl::distance(i_begin, i_end));
 
@@ -465,11 +422,9 @@ uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                   TOutputIterator o_begin, TCounter& count) {
+uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin, TCounter& count) {
     TOutputIterator o_end = etl::uninitialized_move(i_begin, i_end, o_begin);
 
     count += int32_t(etl::distance(i_begin, i_end));
@@ -483,8 +438,7 @@ uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator>
-TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                                   TOutputIterator o_begin) {
+TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin) {
     return std::uninitialized_move(i_begin, i_end, o_begin);
 }
 
@@ -495,8 +449,8 @@ TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator, typename TCounter>
-TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                                   TOutputIterator o_begin, TCounter& count) {
+TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin,
+                                   TCounter& count) {
     count += int32_t(etl::distance(i_begin, i_end));
 
     return std::uninitialized_move(i_begin, i_end, o_begin);
@@ -510,8 +464,7 @@ TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator>
-TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                                   TOutputIterator o_begin) {
+TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin) {
     // Move not supported. Defer to copy.
     return ETL_OR_STD::uninitialized_copy(i_begin, i_end, o_begin);
 }
@@ -523,8 +476,8 @@ TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TOutputIterator, typename TCounter>
-TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
-                                   TOutputIterator o_begin, TCounter& count) {
+TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end, TOutputIterator o_begin,
+                                   TCounter& count) {
     count += int32_t(etl::distance(i_begin, i_end));
 
     // Move not supported. Defer to copy.
@@ -541,8 +494,7 @@ TOutputIterator uninitialized_move(TInputIterator i_begin, TInputIterator i_end,
 //*****************************************************************************
 template <typename TInputIterator, typename TSize, typename TOutputIterator>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
 uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
     return etl::move(i_begin, i_begin + n, o_begin);
@@ -555,18 +507,15 @@ uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
 //*****************************************************************************
 template <typename TInputIterator, typename TSize, typename TOutputIterator>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
 uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
-    typedef
-        typename etl::iterator_traits<TOutputIterator>::value_type value_type;
+    typedef typename etl::iterator_traits<TOutputIterator>::value_type value_type;
 
     TOutputIterator o_end = o_begin;
 
     while (n-- != 0) {
-        ::new (static_cast<void*>(etl::addressof(*o_end)))
-            value_type(etl::move(*i_begin));
+        ::new (static_cast<void*>(etl::addressof(*o_end))) value_type(etl::move(*i_begin));
         ++i_begin;
         ++o_end;
     }
@@ -580,14 +529,11 @@ uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_move_n
 ///\ingroup memory
 //*****************************************************************************
-template <typename TInputIterator, typename TSize, typename TOutputIterator,
-          typename TCounter>
+template <typename TInputIterator, typename TSize, typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin,
-                     TCounter& count) {
+uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin, TCounter& count) {
     TOutputIterator o_end = etl::move(i_begin, i_begin + n, o_begin);
     count += TCounter(n);
 
@@ -600,16 +546,12 @@ uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin,
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_move_n
 ///\ingroup memory
 //*****************************************************************************
-template <typename TInputIterator, typename TSize, typename TOutputIterator,
-          typename TCounter>
+template <typename TInputIterator, typename TSize, typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin,
-                     TCounter& count) {
-    TOutputIterator o_end =
-        etl::uninitialized_move(i_begin, i_begin + n, o_begin);
+uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin, TCounter& count) {
+    TOutputIterator o_end = etl::uninitialized_move(i_begin, i_begin + n, o_begin);
 
     count += TCounter(n);
 
@@ -622,8 +564,7 @@ uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TSize, typename TOutputIterator>
-TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin) {
+TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
     return std::uninitialized_move(i_begin, i_begin + n, o_begin);
 }
 
@@ -633,10 +574,8 @@ TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_move_n
 ///\ingroup memory
 //*****************************************************************************
-template <typename TInputIterator, typename TSize, typename TOutputIterator,
-          typename TCounter>
-TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin, TCounter& count) {
+template <typename TInputIterator, typename TSize, typename TOutputIterator, typename TCounter>
+TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin, TCounter& count) {
     count += TCounter(n);
 
     return std::uninitialized_move(i_begin, i_begin + n, o_begin);
@@ -650,8 +589,7 @@ TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TInputIterator, typename TSize, typename TOutputIterator>
-TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin) {
+TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin) {
     // Move not supported. Defer to copy.
 #if ETL_USING_CPP11
     return std::uninitialized_copy_n(i_begin, n, o_begin);
@@ -666,10 +604,8 @@ TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
 /// https://en.cppreference.com/w/cpp/memory/uninitialized_move
 ///\ingroup memory
 //*****************************************************************************
-template <typename TInputIterator, typename TSize, typename TOutputIterator,
-          typename TCounter>
-TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
-                                     TOutputIterator o_begin, TCounter& count) {
+template <typename TInputIterator, typename TSize, typename TOutputIterator, typename TCounter>
+TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n, TOutputIterator o_begin, TCounter& count) {
     count += TCounter(n);
 
     // Move not supported. Defer to copy.
@@ -689,11 +625,8 @@ TOutputIterator uninitialized_move_n(TInputIterator i_begin, TSize n,
 //*****************************************************************************
 template <typename TOutputIterator>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
-uninitialized_default_construct(TOutputIterator /*o_begin*/,
-                                TOutputIterator /*o_end*/) {
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
+uninitialized_default_construct(TOutputIterator /*o_begin*/, TOutputIterator /*o_end*/) {
     // Do nothing
 }
 
@@ -704,14 +637,10 @@ uninitialized_default_construct(TOutputIterator /*o_begin*/,
 //*****************************************************************************
 template <typename TOutputIterator>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
-uninitialized_default_construct(TOutputIterator o_begin,
-                                TOutputIterator o_end) {
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
+uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end) {
 
-    typedef
-        typename etl::iterator_traits<TOutputIterator>::value_type value_type;
+    typedef typename etl::iterator_traits<TOutputIterator>::value_type value_type;
 
     while (o_begin != o_end) {
         ::new (static_cast<void*>(etl::addressof(*o_begin))) value_type;
@@ -727,11 +656,8 @@ uninitialized_default_construct(TOutputIterator o_begin,
 //*****************************************************************************
 template <typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
-uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end,
-                                TCounter& count) {
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
+uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end, TCounter& count) {
     count = int32_t(etl::distance(o_begin, o_end));
 }
 
@@ -743,11 +669,8 @@ uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end,
 //*****************************************************************************
 template <typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
-uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end,
-                                TCounter& count) {
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
+uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end, TCounter& count) {
     count += int32_t(etl::distance(o_begin, o_end));
 
     etl::uninitialized_default_construct(o_begin, o_end);
@@ -760,11 +683,8 @@ uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end,
 //*****************************************************************************
 template <typename TOutputIterator>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
-uninitialized_default_construct(TOutputIterator o_begin,
-                                TOutputIterator o_end) {
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
+uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end) {
     std::uninitialized_default_construct(o_begin, o_end);
 }
 
@@ -776,11 +696,8 @@ uninitialized_default_construct(TOutputIterator o_begin,
 //*****************************************************************************
 template <typename TOutputIterator, typename TCounter>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
-uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end,
-                                TCounter& count) {
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
+uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end, TCounter& count) {
     count = int32_t(etl::distance(o_begin, o_end));
 
     std::uninitialized_default_construct(o_begin, o_end);
@@ -795,8 +712,7 @@ uninitialized_default_construct(TOutputIterator o_begin, TOutputIterator o_end,
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
 uninitialized_default_construct_n(TOutputIterator o_begin, TSize n) {
     TOutputIterator o_end = o_begin + n;
@@ -810,8 +726,7 @@ uninitialized_default_construct_n(TOutputIterator o_begin, TSize n) {
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
 uninitialized_default_construct_n(TOutputIterator o_begin, TSize n) {
     TOutputIterator o_end = o_begin + n;
@@ -829,11 +744,9 @@ uninitialized_default_construct_n(TOutputIterator o_begin, TSize n) {
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize, typename TCounter>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_default_construct_n(TOutputIterator o_begin, TSize n,
-                                  TCounter& count) {
+uninitialized_default_construct_n(TOutputIterator o_begin, TSize n, TCounter& count) {
     TOutputIterator o_end = o_begin + n;
 
     count += n;
@@ -849,11 +762,9 @@ uninitialized_default_construct_n(TOutputIterator o_begin, TSize n,
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize, typename TCounter>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value,
     TOutputIterator>::type
-uninitialized_default_construct_n(TOutputIterator o_begin, TSize n,
-                                  TCounter& count) {
+uninitialized_default_construct_n(TOutputIterator o_begin, TSize n, TCounter& count) {
     TOutputIterator o_end = o_begin + n;
 
     etl::uninitialized_default_construct(o_begin, o_end);
@@ -869,8 +780,7 @@ uninitialized_default_construct_n(TOutputIterator o_begin, TSize n,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize>
-TOutputIterator uninitialized_default_construct_n(TOutputIterator o_begin,
-                                                  TSize n) {
+TOutputIterator uninitialized_default_construct_n(TOutputIterator o_begin, TSize n) {
     return std::uninitialized_default_construct_n(o_begin, n);
 }
 
@@ -881,8 +791,7 @@ TOutputIterator uninitialized_default_construct_n(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize, typename TCounter>
-TOutputIterator uninitialized_default_construct_n(TOutputIterator o_begin,
-                                                  TSize n, TCounter& count) {
+TOutputIterator uninitialized_default_construct_n(TOutputIterator o_begin, TSize n, TCounter& count) {
     count += n;
 
     return std::uninitialized_default_construct_n(o_begin, n);
@@ -897,12 +806,9 @@ TOutputIterator uninitialized_default_construct_n(TOutputIterator o_begin,
 //*****************************************************************************
 template <typename TOutputIterator>
 typename etl::enable_if<
-    etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
+    etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
 uninitialized_value_construct(TOutputIterator o_begin, TOutputIterator o_end) {
-    typedef
-        typename etl::iterator_traits<TOutputIterator>::value_type value_type;
+    typedef typename etl::iterator_traits<TOutputIterator>::value_type value_type;
 
     etl::fill(o_begin, o_end, value_type());
 }
@@ -914,12 +820,9 @@ uninitialized_value_construct(TOutputIterator o_begin, TOutputIterator o_end) {
 //*****************************************************************************
 template <typename TOutputIterator>
 typename etl::enable_if<
-    !etl::is_trivially_constructible<
-        typename etl::iterator_traits<TOutputIterator>::value_type>::value,
-    void>::type
+    !etl::is_trivially_constructible<typename etl::iterator_traits<TOutputIterator>::value_type>::value, void>::type
 uninitialized_value_construct(TOutputIterator o_begin, TOutputIterator o_end) {
-    typedef
-        typename etl::iterator_traits<TOutputIterator>::value_type value_type;
+    typedef typename etl::iterator_traits<TOutputIterator>::value_type value_type;
 
     while (o_begin != o_end) {
         ::new (static_cast<void*>(etl::addressof(*o_begin))) value_type();
@@ -934,8 +837,7 @@ uninitialized_value_construct(TOutputIterator o_begin, TOutputIterator o_end) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TCounter>
-void uninitialized_value_construct(TOutputIterator o_begin,
-                                   TOutputIterator o_end, TCounter& count) {
+void uninitialized_value_construct(TOutputIterator o_begin, TOutputIterator o_end, TCounter& count) {
     count += int32_t(etl::distance(o_begin, o_end));
 
     etl::uninitialized_value_construct(o_begin, o_end);
@@ -947,8 +849,7 @@ void uninitialized_value_construct(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator>
-void uninitialized_value_construct(TOutputIterator o_begin,
-                                   TOutputIterator o_end) {
+void uninitialized_value_construct(TOutputIterator o_begin, TOutputIterator o_end) {
     std::uninitialized_value_construct(o_begin, o_end);
 }
 
@@ -959,8 +860,7 @@ void uninitialized_value_construct(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TCounter>
-void uninitialized_value_construct(TOutputIterator o_begin,
-                                   TOutputIterator o_end, TCounter& count) {
+void uninitialized_value_construct(TOutputIterator o_begin, TOutputIterator o_end, TCounter& count) {
     count += int32_t(etl::distance(o_begin, o_end));
 
     std::uninitialized_value_construct(o_begin, o_end);
@@ -975,8 +875,7 @@ void uninitialized_value_construct(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize>
-TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
-                                                TSize n) {
+TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin, TSize n) {
     TOutputIterator o_end = o_begin + n;
 
     etl::uninitialized_value_construct(o_begin, o_end);
@@ -991,8 +890,7 @@ TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize, typename TCounter>
-TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
-                                                TSize n, TCounter& count) {
+TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin, TSize n, TCounter& count) {
     TOutputIterator o_end = o_begin + n;
 
     etl::uninitialized_value_construct(o_begin, o_end);
@@ -1008,8 +906,7 @@ TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize>
-TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
-                                                TSize n) {
+TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin, TSize n) {
     return std::uninitialized_value_construct_n(o_begin, n);
 }
 
@@ -1020,8 +917,7 @@ TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
 ///\ingroup memory
 //*****************************************************************************
 template <typename TOutputIterator, typename TSize, typename TCounter>
-TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
-                                                TSize n, TCounter& count) {
+TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin, TSize n, TCounter& count) {
     count += n;
 
     return std::uninitialized_value_construct_n(o_begin, n);
@@ -1037,8 +933,7 @@ TOutputIterator uninitialized_value_construct_n(TOutputIterator o_begin,
 //*****************************************************************************
 template <typename T, typename... TArgs>
 ETL_CONSTEXPR T* construct_at(T* p, TArgs&&... args) {
-    return ::new (const_cast<void*>(static_cast<const volatile void*>(p)))
-        T(etl::forward<TArgs>(args)...);
+    return ::new (const_cast<void*>(static_cast<const volatile void*>(p))) T(etl::forward<TArgs>(args)...);
 }
 #else
 //*****************************************************************************
@@ -1057,8 +952,7 @@ ETL_CONSTEXPR T* construct_at(T* p) {
 //*****************************************************************************
 template <typename T, typename TArg>
 ETL_CONSTEXPR T* construct_at(T* p, const TArg& arg) {
-    return ::new (const_cast<void*>(static_cast<const volatile void*>(p)))
-        T(arg);
+    return ::new (const_cast<void*>(static_cast<const volatile void*>(p))) T(arg);
 }
 #endif
 #else
@@ -1075,8 +969,7 @@ ETL_CONSTEXPR20 T* construct_at(T* p, TArgs&&... args) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename T>
-typename etl::enable_if<etl::is_trivially_destructible<T>::value, void>::type
-destroy_at(T* /*p*/) {}
+typename etl::enable_if<etl::is_trivially_destructible<T>::value, void>::type destroy_at(T* /*p*/) {}
 
 //*****************************************************************************
 /// Destroys an item at address p.
@@ -1084,8 +977,7 @@ destroy_at(T* /*p*/) {}
 ///\ingroup memory
 //*****************************************************************************
 template <typename T>
-typename etl::enable_if<!etl::is_trivially_destructible<T>::value, void>::type
-destroy_at(T* p) {
+typename etl::enable_if<!etl::is_trivially_destructible<T>::value, void>::type destroy_at(T* p) {
     p->~T();
 }
 
@@ -1096,8 +988,7 @@ destroy_at(T* p) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename T, typename TCounter>
-typename etl::enable_if<etl::is_trivially_destructible<T>::value, void>::type
-destroy_at(T* /*p*/, TCounter& count) {
+typename etl::enable_if<etl::is_trivially_destructible<T>::value, void>::type destroy_at(T* /*p*/, TCounter& count) {
     --count;
 }
 
@@ -1108,8 +999,7 @@ destroy_at(T* /*p*/, TCounter& count) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename T, typename TCounter>
-typename etl::enable_if<!etl::is_trivially_destructible<T>::value, void>::type
-destroy_at(T* p, TCounter& count) {
+typename etl::enable_if<!etl::is_trivially_destructible<T>::value, void>::type destroy_at(T* p, TCounter& count) {
     p->~T();
     --count;
 }
@@ -1144,10 +1034,8 @@ void destroy_at(T* p, TCounter& count) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator>
-typename etl::enable_if<
-    etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    void>::type
+typename etl::enable_if<etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        void>::type
 destroy(TIterator /*i_begin*/, TIterator /*i_end*/) {}
 
 //*****************************************************************************
@@ -1156,10 +1044,8 @@ destroy(TIterator /*i_begin*/, TIterator /*i_end*/) {}
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator>
-typename etl::enable_if<
-    !etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    void>::type
+typename etl::enable_if<!etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        void>::type
 destroy(TIterator i_begin, TIterator i_end) {
     while (i_begin != i_end) {
         etl::destroy_at(etl::addressof(*i_begin));
@@ -1174,10 +1060,8 @@ destroy(TIterator i_begin, TIterator i_end) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator, typename TCounter>
-typename etl::enable_if<
-    etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    void>::type
+typename etl::enable_if<etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        void>::type
 destroy(TIterator i_begin, TIterator i_end, TCounter& count) {
     count -= int32_t(etl::distance(i_begin, i_end));
 }
@@ -1189,10 +1073,8 @@ destroy(TIterator i_begin, TIterator i_end, TCounter& count) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator, typename TCounter>
-typename etl::enable_if<
-    !etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    void>::type
+typename etl::enable_if<!etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        void>::type
 destroy(TIterator i_begin, TIterator i_end, TCounter& count) {
     count -= int32_t(etl::distance(i_begin, i_end));
 
@@ -1233,10 +1115,8 @@ void destroy(TIterator i_begin, TIterator i_end, TCounter& count) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator, typename TSize>
-typename etl::enable_if<
-    etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    TIterator>::type
+typename etl::enable_if<etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        TIterator>::type
 destroy_n(TIterator i_begin, TSize n) {
     return i_begin + n;
 }
@@ -1247,10 +1127,8 @@ destroy_n(TIterator i_begin, TSize n) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator, typename TSize>
-typename etl::enable_if<
-    !etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    TIterator>::type
+typename etl::enable_if<!etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        TIterator>::type
 destroy_n(TIterator i_begin, TSize n) {
     while (n > 0) {
         etl::destroy_at(etl::addressof(*i_begin));
@@ -1268,10 +1146,8 @@ destroy_n(TIterator i_begin, TSize n) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator, typename TSize, typename TCounter>
-typename etl::enable_if<
-    etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    TIterator>::type
+typename etl::enable_if<etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        TIterator>::type
 destroy_n(TIterator i_begin, TSize n, TCounter& count) {
     count -= n;
     return i_begin + n;
@@ -1284,10 +1160,8 @@ destroy_n(TIterator i_begin, TSize n, TCounter& count) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename TIterator, typename TSize, typename TCounter>
-typename etl::enable_if<
-    !etl::is_trivially_destructible<
-        typename etl::iterator_traits<TIterator>::value_type>::value,
-    TIterator>::type
+typename etl::enable_if<!etl::is_trivially_destructible<typename etl::iterator_traits<TIterator>::value_type>::value,
+                        TIterator>::type
 destroy_n(TIterator i_begin, TSize n, TCounter& count) {
     count -= n;
 
@@ -1370,25 +1244,21 @@ class unique_ptr {
 
 #if ETL_USING_CPP11
     //*********************************
-    unique_ptr(unique_ptr&& p_) ETL_NOEXCEPT : p(p_.release()),
-                                               deleter(etl::move(p_.deleter)) {}
+    unique_ptr(unique_ptr&& p_) ETL_NOEXCEPT : p(p_.release()), deleter(etl::move(p_.deleter)) {}
 #endif
 
     //*********************************
-    unique_ptr(
-        pointer p_,
-        typename etl::conditional<
-            etl::is_reference<TDeleter>::value, TDeleter,
-            typename etl::add_lvalue_reference<const TDeleter>::type>::type
-            deleter_) ETL_NOEXCEPT : p(p_),
-                                     deleter(deleter_) {}
+    unique_ptr(pointer p_,
+               typename etl::conditional<etl::is_reference<TDeleter>::value, TDeleter,
+                                         typename etl::add_lvalue_reference<const TDeleter>::type>::type deleter_)
+        ETL_NOEXCEPT : p(p_),
+                       deleter(deleter_) {}
 
 #if ETL_USING_CPP11
     //*********************************
-    unique_ptr(pointer p_,
-               typename etl::remove_reference<TDeleter>::type&& deleter_)
-        ETL_NOEXCEPT : p(p_),
-                       deleter(etl::move(deleter_)) {}
+    unique_ptr(pointer p_, typename etl::remove_reference<TDeleter>::type&& deleter_) ETL_NOEXCEPT
+        : p(p_),
+          deleter(etl::move(deleter_)) {}
 #endif
 
     //*********************************
@@ -1512,25 +1382,21 @@ class unique_ptr<T[], TDeleter> {
 
 #if ETL_USING_CPP11
     //*********************************
-    unique_ptr(unique_ptr&& p_) ETL_NOEXCEPT : p(p_.release()),
-                                               deleter(etl::move(p_.deleter)) {}
+    unique_ptr(unique_ptr&& p_) ETL_NOEXCEPT : p(p_.release()), deleter(etl::move(p_.deleter)) {}
 #endif
 
     //*********************************
-    unique_ptr(
-        pointer p_,
-        typename etl::conditional<
-            etl::is_reference<TDeleter>::value, TDeleter,
-            typename etl::add_lvalue_reference<const TDeleter>::type>::type
-            deleter_) ETL_NOEXCEPT : p(p_),
-                                     deleter(deleter_) {}
+    unique_ptr(pointer p_,
+               typename etl::conditional<etl::is_reference<TDeleter>::value, TDeleter,
+                                         typename etl::add_lvalue_reference<const TDeleter>::type>::type deleter_)
+        ETL_NOEXCEPT : p(p_),
+                       deleter(deleter_) {}
 
 #if ETL_USING_CPP11
     //*********************************
-    unique_ptr(pointer p_,
-               typename etl::remove_reference<TDeleter>::type&& deleter_)
-        ETL_NOEXCEPT : p(p_),
-                       deleter(etl::move(deleter_)) {}
+    unique_ptr(pointer p_, typename etl::remove_reference<TDeleter>::type&& deleter_) ETL_NOEXCEPT
+        : p(p_),
+          deleter(etl::move(deleter_)) {}
 #endif
 
     //*********************************
@@ -1637,37 +1503,31 @@ class unique_ptr<T[], TDeleter> {
 // Global functions for unique_ptr
 //*****************************************************************************
 template <typename T1, typename TD1, typename T2, typename TD2>
-bool operator==(const etl::unique_ptr<T1, TD1>& lhs,
-                const etl::unique_ptr<T2, TD2>& rhs) {
+bool operator==(const etl::unique_ptr<T1, TD1>& lhs, const etl::unique_ptr<T2, TD2>& rhs) {
     return lhs.get() == rhs.get();
 }
 
 //*********************************
 template <typename T1, typename TD1, typename T2, typename TD2>
-bool operator<(const etl::unique_ptr<T1, TD1>& lhs,
-               const etl::unique_ptr<T2, TD2>& rhs) {
-    return reinterpret_cast<char*>(lhs.get()) <
-           reinterpret_cast<char*>(rhs.get());
+bool operator<(const etl::unique_ptr<T1, TD1>& lhs, const etl::unique_ptr<T2, TD2>& rhs) {
+    return reinterpret_cast<char*>(lhs.get()) < reinterpret_cast<char*>(rhs.get());
 }
 
 //*********************************
 template <typename T1, typename TD1, typename T2, typename TD2>
-bool operator<=(const etl::unique_ptr<T1, TD1>& lhs,
-                const etl::unique_ptr<T2, TD2>& rhs) {
+bool operator<=(const etl::unique_ptr<T1, TD1>& lhs, const etl::unique_ptr<T2, TD2>& rhs) {
     return !(rhs < lhs);
 }
 
 //*********************************
 template <typename T1, typename TD1, typename T2, typename TD2>
-bool operator>(const etl::unique_ptr<T1, TD1>& lhs,
-               const etl::unique_ptr<T2, TD2>& rhs) {
+bool operator>(const etl::unique_ptr<T1, TD1>& lhs, const etl::unique_ptr<T2, TD2>& rhs) {
     return (rhs < lhs);
 }
 
 //*********************************
 template <typename T1, typename TD1, typename T2, typename TD2>
-bool operator>=(const etl::unique_ptr<T1, TD1>& lhs,
-                const etl::unique_ptr<T2, TD2>& rhs) {
+bool operator>=(const etl::unique_ptr<T1, TD1>& lhs, const etl::unique_ptr<T2, TD2>& rhs) {
     return !(lhs < rhs);
 }
 
@@ -1677,16 +1537,15 @@ namespace etl {
 ///\ingroup memory
 //*****************************************************************************
 template <typename T>
-typename etl::enable_if<etl::is_trivially_constructible<T>::value, void>::type
-create_default_at(T* /*p*/) {}
+typename etl::enable_if<etl::is_trivially_constructible<T>::value, void>::type create_default_at(T* /*p*/) {}
 
 //*****************************************************************************
 /// Default construct an item at address p.
 ///\ingroup memory
 //*****************************************************************************
 template <typename T, typename TCounter>
-typename etl::enable_if<etl::is_trivially_constructible<T>::value, void>::type
-create_default_at(T* /*p*/, TCounter& count) {
+typename etl::enable_if<etl::is_trivially_constructible<T>::value, void>::type create_default_at(T* /*p*/,
+                                                                                                 TCounter& count) {
     ++count;
 }
 
@@ -1695,8 +1554,7 @@ create_default_at(T* /*p*/, TCounter& count) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename T>
-typename etl::enable_if<!etl::is_trivially_constructible<T>::value, void>::type
-create_default_at(T* p) {
+typename etl::enable_if<!etl::is_trivially_constructible<T>::value, void>::type create_default_at(T* p) {
     ::new (p) T;
 }
 
@@ -1705,8 +1563,8 @@ create_default_at(T* p) {
 ///\ingroup memory
 //*****************************************************************************
 template <typename T, typename TCounter>
-typename etl::enable_if<!etl::is_trivially_constructible<T>::value, void>::type
-create_default_at(T* p, TCounter& count) {
+typename etl::enable_if<!etl::is_trivially_constructible<T>::value, void>::type create_default_at(T* p,
+                                                                                                  TCounter& count) {
     ::new (p) T;
     ++count;
 }
@@ -2003,8 +1861,7 @@ class uninitialized_buffer {
     /// Convert to T reference.
     template <typename T>
     operator T&() {
-        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value ||
-                           ((Alignment % etl::alignment_of<T>::value) == 0)),
+        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value || ((Alignment % etl::alignment_of<T>::value) == 0)),
                           "Incompatible alignment");
         return *reinterpret_cast<T*>(raw);
     }
@@ -2012,8 +1869,7 @@ class uninitialized_buffer {
     /// Convert to const T reference.
     template <typename T>
     operator const T&() const {
-        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value ||
-                           ((Alignment % etl::alignment_of<T>::value) == 0)),
+        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value || ((Alignment % etl::alignment_of<T>::value) == 0)),
                           "Incompatible alignment");
         return *reinterpret_cast<const T*>(raw);
     }
@@ -2021,8 +1877,7 @@ class uninitialized_buffer {
     /// Convert to T pointer.
     template <typename T>
     operator T*() {
-        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value ||
-                           ((Alignment % etl::alignment_of<T>::value) == 0)),
+        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value || ((Alignment % etl::alignment_of<T>::value) == 0)),
                           "Incompatible alignment");
         return reinterpret_cast<T*>(raw);
     }
@@ -2030,14 +1885,12 @@ class uninitialized_buffer {
     /// Convert to const T pointer.
     template <typename T>
     operator const T*() const {
-        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value ||
-                           ((Alignment % etl::alignment_of<T>::value) == 0)),
+        ETL_STATIC_ASSERT((etl::is_same<T*, void*>::value || ((Alignment % etl::alignment_of<T>::value) == 0)),
                           "Incompatible alignment");
         return reinterpret_cast<const T*>(raw);
     }
 
-#if ETL_USING_CPP11 && !defined(ETL_COMPILER_ARM5) && \
-    !defined(ETL_UNINITIALIZED_BUFFER_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && !defined(ETL_COMPILER_ARM5) && !defined(ETL_UNINITIALIZED_BUFFER_FORCE_CPP03_IMPLEMENTATION)
     alignas(VAlignment) char raw[Object_Size * N_Objects];
 #else
     union {
@@ -2071,9 +1924,7 @@ class uninitialized_buffer_of {
     T& operator[](int i) { return reinterpret_cast<T*>(this->raw)[i]; }
 
     /// Index operator.
-    const T& operator[](int i) const {
-        return reinterpret_cast<const T*>(this->raw)[i];
-    }
+    const T& operator[](int i) const { return reinterpret_cast<const T*>(this->raw)[i]; }
 
     /// Convert to T reference.
     operator T&() { return *reinterpret_cast<T*>(raw); }
@@ -2097,12 +1948,9 @@ class uninitialized_buffer_of {
 
     T* end() { return reinterpret_cast<T*>(raw + (sizeof(T) * N_Objects)); }
 
-    const T* end() const {
-        return reinterpret_cast<const T*>(raw + (sizeof(T) * N_Objects));
-    }
+    const T* end() const { return reinterpret_cast<const T*>(raw + (sizeof(T) * N_Objects)); }
 
-#if ETL_USING_CPP11 && !defined(ETL_COMPILER_ARM5) && \
-    !defined(ETL_UNINITIALIZED_BUFFER_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && !defined(ETL_COMPILER_ARM5) && !defined(ETL_UNINITIALIZED_BUFFER_FORCE_CPP03_IMPLEMENTATION)
     alignas(Alignment) char raw[sizeof(T) * N_Objects];
 #else
     union {
@@ -2115,8 +1963,7 @@ class uninitialized_buffer_of {
 
 #if ETL_USING_CPP11
 template <typename T, size_t N_Objects>
-using uninitialized_buffer_of_t =
-    typename uninitialized_buffer_of<T, N_Objects>::buffer;
+using uninitialized_buffer_of_t = typename uninitialized_buffer_of<T, N_Objects>::buffer;
 #endif
 
 //***************************************************************************
@@ -2128,15 +1975,12 @@ using uninitialized_buffer_of_t =
 /// \return A pointer to the destination.
 //***************************************************************************
 template <typename TPointer>
-typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    TPointer>::type
+typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                        TPointer>::type
 mem_copy(const TPointer sb, const TPointer se, TPointer db) ETL_NOEXCEPT {
     return reinterpret_cast<TPointer>(
         memcpy(reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
-               sizeof(typename etl::iterator_traits<TPointer>::value_type) *
-                   static_cast<size_t>(se - sb)));
+               sizeof(typename etl::iterator_traits<TPointer>::value_type) * static_cast<size_t>(se - sb)));
 }
 
 //***************************************************************************
@@ -2147,14 +1991,11 @@ mem_copy(const TPointer sb, const TPointer se, TPointer db) ETL_NOEXCEPT {
 /// \param destination begin
 //***************************************************************************
 template <typename TPointer>
-typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    TPointer>::type
+typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                        TPointer>::type
 mem_copy(const TPointer sb, size_t n, TPointer db) ETL_NOEXCEPT {
-    return reinterpret_cast<TPointer>(memcpy(
-        reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
-        sizeof(typename etl::iterator_traits<TPointer>::value_type) * n));
+    return reinterpret_cast<TPointer>(memcpy(reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
+                                             sizeof(typename etl::iterator_traits<TPointer>::value_type) * n));
 }
 
 //***************************************************************************
@@ -2165,15 +2006,12 @@ mem_copy(const TPointer sb, size_t n, TPointer db) ETL_NOEXCEPT {
 /// \param destination begin
 //***************************************************************************
 template <typename TPointer>
-typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    TPointer>::type
+typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                        TPointer>::type
 mem_move(const TPointer sb, const TPointer se, TPointer db) ETL_NOEXCEPT {
     return reinterpret_cast<TPointer>(
         memmove(reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
-                sizeof(typename etl::iterator_traits<TPointer>::value_type) *
-                    static_cast<size_t>(se - sb)));
+                sizeof(typename etl::iterator_traits<TPointer>::value_type) * static_cast<size_t>(se - sb)));
 }
 
 //***************************************************************************
@@ -2184,14 +2022,11 @@ mem_move(const TPointer sb, const TPointer se, TPointer db) ETL_NOEXCEPT {
 /// \param destination begin
 //***************************************************************************
 template <typename TPointer>
-typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    TPointer>::type
+typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                        TPointer>::type
 mem_move(const TPointer sb, size_t n, TPointer db) ETL_NOEXCEPT {
-    return reinterpret_cast<TPointer>(memmove(
-        reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
-        sizeof(typename etl::iterator_traits<TPointer>::value_type) * n));
+    return reinterpret_cast<TPointer>(memmove(reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
+                                              sizeof(typename etl::iterator_traits<TPointer>::value_type) * n));
 }
 
 //***************************************************************************
@@ -2204,14 +2039,12 @@ mem_move(const TPointer sb, size_t n, TPointer db) ETL_NOEXCEPT {
 /// > 0	The first byte that does not match in both memory blocks has a greater value in 'sb' than in 'db' when evaluated as unsigned char values.
 //***************************************************************************
 template <typename TPointer>
-ETL_NODISCARD typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    int>::type
-mem_compare(const TPointer sb, const TPointer se, TPointer db) ETL_NOEXCEPT {
+ETL_NODISCARD
+    typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                            int>::type
+    mem_compare(const TPointer sb, const TPointer se, TPointer db) ETL_NOEXCEPT {
     return memcmp(reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
-                  sizeof(typename etl::iterator_traits<TPointer>::value_type) *
-                      static_cast<size_t>(se - sb));
+                  sizeof(typename etl::iterator_traits<TPointer>::value_type) * static_cast<size_t>(se - sb));
 }
 
 //***************************************************************************
@@ -2224,14 +2057,12 @@ mem_compare(const TPointer sb, const TPointer se, TPointer db) ETL_NOEXCEPT {
 /// > 0	The first byte that does not match in both memory blocks has a greater value in 'sb' than in 'db' when evaluated as unsigned char values.
 //***************************************************************************
 template <typename TPointer>
-ETL_NODISCARD typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    int>::type
-mem_compare(const TPointer sb, size_t n, TPointer db) ETL_NOEXCEPT {
-    return memcmp(
-        reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
-        sizeof(typename etl::iterator_traits<TPointer>::value_type) * n);
+ETL_NODISCARD
+    typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                            int>::type
+    mem_compare(const TPointer sb, size_t n, TPointer db) ETL_NOEXCEPT {
+    return memcmp(reinterpret_cast<void*>(db), reinterpret_cast<void*>(sb),
+                  sizeof(typename etl::iterator_traits<TPointer>::value_type) * n);
 }
 
 //***************************************************************************
@@ -2242,15 +2073,12 @@ mem_compare(const TPointer sb, size_t n, TPointer db) ETL_NOEXCEPT {
 /// \return The destination
 //***************************************************************************
 template <typename TPointer, typename T>
-typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    TPointer>::type
+typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                        TPointer>::type
 mem_set(TPointer db, const TPointer de, T value) ETL_NOEXCEPT {
     return reinterpret_cast<TPointer>(
         memset(reinterpret_cast<void*>(db), static_cast<char>(value),
-               sizeof(typename etl::iterator_traits<TPointer>::value_type) *
-                   static_cast<size_t>(de - db)));
+               sizeof(typename etl::iterator_traits<TPointer>::value_type) * static_cast<size_t>(de - db)));
 }
 
 //***************************************************************************
@@ -2261,14 +2089,11 @@ mem_set(TPointer db, const TPointer de, T value) ETL_NOEXCEPT {
 /// \return The destination
 //***************************************************************************
 template <typename TPointer, typename T>
-typename etl::enable_if<
-    etl::is_trivially_copyable<
-        typename etl::iterator_traits<TPointer>::value_type>::value,
-    TPointer>::type
+typename etl::enable_if<etl::is_trivially_copyable<typename etl::iterator_traits<TPointer>::value_type>::value,
+                        TPointer>::type
 mem_set(const TPointer db, size_t n, T value) ETL_NOEXCEPT {
-    return reinterpret_cast<TPointer>(memset(
-        reinterpret_cast<void*>(db), static_cast<char>(value),
-        sizeof(typename etl::iterator_traits<TPointer>::value_type) * n));
+    return reinterpret_cast<TPointer>(memset(reinterpret_cast<void*>(db), static_cast<char>(value),
+                                             sizeof(typename etl::iterator_traits<TPointer>::value_type) * n));
 }
 
 //***************************************************************************
@@ -2279,18 +2104,14 @@ mem_set(const TPointer db, size_t n, T value) ETL_NOEXCEPT {
 /// \return The position of the char or 'se'.
 //***************************************************************************
 template <typename TPointer, typename T>
-ETL_NODISCARD typename etl::enable_if<
-    etl::is_pointer<TPointer>::value &&
-        !etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
-    char*>::type
+ETL_NODISCARD typename etl::enable_if<etl::is_pointer<TPointer>::value &&
+                                          !etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
+                                      char*>::type
 mem_char(TPointer sb, TPointer se, T value) ETL_NOEXCEPT {
-    void* result =
-        memchr(reinterpret_cast<void*>(sb), static_cast<char>(value),
-               sizeof(typename etl::iterator_traits<TPointer>::value_type) *
-                   static_cast<size_t>(se - sb));
+    void* result = memchr(reinterpret_cast<void*>(sb), static_cast<char>(value),
+                          sizeof(typename etl::iterator_traits<TPointer>::value_type) * static_cast<size_t>(se - sb));
 
-    return (result == 0U) ? reinterpret_cast<char*>(se)
-                          : reinterpret_cast<char*>(result);
+    return (result == 0U) ? reinterpret_cast<char*>(se) : reinterpret_cast<char*>(result);
 }
 
 //***************************************************************************
@@ -2301,18 +2122,15 @@ mem_char(TPointer sb, TPointer se, T value) ETL_NOEXCEPT {
 /// \return The position of the char or 'se'.
 //***************************************************************************
 template <typename TPointer, typename T>
-ETL_NODISCARD typename etl::enable_if<
-    etl::is_pointer<TPointer>::value &&
-        etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
-    const char*>::type
+ETL_NODISCARD typename etl::enable_if<etl::is_pointer<TPointer>::value &&
+                                          etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
+                                      const char*>::type
 mem_char(TPointer sb, TPointer se, T value) ETL_NOEXCEPT {
     const void* result =
         memchr(reinterpret_cast<const void*>(sb), static_cast<char>(value),
-               sizeof(typename etl::iterator_traits<TPointer>::value_type) *
-                   static_cast<size_t>(se - sb));
+               sizeof(typename etl::iterator_traits<TPointer>::value_type) * static_cast<size_t>(se - sb));
 
-    return (result == 0U) ? reinterpret_cast<const char*>(se)
-                          : reinterpret_cast<const char*>(result);
+    return (result == 0U) ? reinterpret_cast<const char*>(se) : reinterpret_cast<const char*>(result);
 }
 
 //***************************************************************************
@@ -2323,17 +2141,14 @@ mem_char(TPointer sb, TPointer se, T value) ETL_NOEXCEPT {
 /// \return The position of the char or 'sb + n'
 //***************************************************************************
 template <typename TPointer, typename T>
-ETL_NODISCARD typename etl::enable_if<
-    etl::is_pointer<TPointer>::value &&
-        !etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
-    char*>::type
+ETL_NODISCARD typename etl::enable_if<etl::is_pointer<TPointer>::value &&
+                                          !etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
+                                      char*>::type
 mem_char(TPointer sb, size_t n, T value) ETL_NOEXCEPT {
-    void* result =
-        memchr(reinterpret_cast<void*>(sb), static_cast<char>(value),
-               sizeof(typename etl::iterator_traits<TPointer>::value_type) * n);
+    void* result = memchr(reinterpret_cast<void*>(sb), static_cast<char>(value),
+                          sizeof(typename etl::iterator_traits<TPointer>::value_type) * n);
 
-    return (result == 0U) ? reinterpret_cast<char*>(sb + n)
-                          : reinterpret_cast<char*>(result);
+    return (result == 0U) ? reinterpret_cast<char*>(sb + n) : reinterpret_cast<char*>(result);
 }
 
 //***************************************************************************
@@ -2344,17 +2159,14 @@ mem_char(TPointer sb, size_t n, T value) ETL_NOEXCEPT {
 /// \return The position of the char or 'sb + n'
 //***************************************************************************
 template <typename TPointer, typename T>
-ETL_NODISCARD typename etl::enable_if<
-    etl::is_pointer<TPointer>::value &&
-        etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
-    const char*>::type
+ETL_NODISCARD typename etl::enable_if<etl::is_pointer<TPointer>::value &&
+                                          etl::is_const<typename etl::remove_pointer<TPointer>::type>::value,
+                                      const char*>::type
 mem_char(TPointer sb, size_t n, T value) ETL_NOEXCEPT {
-    const void* result =
-        memchr(reinterpret_cast<const void*>(sb), static_cast<char>(value),
-               sizeof(typename etl::iterator_traits<TPointer>::value_type) * n);
+    const void* result = memchr(reinterpret_cast<const void*>(sb), static_cast<char>(value),
+                                sizeof(typename etl::iterator_traits<TPointer>::value_type) * n);
 
-    return (result == 0U) ? reinterpret_cast<const char*>(sb + n)
-                          : reinterpret_cast<const char*>(result);
+    return (result == 0U) ? reinterpret_cast<const char*>(sb + n) : reinterpret_cast<const char*>(result);
 }
 }  // namespace etl
 

@@ -41,8 +41,7 @@ namespace etl {
 class mutex {
    public:
     mutex() : id(0) {
-        osMutexAttr_t attr = {
-            "ETL", osMutexRecursive | osMutexPrioInherit | osMutexRobust, 0, 0};
+        osMutexAttr_t attr = {"ETL", osMutexRecursive | osMutexPrioInherit | osMutexRobust, 0, 0};
         id = osMutexNew(&attr);
     }
 

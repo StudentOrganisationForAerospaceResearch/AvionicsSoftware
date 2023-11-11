@@ -49,8 +49,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState) {
 
     SOAR_PRINT("Rocket State Machine Started in [ %s ] state\n",
                BaseRocketState::StateToString(rs_currentState->GetStateID()));
-    HDITask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
 }
 
 /**
@@ -76,16 +75,13 @@ RocketState RocketSM::TransitionState(RocketState nextState) {
     rs_currentState = stateArray[nextState];
 
     // Assert the next state is initalized
-    SOAR_ASSERT(rs_currentState != nullptr,
-                "rs_currentState is nullptr in TransitionState");
+    SOAR_ASSERT(rs_currentState != nullptr, "rs_currentState is nullptr in TransitionState");
 
-    HDITask::Inst().SendCommand(
-        Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
+    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
     // Enter the current state
     rs_currentState->OnEnter();
 
-    SOAR_PRINT("ROCKET STATE TRANSITION [ %s ] --> [ %s ]\n",
-               BaseRocketState::StateToString(previousState),
+    SOAR_PRINT("ROCKET STATE TRANSITION [ %s ] --> [ %s ]\n", BaseRocketState::StateToString(previousState),
                BaseRocketState::StateToString(rs_currentState->GetStateID()));
 
     // Return the state after the transition
@@ -97,8 +93,7 @@ RocketState RocketSM::TransitionState(RocketState nextState) {
  * @param cm The command to handle
  */
 void RocketSM::HandleCommand(Command& cm) {
-    SOAR_ASSERT(rs_currentState != nullptr,
-                "Command received before state machine initialized");
+    SOAR_ASSERT(rs_currentState != nullptr, "Command received before state machine initialized");
 
     // Handle the command based on the current state
     RocketState nextRocketState = rs_currentState->HandleCommand(cm);
@@ -213,45 +208,38 @@ RocketState PreLaunch::OnExit() {
  * @brief Handles control actions generally, can be used for derived states that allow full vent control
  * @return The rocket state to transition to or stay in. The current rocket state if no transition
  */
-RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
-                                                 RocketState currentState) {
+RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction, RocketState currentState) {
     switch (rcAction) {
         case RSC_ANY_TO_ABORT:
             // Transition to abort state
             return RS_ABORT;
         case RSC_OPEN_VENT:
             GPIO::Vent::Open();
-            SOAR_PRINT("Vents were opened in [ %s ] state\n",
-                       StateToString(currentState));
+            SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(currentState));
             break;
         case RSC_CLOSE_VENT:
             GPIO::Vent::Close();
-            SOAR_PRINT("Vents were closed in [ %s ] state\n",
-                       StateToString(currentState));
+            SOAR_PRINT("Vents were closed in [ %s ] state\n", StateToString(currentState));
             break;
         case RSC_OPEN_DRAIN:
             GPIO::Drain::Open();
-            SOAR_PRINT("Drain was opened in [ %s ] state\n",
-                       StateToString(currentState));
+            SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
             break;
         case RSC_CLOSE_DRAIN:
             GPIO::Drain::Close();
-            SOAR_PRINT("Drain was closed in [ %s ] state\n",
-                       StateToString(currentState));
+            SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
             break;
         case RSC_MEV_CLOSE:
             MEVManager::CloseMEV();
             break;
         case RSC_POWER_TRANSITION_EXTERNAL:
             GPIO::PowerSelect::UmbilicalPower();
-            SOAR_PRINT("Switched to umbilical power in [ %s ] state\n",
-                       StateToString(currentState));
+            SOAR_PRINT("Switched to umbilical power in [ %s ] state\n", StateToString(currentState));
             //TODO: we should check to make sure umbilical power is available before doing so
             break;
         case RSC_POWER_TRANSITION_ONBOARD:
             GPIO::PowerSelect::InternalPower();
-            SOAR_PRINT("Switched to internal power in [ %s ] state\n",
-                       StateToString(currentState));
+            SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(currentState));
             break;
         default:
             break;
@@ -282,9 +270,8 @@ RocketState PreLaunch::HandleCommand(Command& cm) {
                     break;
                 default:
                     // Handle as a general control action
-                    nextStateID = PreLaunch::HandleNonIgnitionCommands(
-                        (RocketControlCommands)cm.GetTaskCommand(),
-                        GetStateID());
+                    nextStateID =
+                        PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
                     break;
             }
             break;
@@ -376,9 +363,8 @@ RocketState Fill::HandleCommand(Command& cm) {
                     break;
                 default:
                     // Handle as a general control action
-                    nextStateID = PreLaunch::HandleNonIgnitionCommands(
-                        (RocketControlCommands)cm.GetTaskCommand(),
-                        GetStateID());
+                    nextStateID =
+                        PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
                     break;
             }
             break;
@@ -447,9 +433,8 @@ RocketState Arm::HandleCommand(Command& cm) {
                     break;
                 default:
                     // If manual override is enabled, handle the command as a non ignition command
-                    nextStateID = PreLaunch::HandleNonIgnitionCommands(
-                        (RocketControlCommands)cm.GetTaskCommand(),
-                        GetStateID());
+                    nextStateID =
+                        PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
                     break;
             }
             break;
@@ -611,12 +596,10 @@ Burn::Burn() {
 RocketState Burn::OnEnter() {
     // TODO: Debug print - can remove in final versions
     if (GPIO::Vent::IsOpen()) {
-        SOAR_PRINT("Vents were not closed in [ %s ] state\n",
-                   StateToString(rsStateID));
+        SOAR_PRINT("Vents were not closed in [ %s ] state\n", StateToString(rsStateID));
     }
     if (GPIO::Drain::IsOpen()) {
-        SOAR_PRINT("Drain was not closed in [ %s ] state\n",
-                   StateToString(rsStateID));
+        SOAR_PRINT("Drain was not closed in [ %s ] state\n", StateToString(rsStateID));
     }
 
     // Assert vent/drain state
@@ -854,9 +837,8 @@ RocketState Recovery::HandleCommand(Command& cm) {
             switch (cm.GetTaskCommand()) {
                 default:
                     // Handle as a general control action
-                    nextStateID = PreLaunch::HandleNonIgnitionCommands(
-                        (RocketControlCommands)cm.GetTaskCommand(),
-                        GetStateID());
+                    nextStateID =
+                        PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
                     break;
             }
             break;
@@ -896,8 +878,7 @@ RocketState Abort::OnEnter() {
  * @return The state we're exiting
  */
 RocketState Abort::OnExit() {
-    WatchdogTask::Inst().SendCommand(
-        Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
+    WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_REQUEST));
     return rsStateID;
 }
 
@@ -990,9 +971,8 @@ RocketState Test::HandleCommand(Command& cm) {
                     GPIO::MEV_EN::Off();
                     break;
                 default:
-                    nextStateID = PreLaunch::HandleNonIgnitionCommands(
-                        (RocketControlCommands)cm.GetTaskCommand(),
-                        GetStateID());
+                    nextStateID =
+                        PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
                     break;
             }
             break;

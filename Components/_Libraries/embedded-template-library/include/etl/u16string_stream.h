@@ -41,9 +41,7 @@ SOFTWARE.
 #include "u16string.h"
 
 namespace etl {
-typedef etl::basic_string_stream<etl::u16format_spec, etl::iu16string,
-                                 etl::u16string_view>
-    u16string_stream;
+typedef etl::basic_string_stream<etl::u16format_spec, etl::iu16string, etl::u16string_view> u16string_stream;
 }
 
 #endif

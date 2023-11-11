@@ -36,8 +36,7 @@ SOFTWARE.
 #if !defined(ETL_COMPILER_VERSION) && !defined(ETL_COMPILER_FULL_VERSION)
 #if defined(ETL_COMPILER_GCC)
 #define ETL_COMPILER_VERSION __GNUC__
-#define ETL_COMPILER_FULL_VERSION \
-    ((__GNUC__ * 10000) + (__GNUC_MINOR__ * 100) + __GNUC_PATCHLEVEL__)
+#define ETL_COMPILER_FULL_VERSION ((__GNUC__ * 10000) + (__GNUC_MINOR__ * 100) + __GNUC_PATCHLEVEL__)
 #elif defined(ETL_COMPILER_ICCAVR)
 #define ETL_COMPILER_VERSION __VER__
 #define ETL_COMPILER_FULL_VERSION __VER__
@@ -55,8 +54,7 @@ SOFTWARE.
 #define ETL_COMPILER_FULL_VERSION __ARMCOMPILER_VERSION
 #elif defined(ETL_COMPILER_CLANG)
 #define ETL_COMPILER_VERSION __clang_version__
-#define ETL_COMPILER_FULL_VERSION \
-    ((__clang_major__ * 10000) + (__clang_minor__ * 100) + __clang_patchlevel__)
+#define ETL_COMPILER_FULL_VERSION ((__clang_major__ * 10000) + (__clang_minor__ * 100) + __clang_patchlevel__)
 #elif defined(ETL_COMPILER_GREEN_HILLS)
 #define ETL_COMPILER_VERSION __GHS_VERSION_NUMBER__
 #define ETL_COMPILER_FULL_VERSION __GHS_VERSION_NUMBER__

@@ -42,19 +42,15 @@ namespace etl {
 //***************************************************************************
 class message_exception : public etl::exception {
    public:
-    message_exception(string_type reason_, string_type file_name_,
-                      numeric_type line_number_)
+    message_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
 //***************************************************************************
 class unhandled_message_exception : public etl::message_exception {
    public:
-    unhandled_message_exception(string_type file_name_,
-                                numeric_type line_number_)
-        : message_exception(
-              ETL_ERROR_TEXT("message:unknown", ETL_MESSAGE_FILE_ID "A"),
-              file_name_, line_number_) {}
+    unhandled_message_exception(string_type file_name_, numeric_type line_number_)
+        : message_exception(ETL_ERROR_TEXT("message:unknown", ETL_MESSAGE_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -64,8 +60,7 @@ class imessage {
    public:
     virtual ~imessage() {}
 
-    ETL_NODISCARD virtual etl::message_id_t get_message_id() const
-        ETL_NOEXCEPT = 0;
+    ETL_NODISCARD virtual etl::message_id_t get_message_id() const ETL_NOEXCEPT = 0;
 };
 
 //***************************************************************************
@@ -73,16 +68,12 @@ class imessage {
 //***************************************************************************
 template <etl::message_id_t ID_, typename TParent = etl::imessage>
 class message : public TParent {
-    ETL_STATIC_ASSERT((etl::is_base_of<etl::imessage, TParent>::value),
-                      "TParent is not derived from etl::imessage");
+    ETL_STATIC_ASSERT((etl::is_base_of<etl::imessage, TParent>::value), "TParent is not derived from etl::imessage");
 
    public:
     enum { ID = ID_ };
 
-    ETL_NODISCARD etl::message_id_t get_message_id() const ETL_NOEXCEPT
-        ETL_OVERRIDE {
-        return ID;
-    }
+    ETL_NODISCARD etl::message_id_t get_message_id() const ETL_NOEXCEPT ETL_OVERRIDE { return ID; }
 };
 }  // namespace etl
 

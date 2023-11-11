@@ -78,16 +78,14 @@ struct type_id_lookup {
     // For N type pairs.
     template <size_t ID, typename T1, typename... TRest>
     struct type_from_id_helper {
-        using type = typename etl::conditional<
-            ID == T1::ID, typename T1::type,
-            typename type_from_id_helper<ID, TRest...>::type>::type;
+        using type = typename etl::conditional<ID == T1::ID, typename T1::type,
+                                               typename type_from_id_helper<ID, TRest...>::type>::type;
     };
 
     // Specialisation for 1 type pair.
     template <size_t ID, typename T1>
     struct type_from_id_helper<ID, T1> {
-        using type = typename etl::conditional<ID == T1::ID, typename T1::type,
-                                               nulltype>::type;
+        using type = typename etl::conditional<ID == T1::ID, typename T1::type, nulltype>::type;
     };
 
    public:
@@ -111,16 +109,13 @@ struct type_id_lookup {
     template <typename T, typename T1, typename... TRest>
     struct id_from_type_helper {
         static constexpr size_t value =
-            etl::is_same<T, typename T1::type>::value
-                ? T1::ID
-                : id_from_type_helper<T, TRest...>::value;
+            etl::is_same<T, typename T1::type>::value ? T1::ID : id_from_type_helper<T, TRest...>::value;
     };
 
     // Specialisation for 1 type pair.
     template <typename T, typename T1>
     struct id_from_type_helper<T, T1> {
-        static constexpr size_t value =
-            etl::is_same<T, typename T1::type>::value ? T1::ID : UNKNOWN;
+        static constexpr size_t value = etl::is_same<T, typename T1::type>::value ? T1::ID : UNKNOWN;
     };
 
    public:
@@ -129,8 +124,7 @@ struct type_id_lookup {
     //************************************
     template <typename T>
     struct id_from_type {
-        static constexpr size_t value =
-            id_from_type_helper<T, TTypes...>::value;
+        static constexpr size_t value = id_from_type_helper<T, TTypes...>::value;
 
         static_assert(value != UNKNOWN, "Invalid type");
     };
@@ -164,16 +158,14 @@ class type_type_lookup {
 
     template <typename T, typename T1, typename... TRest>
     struct type_from_type_helper {
-        using type = typename etl::conditional<
-            etl::is_same<T, typename T1::type1>::value, typename T1::type2,
-            typename type_from_type_helper<T, TRest...>::type>::type;
+        using type = typename etl::conditional<etl::is_same<T, typename T1::type1>::value, typename T1::type2,
+                                               typename type_from_type_helper<T, TRest...>::type>::type;
     };
 
     template <typename T, typename T1>
     struct type_from_type_helper<T, T1> {
-        using type = typename etl::conditional<
-            etl::is_same<T, typename T1::type1>::value, typename T1::type2,
-            nulltype>::type;
+        using type =
+            typename etl::conditional<etl::is_same<T, typename T1::type1>::value, typename T1::type2, nulltype>::type;
     };
 
    public:
@@ -183,8 +175,7 @@ class type_type_lookup {
         // The matched type or nulltype
         using type = typename type_from_type_helper<T, TTypes...>::type;
 
-        static_assert(!etl::is_same<type, nulltype>::value,
-                      "Type match not found");
+        static_assert(!etl::is_same<type, nulltype>::value, "Type match not found");
     };
 
     // Template alias.
@@ -197,21 +188,15 @@ class type_type_lookup {
 //***************************************************************************
 // For 16 types.
 //***************************************************************************
-template <typename T1, typename T2 = etl::type_id_pair<etl::null_type<0>, -2>,
-          typename T3 = etl::type_id_pair<etl::null_type<0>, -3>,
-          typename T4 = etl::type_id_pair<etl::null_type<0>, -4>,
-          typename T5 = etl::type_id_pair<etl::null_type<0>, -5>,
-          typename T6 = etl::type_id_pair<etl::null_type<0>, -6>,
-          typename T7 = etl::type_id_pair<etl::null_type<0>, -7>,
-          typename T8 = etl::type_id_pair<etl::null_type<0>, -8>,
-          typename T9 = etl::type_id_pair<etl::null_type<0>, -9>,
-          typename T10 = etl::type_id_pair<etl::null_type<0>, -10>,
-          typename T11 = etl::type_id_pair<etl::null_type<0>, -11>,
-          typename T12 = etl::type_id_pair<etl::null_type<0>, -12>,
-          typename T13 = etl::type_id_pair<etl::null_type<0>, -13>,
-          typename T14 = etl::type_id_pair<etl::null_type<0>, -14>,
-          typename T15 = etl::type_id_pair<etl::null_type<0>, -15>,
-          typename T16 = etl::type_id_pair<etl::null_type<0>, -16>>
+template <
+    typename T1, typename T2 = etl::type_id_pair<etl::null_type<0>, -2>,
+    typename T3 = etl::type_id_pair<etl::null_type<0>, -3>, typename T4 = etl::type_id_pair<etl::null_type<0>, -4>,
+    typename T5 = etl::type_id_pair<etl::null_type<0>, -5>, typename T6 = etl::type_id_pair<etl::null_type<0>, -6>,
+    typename T7 = etl::type_id_pair<etl::null_type<0>, -7>, typename T8 = etl::type_id_pair<etl::null_type<0>, -8>,
+    typename T9 = etl::type_id_pair<etl::null_type<0>, -9>, typename T10 = etl::type_id_pair<etl::null_type<0>, -10>,
+    typename T11 = etl::type_id_pair<etl::null_type<0>, -11>, typename T12 = etl::type_id_pair<etl::null_type<0>, -12>,
+    typename T13 = etl::type_id_pair<etl::null_type<0>, -13>, typename T14 = etl::type_id_pair<etl::null_type<0>, -14>,
+    typename T15 = etl::type_id_pair<etl::null_type<0>, -15>, typename T16 = etl::type_id_pair<etl::null_type<0>, -16>>
 struct type_id_lookup {
    public:
     //************************************
@@ -236,43 +221,24 @@ struct type_id_lookup {
                                         typename etl::conditional<
                                             ID == T9::ID, typename T9::type,
                                             typename etl::conditional<
-                                                ID == T10::ID,
-                                                typename T10::type,
+                                                ID == T10::ID, typename T10::type,
                                                 typename etl::conditional<
-                                                    ID == T11::ID,
-                                                    typename T11::type,
+                                                    ID == T11::ID, typename T11::type,
                                                     typename etl::conditional<
-                                                        ID == T12::ID,
-                                                        typename T12::type,
+                                                        ID == T12::ID, typename T12::type,
                                                         typename etl::conditional<
-                                                            ID == T13::ID,
-                                                            typename T13::type,
+                                                            ID == T13::ID, typename T13::type,
                                                             typename etl::conditional<
-                                                                ID == T14::ID,
-                                                                typename T14::
-                                                                    type,
+                                                                ID == T14::ID, typename T14::type,
                                                                 typename etl::conditional<
-                                                                    ID ==
-                                                                        T15::ID,
-                                                                    typename T15::
-                                                                        type,
+                                                                    ID == T15::ID, typename T15::type,
                                                                     typename etl::conditional<
-                                                                        ID ==
-                                                                            T16::
-                                                                                ID,
-                                                                        typename T16::
-                                                                            type,
-                                                                        etl::null_type<
-                                                                            0>>::
-                                                                        type>::
-                                                                    type>::
-                                                                type>::type>::
-                                                        type>::type>::type>::
-                                            type>::type>::type>::type>::type>::
-                        type>::type>::type>::type type;
+                                                                        ID == T16::ID, typename T16::type,
+                                                                        etl::null_type<0>>::type>::type>::type>::type>::
+                                                        type>::type>::type>::type>::type>::type>::type>::type>::type>::
+                    type>::type>::type type;
 
-        ETL_STATIC_ASSERT(!(etl::is_same<etl::null_type<0>, type>::value),
-                          "Invalid id");
+        ETL_STATIC_ASSERT(!(etl::is_same<etl::null_type<0>, type>::value), "Invalid id");
     };
 
     //************************************
@@ -281,43 +247,26 @@ struct type_id_lookup {
     template <typename T>
     struct id_from_type {
         enum {
-            value = (unsigned int)etl::is_same<T, typename T1::type>::value
-                        ? (unsigned int)T1::ID
-                    : (unsigned int)etl::is_same<T, typename T2::type>::value
-                        ? (unsigned int)T2::ID
-                    : (unsigned int)etl::is_same<T, typename T3::type>::value
-                        ? (unsigned int)T3::ID
-                    : (unsigned int)etl::is_same<T, typename T4::type>::value
-                        ? (unsigned int)T4::ID
-                    : (unsigned int)etl::is_same<T, typename T5::type>::value
-                        ? (unsigned int)T5::ID
-                    : (unsigned int)etl::is_same<T, typename T6::type>::value
-                        ? (unsigned int)T6::ID
-                    : (unsigned int)etl::is_same<T, typename T7::type>::value
-                        ? (unsigned int)T7::ID
-                    : (unsigned int)etl::is_same<T, typename T8::type>::value
-                        ? (unsigned int)T8::ID
-                    : (unsigned int)etl::is_same<T, typename T9::type>::value
-                        ? (unsigned int)T9::ID
-                    : (unsigned int)etl::is_same<T, typename T10::type>::value
-                        ? (unsigned int)T10::ID
-                    : (unsigned int)etl::is_same<T, typename T11::type>::value
-                        ? (unsigned int)T11::ID
-                    : (unsigned int)etl::is_same<T, typename T12::type>::value
-                        ? (unsigned int)T12::ID
-                    : (unsigned int)etl::is_same<T, typename T13::type>::value
-                        ? (unsigned int)T13::ID
-                    : (unsigned int)etl::is_same<T, typename T14::type>::value
-                        ? (unsigned int)T14::ID
-                    : (unsigned int)etl::is_same<T, typename T15::type>::value
-                        ? (unsigned int)T15::ID
-                    : (unsigned int)etl::is_same<T, typename T16::type>::value
-                        ? (unsigned int)T16::ID
-                        : (unsigned int)UNKNOWN
+            value = (unsigned int)etl::is_same<T, typename T1::type>::value    ? (unsigned int)T1::ID
+                    : (unsigned int)etl::is_same<T, typename T2::type>::value  ? (unsigned int)T2::ID
+                    : (unsigned int)etl::is_same<T, typename T3::type>::value  ? (unsigned int)T3::ID
+                    : (unsigned int)etl::is_same<T, typename T4::type>::value  ? (unsigned int)T4::ID
+                    : (unsigned int)etl::is_same<T, typename T5::type>::value  ? (unsigned int)T5::ID
+                    : (unsigned int)etl::is_same<T, typename T6::type>::value  ? (unsigned int)T6::ID
+                    : (unsigned int)etl::is_same<T, typename T7::type>::value  ? (unsigned int)T7::ID
+                    : (unsigned int)etl::is_same<T, typename T8::type>::value  ? (unsigned int)T8::ID
+                    : (unsigned int)etl::is_same<T, typename T9::type>::value  ? (unsigned int)T9::ID
+                    : (unsigned int)etl::is_same<T, typename T10::type>::value ? (unsigned int)T10::ID
+                    : (unsigned int)etl::is_same<T, typename T11::type>::value ? (unsigned int)T11::ID
+                    : (unsigned int)etl::is_same<T, typename T12::type>::value ? (unsigned int)T12::ID
+                    : (unsigned int)etl::is_same<T, typename T13::type>::value ? (unsigned int)T13::ID
+                    : (unsigned int)etl::is_same<T, typename T14::type>::value ? (unsigned int)T14::ID
+                    : (unsigned int)etl::is_same<T, typename T15::type>::value ? (unsigned int)T15::ID
+                    : (unsigned int)etl::is_same<T, typename T16::type>::value ? (unsigned int)T16::ID
+                                                                               : (unsigned int)UNKNOWN
         };
 
-        ETL_STATIC_ASSERT(((unsigned int)value != (unsigned int)UNKNOWN),
-                          "Invalid type");
+        ETL_STATIC_ASSERT(((unsigned int)value != (unsigned int)UNKNOWN), "Invalid type");
     };
 
     //************************************
@@ -336,113 +285,73 @@ struct type_id_lookup {
 //***************************************************************************
 // For 16 types.
 //***************************************************************************
-template <
-    typename T1,
-    typename T2 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T3 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T4 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T5 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T6 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T7 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T8 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T9 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T10 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T11 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T12 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T13 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T14 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T15 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
-    typename T16 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>>
+template <typename T1, typename T2 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T3 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T4 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T5 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T6 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T7 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T8 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T9 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T10 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T11 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T12 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T13 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T14 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T15 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>,
+          typename T16 = etl::type_type_pair<etl::null_type<0>, etl::null_type<0>>>
 struct type_type_lookup {
    public:
     //************************************
     template <typename T>
     struct type_from_type {
-        typedef typename etl::conditional<
-            etl::is_same<T, typename T1::type1>::value, typename T1::type2,
-            typename etl::conditional<
-                etl::is_same<T, typename T2::type1>::value, typename T2::type2,
-                typename etl::conditional<
-                    etl::is_same<T, typename T3::type1>::value,
-                    typename T3::type2,
+        typedef
+            typename etl::
+                conditional<
+                    etl::is_same<T, typename T1::type1>::value, typename T1::type2,
                     typename etl::conditional<
-                        etl::is_same<T, typename T4::type1>::value,
-                        typename T4::type2,
+                        etl::is_same<T, typename T2::type1>::value, typename T2::type2,
                         typename etl::conditional<
-                            etl::is_same<T, typename T5::type1>::value,
-                            typename T5::type2,
+                            etl::is_same<T, typename T3::type1>::value, typename T3::type2,
                             typename etl::conditional<
-                                etl::is_same<T, typename T6::type1>::value,
-                                typename T6::type2,
+                                etl::is_same<T, typename T4::type1>::value, typename T4::type2,
                                 typename etl::conditional<
-                                    etl::is_same<T, typename T7::type1>::value,
-                                    typename T7::type2,
+                                    etl::is_same<T, typename T5::type1>::value, typename T5::type2,
                                     typename etl::conditional<
-                                        etl::is_same<T,
-                                                     typename T8::type1>::value,
-                                        typename T8::type2,
+                                        etl::is_same<T, typename T6::type1>::value, typename T6::type2,
                                         typename etl::conditional<
-                                            etl::is_same<
-                                                T, typename T9::type1>::value,
-                                            typename T9::type2,
+                                            etl::is_same<T, typename T7::type1>::value, typename T7::type2,
                                             typename etl::conditional<
-                                                etl::is_same<
-                                                    T,
-                                                    typename T10::type1>::value,
-                                                typename T10::type2,
+                                                etl::is_same<T, typename T8::type1>::value, typename T8::type2,
                                                 typename etl::conditional<
-                                                    etl::is_same<
-                                                        T, typename T11::
-                                                               type1>::value,
-                                                    typename T11::type2,
+                                                    etl::is_same<T, typename T9::type1>::value, typename T9::type2,
                                                     typename etl::conditional<
-                                                        etl::is_same<
-                                                            T,
-                                                            typename T12::
-                                                                type1>::value,
-                                                        typename T12::type2,
+                                                        etl::is_same<T, typename T10::type1>::value,
+                                                        typename T10::type2,
                                                         typename etl::conditional<
-                                                            etl::is_same<
-                                                                T,
-                                                                typename T13::
-                                                                    type1>::
-                                                                value,
-                                                            typename T13::type2,
+                                                            etl::is_same<T, typename T11::type1>::value,
+                                                            typename T11::type2,
                                                             typename etl::conditional<
-                                                                etl::is_same<
-                                                                    T,
-                                                                    typename T14::
-                                                                        type1>::
-                                                                    value,
-                                                                typename T14::
-                                                                    type2,
+                                                                etl::is_same<T, typename T12::type1>::value,
+                                                                typename T12::type2,
                                                                 typename etl::conditional<
-                                                                    etl::is_same<
-                                                                        T,
-                                                                        typename T15::
-                                                                            type1>::
-                                                                        value,
-                                                                    typename T15::
-                                                                        type2,
+                                                                    etl::is_same<T, typename T13::type1>::value,
+                                                                    typename T13::type2,
                                                                     typename etl::conditional<
-                                                                        etl::is_same<
-                                                                            T,
-                                                                            typename T16::
-                                                                                type1>::
-                                                                            value,
-                                                                        typename T16::
-                                                                            type2,
-                                                                        etl::null_type<
-                                                                            0>>::
-                                                                        type>::
-                                                                    type>::
-                                                                type>::type>::
-                                                        type>::type>::type>::
-                                            type>::type>::type>::type>::type>::
-                        type>::type>::type>::type type;
+                                                                        etl::is_same<T, typename T14::type1>::value,
+                                                                        typename T14::type2,
+                                                                        typename etl::conditional<
+                                                                            etl::is_same<T, typename T15::type1>::value,
+                                                                            typename T15::type2,
+                                                                            typename etl::conditional<
+                                                                                etl::is_same<
+                                                                                    T, typename T16::type1>::value,
+                                                                                typename T16::type2,
+                                                                                etl::null_type<0>>::type>::type>::
+                                                                        type>::type>::type>::type>::type>::type>::
+                                                type>::type>::type>::type>::type>::type>::type>::type type;
 
-        ETL_STATIC_ASSERT(!(etl::is_same<etl::null_type<0>, type>::value),
-                          "Invalid type");
+        ETL_STATIC_ASSERT(!(etl::is_same<etl::null_type<0>, type>::value), "Invalid type");
     };
 };
 

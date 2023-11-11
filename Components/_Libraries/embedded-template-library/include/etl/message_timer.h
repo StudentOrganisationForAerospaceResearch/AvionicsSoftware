@@ -49,13 +49,11 @@ SOFTWARE.
 #undef ETL_MESSAGE_TIMER_USE_ATOMIC_LOCK
 #undef ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK
 #else
-#if !defined(ETL_MESSAGE_TIMER_USE_ATOMIC_LOCK) && \
-    !defined(ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK)
+#if !defined(ETL_MESSAGE_TIMER_USE_ATOMIC_LOCK) && !defined(ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK)
 #error ETL_MESSAGE_TIMER_USE_ATOMIC_LOCK or ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK not defined
 #endif
 
-#if defined(ETL_MESSAGE_TIMER_USE_ATOMIC_LOCK) && \
-    defined(ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK)
+#if defined(ETL_MESSAGE_TIMER_USE_ATOMIC_LOCK) && defined(ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK)
 #error Only define one of ETL_MESSAGE_TIMER_USE_ATOMIC_LOCK or ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK
 #endif
 
@@ -66,8 +64,7 @@ SOFTWARE.
 #endif
 
 #if defined(ETL_MESSAGE_TIMER_USE_INTERRUPT_LOCK)
-#if !defined(ETL_MESSAGE_TIMER_DISABLE_INTERRUPTS) || \
-    !defined(ETL_MESSAGE_TIMER_ENABLE_INTERRUPTS)
+#if !defined(ETL_MESSAGE_TIMER_DISABLE_INTERRUPTS) || !defined(ETL_MESSAGE_TIMER_ENABLE_INTERRUPTS)
 #error ETL_MESSAGE_TIMER_DISABLE_INTERRUPTS and/or ETL_MESSAGE_TIMER_ENABLE_INTERRUPTS not defined
 #endif
 
@@ -94,11 +91,9 @@ struct message_timer_data {
           repeating(true) {}
 
     //*******************************************
-    message_timer_data(etl::timer::id::type id_, const etl::imessage& message_,
-                       etl::imessage_router& irouter_, uint32_t period_,
-                       bool repeating_,
-                       etl::message_router_id_t destination_router_id_ =
-                           etl::imessage_bus::ALL_MESSAGE_ROUTERS)
+    message_timer_data(etl::timer::id::type id_, const etl::imessage& message_, etl::imessage_router& irouter_,
+                       uint32_t period_, bool repeating_,
+                       etl::message_router_id_t destination_router_id_ = etl::imessage_bus::ALL_MESSAGE_ROUTERS)
         : p_message(&message_),
           p_router(&irouter_),
           period(period_),
@@ -288,10 +283,8 @@ class imessage_timer {
     /// Register a timer.
     //*******************************************
     etl::timer::id::type register_timer(
-        const etl::imessage& message_, etl::imessage_router& router_,
-        uint32_t period_, bool repeating_,
-        etl::message_router_id_t destination_router_id_ =
-            etl::imessage_router::ALL_MESSAGE_ROUTERS) {
+        const etl::imessage& message_, etl::imessage_router& router_, uint32_t period_, bool repeating_,
+        etl::message_router_id_t destination_router_id_ = etl::imessage_router::ALL_MESSAGE_ROUTERS) {
         etl::timer::id::type id = etl::timer::id::NO_TIMER;
 
         bool is_space = (registered_timers < MAX_TIMERS);
@@ -305,9 +298,8 @@ class imessage_timer {
 
                     if (timer.id == etl::timer::id::NO_TIMER) {
                         // Create in-place.
-                        new (&timer) message_timer_data(i, message_, router_,
-                                                        period_, repeating_,
-                                                        destination_router_id_);
+                        new (&timer)
+                            message_timer_data(i, message_, router_, period_, repeating_, destination_router_id_);
                         ++registered_timers;
                         id = i;
                         break;
@@ -397,8 +389,7 @@ class imessage_timer {
                         }
 
                         if (timer.p_router != ETL_NULLPTR) {
-                            timer.p_router->receive(timer.destination_router_id,
-                                                    *(timer.p_message));
+                            timer.p_router->receive(timer.destination_router_id, *(timer.p_message));
                         }
 
                         has_active = !active_list.empty();
@@ -501,8 +492,7 @@ class imessage_timer {
     //*******************************************
     /// Constructor.
     //*******************************************
-    imessage_timer(message_timer_data* const timer_array_,
-                   const uint_least8_t MAX_TIMERS_)
+    imessage_timer(message_timer_data* const timer_array_, const uint_least8_t MAX_TIMERS_)
         : timer_array(timer_array_),
           active_list(timer_array_),
           enabled(false),
@@ -553,8 +543,7 @@ class imessage_timer {
 template <uint_least8_t MAX_TIMERS_>
 class message_timer : public etl::imessage_timer {
    public:
-    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254,
-                      "No more than 254 timers are allowed");
+    ETL_STATIC_ASSERT(MAX_TIMERS_ <= 254, "No more than 254 timers are allowed");
 
     //*******************************************
     /// Constructor.

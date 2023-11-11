@@ -61,8 +61,7 @@ namespace etl {
 //***************************************************************************
 class bip_buffer_exception : public exception {
    public:
-    bip_buffer_exception(string_type reason_, string_type file_name_,
-                         numeric_type line_number_)
+    bip_buffer_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -71,12 +70,9 @@ class bip_buffer_exception : public exception {
 //***************************************************************************
 class bip_buffer_reserve_invalid : public bip_buffer_exception {
    public:
-    bip_buffer_reserve_invalid(string_type file_name_,
-                               numeric_type line_number_)
-        : bip_buffer_exception(
-              ETL_ERROR_TEXT("bip_buffer:reserve",
-                             ETL_BIP_BUFFER_SPSC_ATOMIC_FILE_ID "A"),
-              file_name_, line_number_) {}
+    bip_buffer_reserve_invalid(string_type file_name_, numeric_type line_number_)
+        : bip_buffer_exception(ETL_ERROR_TEXT("bip_buffer:reserve", ETL_BIP_BUFFER_SPSC_ATOMIC_FILE_ID "A"), file_name_,
+                               line_number_) {}
 };
 
 //***************************************************************************
@@ -155,8 +151,7 @@ class bip_buffer_spsc_atomic_base {
     //*************************************************************************
     /// Constructs the buffer.
     //*************************************************************************
-    bip_buffer_spsc_atomic_base(size_type reserved_)
-        : read(0), write(0), last(0), RESERVED(reserved_) {}
+    bip_buffer_spsc_atomic_base(size_type reserved_) : read(0), write(0), last(0), RESERVED(reserved_) {}
 
     //*************************************************************************
     void reset() {
@@ -166,9 +161,7 @@ class bip_buffer_spsc_atomic_base {
     }
 
     //*************************************************************************
-    size_type get_write_reserve(
-        size_type* psize,
-        size_type fallback_size = numeric_limits<size_type>::max()) {
+    size_type get_write_reserve(size_type* psize, size_type fallback_size = numeric_limits<size_type>::max()) {
         size_type write_index = write.load(etl::memory_order_relaxed);
         size_type read_index = read.load(etl::memory_order_acquire);
 
@@ -182,8 +175,7 @@ class bip_buffer_spsc_atomic_base {
             }
             // There isn't more space even when wrapping around,
             // or the linear size is good enough as fallback
-            else if ((read_index <= (forward_size + 1)) ||
-                     (fallback_size <= forward_size)) {
+            else if ((read_index <= (forward_size + 1)) || (fallback_size <= forward_size)) {
                 *psize = forward_size;
                 return write_index;
             }
@@ -221,23 +213,20 @@ class bip_buffer_spsc_atomic_base {
 
             // Wrapped around already
             if (write_index < read_index) {
-                ETL_ASSERT_AND_RETURN(
-                    (windex == write_index) && ((wsize + 1) <= read_index),
-                    ETL_ERROR(bip_buffer_reserve_invalid));
+                ETL_ASSERT_AND_RETURN((windex == write_index) && ((wsize + 1) <= read_index),
+                                      ETL_ERROR(bip_buffer_reserve_invalid));
             }
             // No wraparound so far, also not wrapping around with this block
             else if (windex == write_index) {
-                ETL_ASSERT_AND_RETURN(wsize <= (capacity() - write_index),
-                                      ETL_ERROR(bip_buffer_reserve_invalid));
+                ETL_ASSERT_AND_RETURN(wsize <= (capacity() - write_index), ETL_ERROR(bip_buffer_reserve_invalid));
 
                 // Move both indexes forward
                 last.store(windex + wsize, etl::memory_order_release);
             }
             // Wrapping around now
             else {
-                ETL_ASSERT_AND_RETURN(
-                    (windex == 0) && ((wsize + 1) <= read_index),
-                    ETL_ERROR(bip_buffer_reserve_invalid));
+                ETL_ASSERT_AND_RETURN((windex == 0) && ((wsize + 1) <= read_index),
+                                      ETL_ERROR(bip_buffer_reserve_invalid));
             }
 
             // Always update write index
@@ -278,10 +267,8 @@ class bip_buffer_spsc_atomic_base {
     void apply_read_reserve(size_type rindex, size_type rsize) {
         if (rsize > 0) {
             size_type rsize_checker = rsize;
-            ETL_ASSERT_AND_RETURN(
-                (rindex == get_read_reserve(&rsize_checker)) &&
-                    (rsize == rsize_checker),
-                ETL_ERROR(bip_buffer_reserve_invalid));
+            ETL_ASSERT_AND_RETURN((rindex == get_read_reserve(&rsize_checker)) && (rsize == rsize_checker),
+                                  ETL_ERROR(bip_buffer_reserve_invalid));
 
             read.store(rindex + rsize, etl::memory_order_release);
         }
@@ -293,8 +280,7 @@ class bip_buffer_spsc_atomic_base {
     etl::atomic<size_type> last;
     const size_type RESERVED;
 
-#if defined(ETL_POLYMORPHIC_SPSC_BIP_BUFFER_ATOMIC) || \
-    defined(ETL_POLYMORPHIC_CONTAINERS)
+#if defined(ETL_POLYMORPHIC_SPSC_BIP_BUFFER_ATOMIC) || defined(ETL_POLYMORPHIC_CONTAINERS)
    public:
     virtual ~bip_buffer_spsc_atomic_base() {}
 #else
@@ -306,10 +292,8 @@ class bip_buffer_spsc_atomic_base {
 //***************************************************************************
 /// A fixed capacity bipartite buffer.
 //***************************************************************************
-template <typename T,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
-class ibip_buffer_spsc_atomic
-    : public bip_buffer_spsc_atomic_base<MEMORY_MODEL> {
+template <typename T, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+class ibip_buffer_spsc_atomic : public bip_buffer_spsc_atomic_base<MEMORY_MODEL> {
    private:
     typedef typename etl::bip_buffer_spsc_atomic_base<MEMORY_MODEL> base_t;
     using base_t::apply_read_reserve;
@@ -319,24 +303,20 @@ class ibip_buffer_spsc_atomic
     using base_t::reset;
 
    public:
-    typedef T value_type;  ///< The type stored in the buffer.
-    typedef T& reference;  ///< A reference to the type used in the buffer.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the buffer.
+    typedef T value_type;              ///< The type stored in the buffer.
+    typedef T& reference;              ///< A reference to the type used in the buffer.
+    typedef const T& const_reference;  ///< A const reference to the type used in the buffer.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue_reference to the type used in the buffer.
+    typedef T&& rvalue_reference;  ///< An rvalue_reference to the type used in the buffer.
 #endif
-    typedef typename base_t::size_type
-        size_type;  ///< The type used for determining the size of the buffer.
+    typedef typename base_t::size_type size_type;  ///< The type used for determining the size of the buffer.
 
     using base_t::max_size;
 
     //*************************************************************************
     // Reserves a memory area for reading (up to the max_reserve_size).
     //*************************************************************************
-    span<T> read_reserve(
-        size_type max_reserve_size = numeric_limits<size_type>::max()) {
+    span<T> read_reserve(size_type max_reserve_size = numeric_limits<size_type>::max()) {
         size_type reserve_size = max_reserve_size;
         size_type rindex = get_read_reserve(&reserve_size);
 
@@ -389,8 +369,7 @@ class ibip_buffer_spsc_atomic
     //*************************************************************************
     void clear() {
         // the buffer might be split into two contiguous blocks
-        for (span<T> reader = read_reserve(); reader.size() > 0;
-             reader = read_reserve()) {
+        for (span<T> reader = read_reserve(); reader.size() > 0; reader = read_reserve()) {
             destroy(reader.begin(), reader.end());
             read_commit(reader);
         }
@@ -403,14 +382,12 @@ class ibip_buffer_spsc_atomic
 
    protected:
     //*************************************************************************
-    ibip_buffer_spsc_atomic(T* p_buffer_, size_type reserved_)
-        : base_t(reserved_), p_buffer(p_buffer_) {}
+    ibip_buffer_spsc_atomic(T* p_buffer_, size_type reserved_) : base_t(reserved_), p_buffer(p_buffer_) {}
 
    private:
     // Disable copy construction and assignment.
     ibip_buffer_spsc_atomic(const ibip_buffer_spsc_atomic&) ETL_DELETE;
-    ibip_buffer_spsc_atomic& operator=(const ibip_buffer_spsc_atomic&)
-        ETL_DELETE;
+    ibip_buffer_spsc_atomic& operator=(const ibip_buffer_spsc_atomic&) ETL_DELETE;
 
 #if ETL_USING_CPP11
     ibip_buffer_spsc_atomic(ibip_buffer_spsc_atomic&&) = delete;
@@ -427,8 +404,7 @@ class ibip_buffer_spsc_atomic
 /// \tparam SIZE         The maximum capacity of the buffer.
 /// \tparam MEMORY_MODEL The memory model for the buffer. Determines the type of the internal counter variables.
 //***************************************************************************
-template <typename T, const size_t SIZE,
-          const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
+template <typename T, const size_t SIZE, const size_t MEMORY_MODEL = etl::memory_model::MEMORY_MODEL_LARGE>
 class bip_buffer_spsc_atomic : public ibip_buffer_spsc_atomic<T, MEMORY_MODEL> {
    private:
     typedef typename etl::ibip_buffer_spsc_atomic<T, MEMORY_MODEL> base_t;
@@ -440,16 +416,14 @@ class bip_buffer_spsc_atomic : public ibip_buffer_spsc_atomic<T, MEMORY_MODEL> {
     static ETL_CONSTANT size_type RESERVED_SIZE = size_type(SIZE);
 
    public:
-    ETL_STATIC_ASSERT((SIZE <= (etl::integral_limits<size_type>::max)),
-                      "Size too large for memory model");
+    ETL_STATIC_ASSERT((SIZE <= (etl::integral_limits<size_type>::max)), "Size too large for memory model");
 
     static ETL_CONSTANT size_type MAX_SIZE = size_type(SIZE);
 
     //*************************************************************************
     /// Default constructor.
     //*************************************************************************
-    bip_buffer_spsc_atomic()
-        : base_t(reinterpret_cast<T*>(buffer.raw), RESERVED_SIZE) {}
+    bip_buffer_spsc_atomic() : base_t(reinterpret_cast<T*>(buffer.raw), RESERVED_SIZE) {}
 
     //*************************************************************************
     /// Destructor.

@@ -56,8 +56,7 @@ namespace etl {
 //***************************************************************************
 class array_exception : public exception {
    public:
-    array_exception(string_type reason_, string_type file_name_,
-                    numeric_type line_number_)
+    array_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -131,9 +130,7 @@ class array {
     /// Returns a const reference to the value at index 'i'.
     ///\param i The index of the element to access.
     //*************************************************************************
-    ETL_CONSTEXPR const_reference operator[](size_t i) const {
-        return _buffer[i];
-    }
+    ETL_CONSTEXPR const_reference operator[](size_t i) const { return _buffer[i]; }
 
     //*************************************************************************
     /// Returns a reference to the first element.
@@ -163,9 +160,7 @@ class array {
     //*************************************************************************
     /// Returns a const pointer to the first element of the internal buffer.
     //*************************************************************************
-    ETL_CONSTEXPR const_pointer data() const ETL_NOEXCEPT {
-        return &_buffer[0];
-    }
+    ETL_CONSTEXPR const_pointer data() const ETL_NOEXCEPT { return &_buffer[0]; }
 
     //*************************************************************************
     // Iterators
@@ -179,9 +174,7 @@ class array {
     //*************************************************************************
     /// Returns a const iterator to the beginning of the array.
     //*************************************************************************
-    ETL_CONSTEXPR const_iterator begin() const ETL_NOEXCEPT {
-        return &_buffer[0];
-    }
+    ETL_CONSTEXPR const_iterator begin() const ETL_NOEXCEPT { return &_buffer[0]; }
 
     //*************************************************************************
     /// Returns a const iterator to the beginning of the array.
@@ -196,16 +189,12 @@ class array {
     //*************************************************************************
     /// Returns a const iterator to the end of the array.
     //*************************************************************************
-    ETL_CONSTEXPR const_iterator end() const ETL_NOEXCEPT {
-        return &_buffer[SIZE];
-    }
+    ETL_CONSTEXPR const_iterator end() const ETL_NOEXCEPT { return &_buffer[SIZE]; }
 
     //*************************************************************************
     // Returns a const iterator to the end of the array.
     //*************************************************************************
-    ETL_CONSTEXPR const_iterator cend() const ETL_NOEXCEPT {
-        return &_buffer[SIZE];
-    }
+    ETL_CONSTEXPR const_iterator cend() const ETL_NOEXCEPT { return &_buffer[SIZE]; }
 
     //*************************************************************************
     // Returns an reverse iterator to the reverse beginning of the array.
@@ -215,16 +204,12 @@ class array {
     //*************************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the array.
     //*************************************************************************
-    ETL_CONSTEXPR const_reverse_iterator rbegin() const ETL_NOEXCEPT {
-        return const_reverse_iterator(end());
-    }
+    ETL_CONSTEXPR const_reverse_iterator rbegin() const ETL_NOEXCEPT { return const_reverse_iterator(end()); }
 
     //*************************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the array.
     //*************************************************************************
-    ETL_CONSTEXPR const_reverse_iterator crbegin() const ETL_NOEXCEPT {
-        return const_reverse_iterator(end());
-    }
+    ETL_CONSTEXPR const_reverse_iterator crbegin() const ETL_NOEXCEPT { return const_reverse_iterator(end()); }
 
     //*************************************************************************
     /// Returns a reverse iterator to the end of the array.
@@ -234,16 +219,12 @@ class array {
     //*************************************************************************
     /// Returns a const reverse iterator to the end of the array.
     //*************************************************************************
-    ETL_CONSTEXPR const_reverse_iterator rend() const ETL_NOEXCEPT {
-        return const_reverse_iterator(begin());
-    }
+    ETL_CONSTEXPR const_reverse_iterator rend() const ETL_NOEXCEPT { return const_reverse_iterator(begin()); }
 
     //*************************************************************************
     /// Returns a const reverse iterator to the end of the array.
     //*************************************************************************
-    ETL_CONSTEXPR const_reverse_iterator crend() const ETL_NOEXCEPT {
-        return const_reverse_iterator(begin());
-    }
+    ETL_CONSTEXPR const_reverse_iterator crend() const ETL_NOEXCEPT { return const_reverse_iterator(begin()); }
 
     //*************************************************************************
     // Capacity
@@ -317,9 +298,7 @@ class array {
     ///\param position The index of the position to insert at.
     ///\param value    The value to insert.
     //*************************************************************************
-    inline iterator insert_at(size_t position, parameter_t value) {
-        return insert(begin() + position, value);
-    }
+    inline iterator insert_at(size_t position, parameter_t value) { return insert(begin() + position, value); }
 
     //*************************************************************************
     /// Inserts a value into the array.
@@ -342,8 +321,7 @@ class array {
     ///\param last     The iterator to one past the final item in the range.
     //*************************************************************************
     template <typename TIterator>
-    inline iterator insert_at(size_t position, TIterator first,
-                              const TIterator last) {
+    inline iterator insert_at(size_t position, TIterator first, const TIterator last) {
         return insert(begin() + position, first, last);
     }
 
@@ -354,8 +332,7 @@ class array {
     ///\param last     The iterator to one past the final item in the range.
     //*************************************************************************
     template <typename TIterator>
-    iterator insert(const_iterator position, TIterator first,
-                    const TIterator last) {
+    iterator insert(const_iterator position, TIterator first, const TIterator last) {
         iterator p = to_iterator(position);
         iterator result(p);
 
@@ -379,9 +356,7 @@ class array {
     /// After erase, the last value in the array will be unmodified.
     ///\param position The index of the position to erase at.
     //*************************************************************************
-    inline iterator erase_at(size_t position) {
-        return erase(begin() + position);
-    }
+    inline iterator erase_at(size_t position) { return erase(begin() + position); }
 
     //*************************************************************************
     /// Erases a value from the array.
@@ -401,9 +376,7 @@ class array {
     ///\param first The first item to erase.
     ///\param last  The one past the last item to erase.
     //*************************************************************************
-    iterator erase_range(size_t first, size_t last) {
-        return erase(begin() + first, begin() + last);
-    }
+    iterator erase_range(size_t first, size_t last) { return erase(begin() + first, begin() + last); }
 
     //*************************************************************************
     /// Erases a range of values from the array.
@@ -422,9 +395,7 @@ class array {
     ///\param position The index of the position to erase at.
     ///\param value    The value to use to overwrite the last element in the array.
     //*************************************************************************
-    inline iterator erase_at(size_t position, parameter_t value) {
-        return erase(begin() + position, value);
-    }
+    inline iterator erase_at(size_t position, parameter_t value) { return erase(begin() + position, value); }
 
     //*************************************************************************
     /// Erases a value from the array.
@@ -455,8 +426,7 @@ class array {
     ///\param position The iterator to the position to erase at.
     ///\param value    The value to use to overwrite the last elements in the array.
     //*************************************************************************
-    iterator erase(const_iterator first, const_iterator last,
-                   parameter_t value) {
+    iterator erase(const_iterator first, const_iterator last, parameter_t value) {
         iterator p = to_iterator(first);
 
         p = etl::move(last, cend(), p);
@@ -472,9 +442,7 @@ class array {
     //*************************************************************************
     /// Convert from const_iterator to iterator
     //*************************************************************************
-    iterator to_iterator(const_iterator itr) const {
-        return const_cast<iterator>(itr);
-    }
+    iterator to_iterator(const_iterator itr) const { return const_cast<iterator>(itr); }
 };
 
 //*************************************************************************
@@ -490,8 +458,7 @@ array(T...) -> array<typename etl::common_type<T...>::type, sizeof...(T)>;
 //*************************************************************************
 #if ETL_HAS_INITIALIZER_LIST
 template <typename T, typename... TValues>
-constexpr auto make_array(TValues&&... values)
-    -> etl::array<T, sizeof...(TValues)> {
+constexpr auto make_array(TValues&&... values) -> etl::array<T, sizeof...(TValues)> {
     return {{etl::forward<T>(values)...}};
 }
 #endif
@@ -513,8 +480,7 @@ void swap(etl::array<T, SIZE>& lhs, etl::array<T, SIZE>& rhs) {
 ///\return <b>true</b> if the arrays are equal, otherwise <b>false</b>
 //*************************************************************************
 template <typename T, size_t SIZE>
-bool operator==(const etl::array<T, SIZE>& lhs,
-                const etl::array<T, SIZE>& rhs) {
+bool operator==(const etl::array<T, SIZE>& lhs, const etl::array<T, SIZE>& rhs) {
     return etl::equal(lhs.cbegin(), lhs.cend(), rhs.cbegin());
 }
 
@@ -525,8 +491,7 @@ bool operator==(const etl::array<T, SIZE>& lhs,
 ///\return <b>true</b> if the arrays are not equal, otherwise <b>false</b>
 //*************************************************************************
 template <typename T, size_t SIZE>
-bool operator!=(const etl::array<T, SIZE>& lhs,
-                const etl::array<T, SIZE>& rhs) {
+bool operator!=(const etl::array<T, SIZE>& lhs, const etl::array<T, SIZE>& rhs) {
     return !(lhs == rhs);
 }
 
@@ -538,8 +503,7 @@ bool operator!=(const etl::array<T, SIZE>& lhs,
 //*************************************************************************
 template <typename T, size_t SIZE>
 bool operator<(const etl::array<T, SIZE>& lhs, const etl::array<T, SIZE>& rhs) {
-    return etl::lexicographical_compare(lhs.cbegin(), lhs.cend(), rhs.cbegin(),
-                                        rhs.cend());
+    return etl::lexicographical_compare(lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend());
 }
 
 //*************************************************************************
@@ -549,8 +513,7 @@ bool operator<(const etl::array<T, SIZE>& lhs, const etl::array<T, SIZE>& rhs) {
 ///\return <b>true</b> if the first array is lexicographically less than or equal to the second, otherwise <b>false</b>
 //*************************************************************************
 template <typename T, size_t SIZE>
-bool operator<=(const etl::array<T, SIZE>& lhs,
-                const etl::array<T, SIZE>& rhs) {
+bool operator<=(const etl::array<T, SIZE>& lhs, const etl::array<T, SIZE>& rhs) {
     return !(lhs > rhs);
 }
 
@@ -572,8 +535,7 @@ bool operator>(const etl::array<T, SIZE>& lhs, const etl::array<T, SIZE>& rhs) {
 ///\return <b>true</b> if the first array is lexicographically greater than or equal to the second, otherwise <b>false</b>
 //*************************************************************************
 template <typename T, size_t SIZE>
-bool operator>=(const etl::array<T, SIZE>& lhs,
-                const etl::array<T, SIZE>& rhs) {
+bool operator>=(const etl::array<T, SIZE>& lhs, const etl::array<T, SIZE>& rhs) {
     return !(lhs < rhs);
 }
 

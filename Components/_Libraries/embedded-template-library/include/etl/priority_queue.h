@@ -58,8 +58,7 @@ namespace etl {
 //***************************************************************************
 class priority_queue_exception : public exception {
    public:
-    priority_queue_exception(string_type reason_, string_type file_name_,
-                             numeric_type line_number_)
+    priority_queue_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -70,10 +69,8 @@ class priority_queue_exception : public exception {
 class priority_queue_full : public etl::priority_queue_exception {
    public:
     priority_queue_full(string_type file_name_, numeric_type line_number_)
-        : priority_queue_exception(
-              ETL_ERROR_TEXT("priority_queue:full",
-                             ETL_PRIORITY_QUEUE_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : priority_queue_exception(ETL_ERROR_TEXT("priority_queue:full", ETL_PRIORITY_QUEUE_FILE_ID "A"), file_name_,
+                                   line_number_) {}
 };
 
 //***************************************************************************
@@ -83,10 +80,8 @@ class priority_queue_full : public etl::priority_queue_exception {
 class priority_queue_iterator : public etl::priority_queue_exception {
    public:
     priority_queue_iterator(string_type file_name_, numeric_type line_number_)
-        : priority_queue_exception(
-              ETL_ERROR_TEXT("priority_queue:iterator",
-                             ETL_PRIORITY_QUEUE_FILE_ID "B"),
-              file_name_, line_number_) {}
+        : priority_queue_exception(ETL_ERROR_TEXT("priority_queue:iterator", ETL_PRIORITY_QUEUE_FILE_ID "B"),
+                                   file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -108,21 +103,16 @@ class priority_queue_iterator : public etl::priority_queue_exception {
 template <typename T, typename TContainer, typename TCompare = etl::less<T>>
 class ipriority_queue {
    public:
-    typedef T value_type;  ///< The type stored in the queue.
-    typedef TContainer
-        container_type;  ///< The container type used for priority queue.
-    typedef TCompare compare_type;  ///< The comparison type.
-    typedef T& reference;  ///< A reference to the type used in the queue.
-    typedef const T&
-        const_reference;  ///< A const reference to the type used in the queue.
+    typedef T value_type;               ///< The type stored in the queue.
+    typedef TContainer container_type;  ///< The container type used for priority queue.
+    typedef TCompare compare_type;      ///< The comparison type.
+    typedef T& reference;               ///< A reference to the type used in the queue.
+    typedef const T& const_reference;   ///< A const reference to the type used in the queue.
 #if ETL_USING_CPP11
-    typedef T&&
-        rvalue_reference;  ///< An rvalue reference to the type used in the queue.
+    typedef T&& rvalue_reference;  ///< An rvalue reference to the type used in the queue.
 #endif
-    typedef typename TContainer::size_type
-        size_type;  ///< The type used for determining the size of the queue.
-    typedef typename etl::iterator_traits<
-        typename TContainer::iterator>::difference_type difference_type;
+    typedef typename TContainer::size_type size_type;  ///< The type used for determining the size of the queue.
+    typedef typename etl::iterator_traits<typename TContainer::iterator>::difference_type difference_type;
 
     //*************************************************************************
     /// Gets a reference to the highest priority value in the priority queue.<br>
@@ -172,8 +162,7 @@ class ipriority_queue {
     }
 #endif
 
-#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && \
-    !defined(ETL_PRIORITY_QUEUE_FORCE_CPP03_IMPLEMENTATION)
+#if ETL_USING_CPP11 && ETL_NOT_USING_STLPORT && !defined(ETL_PRIORITY_QUEUE_FORCE_CPP03_IMPLEMENTATION)
     //*************************************************************************
     /// Emplaces a value to the queue.
     /// If asserts or exceptions are enabled, throws an etl::priority_queue_full
@@ -245,8 +234,7 @@ class ipriority_queue {
     ///\param value The value to push to the queue.
     //*************************************************************************
     template <typename T1, typename T2, typename T3, typename T4>
-    void emplace(const T1& value1, const T2& value2, const T3& value3,
-                 const T4& value4) {
+    void emplace(const T1& value1, const T2& value2, const T3& value3, const T4& value4) {
         ETL_ASSERT(!full(), ETL_ERROR(etl::priority_queue_full));
 
         // Put element at end
@@ -270,8 +258,7 @@ class ipriority_queue {
 #if ETL_IS_DEBUG_BUILD
         difference_type d = etl::distance(first, last);
         ETL_ASSERT(d >= 0, ETL_ERROR(etl::priority_queue_iterator));
-        ETL_ASSERT(static_cast<size_t>(d) <= max_size(),
-                   ETL_ERROR(etl::priority_queue_full));
+        ETL_ASSERT(static_cast<size_t>(d) <= max_size(), ETL_ERROR(etl::priority_queue_full));
 #endif
 
         clear();
@@ -410,8 +397,7 @@ class ipriority_queue {
 /// \tparam T    The type this queue should support.
 /// \tparam SIZE The maximum capacity of the queue.
 //***************************************************************************
-template <typename T, const size_t SIZE,
-          typename TContainer = etl::vector<T, SIZE>,
+template <typename T, const size_t SIZE, typename TContainer = etl::vector<T, SIZE>,
           typename TCompare = etl::less<typename TContainer::value_type>>
 class priority_queue : public etl::ipriority_queue<T, TContainer, TCompare> {
    public:
@@ -428,8 +414,7 @@ class priority_queue : public etl::ipriority_queue<T, TContainer, TCompare> {
     //*************************************************************************
     /// Copy constructor
     //*************************************************************************
-    priority_queue(const priority_queue& rhs)
-        : etl::ipriority_queue<T, TContainer, TCompare>() {
+    priority_queue(const priority_queue& rhs) : etl::ipriority_queue<T, TContainer, TCompare>() {
         etl::ipriority_queue<T, TContainer, TCompare>::clone(rhs);
     }
 
@@ -437,8 +422,7 @@ class priority_queue : public etl::ipriority_queue<T, TContainer, TCompare> {
     //*************************************************************************
     /// Move constructor
     //*************************************************************************
-    priority_queue(priority_queue&& rhs)
-        : etl::ipriority_queue<T, TContainer, TCompare>() {
+    priority_queue(priority_queue&& rhs) : etl::ipriority_queue<T, TContainer, TCompare>() {
         etl::ipriority_queue<T, TContainer, TCompare>::move(etl::move(rhs));
     }
 #endif
@@ -450,8 +434,7 @@ class priority_queue : public etl::ipriority_queue<T, TContainer, TCompare> {
     ///\param last  The iterator to the last element + 1.
     //*************************************************************************
     template <typename TIterator>
-    priority_queue(TIterator first, TIterator last)
-        : etl::ipriority_queue<T, TContainer, TCompare>() {
+    priority_queue(TIterator first, TIterator last) : etl::ipriority_queue<T, TContainer, TCompare>() {
         etl::ipriority_queue<T, TContainer, TCompare>::assign(first, last);
     }
 

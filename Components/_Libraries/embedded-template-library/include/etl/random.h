@@ -412,9 +412,7 @@ class random_pcg : public random {
     /// Initialises the sequence with a new seed value.
     ///\param seed The new seed value.
     //***************************************************************************
-    void initialise(uint32_t seed) {
-        value = uint64_t(seed) | (uint64_t(seed) << 32U);
-    }
+    void initialise(uint32_t seed) { value = uint64_t(seed) | (uint64_t(seed) << 32U); }
 
     //***************************************************************************
     /// Get the next random_lsfr number.

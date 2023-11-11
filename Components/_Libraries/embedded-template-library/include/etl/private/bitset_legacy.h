@@ -80,8 +80,7 @@ namespace etl {
 //***************************************************************************
 class bitset_exception : public etl::exception {
    public:
-    bitset_exception(string_type reason_, string_type file_name_,
-                     numeric_type line_number_)
+    bitset_exception(string_type reason_, string_type file_name_, numeric_type line_number_)
         : exception(reason_, file_name_, line_number_) {}
 };
 
@@ -92,9 +91,7 @@ class bitset_exception : public etl::exception {
 class bitset_nullptr : public bitset_exception {
    public:
     bitset_nullptr(string_type file_name_, numeric_type line_number_)
-        : bitset_exception(
-              ETL_ERROR_TEXT("bitset:null pointer", ETL_BITSET_FILE_ID "A"),
-              file_name_, line_number_) {}
+        : bitset_exception(ETL_ERROR_TEXT("bitset:null pointer", ETL_BITSET_FILE_ID "A"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -104,9 +101,7 @@ class bitset_nullptr : public bitset_exception {
 class bitset_type_too_small : public bitset_exception {
    public:
     bitset_type_too_small(string_type file_name_, numeric_type line_number_)
-        : bitset_exception(
-              ETL_ERROR_TEXT("bitset:type_too_small", ETL_BITSET_FILE_ID "B"),
-              file_name_, line_number_) {}
+        : bitset_exception(ETL_ERROR_TEXT("bitset:type_too_small", ETL_BITSET_FILE_ID "B"), file_name_, line_number_) {}
 };
 
 //***************************************************************************
@@ -116,9 +111,7 @@ class bitset_type_too_small : public bitset_exception {
 class bitset_overflow : public bitset_exception {
    public:
     bitset_overflow(string_type file_name_, numeric_type line_number_)
-        : bitset_exception(
-              ETL_ERROR_TEXT("bitset:overflow", ETL_BITSET_FILE_ID "C"),
-              file_name_, line_number_) {}
+        : bitset_exception(ETL_ERROR_TEXT("bitset:overflow", ETL_BITSET_FILE_ID "C"), file_name_, line_number_) {}
 };
 
 //*************************************************************************
@@ -133,16 +126,13 @@ class ibitset {
 #endif
 
    public:
-    typedef
-        typename etl::make_unsigned<ETL_BITSET_ELEMENT_TYPE>::type element_type;
+    typedef typename etl::make_unsigned<ETL_BITSET_ELEMENT_TYPE>::type element_type;
     typedef element_type element_t;  // Backward compatibility
 
-    static ETL_CONSTANT element_type ALL_SET =
-        etl::integral_limits<element_type>::max;
+    static ETL_CONSTANT element_type ALL_SET = etl::integral_limits<element_type>::max;
     static ETL_CONSTANT element_type ALL_CLEAR = 0;
 
-    static ETL_CONSTANT size_t Bits_Per_Element =
-        etl::integral_limits<element_type>::bits;
+    static ETL_CONSTANT size_t Bits_Per_Element = etl::integral_limits<element_type>::bits;
 
 #if ETL_USING_CPP11
     typedef etl::span<element_type> span_type;
@@ -201,8 +191,7 @@ class ibitset {
         //*******************************
         /// Constructor.
         //*******************************
-        bit_reference(ibitset& r_bitset, size_t position_)
-            : p_bitset(&r_bitset), position(position_) {}
+        bit_reference(ibitset& r_bitset, size_t position_) : p_bitset(&r_bitset), position(position_) {}
 
         ibitset* p_bitset;  ///< The bitset.
         size_t position;    ///< The position in the bitset.
@@ -388,11 +377,9 @@ class ibitset {
     typename etl::enable_if<etl::is_integral<T>::value, T>::type value() const {
         T v = T(0);
 
-        const bool OK =
-            (sizeof(T) * CHAR_BIT) >= (Number_Of_Elements * Bits_Per_Element);
+        const bool OK = (sizeof(T) * CHAR_BIT) >= (Number_Of_Elements * Bits_Per_Element);
 
-        ETL_ASSERT_AND_RETURN_VALUE(OK, ETL_ERROR(etl::bitset_type_too_small),
-                                    T(0));
+        ETL_ASSERT_AND_RETURN_VALUE(OK, ETL_ERROR(etl::bitset_type_too_small), T(0));
 
         if (OK) {
             uint_least8_t shift = 0U;
@@ -568,8 +555,7 @@ class ibitset {
             element_type value = pdata[index];
 
             // Needs checking?
-            if ((state && (value != ALL_CLEAR)) ||
-                (!state && (value != ALL_SET))) {
+            if ((state && (value != ALL_CLEAR)) || (!state && (value != ALL_SET))) {
                 // For each bit in the element...
                 while ((bit < Bits_Per_Element) && (position < Active_Bits)) {
                     // Equal to the required state?
@@ -654,17 +640,14 @@ class ibitset {
             if (Number_Of_Elements == 1UL) {
                 pdata[0] <<= shift;
             } else if (shift == Bits_Per_Element) {
-                etl::copy_backward(pdata, pdata + Number_Of_Elements - 1U,
-                                   pdata + Number_Of_Elements);
+                etl::copy_backward(pdata, pdata + Number_Of_Elements - 1U, pdata + Number_Of_Elements);
                 pdata[0] = 0;
             } else {
                 // The place where the elements are split when shifting.
-                const size_t split_position =
-                    Bits_Per_Element - (shift % Bits_Per_Element);
+                const size_t split_position = Bits_Per_Element - (shift % Bits_Per_Element);
 
                 // Where we are shifting from.
-                int src_index =
-                    int(Number_Of_Elements - (shift / Bits_Per_Element) - 1U);
+                int src_index = int(Number_Of_Elements - (shift / Bits_Per_Element) - 1U);
 
                 // Where we are shifting to.
                 int dst_index = int(Number_Of_Elements - 1U);
@@ -674,30 +657,24 @@ class ibitset {
                 const size_t msb_shift = split_position;
 
                 const element_type lsb_mask =
-                    element_type(etl::integral_limits<element_type>::max >>
-                                 (Bits_Per_Element - split_position));
-                const element_type msb_mask =
-                    etl::integral_limits<element_type>::max - lsb_mask;
-                const element_type lsb_shifted_mask =
-                    element_type(lsb_mask << lsb_shift);
+                    element_type(etl::integral_limits<element_type>::max >> (Bits_Per_Element - split_position));
+                const element_type msb_mask = etl::integral_limits<element_type>::max - lsb_mask;
+                const element_type lsb_shifted_mask = element_type(lsb_mask << lsb_shift);
 
                 // First lsb.
-                element_type lsb =
-                    element_type((pdata[src_index] & lsb_mask) << lsb_shift);
+                element_type lsb = element_type((pdata[src_index] & lsb_mask) << lsb_shift);
                 pdata[dst_index] = lsb;
                 --src_index;
 
                 // Now do the shifting.
                 while (src_index >= 0) {
                     // Shift msb.
-                    element_type msb = element_type(
-                        (pdata[src_index] & msb_mask) >> msb_shift);
+                    element_type msb = element_type((pdata[src_index] & msb_mask) >> msb_shift);
                     pdata[dst_index] = pdata[dst_index] | msb;
                     --dst_index;
 
                     // Shift lsb.
-                    element_type lsb = element_type(
-                        (pdata[src_index] & lsb_mask) << lsb_shift);
+                    element_type lsb = element_type((pdata[src_index] & lsb_mask) << lsb_shift);
                     pdata[dst_index] = lsb;
                     --src_index;
                 }
@@ -751,23 +728,18 @@ class ibitset {
                 const size_t msb_shift = split_position;
 
                 const element_type lsb_mask =
-                    element_type(etl::integral_limits<element_type>::max >>
-                                 (Bits_Per_Element - split_position));
-                const element_type msb_mask =
-                    etl::integral_limits<element_type>::max - lsb_mask;
-                const element_type msb_shifted_mask =
-                    element_type(msb_mask >> msb_shift);
+                    element_type(etl::integral_limits<element_type>::max >> (Bits_Per_Element - split_position));
+                const element_type msb_mask = etl::integral_limits<element_type>::max - lsb_mask;
+                const element_type msb_shifted_mask = element_type(msb_mask >> msb_shift);
 
                 // Now do the shifting.
                 while (src_index < int(Number_Of_Elements - 1)) {
                     // Shift msb.
-                    element_type msb = element_type(
-                        (pdata[src_index] & msb_mask) >> msb_shift);
+                    element_type msb = element_type((pdata[src_index] & msb_mask) >> msb_shift);
                     ++src_index;
 
                     // Shift lsb.
-                    element_type lsb = element_type(
-                        (pdata[src_index] & lsb_mask) << lsb_shift);
+                    element_type lsb = element_type((pdata[src_index] & lsb_mask) << lsb_shift);
 
                     // Combine them.
                     pdata[dst_index] = lsb | msb;
@@ -775,8 +747,7 @@ class ibitset {
                 }
 
                 // Final msb.
-                element_type msb =
-                    element_type((pdata[src_index] & msb_mask) >> msb_shift);
+                element_type msb = element_type((pdata[src_index] & msb_mask) >> msb_shift);
                 pdata[dst_index] = msb;
 
                 // Clear the remaining bits.
@@ -839,9 +810,7 @@ class ibitset {
         reset();
 
         const size_t Shift =
-            (integral_limits<unsigned long long>::bits <= (int)Bits_Per_Element)
-                ? 0
-                : Bits_Per_Element;
+            (integral_limits<unsigned long long>::bits <= (int)Bits_Per_Element) ? 0 : Bits_Per_Element;
 
         // Can we do it in one hit?
         if (Shift == 0) {
@@ -884,19 +853,15 @@ class ibitset {
     ibitset(size_t nbits_, size_t size_, element_type* pdata_)
         : Active_Bits(nbits_), Number_Of_Elements(size_), pdata(pdata_) {
         const size_t allocated_bits = Number_Of_Elements * Bits_Per_Element;
-        const size_t top_mask_shift =
-            ((Bits_Per_Element - (allocated_bits - Active_Bits)) %
-             Bits_Per_Element);
-        Top_Mask = element_type(
-            top_mask_shift == 0 ? ALL_SET : ~(ALL_SET << top_mask_shift));
+        const size_t top_mask_shift = ((Bits_Per_Element - (allocated_bits - Active_Bits)) % Bits_Per_Element);
+        Top_Mask = element_type(top_mask_shift == 0 ? ALL_SET : ~(ALL_SET << top_mask_shift));
     }
 
     //*************************************************************************
     /// Compare bitsets.
     //*************************************************************************
     static bool is_equal(const ibitset& lhs, const ibitset& rhs) {
-        return etl::equal(lhs.pdata, lhs.pdata + lhs.Number_Of_Elements,
-                          rhs.pdata);
+        return etl::equal(lhs.pdata, lhs.pdata + lhs.Number_Of_Elements, rhs.pdata);
     }
 
     element_type Top_Mask;
@@ -938,9 +903,8 @@ class ibitset {
 template <const size_t MaxN>
 class bitset : public etl::ibitset {
 
-    static ETL_CONSTANT size_t Array_Size = (MaxN % Bits_Per_Element == 0)
-                                                ? MaxN / Bits_Per_Element
-                                                : MaxN / Bits_Per_Element + 1;
+    static ETL_CONSTANT size_t Array_Size =
+        (MaxN % Bits_Per_Element == 0) ? MaxN / Bits_Per_Element : MaxN / Bits_Per_Element + 1;
 
    public:
     static ETL_CONSTANT size_t ALLOCATED_BITS = Array_Size * Bits_Per_Element;
@@ -962,37 +926,27 @@ class bitset : public etl::ibitset {
     //*************************************************************************
     /// Construct from a value.
     //*************************************************************************
-    bitset(unsigned long long value) : etl::ibitset(MaxN, Array_Size, data) {
-        initialise(value);
-    }
+    bitset(unsigned long long value) : etl::ibitset(MaxN, Array_Size, data) { initialise(value); }
 
     //*************************************************************************
     /// Construct from a string.
     //*************************************************************************
-    bitset(const char* text) : etl::ibitset(MaxN, Array_Size, data) {
-        set(text);
-    }
+    bitset(const char* text) : etl::ibitset(MaxN, Array_Size, data) { set(text); }
 
     //*************************************************************************
     /// Construct from a string.
     //*************************************************************************
-    bitset(const wchar_t* text) : etl::ibitset(MaxN, Array_Size, data) {
-        set(text);
-    }
+    bitset(const wchar_t* text) : etl::ibitset(MaxN, Array_Size, data) { set(text); }
 
     //*************************************************************************
     /// Construct from a string.
     //*************************************************************************
-    bitset(const char16_t* text) : etl::ibitset(MaxN, Array_Size, data) {
-        set(text);
-    }
+    bitset(const char16_t* text) : etl::ibitset(MaxN, Array_Size, data) { set(text); }
 
     //*************************************************************************
     /// Construct from a string.
     //*************************************************************************
-    bitset(const char32_t* text) : etl::ibitset(MaxN, Array_Size, data) {
-        set(text);
-    }
+    bitset(const char32_t* text) : etl::ibitset(MaxN, Array_Size, data) { set(text); }
 
     //*************************************************************************
     /// Set all of the bits.
@@ -1014,8 +968,7 @@ class bitset : public etl::ibitset {
     /// Set from a string.
     //*************************************************************************
     bitset<MaxN>& set(const char* text) {
-        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr),
-                                    *this);
+        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr), *this);
         etl::ibitset::set(text);
 
         return *this;
@@ -1025,8 +978,7 @@ class bitset : public etl::ibitset {
     /// Set from a string.
     //*************************************************************************
     bitset<MaxN>& set(const wchar_t* text) {
-        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr),
-                                    *this);
+        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr), *this);
         etl::ibitset::set(text);
 
         return *this;
@@ -1036,8 +988,7 @@ class bitset : public etl::ibitset {
     /// Set from a string.
     //*************************************************************************
     bitset<MaxN>& set(const char16_t* text) {
-        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr),
-                                    *this);
+        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr), *this);
         etl::ibitset::set(text);
 
         return *this;
@@ -1047,8 +998,7 @@ class bitset : public etl::ibitset {
     /// Set from a string.
     //*************************************************************************
     bitset<MaxN>& set(const char32_t* text) {
-        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr),
-                                    *this);
+        ETL_ASSERT_AND_RETURN_VALUE(text != 0, ETL_ERROR(bitset_nullptr), *this);
         etl::ibitset::set(text);
 
         return *this;
@@ -1095,11 +1045,8 @@ class bitset : public etl::ibitset {
     //*************************************************************************
     template <typename T>
     typename etl::enable_if<etl::is_integral<T>::value, T>::type value() const {
-        ETL_STATIC_ASSERT(etl::is_integral<T>::value,
-                          "Only integral types are supported");
-        ETL_STATIC_ASSERT(
-            (sizeof(T) * CHAR_BIT) >= (Array_Size * Bits_Per_Element),
-            "Type too small");
+        ETL_STATIC_ASSERT(etl::is_integral<T>::value, "Only integral types are supported");
+        ETL_STATIC_ASSERT((sizeof(T) * CHAR_BIT) >= (Array_Size * Bits_Per_Element), "Type too small");
 
         return ibitset::value<T>();
     }
@@ -1144,16 +1091,13 @@ class bitset : public etl::ibitset {
 #else
     template <typename TString>
 #endif
-    TString to_string(
-        typename TString::value_type zero = typename TString::value_type('0'),
-        typename TString::value_type one =
-            typename TString::value_type('1')) const {
+    TString to_string(typename TString::value_type zero = typename TString::value_type('0'),
+                      typename TString::value_type one = typename TString::value_type('1')) const {
         TString result;
 
         result.resize(MaxN, '\0');
 
-        ETL_ASSERT_AND_RETURN_VALUE((result.size() == MaxN),
-                                    ETL_ERROR(etl::bitset_overflow), result);
+        ETL_ASSERT_AND_RETURN_VALUE((result.size() == MaxN), ETL_ERROR(etl::bitset_overflow), result);
 
         for (size_t i = MaxN; i > 0; --i) {
             result[MaxN - i] = test(i - 1) ? one : zero;

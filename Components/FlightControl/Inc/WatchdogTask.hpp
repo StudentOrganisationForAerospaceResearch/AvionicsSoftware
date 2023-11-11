@@ -30,16 +30,13 @@ class WatchdogTask : public Task {
    protected:
     static void RunTask(void* pvParams) {
         WatchdogTask::Inst().Run(pvParams);
-    }  // Static Task Interface, passes control to the instance Run();
+    }                          // Static Task Interface, passes control to the instance Run();
     void Run(void* pvParams);  // Main run code
 
     static void HeartbeatFailureCallback(
-        TimerHandle_t
-            rtTimerHandle);  // Callback for timer which aborts system in case of data ghosting
+        TimerHandle_t rtTimerHandle);  // Callback for timer which aborts system in case of data ghosting
     void HandleCommand(Command& cm);
-    void HandleHeartbeat(
-        uint16_t
-            taskCommand);  // If it receives a heartbeat then it resets the timer
+    void HandleHeartbeat(uint16_t taskCommand);  // If it receives a heartbeat then it resets the timer
     Timer* heartbeatTimer;
 
    private:

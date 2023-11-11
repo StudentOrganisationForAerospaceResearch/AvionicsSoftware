@@ -62,8 +62,7 @@
 // These configuration symbols could be provided by from build...
 #define configISR_STACK_SIZE_WORDS (0x100)
 #define STM_VERSION  // Replace sane LD symbols with STM CubeMX's poor standard exported LD symbols
-#define ISR_STACK_LENGTH_BYTES \
-    (configISR_STACK_SIZE_WORDS * 4)  // bytes to reserve for ISR (MSP) stack
+#define ISR_STACK_LENGTH_BYTES (configISR_STACK_SIZE_WORDS * 4)  // bytes to reserve for ISR (MSP) stack
 // =======================================  Configuration  ========================================
 // ================================================================================================
 
@@ -74,16 +73,14 @@
 #include <stdlib.h>  // maps to newlib...
 
 #include "newlib.h"
-#if ((__NEWLIB__ == 2) && (__NEWLIB_MINOR__ < 5)) || \
-    ((__NEWLIB__ == 3) && (__NEWLIB_MINOR__ > 1))
+#if ((__NEWLIB__ == 2) && (__NEWLIB_MINOR__ < 5)) || ((__NEWLIB__ == 3) && (__NEWLIB_MINOR__ > 1))
 #warning \
     "This wrapper was verified for newlib versions 2.5 - 3.1; please ensure newlib's external requirements for malloc-family are unchanged!"
 #endif
 
 #include "FreeRTOS.h"  // defines public interface we're implementing here
 #if !defined(configUSE_NEWLIB_REENTRANT) || (configUSE_NEWLIB_REENTRANT != 1)
-#warning \
-    "#define configUSE_NEWLIB_REENTRANT 1 // Required for thread-safety of newlib sprintf, dtoa, strtok, etc..."
+#warning "#define configUSE_NEWLIB_REENTRANT 1 // Required for thread-safety of newlib sprintf, dtoa, strtok, etc..."
 // If you're *REALLY* sure you don't need FreeRTOS's newlib reentrancy support, comment out the above warning...
 #endif
 #include "task.h"
@@ -128,33 +125,25 @@ register char* stack_ptr asm("sp");
 //    _estack /* one word beyond end of "RAM" Ram type memory, for STM32F429 0x20030000 */
 // Kludge below uses CubeMX-generated symbols instead of sane LD definitions
 #define __HeapBase end
-#define __HeapLimit \
-    _estack  // In K64F LD this is already adjusted for ISR stack space...
+#define __HeapLimit _estack  // In K64F LD this is already adjusted for ISR stack space...
 static int heapBytesRemaining;
 // no DRN HEAP_SIZE symbol from LD... // that's (&__HeapLimit)-(&__HeapBase)
-uint32_t
-    TotalHeapSize;  // publish for diagnostic routines; filled in first _sbrk call.
+uint32_t TotalHeapSize;  // publish for diagnostic routines; filled in first _sbrk call.
 #else
 // Note: DRN's K64F LD provided: __StackTop (byte beyond end of memory), __StackLimit, HEAP_SIZE, STACK_SIZE
 // __HeapLimit was already adjusted to be below reserved stack area.
-extern char
-    HEAP_SIZE;  // make sure to define this symbol in linker LD command file
-static int heapBytesRemaining =
-    (int)&HEAP_SIZE;  // that's (&__HeapLimit)-(&__HeapBase)
+extern char HEAP_SIZE;                            // make sure to define this symbol in linker LD command file
+static int heapBytesRemaining = (int)&HEAP_SIZE;  // that's (&__HeapLimit)-(&__HeapBase)
 #endif
 
 #ifdef MALLOCS_INSIDE_ISRs  // STM code to avoid malloc within ISR (USB CDC stack)
 // We can't use vTaskSuspendAll() within an ISR.
 // STM's stunningly bad coding malpractice calls malloc within ISRs (for example, on USB connect function USBD_CDC_Init)
 // So, we must just suspend/resume interrupts, lengthening max interrupt response time, aarrggg...
-#define DRN_ENTER_CRITICAL_SECTION(_usis)      \
-    {                                          \
-        _usis = taskENTER_CRITICAL_FROM_ISR(); \
-    }  // Disables interrupts (after saving prior state)
-#define DRN_EXIT_CRITICAL_SECTION(_usis)   \
-    {                                      \
-        taskEXIT_CRITICAL_FROM_ISR(_usis); \
-    }  // Re-enables interrupts (unless already disabled prior taskENTER_CRITICAL)
+#define DRN_ENTER_CRITICAL_SECTION(_usis) \
+    { _usis = taskENTER_CRITICAL_FROM_ISR(); }  // Disables interrupts (after saving prior state)
+#define DRN_EXIT_CRITICAL_SECTION(_usis) \
+    { taskEXIT_CRITICAL_FROM_ISR(_usis); }  // Re-enables interrupts (unless already disabled prior taskENTER_CRITICAL)
 #else
 #define DRN_ENTER_CRITICAL_SECTION(_usis) \
     vTaskSuspendAll();  // Note: safe to use before FreeRTOS scheduler started, but not in ISR
@@ -178,8 +167,7 @@ void* _sbrk_r(struct _reent* pReent, int incr) {
     static char* currentHeapEnd = &__HeapBase;
 #ifdef STM_VERSION  // Use STM CubeMX LD symbols for heap
     if (TotalHeapSize == 0) {
-        TotalHeapSize = heapBytesRemaining =
-            (int)((&__HeapLimit) - (&__HeapBase)) - ISR_STACK_LENGTH_BYTES;
+        TotalHeapSize = heapBytesRemaining = (int)((&__HeapLimit) - (&__HeapBase)) - ISR_STACK_LENGTH_BYTES;
     };
 #endif
     char* limit =
@@ -208,8 +196,7 @@ void* _sbrk_r(struct _reent* pReent, int incr) {
         pReent->_errno = ENOMEM;  // newlib's thread-specific errno
         DRN_EXIT_CRITICAL_SECTION(usis);
 #endif
-        return (
-            char*)-1;  // the malloc-family routine that called sbrk will return 0
+        return (char*)-1;  // the malloc-family routine that called sbrk will return 0
     }
     // 'incr' of memory is available: update accounting and return it.
     char* previousHeapEnd = currentHeapEnd;
@@ -306,9 +293,8 @@ void vPortFree(void* pv) PRIVILEGED_FUNCTION {
 };
 
 size_t xPortGetFreeHeapSize(void) PRIVILEGED_FUNCTION {
-    struct mallinfo mi = mallinfo();  // available space now managed by newlib
-    return mi.fordblks +
-           heapBytesRemaining;  // plus space not yet handed to newlib by sbrk
+    struct mallinfo mi = mallinfo();          // available space now managed by newlib
+    return mi.fordblks + heapBytesRemaining;  // plus space not yet handed to newlib by sbrk
 }
 
 // GetMinimumEverFree is not available in newlib's malloc implementation.
