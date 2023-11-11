@@ -1,6 +1,0 @@
-repos:
-    -   repo: https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware
-        rev: 9ad5e433509165c2986659de5a84047dea0d2c70
-        hooks:
-        -   id: clang-format
-            files: 'Components/.*\.(c|h|cpp|hpp)'
