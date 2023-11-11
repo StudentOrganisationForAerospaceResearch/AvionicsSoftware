@@ -322,7 +322,9 @@ class pvoidvector : public vector_base {
     //*************************************************************************
     /// Clears the vector.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*********************************************************************
     /// Inserts a value at the end of the vector.
@@ -520,25 +522,33 @@ class pvoidvector : public vector_base {
     /// Gets the current size of the vector.
     ///\return The current size of the vector.
     //*************************************************************************
-    size_type size() const { return size_t(p_end - p_buffer); }
+    size_type size() const {
+        return size_t(p_end - p_buffer);
+    }
 
     //*************************************************************************
     /// Checks the 'empty' state of the vector.
     ///\return <b>true</b> if empty.
     //*************************************************************************
-    bool empty() const { return (p_end == p_buffer); }
+    bool empty() const {
+        return (p_end == p_buffer);
+    }
 
     //*************************************************************************
     /// Checks the 'full' state of the vector.
     ///\return <b>true</b> if full.
     //*************************************************************************
-    bool full() const { return size() == CAPACITY; }
+    bool full() const {
+        return size() == CAPACITY;
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_t available() const { return max_size() - size(); }
+    size_t available() const {
+        return max_size() - size();
+    }
 
    protected:
     //*********************************************************************
@@ -550,7 +560,9 @@ class pvoidvector : public vector_base {
     //*********************************************************************
     /// Initialise the vector.
     //*********************************************************************
-    void initialise() { p_end = p_buffer; }
+    void initialise() {
+        p_end = p_buffer;
+    }
 
     //*************************************************************************
     /// Fix the internal pointers after a low level memory copy.

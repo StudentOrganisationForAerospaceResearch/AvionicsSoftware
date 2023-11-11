@@ -417,19 +417,25 @@ class iunordered_multiset {
     /// Returns an iterator to the beginning of the unordered_multiset bucket.
     ///\return An iterator to the beginning of the unordered_multiset bucket.
     //*********************************************************************
-    local_iterator begin(size_t i) { return pbuckets[i].begin(); }
+    local_iterator begin(size_t i) {
+        return pbuckets[i].begin();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the unordered_multiset bucket.
     ///\return A const iterator to the beginning of the unordered_multiset bucket.
     //*********************************************************************
-    const_local_iterator begin(size_t i) const { return pbuckets[i].cbegin(); }
+    const_local_iterator begin(size_t i) const {
+        return pbuckets[i].cbegin();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the unordered_multiset bucket.
     ///\return A const iterator to the beginning of the unordered_multiset bucket.
     //*********************************************************************
-    const_local_iterator cbegin(size_t i) const { return pbuckets[i].cbegin(); }
+    const_local_iterator cbegin(size_t i) const {
+        return pbuckets[i].cbegin();
+    }
 
     //*********************************************************************
     /// Returns an iterator to the end of the unordered_multiset.
@@ -461,19 +467,25 @@ class iunordered_multiset {
     /// Returns an iterator to the end of the unordered_multiset bucket.
     ///\return An iterator to the end of the unordered_multiset bucket.
     //*********************************************************************
-    local_iterator end(size_t i) { return pbuckets[i].end(); }
+    local_iterator end(size_t i) {
+        return pbuckets[i].end();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the unordered_multiset bucket.
     ///\return A const iterator to the end of the unordered_multiset bucket.
     //*********************************************************************
-    const_local_iterator end(size_t i) const { return pbuckets[i].cend(); }
+    const_local_iterator end(size_t i) const {
+        return pbuckets[i].cend();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the unordered_multiset bucket.
     ///\return A const iterator to the end of the unordered_multiset bucket.
     //*********************************************************************
-    const_local_iterator cend(size_t i) const { return pbuckets[i].cend(); }
+    const_local_iterator cend(size_t i) const {
+        return pbuckets[i].cend();
+    }
 
     //*********************************************************************
     /// Returns the bucket index for the key.
@@ -497,13 +509,17 @@ class iunordered_multiset {
     /// Returns the maximum number of the buckets the container can hold.
     ///\return The maximum number of the buckets the container can hold.
     //*********************************************************************
-    size_type max_bucket_count() const { return number_of_buckets; }
+    size_type max_bucket_count() const {
+        return number_of_buckets;
+    }
 
     //*********************************************************************
     /// Returns the number of the buckets the container holds.
     ///\return The number of the buckets the container holds.
     //*********************************************************************
-    size_type bucket_count() const { return number_of_buckets; }
+    size_type bucket_count() const {
+        return number_of_buckets;
+    }
 
     //*********************************************************************
     /// Assigns values to the unordered_multiset.
@@ -811,7 +827,9 @@ class iunordered_multiset {
     //*************************************************************************
     /// Clears the unordered_multiset.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*********************************************************************
     /// Counts an element.
@@ -948,33 +966,45 @@ class iunordered_multiset {
     //*************************************************************************
     /// Gets the size of the unordered_multiset.
     //*************************************************************************
-    size_type size() const { return pnodepool->size(); }
+    size_type size() const {
+        return pnodepool->size();
+    }
 
     //*************************************************************************
     /// Gets the maximum possible size of the unordered_multiset.
     //*************************************************************************
-    size_type max_size() const { return pnodepool->max_size(); }
+    size_type max_size() const {
+        return pnodepool->max_size();
+    }
 
     //*************************************************************************
     /// Gets the maximum possible size of the unordered_multiset.
     //*************************************************************************
-    size_type capacity() const { return pnodepool->max_size(); }
+    size_type capacity() const {
+        return pnodepool->max_size();
+    }
 
     //*************************************************************************
     /// Checks to see if the unordered_multiset is empty.
     //*************************************************************************
-    bool empty() const { return pnodepool->empty(); }
+    bool empty() const {
+        return pnodepool->empty();
+    }
 
     //*************************************************************************
     /// Checks to see if the unordered_multiset is full.
     //*************************************************************************
-    bool full() const { return pnodepool->full(); }
+    bool full() const {
+        return pnodepool->full();
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_t available() const { return pnodepool->available(); }
+    size_t available() const {
+        return pnodepool->available();
+    }
 
     //*************************************************************************
     /// Returns the load factor = size / bucket_count.
@@ -988,13 +1018,17 @@ class iunordered_multiset {
     /// Returns the function that hashes the keys.
     ///\return The function that hashes the keys..
     //*************************************************************************
-    hasher hash_function() const { return key_hash_function; }
+    hasher hash_function() const {
+        return key_hash_function;
+    }
 
     //*************************************************************************
     /// Returns the function that compares the keys.
     ///\return The function that compares the keys..
     //*************************************************************************
-    key_equal key_eq() const { return key_equal_function; }
+    key_equal key_eq() const {
+        return key_equal_function;
+    }
 
     //*************************************************************************
     /// Assignment operator.
@@ -1299,7 +1333,9 @@ class unordered_multiset
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~unordered_multiset() { base::initialise(); }
+    ~unordered_multiset() {
+        base::initialise();
+    }
 
     //*************************************************************************
     /// Assignment operator.

@@ -124,7 +124,9 @@ class successor {
     //*************************************************************************
     /// Clear the successor.
     //*************************************************************************
-    void clear_successor() { p_successor = ETL_NULLPTR; }
+    void clear_successor() {
+        p_successor = ETL_NULLPTR;
+    }
 
     //*************************************************************************
     /// Clear the successor chain.
@@ -149,7 +151,9 @@ class successor {
     //*************************************************************************
     /// Does this have a successor?
     //*************************************************************************
-    bool has_successor() const { return (p_successor != ETL_NULLPTR); }
+    bool has_successor() const {
+        return (p_successor != ETL_NULLPTR);
+    }
 
    private:
     successor_type* p_successor;

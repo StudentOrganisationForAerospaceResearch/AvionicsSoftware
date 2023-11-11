@@ -168,7 +168,9 @@ class shared_message {
     //*************************************************************************
     /// Checks if the shared message is valid.
     //*************************************************************************
-    ETL_NODISCARD bool is_valid() const { return p_rcmessage != ETL_NULLPTR; }
+    ETL_NODISCARD bool is_valid() const {
+        return p_rcmessage != ETL_NULLPTR;
+    }
 
    private:
     shared_message() ETL_DELETE;

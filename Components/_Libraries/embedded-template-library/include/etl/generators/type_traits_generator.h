@@ -1416,7 +1416,7 @@ struct is_pod
 #if ETL_USING_CPP17
 template <typename T>
 inline constexpr bool is_pod_v =
-    std::is_standard_layout_v<T> && std::is_trivial_v<T>;
+    std::is_standard_layout_v<T>&& std::is_trivial_v<T>;
 #endif
 
 #if defined(ETL_COMPILER_GCC)

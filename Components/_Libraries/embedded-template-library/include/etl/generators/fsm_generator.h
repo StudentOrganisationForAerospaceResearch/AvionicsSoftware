@@ -218,7 +218,9 @@ class ifsm_state {
     //*******************************************
     /// Gets the id for this state.
     //*******************************************
-    etl::fsm_state_id_t get_state_id() const { return state_id; }
+    etl::fsm_state_id_t get_state_id() const {
+        return state_id;
+    }
 
     //*******************************************
     /// Adds a child to this state.
@@ -268,7 +270,9 @@ class ifsm_state {
     virtual ~ifsm_state() {}
 
     //*******************************************
-    etl::fsm& get_fsm_context() const { return *p_context; }
+    etl::fsm& get_fsm_context() const {
+        return *p_context;
+    }
 
    private:
     virtual fsm_state_id_t process_event(const etl::imessage& message) = 0;
@@ -279,7 +283,9 @@ class ifsm_state {
     virtual void on_exit_state() {}  // By default, do nothing.
 
     //*******************************************
-    void set_fsm_context(etl::fsm& context) { p_context = &context; }
+    void set_fsm_context(etl::fsm& context) {
+        p_context = &context;
+    }
 
     // The state id.
     const etl::fsm_state_id_t state_id;

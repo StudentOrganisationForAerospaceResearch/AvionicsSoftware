@@ -89,7 +89,9 @@ class packet {
     //***************************************************************************
     /// Destructor
     //***************************************************************************
-    ~packet() { static_cast<TBase*>(data)->~TBase(); }
+    ~packet() {
+        static_cast<TBase*>(data)->~TBase();
+    }
 
 #if ETL_USING_CPP11
     //***************************************************************************
@@ -134,12 +136,16 @@ class packet {
     //***************************************************************************
     /// Get access to the contained object.
     //***************************************************************************
-    TBase& get() { return *static_cast<TBase*>(data); }
+    TBase& get() {
+        return *static_cast<TBase*>(data);
+    }
 
     //***************************************************************************
     /// Get access to the contained object.
     //***************************************************************************
-    const TBase& get() const { return *static_cast<const TBase*>(data); }
+    const TBase& get() const {
+        return *static_cast<const TBase*>(data);
+    }
 
    private:
     packet(const packet& other);

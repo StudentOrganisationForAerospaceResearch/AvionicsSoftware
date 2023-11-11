@@ -241,34 +241,46 @@ class ipool {
     //*************************************************************************
     /// Returns the maximum number of items in the pool.
     //*************************************************************************
-    size_t max_size() const { return Max_Size; }
+    size_t max_size() const {
+        return Max_Size;
+    }
 
     //*************************************************************************
     /// Returns the maximum number of items in the pool.
     //*************************************************************************
-    size_t capacity() const { return Max_Size; }
+    size_t capacity() const {
+        return Max_Size;
+    }
 
     //*************************************************************************
     /// Returns the number of free items in the pool.
     //*************************************************************************
-    size_t available() const { return Max_Size - items_allocated; }
+    size_t available() const {
+        return Max_Size - items_allocated;
+    }
 
     //*************************************************************************
     /// Returns the number of allocated items in the pool.
     //*************************************************************************
-    size_t size() const { return items_allocated; }
+    size_t size() const {
+        return items_allocated;
+    }
 
     //*************************************************************************
     /// Checks to see if there are no allocated items in the pool.
     /// \return <b>true</b> if there are none allocated.
     //*************************************************************************
-    bool empty() const { return items_allocated == 0; }
+    bool empty() const {
+        return items_allocated == 0;
+    }
 
     //*************************************************************************
     /// Checks to see if there are no free items in the pool.
     /// \return <b>true</b> if there are none free.
     //*************************************************************************
-    bool full() const { return items_allocated == Max_Size; }
+    bool full() const {
+        return items_allocated == Max_Size;
+    }
 
    protected:
     //*************************************************************************

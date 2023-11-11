@@ -462,7 +462,9 @@ class ireference_flat_multiset {
     //*************************************************************************
     /// Clears the reference_flat_multiset.
     //*************************************************************************
-    void clear() { lookup.clear(); }
+    void clear() {
+        lookup.clear();
+    }
 
     //*********************************************************************
     /// Finds an element.
@@ -657,7 +659,9 @@ class ireference_flat_multiset {
     //*************************************************************************
     /// Check if the map contains the key.
     //*************************************************************************
-    bool contains(parameter_t key) const { return find(key) != end(); }
+    bool contains(parameter_t key) const {
+        return find(key) != end();
+    }
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -682,37 +686,49 @@ class ireference_flat_multiset {
     /// Gets the current size of the reference_flat_multiset.
     ///\return The current size of the reference_flat_multiset.
     //*************************************************************************
-    size_type size() const { return lookup.size(); }
+    size_type size() const {
+        return lookup.size();
+    }
 
     //*************************************************************************
     /// Checks the 'empty' state of the reference_flat_multiset.
     ///\return <b>true</b> if empty.
     //*************************************************************************
-    bool empty() const { return lookup.empty(); }
+    bool empty() const {
+        return lookup.empty();
+    }
 
     //*************************************************************************
     /// Checks the 'full' state of the reference_flat_multiset.
     ///\return <b>true</b> if full.
     //*************************************************************************
-    bool full() const { return lookup.full(); }
+    bool full() const {
+        return lookup.full();
+    }
 
     //*************************************************************************
     /// Returns the capacity of the reference_flat_multiset.
     ///\return The capacity of the reference_flat_multiset.
     //*************************************************************************
-    size_type capacity() const { return lookup.capacity(); }
+    size_type capacity() const {
+        return lookup.capacity();
+    }
 
     //*************************************************************************
     /// Returns the maximum possible size of the reference_flat_multiset.
     ///\return The maximum size of the reference_flat_multiset.
     //*************************************************************************
-    size_type max_size() const { return lookup.max_size(); }
+    size_type max_size() const {
+        return lookup.max_size();
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_t available() const { return lookup.available(); }
+    size_t available() const {
+        return lookup.available();
+    }
 
    protected:
     //*********************************************************************

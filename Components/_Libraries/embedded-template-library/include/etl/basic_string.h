@@ -136,43 +136,57 @@ class string_base {
     /// Gets the current size of the string.
     ///\return The current size of the string.
     //*************************************************************************
-    size_type size() const { return current_size; }
+    size_type size() const {
+        return current_size;
+    }
 
     //*************************************************************************
     /// Gets the current size of the string.
     ///\return The current size of the string.
     //*************************************************************************
-    size_type length() const { return current_size; }
+    size_type length() const {
+        return current_size;
+    }
 
     //*************************************************************************
     /// Checks the 'empty' state of the string.
     ///\return <b>true</b> if empty.
     //*************************************************************************
-    bool empty() const { return (current_size == 0); }
+    bool empty() const {
+        return (current_size == 0);
+    }
 
     //*************************************************************************
     /// Checks the 'full' state of the string.
     ///\return <b>true</b> if full.
     //*************************************************************************
-    bool full() const { return current_size == CAPACITY; }
+    bool full() const {
+        return current_size == CAPACITY;
+    }
 
     //*************************************************************************
     /// Returns the capacity of the string.
     ///\return The capacity of the string.
     //*************************************************************************
-    size_type capacity() const { return CAPACITY; }
+    size_type capacity() const {
+        return CAPACITY;
+    }
 
     //*************************************************************************
     /// Returns the maximum possible size of the string.
     ///\return The maximum size of the string.
     //*************************************************************************
-    size_type max_size() const { return CAPACITY; }
+    size_type max_size() const {
+        return CAPACITY;
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_type available() const { return max_size() - size(); }
+    size_type available() const {
+        return max_size() - size();
+    }
 
 #if ETL_HAS_STRING_TRUNCATION_CHECKS
     //*************************************************************************
@@ -181,30 +195,40 @@ class string_base {
     ///\return Whether the string was truncated by the last operation.
     //*************************************************************************
     ETL_DEPRECATED
-    bool truncated() const { return flags.test<IS_TRUNCATED>(); }
+    bool truncated() const {
+        return flags.test<IS_TRUNCATED>();
+    }
 
     //*************************************************************************
     /// Returns whether the string was truncated by the last operation.
     ///\return Whether the string was truncated by the last operation.
     //*************************************************************************
-    bool is_truncated() const { return flags.test<IS_TRUNCATED>(); }
+    bool is_truncated() const {
+        return flags.test<IS_TRUNCATED>();
+    }
 
     //*************************************************************************
     /// Clears the 'truncated' flag.
     //*************************************************************************
-    void clear_truncated() { flags.set<IS_TRUNCATED, false>(); }
+    void clear_truncated() {
+        flags.set<IS_TRUNCATED, false>();
+    }
 #endif
 
 #if ETL_HAS_STRING_CLEAR_AFTER_USE
     //*************************************************************************
     /// Sets the 'secure' flag to the requested state.
     //*************************************************************************
-    void set_secure() { flags.set<CLEAR_AFTER_USE>(); }
+    void set_secure() {
+        flags.set<CLEAR_AFTER_USE>();
+    }
 
     //*************************************************************************
     /// Gets the 'secure' state flag.
     //*************************************************************************
-    bool is_secure() const { return flags.test<CLEAR_AFTER_USE>(); }
+    bool is_secure() const {
+        return flags.test<CLEAR_AFTER_USE>();
+    }
 #endif
 
    protected:
@@ -217,7 +241,9 @@ class string_base {
     //*************************************************************************
     /// Sets the 'truncated' flag.
     //*************************************************************************
-    void set_truncated(bool status) { flags.set<IS_TRUNCATED>(status); }
+    void set_truncated(bool status) {
+        flags.set<IS_TRUNCATED>(status);
+    }
 #endif
 
     //*************************************************************************
@@ -392,14 +418,18 @@ class ibasic_string : public etl::string_base {
     ///\param i The index.
     ///\return A reference to the value at index 'i'
     //*********************************************************************
-    reference operator[](size_type i) { return p_buffer[i]; }
+    reference operator[](size_type i) {
+        return p_buffer[i];
+    }
 
     //*********************************************************************
     /// Returns a const reference to the value at index 'i'
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference operator[](size_type i) const { return p_buffer[i]; }
+    const_reference operator[](size_type i) const {
+        return p_buffer[i];
+    }
 
     //*********************************************************************
     /// Returns a reference to the value at index 'i'
@@ -427,49 +457,65 @@ class ibasic_string : public etl::string_base {
     /// Returns a reference to the first element.
     ///\return A reference to the first element.
     //*********************************************************************
-    reference front() { return p_buffer[0]; }
+    reference front() {
+        return p_buffer[0];
+    }
 
     //*********************************************************************
     /// Returns a const reference to the first element.
     ///\return A const reference to the first element.
     //*********************************************************************
-    const_reference front() const { return p_buffer[0]; }
+    const_reference front() const {
+        return p_buffer[0];
+    }
 
     //*********************************************************************
     /// Returns a reference to the last element.
     ///\return A reference to the last element.
     //*********************************************************************
-    reference back() { return p_buffer[current_size - 1]; }
+    reference back() {
+        return p_buffer[current_size - 1];
+    }
 
     //*********************************************************************
     /// Returns a const reference to the last element.
     ///\return A const reference to the last element.
     //*********************************************************************
-    const_reference back() const { return p_buffer[current_size - 1]; }
+    const_reference back() const {
+        return p_buffer[current_size - 1];
+    }
 
     //*********************************************************************
     /// Returns a pointer to the beginning of the string data.
     ///\return A pointer to the beginning of the string data.
     //*********************************************************************
-    pointer data() { return p_buffer; }
+    pointer data() {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Returns a const pointer to the beginning of the string data.
     ///\return A const pointer to the beginning of the string data.
     //*********************************************************************
-    const_pointer data() const { return p_buffer; }
+    const_pointer data() const {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Returns a pointer to the beginning of the string data.
     ///\return A pointer to the beginning of the string data.
     //*********************************************************************
-    pointer data_end() { return p_buffer + current_size; }
+    pointer data_end() {
+        return p_buffer + current_size;
+    }
 
     //*********************************************************************
     /// Returns a const pointer to the beginning of the string data.
     ///\return A const pointer to the beginning of the string data.
     //*********************************************************************
-    const_pointer data_end() const { return p_buffer + current_size; }
+    const_pointer data_end() const {
+        return p_buffer + current_size;
+    }
 
     //*********************************************************************
     /// Assigns values to the string.
@@ -643,7 +689,9 @@ class ibasic_string : public etl::string_base {
     //*************************************************************************
     /// Clears the string.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*********************************************************************
     /// Inserts a value at the end of the string.
@@ -1125,7 +1173,9 @@ class ibasic_string : public etl::string_base {
     //*********************************************************************
     /// Return a pointer to a C string.
     //*********************************************************************
-    const_pointer c_str() const { return p_buffer; }
+    const_pointer c_str() const {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Copies a portion of a string.
@@ -1990,7 +2040,9 @@ class ibasic_string : public etl::string_base {
     //*************************************************************************
     /// Fix the internal pointers after a low level memory copy.
     //*************************************************************************
-    void repair_buffer(T* p_buffer_) { p_buffer = p_buffer_; }
+    void repair_buffer(T* p_buffer_) {
+        p_buffer = p_buffer_;
+    }
 
    private:
     //*************************************************************************

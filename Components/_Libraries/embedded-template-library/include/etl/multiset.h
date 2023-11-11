@@ -822,12 +822,16 @@ class imultiset : public etl::multiset_base {
     //*************************************************************************
     /// Gets the end of the multiset.
     //*************************************************************************
-    iterator end() { return iterator(*this); }
+    iterator end() {
+        return iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the end of the multiset.
     //*************************************************************************
-    const_iterator end() const { return const_iterator(*this); }
+    const_iterator end() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the beginning of the multiset.
@@ -839,12 +843,16 @@ class imultiset : public etl::multiset_base {
     //*************************************************************************
     /// Gets the end of the multiset.
     //*************************************************************************
-    const_iterator cend() const { return const_iterator(*this); }
+    const_iterator cend() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(iterator(*this)); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(iterator(*this));
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
@@ -900,14 +908,18 @@ class imultiset : public etl::multiset_base {
     //*************************************************************************
     /// Clears the multiset.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*********************************************************************
     /// Counts the number of elements that contain the key specified.
     ///\param key The key to search for.
     ///\return 1 if element was found, 0 otherwise.
     //*********************************************************************
-    size_type count(key_parameter_t key) const { return count_nodes(key); }
+    size_type count(key_parameter_t key) const {
+        return count_nodes(key);
+    }
 
 #if ETL_USING_CPP11
     //*********************************************************************
@@ -1274,17 +1286,23 @@ class imultiset : public etl::multiset_base {
     //*************************************************************************
     /// How to compare two key elements.
     //*************************************************************************
-    key_compare key_comp() const { return compare; };
+    key_compare key_comp() const {
+        return compare;
+    };
 
     //*************************************************************************
     /// How to compare two value elements.
     //*************************************************************************
-    value_compare value_comp() const { return compare; };
+    value_compare value_comp() const {
+        return compare;
+    };
 
     //*************************************************************************
     /// Check if the set contains the key.
     //*************************************************************************
-    bool contains(key_parameter_t key) const { return find(key) != end(); }
+    bool contains(key_parameter_t key) const {
+        return find(key) != end();
+    }
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -2033,7 +2051,9 @@ class multiset : public etl::imultiset<TKey, TCompare> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~multiset() { this->initialise(); }
+    ~multiset() {
+        this->initialise();
+    }
 
     //*************************************************************************
     /// Assignment operator.

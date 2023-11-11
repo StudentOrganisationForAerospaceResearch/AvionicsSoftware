@@ -708,12 +708,16 @@ class iset : public etl::set_base {
     //*************************************************************************
     /// Gets the end of the set.
     //*************************************************************************
-    iterator end() { return iterator(*this); }
+    iterator end() {
+        return iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the end of the set.
     //*************************************************************************
-    const_iterator end() const { return const_iterator(*this); }
+    const_iterator end() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the beginning of the set.
@@ -725,12 +729,16 @@ class iset : public etl::set_base {
     //*************************************************************************
     /// Gets the end of the set.
     //*************************************************************************
-    const_iterator cend() const { return const_iterator(*this); }
+    const_iterator cend() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(iterator(*this)); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(iterator(*this));
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
@@ -786,7 +794,9 @@ class iset : public etl::set_base {
     //*************************************************************************
     /// Clears the set.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*********************************************************************
     /// Counts the number of elements that contain the key specified.
@@ -1125,17 +1135,23 @@ class iset : public etl::set_base {
     //*************************************************************************
     /// How to compare two key elements.
     //*************************************************************************
-    key_compare key_comp() const { return compare; };
+    key_compare key_comp() const {
+        return compare;
+    };
 
     //*************************************************************************
     /// How to compare two value elements.
     //*************************************************************************
-    value_compare value_comp() const { return compare; };
+    value_compare value_comp() const {
+        return compare;
+    };
 
     //*************************************************************************
     /// Check if the set contains the key.
     //*************************************************************************
-    bool contains(const TKey& key) const { return find(key) != end(); }
+    bool contains(const TKey& key) const {
+        return find(key) != end();
+    }
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -2195,7 +2211,9 @@ class set : public etl::iset<TKey, TCompare> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~set() { this->initialise(); }
+    ~set() {
+        this->initialise();
+    }
 
     //*************************************************************************
     /// Assignment operator.

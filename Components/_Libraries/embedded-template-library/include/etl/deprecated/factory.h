@@ -383,29 +383,39 @@ class factory {
     //*************************************************************************
     /// Returns the maximum number of items in the factory.
     //*************************************************************************
-    size_t max_size() const { return MAX_SIZE; }
+    size_t max_size() const {
+        return MAX_SIZE;
+    }
 
     //*************************************************************************
     /// Returns the number of free items in the factory.
     //*************************************************************************
-    size_t available() const { return pool.available(); }
+    size_t available() const {
+        return pool.available();
+    }
 
     //*************************************************************************
     /// Returns the number of allocated items in the factory.
     //*************************************************************************
-    size_t size() const { return pool.size(); }
+    size_t size() const {
+        return pool.size();
+    }
 
     //*************************************************************************
     /// Checks to see if there are no allocated items in the factory.
     /// \return <b>true</b> if there are none allocated.
     //*************************************************************************
-    bool empty() const { return pool.empty(); }
+    bool empty() const {
+        return pool.empty();
+    }
 
     //*************************************************************************
     /// Checks to see if there are no free items in the factory.
     /// \return <b>true</b> if there are none free.
     //*************************************************************************
-    bool full() const { return pool.full(); }
+    bool full() const {
+        return pool.full();
+    }
 
    private:
     factory(const factory&);

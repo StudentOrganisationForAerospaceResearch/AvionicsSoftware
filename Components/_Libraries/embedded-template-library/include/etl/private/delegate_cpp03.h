@@ -358,12 +358,16 @@ class delegate<TReturn(TParam)>
     //*************************************************************************
     /// Returns <b>true</b> if the delegate is valid.
     //*************************************************************************
-    bool is_valid() const { return invocation.stub != ETL_NULLPTR; }
+    bool is_valid() const {
+        return invocation.stub != ETL_NULLPTR;
+    }
 
     //*************************************************************************
     /// Returns <b>true</b> if the delegate is valid.
     //*************************************************************************
-    operator bool() const { return is_valid(); }
+    operator bool() const {
+        return is_valid();
+    }
 
    private:
     typedef TReturn (*stub_type)(void* object, TParam);
@@ -687,12 +691,16 @@ class delegate<TReturn(void)>
     //*************************************************************************
     /// Returns <b>true</b> if the delegate is valid.
     //*************************************************************************
-    bool is_valid() const { return invocation.stub != ETL_NULLPTR; }
+    bool is_valid() const {
+        return invocation.stub != ETL_NULLPTR;
+    }
 
     //*************************************************************************
     /// Returns <b>true</b> if the delegate is valid.
     //*************************************************************************
-    operator bool() const { return is_valid(); }
+    operator bool() const {
+        return is_valid();
+    }
 
    private:
     typedef TReturn (*stub_type)(void* object);

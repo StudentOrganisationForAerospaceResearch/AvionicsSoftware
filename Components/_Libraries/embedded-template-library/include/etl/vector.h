@@ -92,43 +92,57 @@ class ivector : public etl::vector_base {
     /// Returns an iterator to the beginning of the vector.
     ///\return An iterator to the beginning of the vector.
     //*********************************************************************
-    iterator begin() { return p_buffer; }
+    iterator begin() {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the vector.
     ///\return A const iterator to the beginning of the vector.
     //*********************************************************************
-    const_iterator begin() const { return p_buffer; }
+    const_iterator begin() const {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Returns an iterator to the end of the vector.
     ///\return An iterator to the end of the vector.
     //*********************************************************************
-    iterator end() { return p_end; }
+    iterator end() {
+        return p_end;
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the vector.
     ///\return A const iterator to the end of the vector.
     //*********************************************************************
-    const_iterator end() const { return p_end; }
+    const_iterator end() const {
+        return p_end;
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the vector.
     ///\return A const iterator to the beginning of the vector.
     //*********************************************************************
-    const_iterator cbegin() const { return p_buffer; }
+    const_iterator cbegin() const {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the vector.
     ///\return A const iterator to the end of the vector.
     //*********************************************************************
-    const_iterator cend() const { return p_end; }
+    const_iterator cend() const {
+        return p_end;
+    }
 
     //*********************************************************************
     /// Returns an reverse iterator to the reverse beginning of the vector.
     ///\return Iterator to the reverse beginning of the vector.
     //*********************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(end()); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the vector.
@@ -142,7 +156,9 @@ class ivector : public etl::vector_base {
     /// Returns a reverse iterator to the end + 1 of the vector.
     ///\return Reverse iterator to the end + 1 of the vector.
     //*********************************************************************
-    reverse_iterator rend() { return reverse_iterator(begin()); }
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the vector.
@@ -174,7 +190,9 @@ class ivector : public etl::vector_base {
     /// maximum then a vector_full is thrown.
     ///\param new_size The new size.
     //*********************************************************************
-    void resize(size_t new_size) { resize(new_size, T()); }
+    void resize(size_t new_size) {
+        resize(new_size, T());
+    }
 
     //*********************************************************************
     /// Resizes the vector.
@@ -230,14 +248,18 @@ class ivector : public etl::vector_base {
     ///\param i The index.
     ///\return A reference to the value at index 'i'
     //*********************************************************************
-    reference operator[](size_t i) { return p_buffer[i]; }
+    reference operator[](size_t i) {
+        return p_buffer[i];
+    }
 
     //*********************************************************************
     /// Returns a const reference to the value at index 'i'
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference operator[](size_t i) const { return p_buffer[i]; }
+    const_reference operator[](size_t i) const {
+        return p_buffer[i];
+    }
 
     //*********************************************************************
     /// Returns a reference to the value at index 'i'
@@ -265,37 +287,49 @@ class ivector : public etl::vector_base {
     /// Returns a reference to the first element.
     ///\return A reference to the first element.
     //*********************************************************************
-    reference front() { return *p_buffer; }
+    reference front() {
+        return *p_buffer;
+    }
 
     //*********************************************************************
     /// Returns a const reference to the first element.
     ///\return A const reference to the first element.
     //*********************************************************************
-    const_reference front() const { return *p_buffer; }
+    const_reference front() const {
+        return *p_buffer;
+    }
 
     //*********************************************************************
     /// Returns a reference to the last element.
     ///\return A reference to the last element.
     //*********************************************************************
-    reference back() { return *(p_end - 1); }
+    reference back() {
+        return *(p_end - 1);
+    }
 
     //*********************************************************************
     /// Returns a const reference to the last element.
     ///\return A const reference to the last element.
     //*********************************************************************
-    const_reference back() const { return *(p_end - 1); }
+    const_reference back() const {
+        return *(p_end - 1);
+    }
 
     //*********************************************************************
     /// Returns a pointer to the beginning of the vector data.
     ///\return A pointer to the beginning of the vector data.
     //*********************************************************************
-    pointer data() { return p_buffer; }
+    pointer data() {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Returns a const pointer to the beginning of the vector data.
     ///\return A const pointer to the beginning of the vector data.
     //*********************************************************************
-    const_pointer data() const { return p_buffer; }
+    const_pointer data() const {
+        return p_buffer;
+    }
 
     //*********************************************************************
     /// Assigns values to the vector.
@@ -342,12 +376,16 @@ class ivector : public etl::vector_base {
     //*************************************************************************
     /// Clears the vector.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*************************************************************************
     /// Fills the vector.
     //*************************************************************************
-    void fill(const T& value) { etl::fill(begin(), end(), value); }
+    void fill(const T& value) {
+        etl::fill(begin(), end(), value);
+    }
 
     //*********************************************************************
     /// Inserts a value at the end of the vector.
@@ -835,25 +873,33 @@ class ivector : public etl::vector_base {
     /// Gets the current size of the vector.
     ///\return The current size of the vector.
     //*************************************************************************
-    size_type size() const { return size_t(p_end - p_buffer); }
+    size_type size() const {
+        return size_t(p_end - p_buffer);
+    }
 
     //*************************************************************************
     /// Checks the 'empty' state of the vector.
     ///\return <b>true</b> if empty.
     //*************************************************************************
-    bool empty() const { return (p_end == p_buffer); }
+    bool empty() const {
+        return (p_end == p_buffer);
+    }
 
     //*************************************************************************
     /// Checks the 'full' state of the vector.
     ///\return <b>true</b> if full.
     //*************************************************************************
-    bool full() const { return size() == CAPACITY; }
+    bool full() const {
+        return size() == CAPACITY;
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_t available() const { return max_size() - size(); }
+    size_t available() const {
+        return max_size() - size();
+    }
 
 #ifdef ETL_IVECTOR_REPAIR_ENABLE
     //*************************************************************************
@@ -1323,7 +1369,9 @@ class vector_ext : public etl::ivector<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~vector_ext() { this->clear(); }
+    ~vector_ext() {
+        this->clear();
+    }
 
     //*************************************************************************
     /// Fix the internal pointers after a low level memory copy.
@@ -1587,7 +1635,9 @@ class vector_ext<T*> : public etl::ivector<T*> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~vector_ext() { this->clear(); }
+    ~vector_ext() {
+        this->clear();
+    }
 
     //*************************************************************************
     /// Fix the internal pointers after a low level memory copy.

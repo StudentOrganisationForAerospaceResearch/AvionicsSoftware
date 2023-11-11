@@ -585,37 +585,51 @@ class icircular_buffer : public circular_buffer_base {
     //*************************************************************************
     /// Gets an iterator to the start of the buffer.
     //*************************************************************************
-    iterator begin() { return iterator(this, out); }
+    iterator begin() {
+        return iterator(this, out);
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the start of the buffer.
     //*************************************************************************
-    const_iterator begin() const { return const_iterator(this, out); }
+    const_iterator begin() const {
+        return const_iterator(this, out);
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the start of the buffer.
     //*************************************************************************
-    const_iterator cbegin() const { return const_iterator(this, out); }
+    const_iterator cbegin() const {
+        return const_iterator(this, out);
+    }
 
     //*************************************************************************
     /// Gets an iterator to the end of the buffer.
     //*************************************************************************
-    iterator end() { return iterator(this, in); }
+    iterator end() {
+        return iterator(this, in);
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the end of the buffer.
     //*************************************************************************
-    const_iterator end() const { return const_iterator(this, in); }
+    const_iterator end() const {
+        return const_iterator(this, in);
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the end of the buffer.
     //*************************************************************************
-    const_iterator cend() const { return const_iterator(this, in); }
+    const_iterator cend() const {
+        return const_iterator(this, in);
+    }
 
     //*************************************************************************
     /// Gets a reverse iterator to the start of the buffer.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(end()); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
 
     //*************************************************************************
     /// Gets a const reverse iterator to the start of the buffer.
@@ -634,7 +648,9 @@ class icircular_buffer : public circular_buffer_base {
     //*************************************************************************
     /// Gets a reverse iterator to the end of the buffer.
     //*************************************************************************
-    reverse_iterator rend() { return reverse_iterator(begin()); }
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
 
     //*************************************************************************
     /// Gets a const reverse iterator to the end of the buffer.
@@ -793,7 +809,9 @@ class icircular_buffer : public circular_buffer_base {
     //*************************************************************************
     /// Fills the buffer.
     //*************************************************************************
-    void fill(const T& value) { etl::fill(begin(), end(), value); }
+    void fill(const T& value) {
+        etl::fill(begin(), end(), value);
+    }
 
     //*************************************************************************
     /// - operator for iterator
@@ -980,7 +998,9 @@ class circular_buffer : public icircular_buffer<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~circular_buffer() { this->clear(); }
+    ~circular_buffer() {
+        this->clear();
+    }
 
    private:
     /// The uninitialised storage.
@@ -1123,12 +1143,16 @@ class circular_buffer_ext : public icircular_buffer<T> {
     //*************************************************************************
     /// set_buffer
     //*************************************************************************
-    bool is_valid() const { return this->pbuffer != ETL_NULLPTR; }
+    bool is_valid() const {
+        return this->pbuffer != ETL_NULLPTR;
+    }
 
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~circular_buffer_ext() { this->clear(); }
+    ~circular_buffer_ext() {
+        this->clear();
+    }
 };
 
 //*************************************************************************

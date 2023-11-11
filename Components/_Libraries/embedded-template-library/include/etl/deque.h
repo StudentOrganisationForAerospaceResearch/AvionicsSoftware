@@ -682,60 +682,82 @@ class ideque : public etl::deque_base {
     /// Gets a reference to the item at the front of the deque.
     ///\return A reference to the item at the front of the deque.
     //*************************************************************************
-    reference front() { return *_begin; }
+    reference front() {
+        return *_begin;
+    }
 
     //*************************************************************************
     /// Gets a const reference to the item at the front of the deque.
     ///\return A const reference to the item at the front of the deque.
     //*************************************************************************
-    const_reference front() const { return *_begin; }
+    const_reference front() const {
+        return *_begin;
+    }
 
     //*************************************************************************
     /// Gets a reference to the item at the back of the deque.
     ///\return A reference to the item at the back of the deque.
     //*************************************************************************
-    reference back() { return *(_end - 1); }
+    reference back() {
+        return *(_end - 1);
+    }
 
     //*************************************************************************
     /// Gets a const reference to the item at the back of the deque.
     ///\return A const reference to the item at the back of the deque.
     //*************************************************************************
-    const_reference back() const { return *(_end - 1); }
+    const_reference back() const {
+        return *(_end - 1);
+    }
 
     //*************************************************************************
     /// Gets an iterator to the beginning of the deque.
     //*************************************************************************
-    iterator begin() { return _begin; }
+    iterator begin() {
+        return _begin;
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the beginning of the deque.
     //*************************************************************************
-    const_iterator begin() const { return _begin; }
+    const_iterator begin() const {
+        return _begin;
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the beginning of the deque.
     //*************************************************************************
-    const_iterator cbegin() const { return _begin; }
+    const_iterator cbegin() const {
+        return _begin;
+    }
 
     //*************************************************************************
     /// Gets an iterator to the end of the deque.
     //*************************************************************************
-    iterator end() { return iterator(_end); }
+    iterator end() {
+        return iterator(_end);
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the end of the deque.
     //*************************************************************************
-    const_iterator end() const { return iterator(_end); }
+    const_iterator end() const {
+        return iterator(_end);
+    }
 
     //*************************************************************************
     /// Gets a const iterator to the end of the deque.
     //*************************************************************************
-    const_iterator cend() const { return const_iterator(_end); }
+    const_iterator cend() const {
+        return const_iterator(_end);
+    }
 
     //*************************************************************************
     /// Gets a reverse iterator to the end of the deque.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(end()); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
 
     //*************************************************************************
     /// Gets a const reverse iterator to the end of the deque.
@@ -754,7 +776,9 @@ class ideque : public etl::deque_base {
     //*************************************************************************
     /// Gets a reverse iterator to the beginning of the deque.
     //*************************************************************************
-    reverse_iterator rend() { return reverse_iterator(begin()); }
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
 
     //*************************************************************************
     /// Gets a const reverse iterator to the beginning of the deque.
@@ -773,12 +797,16 @@ class ideque : public etl::deque_base {
     //*************************************************************************
     /// Clears the deque.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*************************************************************************
     /// Fills the deque.
     //*************************************************************************
-    void fill(const T& value) { etl::fill(begin(), end(), value); }
+    void fill(const T& value) {
+        etl::fill(begin(), end(), value);
+    }
 
     //*************************************************************************
     /// Inserts data into the deque.

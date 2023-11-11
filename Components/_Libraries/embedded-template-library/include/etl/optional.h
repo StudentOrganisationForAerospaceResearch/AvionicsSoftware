@@ -287,12 +287,16 @@ class optional {
     //***************************************************************************
     /// Bool conversion operator.
     //***************************************************************************
-    ETL_EXPLICIT operator bool() const { return valid; }
+    ETL_EXPLICIT operator bool() const {
+        return valid;
+    }
 
     //***************************************************************************
     // Check whether optional contains value
     //***************************************************************************
-    ETL_CONSTEXPR bool has_value() const ETL_NOEXCEPT { return valid; }
+    ETL_CONSTEXPR bool has_value() const ETL_NOEXCEPT {
+        return valid;
+    }
 
     //***************************************************************************
     /// Get a reference to the value.

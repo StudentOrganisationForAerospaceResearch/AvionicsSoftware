@@ -54,7 +54,7 @@ SOFTWARE.
 #endif
 
 #if ETL_NOT_USING_STL
-#define ETL_LOG10_OF_2(x) (((x) * 301) / 1000)
+#define ETL_LOG10_OF_2(x) (((x)*301) / 1000)
 
 #if !defined(LDBL_MIN) && defined(DBL_MIN)
 // Looks like we don't have these macros defined.

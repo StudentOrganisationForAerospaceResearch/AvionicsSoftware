@@ -67,7 +67,9 @@ class exception {
     /// Gets the reason for the exception.
     /// \return const char* to the reason.
     //***************************************************************************
-    string_type what() const { return reason_text; }
+    string_type what() const {
+        return reason_text;
+    }
 
     //***************************************************************************
     /// Gets the file for the exception.
@@ -85,7 +87,9 @@ class exception {
     /// Gets the line for the exception.
     /// \return const char* to the line.
     //***************************************************************************
-    numeric_type line_number() const { return line; }
+    numeric_type line_number() const {
+        return line;
+    }
 
    private:
     string_type reason_text;  ///< The reason for the exception.

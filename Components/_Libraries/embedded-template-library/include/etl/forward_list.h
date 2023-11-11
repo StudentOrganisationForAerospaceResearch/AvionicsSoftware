@@ -444,57 +444,79 @@ class iforward_list : public etl::forward_list_base {
     //*************************************************************************
     /// Gets the beginning of the forward_list.
     //*************************************************************************
-    iterator begin() { return iterator(get_head()); }
+    iterator begin() {
+        return iterator(get_head());
+    }
 
     //*************************************************************************
     /// Gets the beginning of the forward_list.
     //*************************************************************************
-    const_iterator begin() const { return const_iterator(get_head()); }
+    const_iterator begin() const {
+        return const_iterator(get_head());
+    }
 
     //*************************************************************************
     /// Gets before the beginning of the forward_list.
     //*************************************************************************
-    iterator before_begin() { return iterator(&start_node); }
+    iterator before_begin() {
+        return iterator(&start_node);
+    }
 
     //*************************************************************************
     /// Gets before the beginning of the forward_list.
     //*************************************************************************
-    const_iterator before_begin() const { return const_iterator(&start_node); }
+    const_iterator before_begin() const {
+        return const_iterator(&start_node);
+    }
 
     //*************************************************************************
     /// Gets the beginning of the forward_list.
     //*************************************************************************
-    const_iterator cbegin() const { return const_iterator(get_head()); }
+    const_iterator cbegin() const {
+        return const_iterator(get_head());
+    }
 
     //*************************************************************************
     /// Gets the end of the forward_list.
     //*************************************************************************
-    iterator end() { return iterator(); }
+    iterator end() {
+        return iterator();
+    }
 
     //*************************************************************************
     /// Gets the end of the forward_list.
     //*************************************************************************
-    const_iterator end() const { return const_iterator(); }
+    const_iterator end() const {
+        return const_iterator();
+    }
 
     //*************************************************************************
     /// Gets the end of the forward_list.
     //*************************************************************************
-    const_iterator cend() const { return const_iterator(); }
+    const_iterator cend() const {
+        return const_iterator();
+    }
 
     //*************************************************************************
     /// Clears the forward_list.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*************************************************************************
     /// Gets a reference to the first element.
     //*************************************************************************
-    reference front() { return data_cast(*get_head()).value; }
+    reference front() {
+        return data_cast(*get_head()).value;
+    }
 
     //*************************************************************************
     /// Gets a const reference to the first element.
     //*************************************************************************
-    const_reference front() const { return data_cast(*get_head()).value; }
+    const_reference front() const {
+        return data_cast(*get_head()).value;
+    }
 
     //*************************************************************************
     /// Assigns a range of values to the forward_list.
@@ -657,7 +679,9 @@ class iforward_list : public etl::forward_list_base {
     //*************************************************************************
     /// Resizes the forward_list.
     //*************************************************************************
-    void resize(size_t n) { resize(n, T()); }
+    void resize(size_t n) {
+        resize(n, T());
+    }
 
     //*************************************************************************
     /// Resizes the forward_list.
@@ -968,7 +992,9 @@ class iforward_list : public etl::forward_list_base {
     /// Removes all but the first element from every consecutive group of equal
     /// elements in the container.
     //*************************************************************************
-    void unique() { unique(etl::equal_to<T>()); }
+    void unique() {
+        unique(etl::equal_to<T>());
+    }
 
     //*************************************************************************
     /// Removes all but the one element from every consecutive group of equal
@@ -1000,7 +1026,9 @@ class iforward_list : public etl::forward_list_base {
     /// Sort using in-place merge sort algorithm.
     /// Uses 'less-than operator as the predicate.
     //*************************************************************************
-    void sort() { sort(etl::less<T>()); }
+    void sort() {
+        sort(etl::less<T>());
+    }
 
     //*************************************************************************
     /// Stable sort using in-place merge sort algorithm.
@@ -1450,7 +1478,9 @@ class forward_list : public etl::iforward_list<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~forward_list() { this->initialise(); }
+    ~forward_list() {
+        this->initialise();
+    }
 
     //*************************************************************************
     /// Assignment operator.
@@ -1606,7 +1636,9 @@ class forward_list_ext : public etl::iforward_list<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~forward_list_ext() { this->initialise(); }
+    ~forward_list_ext() {
+        this->initialise();
+    }
 
     //*************************************************************************
     /// Assignment operator.
@@ -1645,7 +1677,9 @@ class forward_list_ext : public etl::iforward_list<T> {
     //*************************************************************************
     /// Get the pool instance.
     //*************************************************************************
-    etl::ipool& get_pool() const { return *this->p_node_pool; }
+    etl::ipool& get_pool() const {
+        return *this->p_node_pool;
+    }
 };
 
 //*************************************************************************

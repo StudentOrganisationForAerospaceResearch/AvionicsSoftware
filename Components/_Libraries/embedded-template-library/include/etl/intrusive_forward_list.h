@@ -160,7 +160,9 @@ class intrusive_forward_list_base {
     //*************************************************************************
     /// Pushes a value to the front of the intrusive_forward_list.
     //*************************************************************************
-    void push_front(link_type& value) { insert_link_after(start_link, value); }
+    void push_front(link_type& value) {
+        insert_link_after(start_link, value);
+    }
 
     //*************************************************************************
     /// Removes a value from the front of the intrusive_forward_list.
@@ -197,12 +199,16 @@ class intrusive_forward_list_base {
     //*************************************************************************
     /// Returns true if the list has no elements.
     //*************************************************************************
-    bool empty() const { return start_link.etl_next == ETL_NULLPTR; }
+    bool empty() const {
+        return start_link.etl_next == ETL_NULLPTR;
+    }
 
     //*************************************************************************
     /// Returns the number of elements.
     //*************************************************************************
-    size_t size() const { return current_size; }
+    size_t size() const {
+        return current_size;
+    }
 
    protected:
     link_type
@@ -247,12 +253,16 @@ class intrusive_forward_list_base {
     //*************************************************************************
     /// Get the head link.
     //*************************************************************************
-    link_type* get_head() { return start_link.etl_next; }
+    link_type* get_head() {
+        return start_link.etl_next;
+    }
 
     //*************************************************************************
     /// Get the head link.
     //*************************************************************************
-    const link_type* get_head() const { return start_link.etl_next; }
+    const link_type* get_head() const {
+        return start_link.etl_next;
+    }
 
     //*************************************************************************
     /// Initialise the intrusive_forward_list.

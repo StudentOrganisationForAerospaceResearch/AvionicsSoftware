@@ -678,7 +678,9 @@ class variant {
     /// Checks whether a valid value is currently stored.
     ///\return <b>true</b> if the value is valid, otherwise <b>false</b>.
     //***************************************************************************
-    bool is_valid() const { return type_id != UNSUPPORTED_TYPE_ID; }
+    bool is_valid() const {
+        return type_id != UNSUPPORTED_TYPE_ID;
+    }
 
     //***************************************************************************
     /// Checks to see if the type currently stored is the same as that specified in the template parameter.
@@ -692,12 +694,16 @@ class variant {
     //***************************************************************************
     /// Gets the index of the type currently stored or UNSUPPORTED_TYPE_ID
     //***************************************************************************
-    size_t index() const { return type_id; }
+    size_t index() const {
+        return type_id;
+    }
 
     //***************************************************************************
     /// Clears the value to 'no valid stored value'.
     //***************************************************************************
-    void clear() { destruct_current(); }
+    void clear() {
+        destruct_current();
+    }
 
     //***************************************************************************
     /// Gets the value stored as the specified template type.
@@ -821,14 +827,30 @@ class variant {
     //***************************************************************************
     /// Conversion operators for each type.
     //***************************************************************************
-    operator T1&() { return get<T1>(); }
-    operator T2&() { return get<T2>(); }
-    operator T3&() { return get<T3>(); }
-    operator T4&() { return get<T4>(); }
-    operator T5&() { return get<T5>(); }
-    operator T6&() { return get<T6>(); }
-    operator T7&() { return get<T7>(); }
-    operator T8&() { return get<T8>(); }
+    operator T1&() {
+        return get<T1>();
+    }
+    operator T2&() {
+        return get<T2>();
+    }
+    operator T3&() {
+        return get<T3>();
+    }
+    operator T4&() {
+        return get<T4>();
+    }
+    operator T5&() {
+        return get<T5>();
+    }
+    operator T6&() {
+        return get<T6>();
+    }
+    operator T7&() {
+        return get<T7>();
+    }
+    operator T8&() {
+        return get<T8>();
+    }
 
     //***************************************************************************
     /// Checks if the template type is supported by the implementation of variant..

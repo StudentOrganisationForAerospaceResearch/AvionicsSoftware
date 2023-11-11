@@ -194,7 +194,9 @@ class variant_pool : public etl::generic_pool<
     //*************************************************************************
     /// Returns the maximum number of items in the variant_pool.
     //*************************************************************************
-    size_t max_size() const { return MAX_SIZE; }
+    size_t max_size() const {
+        return MAX_SIZE;
+    }
 
    private:
     variant_pool(const variant_pool&) ETL_DELETE;
@@ -333,7 +335,9 @@ class variant_pool_ext
     //*************************************************************************
     /// Returns the maximum number of items in the variant_pool.
     //*************************************************************************
-    size_t max_size() const { return base_t::max_size(); }
+    size_t max_size() const {
+        return base_t::max_size();
+    }
 
    private:
     variant_pool_ext(const variant_pool_ext&) ETL_DELETE;

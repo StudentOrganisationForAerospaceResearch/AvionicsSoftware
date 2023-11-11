@@ -528,17 +528,23 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Gets the beginning of the list.
     //*************************************************************************
-    iterator begin() { return iterator(get_head()); }
+    iterator begin() {
+        return iterator(get_head());
+    }
 
     //*************************************************************************
     /// Gets the beginning of the list.
     //*************************************************************************
-    const_iterator begin() const { return const_iterator(get_head()); }
+    const_iterator begin() const {
+        return const_iterator(get_head());
+    }
 
     //*************************************************************************
     /// Gets the end of the list.
     //*************************************************************************
-    iterator end() { return iterator(terminal_node); }
+    iterator end() {
+        return iterator(terminal_node);
+    }
 
     //*************************************************************************
     /// Gets the end of the list.
@@ -550,7 +556,9 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Gets the beginning of the list.
     //*************************************************************************
-    const_iterator cbegin() const { return const_iterator(get_head()); }
+    const_iterator cbegin() const {
+        return const_iterator(get_head());
+    }
 
     //*************************************************************************
     /// Gets the end of the list.
@@ -562,7 +570,9 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Gets the reverse beginning of the list.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(terminal_node); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(terminal_node);
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
@@ -575,7 +585,9 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Gets the reverse end of the list.
     //*************************************************************************
-    reverse_iterator rend() { return reverse_iterator(get_head()); }
+    reverse_iterator rend() {
+        return reverse_iterator(get_head());
+    }
 
     //*************************************************************************
     /// Gets the reverse end of the list.
@@ -602,22 +614,30 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Gets a reference to the first element.
     //*************************************************************************
-    reference front() { return data_cast(get_head()).value; }
+    reference front() {
+        return data_cast(get_head()).value;
+    }
 
     //*************************************************************************
     /// Gets a const reference to the first element.
     //*************************************************************************
-    const_reference front() const { return data_cast(get_head()).value; }
+    const_reference front() const {
+        return data_cast(get_head()).value;
+    }
 
     //*************************************************************************
     /// Gets a reference to the last element.
     //*************************************************************************
-    reference back() { return data_cast(get_tail()).value; }
+    reference back() {
+        return data_cast(get_tail()).value;
+    }
 
     //*************************************************************************
     /// Gets a reference to the last element.
     //*************************************************************************
-    const_reference back() const { return data_cast(get_tail()).value; }
+    const_reference back() const {
+        return data_cast(get_tail()).value;
+    }
 
     //*************************************************************************
     /// Assigns a range of values to the list.
@@ -1050,7 +1070,9 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Resizes the list.
     //*************************************************************************
-    void resize(size_t n) { resize(n, T()); }
+    void resize(size_t n) {
+        resize(n, T());
+    }
 
     //*************************************************************************
     /// Resizes the list.
@@ -1077,7 +1099,9 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Clears the list.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*************************************************************************
     // Removes the values specified.
@@ -1114,7 +1138,9 @@ class ilist : public etl::list_base {
     /// Removes all but the first element from every consecutive group of equal
     /// elements in the container.
     //*************************************************************************
-    void unique() { unique(etl::equal_to<T>()); }
+    void unique() {
+        unique(etl::equal_to<T>());
+    }
 
     //*************************************************************************
     /// Removes all but the first element from every consecutive group of equal
@@ -1236,7 +1262,9 @@ class ilist : public etl::list_base {
     //*************************************************************************
     /// Merge another list into this one. Both lists should be sorted.
     //*************************************************************************
-    void merge(ilist& other) { merge(other, etl::less<value_type>()); }
+    void merge(ilist& other) {
+        merge(other, etl::less<value_type>());
+    }
 
     //*************************************************************************
     /// Merge another list into this one. Both lists should be sorted.
@@ -1344,7 +1372,9 @@ class ilist : public etl::list_base {
     /// Sort using in-place merge sort algorithm.
     /// Uses 'less-than operator as the predicate.
     //*************************************************************************
-    void sort() { sort(etl::less<T>()); }
+    void sort() {
+        sort(etl::less<T>());
+    }
 
     //*************************************************************************
     /// Stable sort using in-place merge sort algorithm.
@@ -1732,7 +1762,9 @@ class list : public etl::ilist<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~list() { this->initialise(); }
+    ~list() {
+        this->initialise();
+    }
 
     //*************************************************************************
     /// Construct from size.
@@ -1989,7 +2021,9 @@ class list_ext : public etl::ilist<T> {
     //*************************************************************************
     /// Get the pool instance.
     //*************************************************************************
-    etl::ipool& get_pool() const { return *this->p_node_pool; }
+    etl::ipool& get_pool() const {
+        return *this->p_node_pool;
+    }
 };
 
 //*************************************************************************

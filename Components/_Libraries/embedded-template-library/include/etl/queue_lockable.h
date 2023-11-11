@@ -383,7 +383,9 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     //*************************************************************************
     /// Pop a value from the queue without locking, and discard.
     //*************************************************************************
-    bool pop_unlocked() { return pop_implementation(); }
+    bool pop_unlocked() {
+        return pop_implementation();
+    }
 
     //*************************************************************************
     /// Pop a value from the queue and discard.
@@ -401,7 +403,9 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     //*************************************************************************
     /// Pop a value from the queue without locking
     //*************************************************************************
-    bool pop_unlocked(reference value) { return pop_implementation(value); }
+    bool pop_unlocked(reference value) {
+        return pop_implementation(value);
+    }
 
     //*************************************************************************
     /// Pop a value from the queue.
@@ -419,12 +423,16 @@ class iqueue_lockable : public etl::queue_lockable_base<VMemory_Model> {
     //*************************************************************************
     /// Peek a value at the front of the queue without locking.
     //*************************************************************************
-    reference front_unlocked() { return front_implementation(); }
+    reference front_unlocked() {
+        return front_implementation();
+    }
 
     //*************************************************************************
     /// Peek a value at the front of the queue without locking.
     //*************************************************************************
-    const_reference front_unlocked() const { return front_implementation(); }
+    const_reference front_unlocked() const {
+        return front_implementation();
+    }
 
     //*************************************************************************
     /// Peek a value at the front of the queue.

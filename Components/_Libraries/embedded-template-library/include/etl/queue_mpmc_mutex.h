@@ -551,7 +551,9 @@ class iqueue_mpmc_mutex : public queue_mpmc_mutex_base<MEMORY_MODEL> {
     //*************************************************************************
     /// Peek a value at the front of the queue.
     //*************************************************************************
-    reference front_implementation() { return p_buffer[read_index]; }
+    reference front_implementation() {
+        return p_buffer[read_index];
+    }
 
     //*************************************************************************
     /// Peek a value at the front of the queue.

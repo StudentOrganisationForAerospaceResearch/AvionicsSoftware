@@ -355,43 +355,57 @@ class iindirect_vector {
     /// Returns an iterator to the beginning of the indirect_vector.
     ///\return An iterator to the beginning of the indirect_vector.
     //*********************************************************************
-    iterator begin() { return iterator(lookup.begin()); }
+    iterator begin() {
+        return iterator(lookup.begin());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the indirect_vector.
     ///\return A const iterator to the beginning of the indirect_vector.
     //*********************************************************************
-    const_iterator begin() const { return const_iterator(lookup.begin()); }
+    const_iterator begin() const {
+        return const_iterator(lookup.begin());
+    }
 
     //*********************************************************************
     /// Returns an iterator to the end of the indirect_vector.
     ///\return An iterator to the end of the indirect_vector.
     //*********************************************************************
-    iterator end() { return iterator(lookup.end()); }
+    iterator end() {
+        return iterator(lookup.end());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the indirect_vector.
     ///\return A const iterator to the end of the indirect_vector.
     //*********************************************************************
-    const_iterator end() const { return const_iterator(lookup.end()); }
+    const_iterator end() const {
+        return const_iterator(lookup.end());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the indirect_vector.
     ///\return A const iterator to the beginning of the indirect_vector.
     //*********************************************************************
-    const_iterator cbegin() const { return const_iterator(lookup.begin()); }
+    const_iterator cbegin() const {
+        return const_iterator(lookup.begin());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the indirect_vector.
     ///\return A const iterator to the end of the indirect_vector.
     //*********************************************************************
-    const_iterator cend() const { return const_iterator(lookup.cend()); }
+    const_iterator cend() const {
+        return const_iterator(lookup.cend());
+    }
 
     //*********************************************************************
     /// Returns an reverse iterator to the reverse beginning of the indirect_vector.
     ///\return Iterator to the reverse beginning of the indirect_vector.
     //*********************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(end()); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the indirect_vector.
@@ -405,7 +419,9 @@ class iindirect_vector {
     /// Returns a reverse iterator to the end + 1 of the indirect_vector.
     ///\return Reverse iterator to the end + 1 of the indirect_vector.
     //*********************************************************************
-    reverse_iterator rend() { return reverse_iterator(begin()); }
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the indirect_vector.
@@ -437,7 +453,9 @@ class iindirect_vector {
     /// maximum then a vector_full is thrown.
     ///\param new_size The new size.
     //*********************************************************************
-    void resize(size_t new_size) { resize(new_size, T()); }
+    void resize(size_t new_size) {
+        resize(new_size, T());
+    }
 
     //*********************************************************************
     /// Resizes the indirect_vector.
@@ -478,14 +496,18 @@ class iindirect_vector {
     ///\param i The index.
     ///\return A reference to the value at index 'i'
     //*********************************************************************
-    reference operator[](size_t i) { return *lookup[i]; }
+    reference operator[](size_t i) {
+        return *lookup[i];
+    }
 
     //*********************************************************************
     /// Returns a const reference to the value at index 'i'
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference operator[](size_t i) const { return *lookup[i]; }
+    const_reference operator[](size_t i) const {
+        return *lookup[i];
+    }
 
     //*********************************************************************
     /// Returns a reference to the value at index 'i'
@@ -493,7 +515,9 @@ class iindirect_vector {
     ///\param i The index.
     ///\return A reference to the value at index 'i'
     //*********************************************************************
-    reference at(size_t i) { return *lookup.at(i); }
+    reference at(size_t i) {
+        return *lookup.at(i);
+    }
 
     //*********************************************************************
     /// Returns a const reference to the value at index 'i'
@@ -501,31 +525,41 @@ class iindirect_vector {
     ///\param i The index.
     ///\return A const reference to the value at index 'i'
     //*********************************************************************
-    const_reference at(size_t i) const { return *lookup.at(i); }
+    const_reference at(size_t i) const {
+        return *lookup.at(i);
+    }
 
     //*********************************************************************
     /// Returns a reference to the first element.
     ///\return A reference to the first element.
     //*********************************************************************
-    reference front() { return *(lookup.front()); }
+    reference front() {
+        return *(lookup.front());
+    }
 
     //*********************************************************************
     /// Returns a const reference to the first element.
     ///\return A const reference to the first element.
     //*********************************************************************
-    const_reference front() const { return *(lookup.front()); }
+    const_reference front() const {
+        return *(lookup.front());
+    }
 
     //*********************************************************************
     /// Returns a reference to the last element.
     ///\return A reference to the last element.
     //*********************************************************************
-    reference back() { return *(lookup.back()); }
+    reference back() {
+        return *(lookup.back());
+    }
 
     //*********************************************************************
     /// Returns a const reference to the last element.
     ///\return A const reference to the last element.
     //*********************************************************************
-    const_reference back() const { return *(lookup.back()); }
+    const_reference back() const {
+        return *(lookup.back());
+    }
 
     //*********************************************************************
     /// Assigns values to the indirect_vector.
@@ -577,12 +611,16 @@ class iindirect_vector {
     //*************************************************************************
     /// Clears the indirect_vector.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*************************************************************************
     /// Fills the buffer.
     //*************************************************************************
-    void fill(const T& value) { etl::fill(begin(), end(), value); }
+    void fill(const T& value) {
+        etl::fill(begin(), end(), value);
+    }
 
     //*********************************************************************
     /// Inserts a value at the end of the indirect_vector.
@@ -900,37 +938,49 @@ class iindirect_vector {
     /// Gets the current size of the indirect_vector.
     ///\return The current size of the indirect_vector.
     //*************************************************************************
-    size_type size() const { return lookup.size(); }
+    size_type size() const {
+        return lookup.size();
+    }
 
     //*************************************************************************
     /// Gets the current capacity of the indirect_vector.
     ///\return The capacity of the indirect_vector.
     //*************************************************************************
-    size_type capacity() const { return lookup.capacity(); }
+    size_type capacity() const {
+        return lookup.capacity();
+    }
 
     //*************************************************************************
     /// Checks the 'empty' state of the indirect_vector.
     ///\return <b>true</b> if empty.
     //*************************************************************************
-    bool empty() const { return lookup.empty(); }
+    bool empty() const {
+        return lookup.empty();
+    }
 
     //*************************************************************************
     /// Checks the 'full' state of the indirect_vector.
     ///\return <b>true</b> if full.
     //*************************************************************************
-    bool full() const { return lookup.full(); }
+    bool full() const {
+        return lookup.full();
+    }
 
     //*************************************************************************
     /// Returns the maximum size.
     ///\return The maximum size.
     //*************************************************************************
-    size_type max_size() const { return lookup.max_size(); }
+    size_type max_size() const {
+        return lookup.max_size();
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_type available() const { return lookup.available(); }
+    size_type available() const {
+        return lookup.available();
+    }
 
    protected:
     //*********************************************************************
@@ -1184,7 +1234,9 @@ class indirect_vector : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~indirect_vector() { this->clear(); }
+    ~indirect_vector() {
+        this->clear();
+    }
 
    private:
     etl::vector<T*, MAX_SIZE> lookup_vector;
@@ -1341,7 +1393,9 @@ class indirect_vector_ext : public etl::iindirect_vector<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~indirect_vector_ext() { this->clear(); }
+    ~indirect_vector_ext() {
+        this->clear();
+    }
 };
 }  // namespace etl
 

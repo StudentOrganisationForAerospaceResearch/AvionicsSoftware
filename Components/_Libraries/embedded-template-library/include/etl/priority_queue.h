@@ -128,13 +128,17 @@ class ipriority_queue {
     /// Gets a reference to the highest priority value in the priority queue.<br>
     /// \return A reference to the highest priority value in the priority queue.
     //*************************************************************************
-    reference top() { return container.front(); }
+    reference top() {
+        return container.front();
+    }
 
     //*************************************************************************
     /// Gets a const reference to the highest priority value in the priority queue.<br>
     /// \return A const reference to the highest priority value in the priority queue.
     //*************************************************************************
-    const_reference top() const { return container.front(); }
+    const_reference top() const {
+        return container.front();
+    }
 
     //*************************************************************************
     /// Adds a value to the queue.
@@ -298,24 +302,32 @@ class ipriority_queue {
     //*************************************************************************
     /// Returns the current number of items in the priority queue.
     //*************************************************************************
-    size_type size() const { return container.size(); }
+    size_type size() const {
+        return container.size();
+    }
 
     //*************************************************************************
     /// Returns the maximum number of items that can be queued.
     //*************************************************************************
-    size_type max_size() const { return container.max_size(); }
+    size_type max_size() const {
+        return container.max_size();
+    }
 
     //*************************************************************************
     /// Checks to see if the priority queue is empty.
     /// \return <b>true</b> if the queue is empty, otherwise <b>false</b>
     //*************************************************************************
-    bool empty() const { return container.empty(); }
+    bool empty() const {
+        return container.empty();
+    }
 
     //*************************************************************************
     /// Checks to see if the priority queue is full.
     /// \return <b>true</b> if the priority queue is full, otherwise <b>false</b>
     //*************************************************************************
-    bool full() const { return container.size() == container.max_size(); }
+    bool full() const {
+        return container.size() == container.max_size();
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
@@ -328,7 +340,9 @@ class ipriority_queue {
     //*************************************************************************
     /// Clears the queue to the empty state.
     //*************************************************************************
-    void clear() { container.clear(); }
+    void clear() {
+        container.clear();
+    }
 
     //*************************************************************************
     /// Assignment operator.

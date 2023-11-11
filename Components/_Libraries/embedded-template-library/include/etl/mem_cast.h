@@ -263,22 +263,30 @@ class mem_cast {
     //***********************************
     /// Get the size of the buffer
     //***********************************
-    ETL_NODISCARD static ETL_CONSTEXPR size_t size() { return Size; }
+    ETL_NODISCARD static ETL_CONSTEXPR size_t size() {
+        return Size;
+    }
 
     //***********************************
     /// Get the alignment of the buffer
     //***********************************
-    ETL_NODISCARD static ETL_CONSTEXPR size_t alignment() { return Alignment; }
+    ETL_NODISCARD static ETL_CONSTEXPR size_t alignment() {
+        return Alignment;
+    }
 
     //***********************************
     /// Get a pointer to the internal buffer
     //***********************************
-    ETL_NODISCARD char* data() { return buffer; }
+    ETL_NODISCARD char* data() {
+        return buffer;
+    }
 
     //***********************************
     /// Get a const pointer to the internal buffer
     //***********************************
-    ETL_NODISCARD const char* data() const { return buffer; }
+    ETL_NODISCARD const char* data() const {
+        return buffer;
+    }
 
    private:
     /// The internal buffer
@@ -489,7 +497,9 @@ class mem_cast_ptr {
     //***********************************
     /// Get the size of the buffer
     //***********************************
-    ETL_NODISCARD size_t size() const { return buffer_size; }
+    ETL_NODISCARD size_t size() const {
+        return buffer_size;
+    }
 
     //***********************************
     /// Get the alignment of the buffer
@@ -514,12 +524,16 @@ class mem_cast_ptr {
     //***********************************
     /// Get a pointer to the external buffer
     //***********************************
-    ETL_NODISCARD char* data() { return pbuffer; }
+    ETL_NODISCARD char* data() {
+        return pbuffer;
+    }
 
     //***********************************
     /// Get const a pointer to the external buffer
     //***********************************
-    ETL_NODISCARD const char* data() const { return pbuffer; }
+    ETL_NODISCARD const char* data() const {
+        return pbuffer;
+    }
 
    private:
     /// Pointer to the buffer

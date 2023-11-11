@@ -138,12 +138,16 @@ class intrusive_queue_base {
     //*************************************************************************
     /// Checks if the queue is in the empty state.
     //*************************************************************************
-    bool empty() const { return current_size == 0; }
+    bool empty() const {
+        return current_size == 0;
+    }
 
     //*************************************************************************
     /// Returns the number of elements.
     //*************************************************************************
-    size_t size() const { return current_size; }
+    size_t size() const {
+        return current_size;
+    }
 
    protected:
     //*************************************************************************

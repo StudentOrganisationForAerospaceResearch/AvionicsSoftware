@@ -770,7 +770,9 @@ class variant {
     //***************************************************************************
     /// Gets the index of the type currently stored or variant_npos
     //***************************************************************************
-    constexpr size_t index() const noexcept { return type_id; }
+    constexpr size_t index() const noexcept {
+        return type_id;
+    }
 
     //***************************************************************************
     /// Swaps this variant with another.

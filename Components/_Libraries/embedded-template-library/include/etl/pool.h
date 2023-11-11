@@ -80,7 +80,9 @@ class pool
     /// If asserts or exceptions are enabled and there are no more free items an
     /// etl::pool_no_allocation if thrown, otherwise a null pointer is returned.
     //*************************************************************************
-    T* create() { return base_t::template create<T>(); }
+    T* create() {
+        return base_t::template create<T>();
+    }
 
     //*************************************************************************
     /// Allocate storage for an object from the pool and create with 1 parameter.
@@ -202,7 +204,9 @@ class pool_ext
     /// If asserts or exceptions are enabled and there are no more free items an
     /// etl::pool_no_allocation if thrown, otherwise a null pointer is returned.
     //*************************************************************************
-    T* create() { return base_t::template create<T>(); }
+    T* create() {
+        return base_t::template create<T>();
+    }
 
     //*************************************************************************
     /// Allocate storage for an object from the pool and create with 1 parameter.

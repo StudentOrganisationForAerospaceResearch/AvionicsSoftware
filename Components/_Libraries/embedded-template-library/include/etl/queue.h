@@ -231,19 +231,25 @@ class iqueue : public etl::queue_base<MEMORY_MODEL> {
     /// Gets a reference to the value at the front of the queue.<br>
     /// \return A reference to the value at the front of the queue.
     //*************************************************************************
-    reference front() { return p_buffer[out]; }
+    reference front() {
+        return p_buffer[out];
+    }
 
     //*************************************************************************
     /// Gets a const reference to the value at the front of the queue.<br>
     /// \return A const reference to the value at the front of the queue.
     //*************************************************************************
-    const_reference front() const { return p_buffer[out]; }
+    const_reference front() const {
+        return p_buffer[out];
+    }
 
     //*************************************************************************
     /// Gets a reference to the value at the back of the queue.<br>
     /// \return A reference to the value at the back of the queue.
     //*************************************************************************
-    reference back() { return p_buffer[in == 0 ? CAPACITY - 1 : in - 1]; }
+    reference back() {
+        return p_buffer[in == 0 ? CAPACITY - 1 : in - 1];
+    }
 
     //*************************************************************************
     /// Gets a const reference to the value at the back of the queue.<br>
@@ -535,7 +541,9 @@ class queue : public etl::iqueue<T, MEMORY_MODEL> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~queue() { base_t::clear(); }
+    ~queue() {
+        base_t::clear();
+    }
 
     //*************************************************************************
     /// Assignment operator.

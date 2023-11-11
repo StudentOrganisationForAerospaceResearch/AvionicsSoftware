@@ -1399,13 +1399,19 @@ class unique_ptr {
     }
 
     //*********************************
-    ETL_CONSTEXPR pointer get() const ETL_NOEXCEPT { return p; }
+    ETL_CONSTEXPR pointer get() const ETL_NOEXCEPT {
+        return p;
+    }
 
     //*********************************
-    TDeleter& get_deleter() ETL_NOEXCEPT { return deleter; }
+    TDeleter& get_deleter() ETL_NOEXCEPT {
+        return deleter;
+    }
 
     //*********************************
-    const TDeleter& get_deleter() const ETL_NOEXCEPT { return deleter; }
+    const TDeleter& get_deleter() const ETL_NOEXCEPT {
+        return deleter;
+    }
 
     //*********************************
     pointer release() ETL_NOEXCEPT {
@@ -1462,13 +1468,19 @@ class unique_ptr {
 #endif
 
     //*********************************
-    ETL_CONSTEXPR reference operator*() const { return *get(); }
+    ETL_CONSTEXPR reference operator*() const {
+        return *get();
+    }
 
     //*********************************
-    ETL_CONSTEXPR pointer operator->() const ETL_NOEXCEPT { return get(); }
+    ETL_CONSTEXPR pointer operator->() const ETL_NOEXCEPT {
+        return get();
+    }
 
     //*********************************
-    ETL_CONSTEXPR reference operator[](size_t i) const { return p[i]; }
+    ETL_CONSTEXPR reference operator[](size_t i) const {
+        return p[i];
+    }
 
    private:
     // Deleted.
@@ -1529,13 +1541,19 @@ class unique_ptr<T[], TDeleter> {
     }
 
     //*********************************
-    ETL_CONSTEXPR pointer get() const ETL_NOEXCEPT { return p; }
+    ETL_CONSTEXPR pointer get() const ETL_NOEXCEPT {
+        return p;
+    }
 
     //*********************************
-    TDeleter& get_deleter() ETL_NOEXCEPT { return deleter; }
+    TDeleter& get_deleter() ETL_NOEXCEPT {
+        return deleter;
+    }
 
     //*********************************
-    const TDeleter& get_deleter() const ETL_NOEXCEPT { return deleter; }
+    const TDeleter& get_deleter() const ETL_NOEXCEPT {
+        return deleter;
+    }
 
     //*********************************
     pointer release() ETL_NOEXCEPT {
@@ -1591,13 +1609,19 @@ class unique_ptr<T[], TDeleter> {
 #endif
 
     //*********************************
-    ETL_CONSTEXPR reference operator*() const { return *p; }
+    ETL_CONSTEXPR reference operator*() const {
+        return *p;
+    }
 
     //*********************************
-    ETL_CONSTEXPR pointer operator->() const ETL_NOEXCEPT { return p; }
+    ETL_CONSTEXPR pointer operator->() const ETL_NOEXCEPT {
+        return p;
+    }
 
     //*********************************
-    ETL_CONSTEXPR reference operator[](size_t i) const { return p[i]; }
+    ETL_CONSTEXPR reference operator[](size_t i) const {
+        return p[i];
+    }
 
    private:
     // Deleted.

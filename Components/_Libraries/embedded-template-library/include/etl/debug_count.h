@@ -105,16 +105,26 @@ class debug_count {
         count.store(temp);
     }
 #else
-    void swap(debug_count& other) ETL_NOEXCEPT { swap(count, other.count); }
+    void swap(debug_count& other) ETL_NOEXCEPT {
+        swap(count, other.count);
+    }
 #endif
 
-    operator int32_t() const { return count; }
+    operator int32_t() const {
+        return count;
+    }
 
-    int32_t get() const { return int32_t(count); }
+    int32_t get() const {
+        return int32_t(count);
+    }
 
-    void set(int32_t n) { count = n; }
+    void set(int32_t n) {
+        count = n;
+    }
 
-    void clear() { count = 0; }
+    void clear() {
+        count = 0;
+    }
 
    private:
 #if ETL_HAS_ATOMIC

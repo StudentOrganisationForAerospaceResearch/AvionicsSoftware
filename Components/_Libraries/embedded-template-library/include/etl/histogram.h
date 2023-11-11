@@ -173,7 +173,9 @@ class histogram
     //*********************************
     /// Add
     //*********************************
-    void add(key_type key) { ++this->accumulator[key - Start_Index]; }
+    void add(key_type key) {
+        ++this->accumulator[key - Start_Index];
+    }
 
     //*********************************
     /// Add
@@ -189,7 +191,9 @@ class histogram
     //*********************************
     /// operator ()
     //*********************************
-    void operator()(key_type key) { add(key); }
+    void operator()(key_type key) {
+        add(key);
+    }
 
     //*********************************
     /// operator ()
@@ -202,7 +206,9 @@ class histogram
     //*********************************
     /// operator []
     //*********************************
-    value_type operator[](key_type key) const { return this->accumulator[key]; }
+    value_type operator[](key_type key) const {
+        return this->accumulator[key];
+    }
 };
 
 //***************************************************************************
@@ -276,7 +282,9 @@ class histogram<TKey, TCount, Max_Size, etl::integral_limits<int32_t>::max>
     //*********************************
     /// Add
     //*********************************
-    void add(key_type key) { ++this->accumulator[key - start_index]; }
+    void add(key_type key) {
+        ++this->accumulator[key - start_index];
+    }
 
     //*********************************
     /// Add
@@ -292,7 +300,9 @@ class histogram<TKey, TCount, Max_Size, etl::integral_limits<int32_t>::max>
     //*********************************
     /// operator ()
     //*********************************
-    void operator()(key_type key) { add(key); }
+    void operator()(key_type key) {
+        add(key);
+    }
 
     //*********************************
     /// operator ()
@@ -305,7 +315,9 @@ class histogram<TKey, TCount, Max_Size, etl::integral_limits<int32_t>::max>
     //*********************************
     /// operator []
     //*********************************
-    value_type operator[](key_type key) const { return this->accumulator[key]; }
+    value_type operator[](key_type key) const {
+        return this->accumulator[key];
+    }
 
    private:
     key_type start_index;
@@ -383,27 +395,37 @@ class sparse_histogram : public etl::unary_function<TKey, void> {
     //*********************************
     /// Beginning of the histogram.
     //*********************************
-    const_iterator begin() const { return accumulator.begin(); }
+    const_iterator begin() const {
+        return accumulator.begin();
+    }
 
     //*********************************
     /// Beginning of the histogram.
     //*********************************
-    const_iterator cbegin() const { return accumulator.cbegin(); }
+    const_iterator cbegin() const {
+        return accumulator.cbegin();
+    }
 
     //*********************************
     /// End of the histogram.
     //*********************************
-    const_iterator end() const { return accumulator.begin(); }
+    const_iterator end() const {
+        return accumulator.begin();
+    }
 
     //*********************************
     /// End of the histogram.
     //*********************************
-    const_iterator cend() const { return accumulator.cbegin(); }
+    const_iterator cend() const {
+        return accumulator.cbegin();
+    }
 
     //*********************************
     /// Add
     //*********************************
-    void add(const key_type& key) { ++accumulator[key]; }
+    void add(const key_type& key) {
+        ++accumulator[key];
+    }
 
     //*********************************
     /// Add
@@ -419,7 +441,9 @@ class sparse_histogram : public etl::unary_function<TKey, void> {
     //*********************************
     /// operator ()
     //*********************************
-    void operator()(const key_type& key) { add(key); }
+    void operator()(const key_type& key) {
+        add(key);
+    }
 
     //*********************************
     /// operator ()
@@ -447,17 +471,23 @@ class sparse_histogram : public etl::unary_function<TKey, void> {
     //*********************************
     /// Clear the histogram.
     //*********************************
-    void clear() { accumulator.clear(); }
+    void clear() {
+        accumulator.clear();
+    }
 
     //*********************************
     /// Size of the histogram.
     //*********************************
-    size_t size() const { return accumulator.size(); }
+    size_t size() const {
+        return accumulator.size();
+    }
 
     //*********************************
     /// Max size of the histogram.
     //*********************************
-    ETL_CONSTEXPR size_t max_size() const { return Max_Size; }
+    ETL_CONSTEXPR size_t max_size() const {
+        return Max_Size;
+    }
 
     //*********************************
     /// Count of items in the histogram.

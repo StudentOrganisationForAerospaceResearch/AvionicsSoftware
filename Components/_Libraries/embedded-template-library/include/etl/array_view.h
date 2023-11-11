@@ -274,67 +274,93 @@ class array_view {
     //*************************************************************************
     /// Returns a reference to the first element.
     //*************************************************************************
-    reference front() { return *mbegin; }
+    reference front() {
+        return *mbegin;
+    }
 
     //*************************************************************************
     /// Returns a const reference to the first element.
     //*************************************************************************
-    const_reference front() const { return *mbegin; }
+    const_reference front() const {
+        return *mbegin;
+    }
 
     //*************************************************************************
     /// Returns a reference to the last element.
     //*************************************************************************
-    reference back() { return *(mend - 1); }
+    reference back() {
+        return *(mend - 1);
+    }
 
     //*************************************************************************
     /// Returns a const reference to the last element.
     //*************************************************************************
-    const_reference back() const { return *(mend - 1); }
+    const_reference back() const {
+        return *(mend - 1);
+    }
 
     //*************************************************************************
     /// Returns a pointer to the first element of the internal storage.
     //*************************************************************************
-    pointer data() { return mbegin; }
+    pointer data() {
+        return mbegin;
+    }
 
     //*************************************************************************
     /// Returns a const pointer to the first element of the internal storage.
     //*************************************************************************
-    const_pointer data() const { return mbegin; }
+    const_pointer data() const {
+        return mbegin;
+    }
 
     //*************************************************************************
     /// Returns an iterator to the beginning of the array.
     //*************************************************************************
-    iterator begin() { return mbegin; }
+    iterator begin() {
+        return mbegin;
+    }
 
     //*************************************************************************
     /// Returns a const iterator to the beginning of the array.
     //*************************************************************************
-    const_iterator begin() const { return mbegin; }
+    const_iterator begin() const {
+        return mbegin;
+    }
 
     //*************************************************************************
     /// Returns a const iterator to the beginning of the array.
     //*************************************************************************
-    const_iterator cbegin() const { return mbegin; }
+    const_iterator cbegin() const {
+        return mbegin;
+    }
 
     //*************************************************************************
     /// Returns an iterator to the end of the array.
     //*************************************************************************
-    iterator end() { return mend; }
+    iterator end() {
+        return mend;
+    }
 
     //*************************************************************************
     /// Returns a const iterator to the end of the array.
     //*************************************************************************
-    const_iterator end() const { return mend; }
+    const_iterator end() const {
+        return mend;
+    }
 
     //*************************************************************************
     // Returns a const iterator to the end of the array.
     //*************************************************************************
-    const_iterator cend() const { return mend; }
+    const_iterator cend() const {
+        return mend;
+    }
 
     //*************************************************************************
     // Returns an reverse iterator to the reverse beginning of the array.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(mend); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(mend);
+    }
 
     //*************************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the array.
@@ -353,7 +379,9 @@ class array_view {
     //*************************************************************************
     /// Returns a reverse iterator to the end of the array.
     //*************************************************************************
-    reverse_iterator rend() { return reverse_iterator(mbegin); }
+    reverse_iterator rend() {
+        return reverse_iterator(mbegin);
+    }
 
     //*************************************************************************
     /// Returns a const reverse iterator to the end of the array.
@@ -372,17 +400,23 @@ class array_view {
     //*************************************************************************
     /// Returns <b>true</b> if the array size is zero.
     //*************************************************************************
-    bool empty() const { return (mbegin == mend); }
+    bool empty() const {
+        return (mbegin == mend);
+    }
 
     //*************************************************************************
     /// Returns the size of the array.
     //*************************************************************************
-    size_t size() const { return (mend - mbegin); }
+    size_t size() const {
+        return (mend - mbegin);
+    }
 
     //*************************************************************************
     /// Returns the maximum possible size of the array.
     //*************************************************************************
-    size_t max_size() const { return size(); }
+    size_t max_size() const {
+        return size();
+    }
 
     //*************************************************************************
     /// Assign from a view.
@@ -415,13 +449,17 @@ class array_view {
     //*************************************************************************
     /// Returns a reference to the indexed value.
     //*************************************************************************
-    reference operator[](const size_t i) { return mbegin[i]; }
+    reference operator[](const size_t i) {
+        return mbegin[i];
+    }
 #endif
 
     //*************************************************************************
     /// Returns a const reference to the indexed value.
     //*************************************************************************
-    const_reference operator[](const size_t i) const { return mbegin[i]; }
+    const_reference operator[](const size_t i) const {
+        return mbegin[i];
+    }
 
 #if defined(ETL_ARRAY_VIEW_IS_MUTABLE)
     //*************************************************************************
@@ -478,7 +516,9 @@ class array_view {
     //*************************************************************************
     /// Fills the array.
     //*************************************************************************
-    void fill(const T& value) { etl::fill(begin(), end(), value); }
+    void fill(const T& value) {
+        etl::fill(begin(), end(), value);
+    }
 
     //*************************************************************************
     /// Equality for array views.

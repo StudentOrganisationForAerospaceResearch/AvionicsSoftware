@@ -69,7 +69,9 @@ class murmur3 {
     /// Default constructor.
     /// \param seed The seed value. Default = 0.
     //*************************************************************************
-    murmur3(value_type seed_ = 0) : seed(seed_) { reset(); }
+    murmur3(value_type seed_ = 0) : seed(seed_) {
+        reset();
+    }
 
     //*************************************************************************
     /// Constructor from range.
@@ -167,7 +169,9 @@ class murmur3 {
     //*************************************************************************
     /// Conversion operator to value_type.
     //*************************************************************************
-    operator value_type() { return value(); }
+    operator value_type() {
+        return value();
+    }
 
    private:
     //*************************************************************************

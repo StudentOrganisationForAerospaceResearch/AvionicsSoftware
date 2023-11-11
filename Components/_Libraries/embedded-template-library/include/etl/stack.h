@@ -205,7 +205,9 @@ class istack : public etl::stack_base {
     /// Gets a reference to the value at the top of the stack.<br>
     /// \return A reference to the value at the top of the stack.
     //*************************************************************************
-    reference top() { return p_buffer[top_index]; }
+    reference top() {
+        return p_buffer[top_index];
+    }
 
     //*************************************************************************
     /// Adds a value to the stack.
@@ -312,7 +314,9 @@ class istack : public etl::stack_base {
     /// Gets a const reference to the value at the top of the stack.<br>
     /// \return A const reference to the value at the top of the stack.
     //*************************************************************************
-    const_reference top() const { return p_buffer[top_index]; }
+    const_reference top() const {
+        return p_buffer[top_index];
+    }
 
     //*************************************************************************
     /// Clears the stack to the empty state.
@@ -361,7 +365,9 @@ class istack : public etl::stack_base {
     //*************************************************************************
     /// Reverses the stack.
     //*************************************************************************
-    void reverse() { etl::reverse(p_buffer, p_buffer + current_size); }
+    void reverse() {
+        etl::reverse(p_buffer, p_buffer + current_size);
+    }
 
     //*************************************************************************
     /// Assignment operator.
@@ -482,7 +488,9 @@ class stack : public etl::istack<T> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~stack() { etl::istack<T>::clear(); }
+    ~stack() {
+        etl::istack<T>::clear();
+    }
 
     //*************************************************************************
     /// Assignment operator.

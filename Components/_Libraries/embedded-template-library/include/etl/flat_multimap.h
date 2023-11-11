@@ -114,73 +114,97 @@ class iflat_multimap
     /// Returns an iterator to the beginning of the flat_multimap.
     ///\return An iterator to the beginning of the flat_multimap.
     //*********************************************************************
-    iterator begin() { return refmap_t::begin(); }
+    iterator begin() {
+        return refmap_t::begin();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the flat_multimap.
     ///\return A const iterator to the beginning of the flat_multimap.
     //*********************************************************************
-    const_iterator begin() const { return refmap_t::begin(); }
+    const_iterator begin() const {
+        return refmap_t::begin();
+    }
 
     //*********************************************************************
     /// Returns an iterator to the end of the flat_multimap.
     ///\return An iterator to the end of the flat_multimap.
     //*********************************************************************
-    iterator end() { return refmap_t::end(); }
+    iterator end() {
+        return refmap_t::end();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the flat_multimap.
     ///\return A const iterator to the end of the flat_multimap.
     //*********************************************************************
-    const_iterator end() const { return refmap_t::end(); }
+    const_iterator end() const {
+        return refmap_t::end();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the flat_multimap.
     ///\return A const iterator to the beginning of the flat_multimap.
     //*********************************************************************
-    const_iterator cbegin() const { return refmap_t::cbegin(); }
+    const_iterator cbegin() const {
+        return refmap_t::cbegin();
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the flat_multimap.
     ///\return A const iterator to the end of the flat_multimap.
     //*********************************************************************
-    const_iterator cend() const { return refmap_t::cend(); }
+    const_iterator cend() const {
+        return refmap_t::cend();
+    }
 
     //*********************************************************************
     /// Returns an reverse iterator to the reverse beginning of the flat_multimap.
     ///\return Iterator to the reverse beginning of the flat_multimap.
     //*********************************************************************
-    reverse_iterator rbegin() { return refmap_t::rbegin(); }
+    reverse_iterator rbegin() {
+        return refmap_t::rbegin();
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the flat_multimap.
     ///\return Const iterator to the reverse beginning of the flat_multimap.
     //*********************************************************************
-    const_reverse_iterator rbegin() const { return refmap_t::rbegin(); }
+    const_reverse_iterator rbegin() const {
+        return refmap_t::rbegin();
+    }
 
     //*********************************************************************
     /// Returns a reverse iterator to the end + 1 of the flat_multimap.
     ///\return Reverse iterator to the end + 1 of the flat_multimap.
     //*********************************************************************
-    reverse_iterator rend() { return refmap_t::rend(); }
+    reverse_iterator rend() {
+        return refmap_t::rend();
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the flat_multimap.
     ///\return Const reverse iterator to the end + 1 of the flat_multimap.
     //*********************************************************************
-    const_reverse_iterator rend() const { refmap_t::rend(); }
+    const_reverse_iterator rend() const {
+        refmap_t::rend();
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the flat_multimap.
     ///\return Const reverse iterator to the reverse beginning of the flat_multimap.
     //*********************************************************************
-    const_reverse_iterator crbegin() const { return refmap_t::crbegin(); }
+    const_reverse_iterator crbegin() const {
+        return refmap_t::crbegin();
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the flat_multimap.
     ///\return Const reverse iterator to the end + 1 of the flat_multimap.
     //*********************************************************************
-    const_reverse_iterator crend() const { return refmap_t::crend(); }
+    const_reverse_iterator crend() const {
+        return refmap_t::crend();
+    }
 
     //*********************************************************************
     /// Assigns values to the flat_multimap.
@@ -513,7 +537,9 @@ class iflat_multimap
     ///\param key The key to search for.
     ///\return An iterator pointing to the element or end() if not found.
     //*********************************************************************
-    iterator find(key_parameter_t key) { return refmap_t::find(key); }
+    iterator find(key_parameter_t key) {
+        return refmap_t::find(key);
+    }
 
 #if ETL_USING_CPP11
     //*********************************************************************
@@ -547,7 +573,9 @@ class iflat_multimap
     ///\param key The key to search for.
     ///\return 1 if the key exists, otherwise 0.
     //*********************************************************************
-    size_t count(key_parameter_t key) const { return refmap_t::count(key); }
+    size_t count(key_parameter_t key) const {
+        return refmap_t::count(key);
+    }
 
 #if ETL_USING_CPP11
     //*********************************************************************
@@ -671,7 +699,9 @@ class iflat_multimap
     //*************************************************************************
     /// Check if the map contains the key.
     //*************************************************************************
-    bool contains(key_parameter_t key) const { return find(key) != end(); }
+    bool contains(key_parameter_t key) const {
+        return find(key) != end();
+    }
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -708,37 +738,49 @@ class iflat_multimap
     /// Gets the current size of the flat_multiset.
     ///\return The current size of the flat_multiset.
     //*************************************************************************
-    size_type size() const { return refmap_t::size(); }
+    size_type size() const {
+        return refmap_t::size();
+    }
 
     //*************************************************************************
     /// Checks the 'empty' state of the flat_multiset.
     ///\return <b>true</b> if empty.
     //*************************************************************************
-    bool empty() const { return refmap_t::empty(); }
+    bool empty() const {
+        return refmap_t::empty();
+    }
 
     //*************************************************************************
     /// Checks the 'full' state of the flat_multiset.
     ///\return <b>true</b> if full.
     //*************************************************************************
-    bool full() const { return refmap_t::full(); }
+    bool full() const {
+        return refmap_t::full();
+    }
 
     //*************************************************************************
     /// Returns the capacity of the flat_multiset.
     ///\return The capacity of the flat_multiset.
     //*************************************************************************
-    size_type capacity() const { return refmap_t::capacity(); }
+    size_type capacity() const {
+        return refmap_t::capacity();
+    }
 
     //*************************************************************************
     /// Returns the maximum possible size of the flat_multiset.
     ///\return The maximum size of the flat_multiset.
     //*************************************************************************
-    size_type max_size() const { return refmap_t::max_size(); }
+    size_type max_size() const {
+        return refmap_t::max_size();
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_t available() const { return refmap_t::available(); }
+    size_t available() const {
+        return refmap_t::available();
+    }
 
    protected:
     //*********************************************************************
@@ -892,7 +934,9 @@ class flat_multimap : public etl::iflat_multimap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~flat_multimap() { this->clear(); }
+    ~flat_multimap() {
+        this->clear();
+    }
 
     //*************************************************************************
     /// Assignment operator.

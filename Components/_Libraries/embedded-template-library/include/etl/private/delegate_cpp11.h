@@ -345,7 +345,9 @@ class delegate<TReturn(TParams...)> final {
     //*************************************************************************
     /// Returns <b>true</b> if the delegate is valid.
     //*************************************************************************
-    ETL_CONSTEXPR14 operator bool() const { return is_valid(); }
+    ETL_CONSTEXPR14 operator bool() const {
+        return is_valid();
+    }
 
    private:
     using stub_type = TReturn (*)(void* object, TParams...);

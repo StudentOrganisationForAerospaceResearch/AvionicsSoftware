@@ -17,27 +17,23 @@ constexpr uint16_t ERRVAL = 0xDEAD;  // Error value for debugging
 // Math macros and conversions
 constexpr double MATH_PI = 3.14159265358979323846;
 #define DEG_TO_RAD(degrees) \
-    ((degrees) *            \
-     0.01745329251994329576923690768489f)  // Degrees to radians (PI/180)
+    ((degrees)*0.01745329251994329576923690768489f)  // Degrees to radians (PI/180)
 #define RAD_TO_DEG(radians) \
-    ((radians) *            \
-     57.295779513082320876798154814105f)  // Radians to degrees (180/PI)
-#define MILLIG_TO_MPS2(millig) ((millig) * 9.80665f)  // Milli-g to m/s^2
+    ((radians)*57.295779513082320876798154814105f)  // Radians to degrees (180/PI)
+#define MILLIG_TO_MPS2(millig) ((millig)*9.80665f)  // Milli-g to m/s^2
 #define MILLIDPS_TO_RADPS(millidps) \
-    ((millidps) *                   \
-     0.00017453292519943295769236907684886f)  // Milli-degrees per second to radians per second (PI/180/1000)
-#define LBS_TO_GRAMS(lbs) ((lbs) * 453.59237f)  // Pounds to grams
+    ((millidps)*0.00017453292519943295769236907684886f)  // Milli-degrees per second to radians per second (PI/180/1000)
+#define LBS_TO_GRAMS(lbs) ((lbs)*453.59237f)  // Pounds to grams
 #define GET_COBS_MAX_LEN(len)      \
     (((len) + ((len) / 254) + 1) + \
      1)  // Get the max length of a COBS encoded string, we add 1 for the 0x00 delimiter
 
 // Conversion macros (SYSTEM)
 #define TICKS_TO_MS(time_ticks) \
-    ((time_ticks) * 1000 /      \
+    ((time_ticks)*1000 /        \
      osKernelSysTickFrequency)  // System ticks to milliseconds
-#define MS_TO_TICKS(time_ms)                \
-    ((time_ms) * osKernelSysTickFrequency / \
-     1000)  // Milliseconds to system ticks
+#define MS_TO_TICKS(time_ms) \
+    ((time_ms)*osKernelSysTickFrequency / 1000)  // Milliseconds to system ticks
 
 // System Time Macros
 constexpr uint32_t MAX_DELAY_MS = TICKS_TO_MS(portMAX_DELAY);

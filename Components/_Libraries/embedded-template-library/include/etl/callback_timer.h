@@ -145,12 +145,16 @@ struct callback_timer_data {
     //*******************************************
     /// Returns true if the timer is active.
     //*******************************************
-    bool is_active() const { return delta != etl::timer::state::INACTIVE; }
+    bool is_active() const {
+        return delta != etl::timer::state::INACTIVE;
+    }
 
     //*******************************************
     /// Sets the timer to the inactive state.
     //*******************************************
-    void set_inactive() { delta = etl::timer::state::INACTIVE; }
+    void set_inactive() {
+        delta = etl::timer::state::INACTIVE;
+    }
 
     void* p_callback;
     uint32_t period;
@@ -434,12 +438,16 @@ class icallback_timer {
     //*******************************************
     /// Enable/disable the timer.
     //*******************************************
-    void enable(bool state_) { enabled = state_; }
+    void enable(bool state_) {
+        enabled = state_;
+    }
 
     //*******************************************
     /// Get the enable/disable state.
     //*******************************************
-    bool is_running() const { return enabled; }
+    bool is_running() const {
+        return enabled;
+    }
 
     //*******************************************
     /// Clears the timer of data.

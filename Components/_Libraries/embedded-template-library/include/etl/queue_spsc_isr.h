@@ -91,28 +91,38 @@ class queue_spsc_isr_base {
     //*************************************************************************
     /// Pop a value from the queue from an ISR
     //*************************************************************************
-    bool pop_from_isr(reference value) { return pop_implementation(value); }
+    bool pop_from_isr(reference value) {
+        return pop_implementation(value);
+    }
 
     //*************************************************************************
     /// Pop a value from the queue from an ISR, and discard.
     //*************************************************************************
-    bool pop_from_isr() { return pop_implementation(); }
+    bool pop_from_isr() {
+        return pop_implementation();
+    }
 
     //*************************************************************************
     /// Peek a value at the front of the queue from an ISR
     //*************************************************************************
-    reference front_from_isr() { return front_implementation(); }
+    reference front_from_isr() {
+        return front_implementation();
+    }
 
     //*************************************************************************
     /// Peek a value at the front of the queue from an ISR
     //*************************************************************************
-    const_reference front_from_isr() const { return front_implementation(); }
+    const_reference front_from_isr() const {
+        return front_implementation();
+    }
 
     //*************************************************************************
     /// How much free space available in the queue.
     /// Called from ISR.
     //*************************************************************************
-    size_type available_from_isr() const { return MAX_SIZE - current_size; }
+    size_type available_from_isr() const {
+        return MAX_SIZE - current_size;
+    }
 
     //*************************************************************************
     /// Clear the queue from the ISR.
@@ -127,29 +137,39 @@ class queue_spsc_isr_base {
     /// Is the queue empty?
     /// Called from ISR.
     //*************************************************************************
-    bool empty_from_isr() const { return (current_size == 0); }
+    bool empty_from_isr() const {
+        return (current_size == 0);
+    }
 
     //*************************************************************************
     /// Is the queue full?
     /// Called from ISR.
     //*************************************************************************
-    bool full_from_isr() const { return (current_size == MAX_SIZE); }
+    bool full_from_isr() const {
+        return (current_size == MAX_SIZE);
+    }
 
     //*************************************************************************
     /// How many items in the queue?
     /// Called from ISR.
     //*************************************************************************
-    size_type size_from_isr() const { return current_size; }
+    size_type size_from_isr() const {
+        return current_size;
+    }
 
     //*************************************************************************
     /// How many items can the queue hold.
     //*************************************************************************
-    size_type capacity() const { return MAX_SIZE; }
+    size_type capacity() const {
+        return MAX_SIZE;
+    }
 
     //*************************************************************************
     /// How many items can the queue hold.
     //*************************************************************************
-    size_type max_size() const { return MAX_SIZE; }
+    size_type max_size() const {
+        return MAX_SIZE;
+    }
 
    protected:
     queue_spsc_isr_base(T* p_buffer_, size_type max_size_)
@@ -332,7 +352,9 @@ class queue_spsc_isr_base {
     //*************************************************************************
     /// Peek a value at the front of the queue.
     //*************************************************************************
-    reference front_implementation() { return p_buffer[read_index]; }
+    reference front_implementation() {
+        return p_buffer[read_index];
+    }
 
     //*************************************************************************
     /// Peek a value at the front of the queue.

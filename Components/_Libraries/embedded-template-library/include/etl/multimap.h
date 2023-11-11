@@ -848,12 +848,16 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// Gets the end of the multimap.
     //*************************************************************************
-    iterator end() { return iterator(*this); }
+    iterator end() {
+        return iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the end of the multimap.
     //*************************************************************************
-    const_iterator end() const { return const_iterator(*this); }
+    const_iterator end() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the beginning of the multimap.
@@ -865,12 +869,16 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// Gets the end of the multimap.
     //*************************************************************************
-    const_iterator cend() const { return const_iterator(*this); }
+    const_iterator cend() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(iterator(*this)); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(iterator(*this));
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
@@ -926,14 +934,18 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// Clears the multimap.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*********************************************************************
     /// Counts the number of elements that contain the key specified.
     ///\param key The key to search for.
     ///\return 1 if element was found, 0 otherwise.
     //*********************************************************************
-    size_type count(key_parameter_t key) const { return count_nodes(key); }
+    size_type count(key_parameter_t key) const {
+        return count_nodes(key);
+    }
 
 #if ETL_USING_CPP11
     //*********************************************************************
@@ -1297,17 +1309,23 @@ class imultimap : public etl::multimap_base {
     //*************************************************************************
     /// How to compare two key elements.
     //*************************************************************************
-    key_compare key_comp() const { return kcompare; };
+    key_compare key_comp() const {
+        return kcompare;
+    };
 
     //*************************************************************************
     /// How to compare two value elements.
     //*************************************************************************
-    value_compare value_comp() const { return vcompare; };
+    value_compare value_comp() const {
+        return vcompare;
+    };
 
     //*************************************************************************
     /// Check if the map contains the key.
     //*************************************************************************
-    bool contains(const TKey& key) const { return find(key) != end(); }
+    bool contains(const TKey& key) const {
+        return find(key) != end();
+    }
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -2070,7 +2088,9 @@ class multimap : public etl::imultimap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~multimap() { this->initialise(); }
+    ~multimap() {
+        this->initialise();
+    }
 
     //*************************************************************************
     /// Assignment operator.

@@ -299,17 +299,23 @@ class bit_stream {
     //***************************************************************************
     /// Returns the number of bits used in the stream.
     //***************************************************************************
-    size_t bits() const { return (length_chars * CHAR_BIT) - bits_available; }
+    size_t bits() const {
+        return (length_chars * CHAR_BIT) - bits_available;
+    }
 
     //***************************************************************************
     /// Returns start of the stream.
     //***************************************************************************
-    const_iterator begin() const { return pdata; }
+    const_iterator begin() const {
+        return pdata;
+    }
 
     //***************************************************************************
     /// Returns end of the stream.
     //***************************************************************************
-    const_iterator end() const { return pdata + size(); }
+    const_iterator end() const {
+        return pdata + size();
+    }
 
    private:
     //***************************************************************************

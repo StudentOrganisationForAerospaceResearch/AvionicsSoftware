@@ -267,43 +267,57 @@ class ireference_flat_multimap {
     /// Returns an iterator to the beginning of the reference_flat_multimap.
     ///\return An iterator to the beginning of the reference_flat_multimap.
     //*********************************************************************
-    iterator begin() { return iterator(lookup.begin()); }
+    iterator begin() {
+        return iterator(lookup.begin());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the reference_flat_multimap.
     ///\return A const iterator to the beginning of the reference_flat_multimap.
     //*********************************************************************
-    const_iterator begin() const { return const_iterator(lookup.begin()); }
+    const_iterator begin() const {
+        return const_iterator(lookup.begin());
+    }
 
     //*********************************************************************
     /// Returns an iterator to the end of the reference_flat_multimap.
     ///\return An iterator to the end of the reference_flat_multimap.
     //*********************************************************************
-    iterator end() { return iterator(lookup.end()); }
+    iterator end() {
+        return iterator(lookup.end());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the reference_flat_multimap.
     ///\return A const iterator to the end of the reference_flat_multimap.
     //*********************************************************************
-    const_iterator end() const { return const_iterator(lookup.end()); }
+    const_iterator end() const {
+        return const_iterator(lookup.end());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the beginning of the reference_flat_multimap.
     ///\return A const iterator to the beginning of the reference_flat_multimap.
     //*********************************************************************
-    const_iterator cbegin() const { return const_iterator(lookup.cbegin()); }
+    const_iterator cbegin() const {
+        return const_iterator(lookup.cbegin());
+    }
 
     //*********************************************************************
     /// Returns a const_iterator to the end of the reference_flat_multimap.
     ///\return A const iterator to the end of the reference_flat_multimap.
     //*********************************************************************
-    const_iterator cend() const { return const_iterator(lookup.cend()); }
+    const_iterator cend() const {
+        return const_iterator(lookup.cend());
+    }
 
     //*********************************************************************
     /// Returns an reverse iterator to the reverse beginning of the reference_flat_multimap.
     ///\return Iterator to the reverse beginning of the reference_flat_multimap.
     //*********************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(lookup.rbegin()); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(lookup.rbegin());
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the reverse beginning of the reference_flat_multimap.
@@ -317,7 +331,9 @@ class ireference_flat_multimap {
     /// Returns a reverse iterator to the end + 1 of the reference_flat_multimap.
     ///\return Reverse iterator to the end + 1 of the reference_flat_multimap.
     //*********************************************************************
-    reverse_iterator rend() { return reverse_iterator(lookup.rend()); }
+    reverse_iterator rend() {
+        return reverse_iterator(lookup.rend());
+    }
 
     //*********************************************************************
     /// Returns a const reverse iterator to the end + 1 of the reference_flat_multimap.
@@ -470,7 +486,9 @@ class ireference_flat_multimap {
     //*************************************************************************
     /// Clears the reference_flat_multimap.
     //*************************************************************************
-    void clear() { lookup.clear(); }
+    void clear() {
+        lookup.clear();
+    }
 
     //*********************************************************************
     /// Finds an element.
@@ -703,7 +721,9 @@ class ireference_flat_multimap {
     //*************************************************************************
     /// Check if the map contains the key.
     //*************************************************************************
-    bool contains(const TKey& key) const { return find(key) != end(); }
+    bool contains(const TKey& key) const {
+        return find(key) != end();
+    }
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -718,37 +738,49 @@ class ireference_flat_multimap {
     /// Gets the current size of the flat_multiset.
     ///\return The current size of the flat_multiset.
     //*************************************************************************
-    size_type size() const { return lookup.size(); }
+    size_type size() const {
+        return lookup.size();
+    }
 
     //*************************************************************************
     /// Checks the 'empty' state of the flat_multiset.
     ///\return <b>true</b> if empty.
     //*************************************************************************
-    bool empty() const { return lookup.empty(); }
+    bool empty() const {
+        return lookup.empty();
+    }
 
     //*************************************************************************
     /// Checks the 'full' state of the flat_multiset.
     ///\return <b>true</b> if full.
     //*************************************************************************
-    bool full() const { return lookup.full(); }
+    bool full() const {
+        return lookup.full();
+    }
 
     //*************************************************************************
     /// Returns the capacity of the flat_multiset.
     ///\return The capacity of the flat_multiset.
     //*************************************************************************
-    size_type capacity() const { return lookup.capacity(); }
+    size_type capacity() const {
+        return lookup.capacity();
+    }
 
     //*************************************************************************
     /// Returns the maximum possible size of the flat_multiset.
     ///\return The maximum size of the flat_multiset.
     //*************************************************************************
-    size_type max_size() const { return lookup.max_size(); }
+    size_type max_size() const {
+        return lookup.max_size();
+    }
 
     //*************************************************************************
     /// Returns the remaining capacity.
     ///\return The remaining capacity.
     //*************************************************************************
-    size_t available() const { return lookup.available(); }
+    size_t available() const {
+        return lookup.available();
+    }
 
    protected:
     //*********************************************************************

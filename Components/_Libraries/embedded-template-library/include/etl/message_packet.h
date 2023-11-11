@@ -421,7 +421,9 @@ class message_packet {
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -434,7 +436,9 @@ class message_packet {
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -763,7 +767,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -776,7 +782,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -1094,7 +1102,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -1107,7 +1117,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -1417,7 +1429,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -1430,7 +1444,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -1732,7 +1748,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -1745,7 +1763,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -2036,7 +2056,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -2049,7 +2071,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -2330,7 +2354,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -2343,7 +2369,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -2618,7 +2646,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -2631,7 +2661,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, T9, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -2899,7 +2931,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -2912,7 +2946,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, T8, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -3171,7 +3207,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -3184,7 +3222,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, T7, void, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -3435,7 +3475,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -3448,7 +3490,9 @@ class message_packet<T1, T2, T3, T4, T5, T6, void, void, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -3690,7 +3734,9 @@ class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -3703,7 +3749,9 @@ class message_packet<T1, T2, T3, T4, T5, void, void, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -3939,7 +3987,9 @@ class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -3952,7 +4002,9 @@ class message_packet<T1, T2, T3, T4, void, void, void, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -4179,7 +4231,9 @@ class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -4192,7 +4246,9 @@ class message_packet<T1, T2, T3, void, void, void, void, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -4413,7 +4469,9 @@ class message_packet<T1, T2, void, void, void, void, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -4426,7 +4484,9 @@ class message_packet<T1, T2, void, void, void, void, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {
@@ -4641,7 +4701,9 @@ class message_packet<T1, void, void, void, void, void, void, void, void, void,
 #endif
 
     //********************************************
-    ~message_packet() { delete_current_message(); }
+    ~message_packet() {
+        delete_current_message();
+    }
 
     //********************************************
     etl::imessage& get() ETL_NOEXCEPT {
@@ -4654,7 +4716,9 @@ class message_packet<T1, void, void, void, void, void, void, void, void, void,
     }
 
     //********************************************
-    bool is_valid() const { return valid; }
+    bool is_valid() const {
+        return valid;
+    }
 
     //**********************************************
     static ETL_CONSTEXPR bool accepts(etl::message_id_t id) {

@@ -109,7 +109,9 @@ struct endianness {
 #if ETL_HAS_CONSTEXPR_ENDIANNESS
     ETL_CONSTEXPR
 #endif
-    operator etl::endian() const { return get(); }
+    operator etl::endian() const {
+        return get();
+    }
 
 #if ETL_HAS_CONSTEXPR_ENDIANNESS
     static ETL_CONSTEXPR etl::endian value()
@@ -122,7 +124,9 @@ struct endianness {
 
    private:
 #if ETL_HAS_CONSTEXPR_ENDIANNESS
-    static ETL_CONSTEXPR etl::endian get() { return etl::endian::native; }
+    static ETL_CONSTEXPR etl::endian get() {
+        return etl::endian::native;
+    }
 #else
     static etl::endian get() {
         static const uint32_t i = 0xFFFF0000;

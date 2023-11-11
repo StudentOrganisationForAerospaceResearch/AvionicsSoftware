@@ -86,15 +86,9 @@ SOFTWARE.
             return *this;                                       \
         }                                                       \
         explicit TypeName(ValueType value_) : value(value_) {}  \
-        operator ValueType() const {                            \
-            return value;                                       \
-        }                                                       \
-        ValueType& get() {                                      \
-            return value;                                       \
-        }                                                       \
-        const ValueType& get() const {                          \
-            return value;                                       \
-        }                                                       \
+        operator ValueType() const { return value; }            \
+        ValueType& get() { return value; }                      \
+        const ValueType& get() const { return value; }          \
         TypeName& operator++() {                                \
             ++value;                                            \
             return *this;                                       \

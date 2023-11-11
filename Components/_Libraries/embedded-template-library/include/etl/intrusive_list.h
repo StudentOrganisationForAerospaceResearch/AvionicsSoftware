@@ -135,7 +135,9 @@ class intrusive_list_base {
     //*************************************************************************
     /// Pushes a value to the front of the intrusive_list.
     //*************************************************************************
-    void push_front(link_type& value) { insert_link(terminal_link, value); }
+    void push_front(link_type& value) {
+        insert_link(terminal_link, value);
+    }
 
     //*************************************************************************
     /// Removes a value from the front of the intrusive_list.
@@ -167,7 +169,9 @@ class intrusive_list_base {
     //*************************************************************************
     /// Clears the intrusive_list.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*************************************************************************
     /// Reverses the list.
@@ -200,7 +204,9 @@ class intrusive_list_base {
     //*************************************************************************
     /// Returns the number of elements.
     //*************************************************************************
-    size_t size() const { return current_size; }
+    size_t size() const {
+        return current_size;
+    }
 
    protected:
     /// The link that acts as the intrusive_list start & end.
@@ -276,22 +282,30 @@ class intrusive_list_base {
     //*************************************************************************
     /// Get the head link.
     //*************************************************************************
-    link_type* get_head() { return terminal_link.etl_next; }
+    link_type* get_head() {
+        return terminal_link.etl_next;
+    }
 
     //*************************************************************************
     /// Get the head link.
     //*************************************************************************
-    const link_type* get_head() const { return terminal_link.etl_next; }
+    const link_type* get_head() const {
+        return terminal_link.etl_next;
+    }
 
     //*************************************************************************
     /// Get the tail link.
     //*************************************************************************
-    link_type* get_tail() { return terminal_link.etl_previous; }
+    link_type* get_tail() {
+        return terminal_link.etl_previous;
+    }
 
     //*************************************************************************
     /// Get the tail link.
     //*************************************************************************
-    const link_type* get_tail() const { return terminal_link.etl_previous; }
+    const link_type* get_tail() const {
+        return terminal_link.etl_previous;
+    }
 
     //*************************************************************************
     /// Initialise the intrusive_list.

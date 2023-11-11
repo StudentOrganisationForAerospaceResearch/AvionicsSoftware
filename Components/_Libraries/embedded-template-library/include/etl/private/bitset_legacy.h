@@ -211,7 +211,9 @@ class ibitset {
     //*************************************************************************
     /// The number of bits in the bitset.
     //*************************************************************************
-    size_t size() const { return Active_Bits; }
+    size_t size() const {
+        return Active_Bits;
+    }
 
     //*************************************************************************
     /// Count the number of bits set.
@@ -407,12 +409,16 @@ class ibitset {
     //*************************************************************************
     /// Put to a unsigned long.
     //*************************************************************************
-    unsigned long to_ulong() const { return value<unsigned long>(); }
+    unsigned long to_ulong() const {
+        return value<unsigned long>();
+    }
 
     //*************************************************************************
     /// Put to a unsigned long long.
     //*************************************************************************
-    unsigned long long to_ullong() const { return value<unsigned long long>(); }
+    unsigned long long to_ullong() const {
+        return value<unsigned long long>();
+    }
 
     //*************************************************************************
     /// Resets the bitset.
@@ -508,7 +514,9 @@ class ibitset {
     //*************************************************************************
     /// Are any of the bits set?
     //*************************************************************************
-    bool any() const { return !none(); }
+    bool any() const {
+        return !none();
+    }
 
     //*************************************************************************
     /// Are none of the bits set?
@@ -528,7 +536,9 @@ class ibitset {
     ///\param state The state to search for.
     ///\returns The position of the bit or Number_Of_Elements if none were found.
     //*************************************************************************
-    size_t find_first(bool state) const { return find_next(state, 0); }
+    size_t find_first(bool state) const {
+        return find_next(state, 0);
+    }
 
     //*************************************************************************
     /// Finds the next bit in the specified state.
@@ -589,7 +599,9 @@ class ibitset {
     //*************************************************************************
     /// Read [] operator.
     //*************************************************************************
-    bool operator[](size_t position) const { return test(position); }
+    bool operator[](size_t position) const {
+        return test(position);
+    }
 
     //*************************************************************************
     /// Write [] operator.
@@ -806,7 +818,9 @@ class ibitset {
     /// span
     /// Returns a span of the underlying data.
     //*************************************************************************
-    span_type span() { return span_type(pdata, pdata + Number_Of_Elements); }
+    span_type span() {
+        return span_type(pdata, pdata + Number_Of_Elements);
+    }
 
     //*************************************************************************
     /// span

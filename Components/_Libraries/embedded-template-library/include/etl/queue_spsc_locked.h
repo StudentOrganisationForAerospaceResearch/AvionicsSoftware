@@ -363,7 +363,9 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// Pop a value from the queue and discard.
     /// Unlocked
     //*************************************************************************
-    bool pop_from_unlocked() { return pop_implementation(); }
+    bool pop_from_unlocked() {
+        return pop_implementation();
+    }
 
     //*************************************************************************
     /// Pop a value from the queue and discard.
@@ -382,7 +384,9 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// Peek a value from the front of the queue.
     /// Unlocked
     //*************************************************************************
-    reference front_from_unlocked() { return front_implementation(); }
+    reference front_from_unlocked() {
+        return front_implementation();
+    }
 
     //*************************************************************************
     /// Peek a value from the front of the queue.
@@ -685,7 +689,9 @@ class iqueue_spsc_locked : public iqueue_spsc_locked_base<MEMORY_MODEL> {
     /// Peek a value from the front of the queue.
     /// Unlocked
     //*************************************************************************
-    reference front_implementation() { return p_buffer[this->read_index]; }
+    reference front_implementation() {
+        return p_buffer[this->read_index];
+    }
 
     //*************************************************************************
     /// Peek a value from the front of the queue.

@@ -687,12 +687,16 @@ class imap : public etl::map_base {
     //*************************************************************************
     /// Gets the end of the map.
     //*************************************************************************
-    iterator end() { return iterator(*this); }
+    iterator end() {
+        return iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the end of the map.
     //*************************************************************************
-    const_iterator end() const { return const_iterator(*this); }
+    const_iterator end() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the beginning of the map.
@@ -704,12 +708,16 @@ class imap : public etl::map_base {
     //*************************************************************************
     /// Gets the end of the map.
     //*************************************************************************
-    const_iterator cend() const { return const_iterator(*this); }
+    const_iterator cend() const {
+        return const_iterator(*this);
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
     //*************************************************************************
-    reverse_iterator rbegin() { return reverse_iterator(iterator(*this)); }
+    reverse_iterator rbegin() {
+        return reverse_iterator(iterator(*this));
+    }
 
     //*************************************************************************
     /// Gets the reverse beginning of the list.
@@ -839,7 +847,9 @@ class imap : public etl::map_base {
     //*************************************************************************
     /// Clears the map.
     //*************************************************************************
-    void clear() { initialise(); }
+    void clear() {
+        initialise();
+    }
 
     //*********************************************************************
     /// Counts the number of elements that contain the key specified.
@@ -1204,17 +1214,23 @@ class imap : public etl::map_base {
     //*************************************************************************
     /// How to compare two key elements.
     //*************************************************************************
-    key_compare key_comp() const { return kcompare; }
+    key_compare key_comp() const {
+        return kcompare;
+    }
 
     //*************************************************************************
     /// How to compare two value elements.
     //*************************************************************************
-    value_compare value_comp() const { return vcompare; }
+    value_compare value_comp() const {
+        return vcompare;
+    }
 
     //*************************************************************************
     /// Check if the map contains the key.
     //*************************************************************************
-    bool contains(const TKey& key) const { return find(key) != end(); }
+    bool contains(const TKey& key) const {
+        return find(key) != end();
+    }
 
 #if ETL_USING_CPP11
     //*************************************************************************
@@ -2281,7 +2297,9 @@ class map : public etl::imap<TKey, TValue, TCompare> {
     //*************************************************************************
     /// Destructor.
     //*************************************************************************
-    ~map() { this->initialise(); }
+    ~map() {
+        this->initialise();
+    }
 
     //*************************************************************************
     /// Assignment operator.
