@@ -21,8 +21,6 @@ jobs:
         git add -u
         git commit -m "Apply clang-format" || echo "No changes to commit"
         git push
-    with:
-      github_token: ${{ secrets.WORKFLOW_TOKEN }}
 
     permissions:
       actions: write
