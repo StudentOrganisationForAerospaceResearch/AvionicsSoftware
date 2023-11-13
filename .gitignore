@@ -55,3 +55,6 @@ STM32L152-Discovery.elf.launch
 
 # VS2022
 .vs/
+
+# MacOS
+.DS_Store
