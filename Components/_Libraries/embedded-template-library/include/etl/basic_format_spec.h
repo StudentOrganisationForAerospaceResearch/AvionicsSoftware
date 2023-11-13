@@ -28,7 +28,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#ifndef ETL_BASIC_FORMAT_SPEC_INCLUDED
+            #ifndef ETL_BASIC_FORMAT_SPEC_INCLUDED
 #define ETL_BASIC_FORMAT_SPEC_INCLUDED
 
 ///\ingroup string
@@ -43,7 +43,7 @@ namespace private_basic_format_spec {
 // Structures returned by stream formatting manipulators.
 //*******************************************************
 struct base_spec {
-    ETL_CONSTEXPR base_spec(uint_least8_t base_) : base(base_) {}
+       ETL_CONSTEXPR base_spec(uint_least8_t base_) : base(base_) {}
 
     const uint_least8_t base;
 };
@@ -86,7 +86,7 @@ struct boolalpha_spec {
 
 //*********************************
 struct showbase_spec {
-    ETL_CONSTEXPR showbase_spec(bool show_base_) : show_base(show_base_) {}
+         ETL_CONSTEXPR showbase_spec(bool show_base_) : show_base(show_base_) {}
 
     const bool show_base;
 };
@@ -107,7 +107,7 @@ static ETL_CONSTEXPR private_basic_format_spec::base_spec setbase(uint32_t base)
 
 //*********************************
 static ETL_CONSTEXPR private_basic_format_spec::width_spec setw(uint32_t width) {
-    return private_basic_format_spec::width_spec(width);
+                    return private_basic_format_spec::width_spec(width);
 }
 
 //*********************************
