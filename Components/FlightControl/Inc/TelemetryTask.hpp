@@ -7,14 +7,13 @@
 */
 #ifndef SOAR_TELEMETRYTASK_HPP_
 #define SOAR_TELEMETRYTASK_HPP_
-#include "Task.hpp"
 #include "SystemDefines.hpp"
+#include "Task.hpp"
 
-constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5; // N cycles of telemetry sends for each flash log
+constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5;  // N cycles of telemetry sends for each flash log
 
-class TelemetryTask : public Task
-{
-public:
+class TelemetryTask : public Task {
+   public:
     static TelemetryTask& Inst() {
         static TelemetryTask inst;
         return inst;
@@ -22,10 +21,12 @@ public:
 
     void InitTask();
 
-protected:
-    static void RunTask(void* pvParams) { TelemetryTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
+   protected:
+    static void RunTask(void* pvParams) {
+        TelemetryTask::Inst().Run(pvParams);
+    }  // Static Task Interface, passes control to the instance Run();
 
-    void Run(void* pvParams); // Main run code
+    void Run(void* pvParams);  // Main run code
 
     void HandleCommand(Command& cm);
     void RunLogSequence();
@@ -36,12 +37,11 @@ protected:
 
     void SendVentDrainStatus();
 
-
-private:
+   private:
     // Private Functions
-    TelemetryTask();        // Private constructor
-    TelemetryTask(const TelemetryTask&);                        // Prevent copy-construction
-    TelemetryTask& operator=(const TelemetryTask&);            // Prevent assignment
+    TelemetryTask();                                 // Private constructor
+    TelemetryTask(const TelemetryTask&);             // Prevent copy-construction
+    TelemetryTask& operator=(const TelemetryTask&);  // Prevent assignment
 
     // Private Variables
     uint32_t loggingDelayMs;
@@ -49,4 +49,4 @@ private:
     uint8_t numNonFlashLogs_;
 };
 
-#endif    // SOAR_TELEMETRYTASK_HPP_
+#endif  // SOAR_TELEMETRYTASK_HPP_

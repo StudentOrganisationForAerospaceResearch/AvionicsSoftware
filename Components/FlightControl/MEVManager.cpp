@@ -1,6 +1,6 @@
 #include "MEVManager.hpp"
-#include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
+#include "PBBRxProtocolTask.hpp"
 
 MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
 

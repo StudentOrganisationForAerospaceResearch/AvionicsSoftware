@@ -13,19 +13,16 @@
 /**
  * @brief Constructor for the Mutex class.
  */
-Mutex::Mutex()
-{
+Mutex::Mutex() {
     rtSemaphoreHandle = xSemaphoreCreateMutex();
 
     SOAR_ASSERT(rtSemaphoreHandle != NULL, "Semaphore creation failed.");
 }
 
-
 /**
  * @brief Destructor for the Mutex class.
  */
-Mutex::~Mutex()
-{
+Mutex::~Mutex() {
     vSemaphoreDelete(rtSemaphoreHandle);
 }
 
@@ -34,18 +31,15 @@ Mutex::~Mutex()
  * @param timeout_ms The time to wait for the Mutex before it fails. If timeout_ms is not provided, the function will wait indefinitely.
  * @return True on success, false on failure.
 */
-bool Mutex::Lock(uint32_t timeout_ms)
-{
+bool Mutex::Lock(uint32_t timeout_ms) {
     return xSemaphoreTake(rtSemaphoreHandle, MS_TO_TICKS(timeout_ms)) == pdTRUE;
 }
-
 
 /**
  * @brief This function will attempt to unlock the mutex
  * @return True on success (mutex unlocked) false in failure (mutex was not unlocked)
 */
-bool Mutex::Unlock()
-{
+bool Mutex::Unlock() {
     return xSemaphoreGive(rtSemaphoreHandle) == pdTRUE;
 }
 
@@ -54,8 +48,7 @@ bool Mutex::Unlock()
  * @param timeout_ms The time to wait for the Mutex before it fails. If timeout_ms is not provided, the function will wait indefinitely.
  * @return True on success, false on failure.
 */
-bool Mutex::LockFromISR()
-{
+bool Mutex::LockFromISR() {
     return xSemaphoreTakeFromISR(rtSemaphoreHandle, NULL);
 }
 
@@ -63,7 +56,6 @@ bool Mutex::LockFromISR()
  * @brief This function will attempt to unlock the mutex. If calling from ISR this must be used.
  * @return True on success (mutex unlocked) false in failure (mutex was not unlocked)
 */
-bool Mutex::UnlockFromISR()
-{
+bool Mutex::UnlockFromISR() {
     return xSemaphoreGiveFromISR(rtSemaphoreHandle, NULL) == pdTRUE;
 }
