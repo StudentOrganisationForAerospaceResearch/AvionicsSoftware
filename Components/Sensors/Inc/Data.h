@@ -42,6 +42,12 @@ typedef struct
 
 typedef struct
 {
+	int32_t		pressure;
+	int32_t		time;
+} PressureTransducerFlashLogData;
+
+typedef struct
+{
     int32_t     voltage_; // Volts * 1000, eg. 3300 == 3.3V
 } BatteryData;
 

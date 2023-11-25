@@ -99,7 +99,7 @@ constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the batt
 constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the battery voltage task stack
 
 //nor mal 500 !!!!!!!
-constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 50; // Default logging delay for telemetry task
+constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 10; // Default logging delay for telemetry task
 constexpr uint32_t TELEMETRY_MINIMUM_LOG_PERIOD_MS = 30; // (1000/50 = 20hz) The minimum log period / max log rate
 
 /* Flash Addresses ------------------------------------------------------------------*/

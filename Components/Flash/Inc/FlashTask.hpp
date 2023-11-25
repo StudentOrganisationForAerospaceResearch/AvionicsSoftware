@@ -103,6 +103,7 @@ private:
 
     BarometerData lastBaroData;
     AccelGyroMagnetismData lastIMUData;
+    PressureTransducerFlashLogData lastPTC;
 //    GPSDataFlashLog lastGPSFlashData;
 
 

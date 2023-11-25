@@ -11,6 +11,11 @@
 #include "SystemDefines.hpp"
 
 constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5; // N cycles of telemetry sends for each flash log
+constexpr uint8_t NUM_TICKS_PER_FULL_LOG = 40; // N cycles of telemetry log sequences for Barometer and IMU to be sampled
+
+enum TELEMETRY_COMMANDS {
+	TELEMETRY_DEBUG_PRINT_LOGMS
+};
 
 class TelemetryTask : public Task
 {
@@ -44,9 +49,11 @@ private:
     TelemetryTask& operator=(const TelemetryTask&);            // Prevent assignment
 
     // Private Variables
-    uint32_t loggingDelayMs;
+    uint32_t loggingDelayMs; // for pressure transducer
 
     uint8_t numNonFlashLogs_;
+
+    uint32_t lastFullLogTick;
 };
 
 #endif    // SOAR_TELEMETRYTASK_HPP_

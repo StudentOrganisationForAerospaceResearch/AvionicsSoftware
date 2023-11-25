@@ -23,6 +23,7 @@ TelemetryTask::TelemetryTask() : Task(TELEMETRY_TASK_QUEUE_DEPTH_OBJS)
 {
     loggingDelayMs = TELEMETRY_DEFAULT_LOGGING_RATE_MS;
     numNonFlashLogs_ = 0;
+    lastFullLogTick = 0;
 }
 
 /**
@@ -71,7 +72,13 @@ void TelemetryTask::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case TELEMETRY_CHANGE_PERIOD: {
         loggingDelayMs = (uint16_t)cm.GetTaskCommand();
-	break;
+        break;
+    case TASK_SPECIFIC_COMMAND: {
+    	if(cm.GetTaskCommand() == TELEMETRY_DEBUG_PRINT_LOGMS) {
+    		SOAR_PRINT("Logging rate is currently %dms\n", loggingDelayMs);
+    	}
+    	break;
+    }
     }
     default:
         SOAR_PRINT("TelemetryTask - Received Unsupported Command {%d}\n", cm.GetCommand());
@@ -88,20 +95,37 @@ void TelemetryTask::HandleCommand(Command& cm)
  */
 void TelemetryTask::RunLogSequence()
 {
-    // Flight State
-    FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
+	uint32_t thistick = HAL_GetTick();
+	if(thistick-lastFullLogTick>=NUM_TICKS_PER_FULL_LOG) {
+		lastFullLogTick = thistick;
+		// Flight State
+		FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
 
-    // GPIO
-	SendVentDrainStatus();
+		// GPIO
+		SendVentDrainStatus();
 
-	// Other Sensors
-	RequestSample();
-	RequestTransmit();
+		// Other Sensors
+		RequestSample();
+		RequestTransmit();
 
-	// Request Log to Flash
-	if(++numNonFlashLogs_ >= NUM_SENT_LOGS_PER_FLASH_LOG) {
-	    RequestLogToFlash();
-	    numNonFlashLogs_ = 0;
+
+		// Request Log to Flash
+		if(++numNonFlashLogs_ >= NUM_SENT_LOGS_PER_FLASH_LOG) {
+			RequestLogToFlash();
+			numNonFlashLogs_ = 0;
+		}
+	}
+	else {
+	    // Just request from pressure-transducer
+//	    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+
+	    // Then log to flash/transmit
+//	    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+
+	    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_SAMPLE_TRANSMIT_FLASH));
+
+	    //SOAR_PRINT("hi\n");
+
 	}
 }
 
@@ -113,11 +137,13 @@ void TelemetryTask::RequestSample()
     // Battery
     BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
 
-    // Barometer
-    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
 
-    // IMU
-    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
+	// Barometer
+	BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
+
+	// IMU
+	IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
+
 
     // Pressure Transducer
     PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
@@ -131,11 +157,11 @@ void TelemetryTask::RequestTransmit()
     // Battery
     BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
 
-    // Barometer
-    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
+	// Barometer
+	BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
 
-    // IMU
-    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
+	// IMU
+	IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Pressure Transducer
     PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));

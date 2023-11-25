@@ -18,6 +18,8 @@ enum PT_TASK_COMMANDS {
     PT_REQUEST_NEW_SAMPLE,// Get a new pressure transducer sample, task will be blocked for polling time
     PT_REQUEST_TRANSMIT,    // Send the current pressure transducer data over the Radio
     PT_REQUEST_DEBUG,        // Send the current pressure transducer data over the Debug UART
+	PT_REQUEST_FLASH_LOG,	// Log current pressure transducer data to flash
+	PT_REQUEST_SAMPLE_TRANSMIT_FLASH // Get sample, transmit, and log to flash
 };
 
 /* Class ------------------------------------------------------------------*/
@@ -42,6 +44,7 @@ protected:
     // Sampling
     void SamplePressureTransducer();
     void TransmitProtocolPressureData();
+    void LogPressure();
 
     // Data
     PressureTransducerData* data;

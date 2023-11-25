@@ -28,6 +28,7 @@ FlashTask::FlashTask() : Task(FLASH_TASK_QUEUE_DEPTH_OBJS) {
 	logsInLastSecond = 0;
 	lastBaroData = {0};
 	lastIMUData = {0};
+	lastPTC = {0};
 }
 
 /**
@@ -294,6 +295,7 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 	enum LogType {
 		BAROMETER,
 		ACCELGYROMAG,
+		PTC,
 		OTHER
 	};
 	LogType thisLogType;
@@ -305,18 +307,21 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 	case sizeof(AccelGyroMagnetismData):
 		thisLogType = ACCELGYROMAG;
 		break;
+	case sizeof(PressureTransducerFlashLogData):
+		thisLogType = PTC;
+		break;
 	default:
 		thisLogType = OTHER;
 		//SOAR_PRINT("Received other log type!\n");
 	}
 
-	if(thisLogType == BAROMETER or thisLogType == ACCELGYROMAG) {
+	if(thisLogType == BAROMETER or thisLogType == ACCELGYROMAG or thisLogType == PTC) {
 		useextraheaderbyte = true;
 	} else {
 		useextraheaderbyte = false;
 	}
 
- // VERY WIP!!!!!!!!!!!!
+
 
 #define min(a,b) ((a)>(b) ? (b):(a))
 
@@ -335,6 +340,9 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 	} else if (thisLogType == ACCELGYROMAG) {
 		lastData = (const int32_t*)(&lastIMUData.accelX_);
 		numfields = sizeof(AccelGyroMagnetismData)/sizeof(int32_t);
+	} else if (thisLogType == PTC) {
+		lastData = (const int32_t*)(&lastPTC.pressure);
+		numfields = sizeof(PressureTransducerFlashLogData)/sizeof(int32_t);
 	}
 
 
@@ -408,12 +416,14 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 	}
 
 
-	if (thisLogType == BAROMETER and (!extraheaderbyte or true)) {
-		memcpy(&lastBaroData,datain,size); // WIP
+	if (thisLogType == BAROMETER) {
+		memcpy(&lastBaroData,datain,size);
 
-	} else if (thisLogType == ACCELGYROMAG and (!extraheaderbyte or true)) {
-		memcpy(&lastIMUData,datain,size); // WIP
+	} else if (thisLogType == ACCELGYROMAG) {
+		memcpy(&lastIMUData,datain,size);
 
+	} else if(thisLogType == PTC) {
+		memcpy(&lastPTC,datain,size);
 	}
 
 	//auto endtime = HAL_GetTick();
@@ -438,6 +448,7 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 	enum LogType {
 		BAROMETER,
 		ACCELGYROMAG,
+		PTC,
 		OTHER
 	};
 
@@ -445,13 +456,14 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 	//W25qxx_ReadPage(pagebuf, readOffsetBytes/256, 0, 256);
 	BarometerData lastBaroRead = {0};
 	AccelGyroMagnetismData lastIMURead = {0};
+	PressureTransducerFlashLogData lastPTCRead = {0};
 	const int32_t* lastRead = nullptr;
 
 	do {
 
 		uint8_t thisLogSize = 0;
 		W25qxx_ReadByte(&thisLogSize, readOffsetBytes);
-		SOAR_PRINT("yeah! %d\n", thisLogSize);
+		SOAR_PRINT("Log Size %d\n", thisLogSize);
 		readOffsetBytes++;
 		LogType thistype = OTHER;
 
@@ -465,25 +477,31 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 			thistype = ACCELGYROMAG;
 			lastRead = (const int32_t*)(&lastIMURead);
 			break;
+		case sizeof(PressureTransducerFlashLogData):
+			thistype = PTC;
+			lastRead = (const int32_t*)(&lastPTCRead);
+			break;
 		default:
 			thistype=OTHER;
+			SOAR_PRINT("Encountered unknown log type while dumping!\n");
 			return false;
 			break;
 		}
-		size_t thisDataSize = thisLogSize / sizeof(int32_t);
-		if(thistype == BAROMETER or thistype == ACCELGYROMAG) {
+
+		size_t thisNumFields = thisLogSize / sizeof(int32_t);
+		bool extraHeaderExists = thistype==ACCELGYROMAG or thistype == BAROMETER or thistype == PTC;
+		if(extraHeaderExists) { // uses extra header
 			thisLogSize++;
 		}
 
 		W25qxx_ReadBytes(logbuf, readOffsetBytes, thisLogSize);
-		//readOffsetBytes += thisLogSize;
-
-
 
 		int32_t* startData = nullptr;
 		uint8_t extraheaderbyte = logbuf[0];
 		BarometerData thisBaroRead = {0};
 		AccelGyroMagnetismData thisIMURead = {0};
+		PressureTransducerFlashLogData thisPTCRead = {0};
+
 		switch(thistype) {
 		case BAROMETER:
 			startData = (int32_t*)&thisBaroRead;
@@ -491,23 +509,26 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 		case ACCELGYROMAG:
 			startData = (int32_t*)&thisIMURead;
 			break;
+		case PTC:
+			startData = (int32_t*)&thisPTCRead;
+			break;
 		default:
 			break;
 		}
 
 
 
-			int i = 1;
-			for(unsigned int headerbit = 0; headerbit < thisDataSize; headerbit++) {
+			int i = extraHeaderExists;
+			for(unsigned int field = 0; field < thisNumFields; field++) {
 
-				if(extraheaderbyte & (1<<headerbit)) {
+				if((extraheaderbyte & (1<<field)) && (extraHeaderExists)) {
 					int32_t lastFieldValue;
-					memcpy(&lastFieldValue,lastRead+headerbit,sizeof(int32_t));
+					memcpy(&lastFieldValue,lastRead+field,sizeof(int32_t));
 					int32_t currentFieldValue = (int8_t)logbuf[i]+lastFieldValue;
-					memcpy(startData+headerbit,&currentFieldValue,sizeof(int32_t));
+					memcpy(startData+field,&currentFieldValue,sizeof(int32_t));
 					i++;
 				} else {
-					memcpy(startData+headerbit,logbuf+i,sizeof(int32_t));
+					memcpy(startData+field,logbuf+i,sizeof(int32_t));
 					i += sizeof(int32_t);
 				}
 			}
@@ -534,6 +555,12 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 			lastIMURead = thisIMURead;
 
 			break;
+			case PTC:
+
+				SOAR_PRINT("ExtraHeader: %x\nPTC Pressure: %d, Time: %d\n",extraheaderbyte,thisPTCRead.pressure,thisPTCRead.time);
+				readOffsetBytes += i;
+				lastPTCRead = thisPTCRead;
+				break;
 			default:
 
 			SOAR_PRINT("unknown!! uh oh!\n");

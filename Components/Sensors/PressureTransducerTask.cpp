@@ -18,6 +18,7 @@
 #include "main.h"
 #include "Data.h"
 #include "DebugTask.hpp"
+#include "FlashTask.hpp"
 #include "Task.hpp"
 #include <time.h>
 #include "DMBProtocolTask.hpp"
@@ -119,11 +120,20 @@ void PressureTransducerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case PT_REQUEST_TRANSMIT:
     	TransmitProtocolPressureData();
+    	LogPressure();
         break;
     case PT_REQUEST_DEBUG:
         SOAR_PRINT("|PT_TASK| Pressure (PSI): %d.%d, MCU Timestamp: %u\r\n", data->pressure_1 / 1000, data->pressure_1 % 1000,
         timestampPT);
         break;
+    case PT_REQUEST_FLASH_LOG:
+    	LogPressure();
+    	break;
+    case PT_REQUEST_SAMPLE_TRANSMIT_FLASH:
+    	SamplePressureTransducer();
+    	//TransmitProtocolPressureData(); // uh oh
+    	LogPressure();
+    	break;
     default:
         SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
         break;
@@ -142,6 +152,8 @@ void ADC_Select_CH9 (void)
 	  {
 	    Error_Handler();
 	  }
+
+
 }
 
 /**
@@ -150,6 +162,8 @@ void ADC_Select_CH9 (void)
  */
 void PressureTransducerTask::SamplePressureTransducer()
 {
+	// maybe use dma? also do we need to select ch9 each time? idk
+//	auto starttime = TICKS_TO_MS(HAL_GetTick());
 	static const int PT_VOLTAGE_ADC_POLL_TIMEOUT = 50;
 	static const double PRESSURE_SCALE = 1.5220883534136546; // Value to scale to original voltage value
 	double adcVal[1] = {};
@@ -162,13 +176,25 @@ void PressureTransducerTask::SamplePressureTransducer()
 	if(HAL_ADC_PollForConversion(&hadc1, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK) { //Check if conversion is completed
 		adcVal[0] = HAL_ADC_GetValue(&hadc1); // Get ADC Value
 		HAL_ADC_Stop(&hadc1);
-		}
+	}
 	vi = ((3.3/4095) * (adcVal[0])); // Converts 12 bit ADC value into voltage
 	pressureTransducerValue1 = (250 * (vi * PRESSURE_SCALE) - 125) * 1000; // Multiply by 1000 to keep decimal places
 	data->pressure_1 = (int32_t) pressureTransducerValue1; // Pressure in PSI
+//	auto endtime = TICKS_TO_MS(HAL_GetTick());
+//	SOAR_PRINT("PTC %dms\n",endtime-starttime);
 //	SOAR_PRINT("The pressure is : %d \n\n", (int32_t) pressureTransducerValue1);
+//	SOAR_PRINT("%.2f\n",vi);
 }
 
+void PressureTransducerTask::LogPressure()
+{
+	PressureTransducerFlashLogData flogdata;
+	flogdata.pressure=data->pressure_1;
+	flogdata.time=TICKS_TO_MS(HAL_GetTick());
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    flashCommand.CopyDataToCommand((uint8_t*)&flogdata.pressure, sizeof(flogdata));
+    FlashTask::Inst().GetEventQueue()->Send(flashCommand);
+}
 /**
  * @brief Transmits a protocol barometer data sample
  */

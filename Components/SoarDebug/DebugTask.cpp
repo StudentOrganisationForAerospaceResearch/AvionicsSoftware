@@ -140,7 +140,12 @@ void DebugTask::HandleDebugMessage(const char* msg)
         SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
         SOAR_PRINT("Lowest Ever Heap Size\t: %d Bytes\n", xPortGetMinimumEverFreeHeapSize());
         SOAR_PRINT("Debug Task Runtime  \t: %d ms\n\n", TICKS_TO_MS(xTaskGetTickCount()));
-    } else if (strncmp(msg, "logms " ,6) == 0) {
+    } else if (strcmp(msg,"logms get")==0) {
+    	TelemetryTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND,TELEMETRY_DEBUG_PRINT_LOGMS));
+
+    }
+
+    else if (strncmp(msg, "logms " ,6) == 0) {
     	int32_t newperiod = ExtractIntParameter(msg, 6);
     	TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, newperiod));
     }
