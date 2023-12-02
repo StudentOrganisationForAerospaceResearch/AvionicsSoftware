@@ -280,7 +280,6 @@ bool SimpleSectorStorage<T>::IsCRCValid(Data& data)
     uint8_t* byteData = reinterpret_cast<uint8_t*>(&data);
 
     uint16_t crc = SSS_CalculateChecksum(byteData, sizeof(Data) - sizeof(uint16_t));
-
     return (crc == data.crc);
 }
 

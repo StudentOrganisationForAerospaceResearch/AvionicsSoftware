@@ -29,6 +29,9 @@ FlashTask::FlashTask() : Task(FLASH_TASK_QUEUE_DEPTH_OBJS) {
 	lastBaroData = {0};
 	lastIMUData = {0};
 	lastPTC = {0};
+	currentPageStorageByte = 0;
+	currentPageStoragePage = 0;
+	currentPageStorageSector = 0;
 }
 
 /**
@@ -64,8 +67,41 @@ void FlashTask::Run(void *pvParams) {
 	// Initialize the offsets storage
 	offsetsStorage_ = new SimpleDualSectorStorage<Offsets>(&SPIFlash::Inst(),
 			SPI_FLASH_OFFSETS_SDSS_START_ADDR);
-	offsetsStorage_->Read(currentOffsets_);
-	SPIFlash::Inst().Erase(SPI_FLASH_LOGGING_STORAGE_START_ADDR);
+
+
+
+
+	SPIFlash::Inst().Erase(SPI_FLASH_LOGGING_STORAGE_START_ADDR); // only erases first sector for testing
+
+
+	{ // Recover last written sensor page
+		uint32_t highestPage = 0;
+		for(uint32_t sec = 0; sec < 2; sec++) {
+			for(uint32_t page = 0; page < 16; page++) {
+				for(uint32_t byte = 0; byte < 256-sizeof(currentLogPage)*2; byte+=sizeof(currentLogPage)*2) {
+					uint32_t pageread1;
+					uint32_t pageread2;
+					SPIFlash::Inst().Read(SPI_FLASH_PAGE_OFFSET_STORAGE + sec*w25qxx.SectorSize + page*w25qxx.PageSize + byte, (uint8_t*)(&pageread1), sizeof(pageread1));
+					SPIFlash::Inst().Read(SPI_FLASH_PAGE_OFFSET_STORAGE + sec*w25qxx.SectorSize + page*w25qxx.PageSize + byte + sizeof(currentLogPage), (uint8_t*)(&pageread2), sizeof(pageread2));
+					if(pageread1 == 0xffffffff or pageread2 == 0xffffffff) {
+						continue;
+					}
+					if(pageread1 == pageread2) {
+						if(pageread1 > highestPage) {
+							highestPage = pageread1;
+						}
+					} else {
+						SOAR_PRINT("Encountered corrupt lastpage data\n");
+					}
+				}
+			}
+		}
+
+		SOAR_PRINT("The last written page was %d\n",highestPage);
+
+		W25qxx_EraseSector(SPI_FLASH_PAGE_OFFSET_STORAGE/w25qxx.SectorSize);
+		W25qxx_EraseSector(SPI_FLASH_PAGE_OFFSET_STORAGE/w25qxx.SectorSize+1);
+	}
 
 	while (1) {
 		//Process any commands in the queue
@@ -214,9 +250,8 @@ void FlashTask::HandleCommand(Command &cm) {
 			break;
 		}
 
-		//break; // dont log from sensors for now
 		AddLog(cm.GetDataPointer(), cm.GetDataSize());
-		//WriteLogDataToFlash(cm.GetDataPointer(), cm.GetDataSize()); // replace with AddLog when ready
+		//WriteLogDataToFlash(cm.GetDataPointer(), cm.GetDataSize());
 		break;
 	}
 
@@ -231,6 +266,7 @@ void FlashTask::HandleCommand(Command &cm) {
 
 /**
  * @brief writes data to flash with the size of the data written as the header, increases offset by size + 1 to account for size, currently only handles size < 255
+ * does not use new page format
  */
 void FlashTask::WriteLogDataToFlash(uint8_t *data, uint16_t size) {
 	uint8_t buff[size + 1];
@@ -281,6 +317,9 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 	case 44:
 			SOAR_PRINT("GPS!");
 	break;
+	case 8:
+		SOAR_PRINT("PTC!");
+		break;
 	default:
 		SOAR_PRINT("idk what this is");
 		break;
@@ -372,8 +411,6 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 			}
 		}
 
-		//memcpy(&lastBaroData,datain,size);
-
 		reducedLog[1] = extraheaderbyte;
 
 	} else {
@@ -391,7 +428,7 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 	offsetWithinBuf += bytesToWrite;
 	bytesToWrite = j - bytesToWrite;
 
-	if(offsetWithinBuf == 0) {
+	if(offsetWithinBuf == 0) { // just filled the buf
 
 		uint32_t writestarttime;
 		if(writebuftimemsg) {
@@ -405,6 +442,31 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 		}
 		currbuf = (currbuf == logbufA) ? (logbufB) : (logbufA);
 		currentLogPage++;
+
+		// Logs two currentLogPages immediately after each other for offset recovery,
+		// the second one acts as a checksum to the first
+		uint8_t offsetStorageData[sizeof(currentLogPage)*2];
+		memcpy(offsetStorageData,(const uint8_t*)&currentLogPage,sizeof(currentLogPage));
+		memcpy(offsetStorageData+sizeof(currentLogPage),(const uint8_t*)&currentLogPage,sizeof(currentLogPage));
+
+		SPIFlash::Inst().Write(SPI_FLASH_PAGE_OFFSET_STORAGE+currentPageStorageSector*w25qxx.SectorSize+currentPageStoragePage*w25qxx.PageSize + currentPageStorageByte,
+				&(offsetStorageData[0]), sizeof(offsetStorageData));
+
+		currentPageStorageByte+=sizeof(offsetStorageData);
+
+		if(currentPageStorageByte >= 256-sizeof(offsetStorageData)) {
+			currentPageStorageByte = 0;
+			currentPageStoragePage++;
+		}
+
+		if(currentPageStoragePage >= 16) {
+			currentPageStorageSector = !currentPageStorageSector;
+			currentPageStoragePage = 0;
+			// erase the new sector to prepare
+			W25qxx_EraseSector(SPI_FLASH_PAGE_OFFSET_STORAGE/w25qxx.SectorSize+currentPageStorageSector);
+
+		}
+
 	}
 
 
@@ -432,15 +494,19 @@ void FlashTask::AddLog(const uint8_t *datain, uint32_t size) {
 }
 
 /**
- * @brief currently just writes. nothing fancy :) help
+ * @brief Writes data to the beginning of a specified page
  */
 void FlashTask::WriteLogDataToFlashPageAligned(uint8_t *data, uint16_t size,
 		uint32_t pageAddr) {
 
-//    SPIFlash::Inst().Write(byteAddr, data, size);
-	//W25qxx_WritePage(data, pageAddr, 0, size);
-	W25qxx_WritePageScary(data, pageAddr);
+	W25qxx_WritePage(data, pageAddr, 0, size);
+	//W25qxx_WritePageScary(data, pageAddr);
 }
+
+/**
+ * @brief Prints through UART the first N logs in flash
+ *
+ */
 
 bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 
@@ -453,7 +519,6 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 	};
 
 	uint32_t readOffsetBytes = SPI_FLASH_LOGGING_STORAGE_START_ADDR;
-	//W25qxx_ReadPage(pagebuf, readOffsetBytes/256, 0, 256);
 	BarometerData lastBaroRead = {0};
 	AccelGyroMagnetismData lastIMURead = {0};
 	PressureTransducerFlashLogData lastPTCRead = {0};
@@ -490,7 +555,7 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 
 		size_t thisNumFields = thisLogSize / sizeof(int32_t);
 		bool extraHeaderExists = thistype==ACCELGYROMAG or thistype == BAROMETER or thistype == PTC;
-		if(extraHeaderExists) { // uses extra header
+		if(extraHeaderExists) { // these log types use extra header
 			thisLogSize++;
 		}
 
@@ -498,19 +563,25 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 
 		int32_t* startData = nullptr;
 		uint8_t extraheaderbyte = logbuf[0];
-		BarometerData thisBaroRead = {0};
-		AccelGyroMagnetismData thisIMURead = {0};
-		PressureTransducerFlashLogData thisPTCRead = {0};
+		union {
+			BarometerData thisBaroRead;
+			AccelGyroMagnetismData thisIMURead;
+			PressureTransducerFlashLogData thisPTCRead;
+		} thisRead;
+
+		//BarometerData thisBaroRead = {0};
+		//AccelGyroMagnetismData thisIMURead = {0};
+		//PressureTransducerFlashLogData thisPTCRead = {0};
 
 		switch(thistype) {
 		case BAROMETER:
-			startData = (int32_t*)&thisBaroRead;
+			startData = (int32_t*)&(thisRead.thisBaroRead);
 			break;
 		case ACCELGYROMAG:
-			startData = (int32_t*)&thisIMURead;
+			startData = (int32_t*)&(thisRead.thisIMURead);
 			break;
 		case PTC:
-			startData = (int32_t*)&thisPTCRead;
+			startData = (int32_t*)&(thisRead.thisPTCRead);
 			break;
 		default:
 			break;
@@ -518,55 +589,55 @@ bool FlashTask::DebugReadLogs(uint32_t numOfLogs) {
 
 
 
-			int i = extraHeaderExists;
-			for(unsigned int field = 0; field < thisNumFields; field++) {
+		int i = extraHeaderExists;
+		for(unsigned int field = 0; field < thisNumFields; field++) {
 
-				if((extraheaderbyte & (1<<field)) && (extraHeaderExists)) {
-					int32_t lastFieldValue;
-					memcpy(&lastFieldValue,lastRead+field,sizeof(int32_t));
-					int32_t currentFieldValue = (int8_t)logbuf[i]+lastFieldValue;
-					memcpy(startData+field,&currentFieldValue,sizeof(int32_t));
-					i++;
-				} else {
-					memcpy(startData+field,logbuf+i,sizeof(int32_t));
-					i += sizeof(int32_t);
-				}
+			if((extraheaderbyte & (1<<field)) && (extraHeaderExists)) {
+				int32_t lastFieldValue;
+				memcpy(&lastFieldValue,lastRead+field,sizeof(int32_t));
+				int32_t currentFieldValue = (int8_t)logbuf[i]+lastFieldValue;
+				memcpy(startData+field,&currentFieldValue,sizeof(int32_t));
+				i++;
+			} else {
+				memcpy(startData+field,logbuf+i,sizeof(int32_t));
+				i += sizeof(int32_t);
 			}
+		}
 
 
-			switch(thistype) {
-			case BAROMETER:
+		switch(thistype) {
+		case BAROMETER:
 
-			SOAR_PRINT("ExtraHeader: %x\nPressure: %d\nTemp: %d\nTime: %d\n\n",
-					extraheaderbyte,thisBaroRead.pressure_, thisBaroRead.temperature_,
-					thisBaroRead.time);
+		SOAR_PRINT("ExtraHeader: %x\nPressure: %d\nTemp: %d\nTime: %d\n\n",
+				extraheaderbyte,thisRead.thisBaroRead.pressure_, thisRead.thisBaroRead.temperature_,
+				thisRead.thisBaroRead.time);
+		readOffsetBytes += i;
+		lastBaroRead = thisRead.thisBaroRead;
+		break;
+		case ACCELGYROMAG:
+
+		SOAR_PRINT(
+				"ExtraHeader: %x\nAccel: %d %d %d\nGyro: %d %d %d\nMagnet: %d %d %d\nTime: %d\n\n",
+				extraheaderbyte, thisRead.thisIMURead.accelX_, thisRead.thisIMURead.accelY_, thisRead.thisIMURead.accelZ_,
+				thisRead.thisIMURead.gyroX_, thisRead.thisIMURead.gyroY_, thisRead.thisIMURead.gyroZ_,
+				thisRead.thisIMURead.magnetoX_, thisRead.thisIMURead.magnetoY_, thisRead.thisIMURead.magnetoZ_,
+				thisRead.thisIMURead.time);
+		readOffsetBytes += i;
+		lastIMURead = thisRead.thisIMURead;
+
+		break;
+		case PTC:
+
+			SOAR_PRINT("ExtraHeader: %x\nPTC Pressure: %d, Time: %d\n\n",extraheaderbyte,thisRead.thisPTCRead.pressure,thisRead.thisPTCRead.time);
 			readOffsetBytes += i;
-			lastBaroRead = thisBaroRead;
+			lastPTCRead = thisRead.thisPTCRead;
 			break;
-			case ACCELGYROMAG:
+		default:
 
-			SOAR_PRINT(
-					"ExtraHeader: %x\nAccel: %d %d %d\nGyro: %d %d %d\nMagnet: %d %d %d\nTime: %d\n\n",
-					extraheaderbyte, thisIMURead.accelX_, thisIMURead.accelY_, thisIMURead.accelZ_,
-					thisIMURead.gyroX_, thisIMURead.gyroY_, thisIMURead.gyroZ_,
-					thisIMURead.magnetoX_, thisIMURead.magnetoY_, thisIMURead.magnetoZ_,
-					thisIMURead.time);
-			readOffsetBytes += i;
-			lastIMURead = thisIMURead;
-
-			break;
-			case PTC:
-
-				SOAR_PRINT("ExtraHeader: %x\nPTC Pressure: %d, Time: %d\n",extraheaderbyte,thisPTCRead.pressure,thisPTCRead.time);
-				readOffsetBytes += i;
-				lastPTCRead = thisPTCRead;
-				break;
-			default:
-
-			SOAR_PRINT("unknown!! uh oh!\n");
+		SOAR_PRINT("unknown!! uh oh!\n");
 
 
-			}
+		}
 
 		numOfLogs--;
 
@@ -614,8 +685,3 @@ bool FlashTask::ReadLogDataFromFlash() {
 	}
 	return res;
 }
-
-//void FlashTask::benchmarkcallback(TimerHandle_t x) {
-//SOAR_PRINT("timer\n");
-//}
-

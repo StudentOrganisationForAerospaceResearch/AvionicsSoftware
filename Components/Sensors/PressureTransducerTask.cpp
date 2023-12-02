@@ -41,6 +41,7 @@
 PressureTransducerTask::PressureTransducerTask() : Task(TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS)
 {
     data = (PressureTransducerData*)soar_malloc(sizeof(PressureTransducerData));
+    numLogsSinceTransmit = 0;
 }
 
 /**
@@ -131,7 +132,12 @@ void PressureTransducerTask::HandleRequestCommand(uint16_t taskCommand)
     	break;
     case PT_REQUEST_SAMPLE_TRANSMIT_FLASH:
     	SamplePressureTransducer();
-    	//TransmitProtocolPressureData(); // uh oh
+    	if(numLogsSinceTransmit > 50) {
+    		TransmitProtocolPressureData(); // uh oh
+    		numLogsSinceTransmit = 0;
+    	}
+    	numLogsSinceTransmit++;
+
     	LogPressure();
     	break;
     default:

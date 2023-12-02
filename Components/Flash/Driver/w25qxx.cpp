@@ -641,50 +641,6 @@ void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes)
 	w25qxx.Lock = 0;
 }
 
-void W25qxx_WritePageScary(uint8_t *pBuffer, uint32_t Page_Address)
-{
-	while (w25qxx.Lock == 1)
-		W25qxx_Delay(1);
-	w25qxx.Lock = 1;
-
-#if (_W25QXX_DEBUG == 1)
-	SOAR_PRINT("w25qxx WritePage:%d, Offset:%d ,Writes %d Bytes, begin...\r\n", Page_Address, OffsetInByte, NumByteToWrite_up_to_PageSize);
-	W25qxx_Delay(100);
-	uint32_t StartTime = HAL_GetTick();
-#endif
-	W25qxx_WaitForWriteEnd();
-	W25qxx_WriteEnable();
-	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_RESET);
-	Page_Address = (Page_Address * w25qxx.PageSize);
-
-	W25qxx_Spi(0x12);
-	W25qxx_Spi((Page_Address & 0xFF000000) >> 24);
-
-
-	W25qxx_Spi((Page_Address & 0xFF0000) >> 16);
-	W25qxx_Spi((Page_Address & 0xFF00) >> 8);
-	W25qxx_Spi(Page_Address & 0xFF);
-	HAL_SPI_Transmit(&_W25QXX_SPI, pBuffer, 256, 100);
-	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
-	//W25qxx_WaitForWriteEnd();
-#if (_W25QXX_DEBUG == 1)
-	StartTime = HAL_GetTick() - StartTime;
-	for (uint32_t i = 0; i < NumByteToWrite_up_to_PageSize; i++)
-	{
-		if ((i % 8 == 0) && (i > 2))
-		{
-			SOAR_PRINT("\r\n");
-			W25qxx_Delay(10);
-		}
-		SOAR_PRINT("0x%02X,", pBuffer[i]);
-	}
-	SOAR_PRINT("\r\n");
-	SOAR_PRINT("w25qxx WritePage done after %d ms\r\n", StartTime);
-	W25qxx_Delay(100);
-#endif
-	W25qxx_Delay(1);
-	w25qxx.Lock = 0;
-}
 
 //###################################################################################################################
 void W25qxx_WritePage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_PageSize)

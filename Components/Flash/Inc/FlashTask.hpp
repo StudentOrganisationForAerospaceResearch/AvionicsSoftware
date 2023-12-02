@@ -106,6 +106,10 @@ private:
     PressureTransducerFlashLogData lastPTC;
 //    GPSDataFlashLog lastGPSFlashData;
 
+    uint8_t currentPageStorageByte; // from 0 to pagesize in increments of 8
+    uint8_t currentPageStoragePage; // from 0 to 15
+    uint8_t currentPageStorageSector; // either 0 or 1
+
 
 
 

@@ -49,6 +49,7 @@ protected:
     // Data
     PressureTransducerData* data;
     uint32_t timestampPT;
+    uint32_t numLogsSinceTransmit;
 
 private:
     PressureTransducerTask();                                        // Private constructor

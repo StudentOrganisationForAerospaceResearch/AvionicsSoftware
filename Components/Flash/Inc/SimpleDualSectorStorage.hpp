@@ -195,6 +195,7 @@ template<typename T>
 bool SimpleDualSectorStorage<T>::Write(T& data) {
     // First read the current valid data
     Data currentData;
+    currentData.seqN = 0; // test???
     bool readSuccess = Read(currentData.data);
 
     // Run any pending operations
