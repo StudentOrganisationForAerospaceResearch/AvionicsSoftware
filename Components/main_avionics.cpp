@@ -5,31 +5,31 @@
     while having a clean interface for development.
  ******************************************************************************
 */
-#include <cstdarg>        // Support for va_start and va_end
-#include <cstring>        // Support for strlen and strcpy
+#include <cstdarg>  // Support for va_start and va_end
+#include <cstring>  // Support for strlen and strcpy
 
+#include "Command.hpp"
+#include "Mutex.hpp"
 #include "SystemDefines.hpp"
+#include "UARTDriver.hpp"
 #include "main_avionics.hpp"
 #include "stm32f4xx_hal_uart.h"
-#include "Mutex.hpp"
-#include "Command.hpp"
-#include "UARTDriver.hpp"
 
 // Tasks
-#include "UARTTask.hpp"
-#include "FlightTask.hpp"
-#include "FlashTask.hpp"
-#include "DebugTask.hpp"
 #include "BarometerTask.hpp"
-#include "IMUTask.hpp"
+#include "BatteryTask.hpp"
 #include "DMBProtocolTask.hpp"
-#include "WatchdogTask.hpp"
+#include "DebugTask.hpp"
+#include "FlashTask.hpp"
+#include "FlightTask.hpp"
+#include "GPSTask.hpp"
 #include "HDITask.hpp"
-#include "TelemetryTask.hpp"
+#include "IMUTask.hpp"
 #include "PBBRxProtocolTask.hpp"
 #include "PressureTransducerTask.hpp"
-#include "BatteryTask.hpp"
-#include "GPSTask.hpp"
+#include "TelemetryTask.hpp"
+#include "UARTTask.hpp"
+#include "WatchdogTask.hpp"
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
@@ -57,10 +57,10 @@ void run_main() {
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
     SOAR_PRINT("\n-- SOAR AVIONICS --\n");
-    SOAR_PRINT("System Reset Reason: [TODO]\n"); //TODO: If we want a system reset reason we need to save it on flash
+    SOAR_PRINT("System Reset Reason: [TODO]\n");  //TODO: If we want a system reset reason we need to save it on flash
     SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
     SOAR_PRINT("Lowest Ever Heap Size: %d Bytes\n\n", xPortGetMinimumEverFreeHeapSize());
-    
+
     // Start the Scheduler
     // Guidelines:
     // - Be CAREFUL with race conditions after osKernelStart
@@ -70,8 +70,7 @@ void run_main() {
     // Should never reach here
     SOAR_ASSERT(false, "osKernelStart() failed");
 
-    while (1)
-    {
+    while (1) {
         osDelay(100);
     }
 }
@@ -79,11 +78,9 @@ void run_main() {
 /**
  * @brief Called by RunDefaultTask inside main.cpp, if using task implement here and change the location for user code in main.cpp.
 */
-void run_StartDefaultTask()
-{
+void run_StartDefaultTask() {
     SOAR_ASSERT(false, "Default task is not used");
 }
-
 
 /* System Functions ------------------------------------------------------------*/
 
@@ -92,8 +89,7 @@ void run_StartDefaultTask()
 * @param str String to print with printf style formatting
 * @param ... Additional arguments to print if assertion fails, in same format as printf
 */
-void print(const char* str, ...)
-{
+void print(const char* str, ...) {
     //Try to take the VA list mutex
     if (Global::vaListMutex.Lock(DEBUG_TAKE_MAX_TIME_MS)) {
         // If we have a message, and can use VA list, extract the string into a new buffer, and null terminate it
@@ -110,16 +106,14 @@ void print(const char* str, ...)
         Global::vaListMutex.Unlock();
 
         //Generate a command
-        Command cmd(DATA_COMMAND, (uint16_t)UART_TASK_COMMAND_SEND_DEBUG); // Set the UART channel to send data on
-        
+        Command cmd(DATA_COMMAND, (uint16_t)UART_TASK_COMMAND_SEND_DEBUG);  // Set the UART channel to send data on
+
         //Copy data into the command
         cmd.CopyDataToCommand(str_buffer, buflen);
-            
+
         //Send this packet off to the UART Task
         UARTTask::Inst().GetEventQueue()->Send(cmd);
-    }
-    else
-    {
+    } else {
         //TODO: Print out that we could not acquire the VA list mutex
         SOAR_ASSERT(false, "Could not acquire VA_LIST mutex");
     }
@@ -149,17 +143,19 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
         // We have the mutex, we can now safely print the message
         printMessage = true;
     }
-    
+
     vTaskSuspendAll();
 
     //If we have the vaListMutex, we can safely use vsnprintf
     if (printMessage) {
         // Print out the assertion header through the supported interface, we don't have a UART task running, so we directly use HAL
         uint8_t header_buf[ASSERT_BUFFER_MAX_SIZE] = {};
-        int16_t res = snprintf(reinterpret_cast<char*>(header_buf), ASSERT_BUFFER_MAX_SIZE - 1, "\r\n\n-- ASSERTION FAILED --\r\nFile [%s] @ Line # [%d]\r\n", file, line);
+        int16_t res = snprintf(reinterpret_cast<char*>(header_buf), ASSERT_BUFFER_MAX_SIZE - 1,
+                               "\r\n\n-- ASSERTION FAILED --\r\nFile [%s] @ Line # [%d]\r\n", file, line);
         if (res < 0) {
             // If we failed to generate the header, just format the line number
-            snprintf(reinterpret_cast<char*>(header_buf), ASSERT_BUFFER_MAX_SIZE - 1, "\r\n\n-- ASSERTION FAILED --\r\nFile [PATH_TOO_LONG] @ Line # [%d]\r\n", line);
+            snprintf(reinterpret_cast<char*>(header_buf), ASSERT_BUFFER_MAX_SIZE - 1,
+                     "\r\n\n-- ASSERTION FAILED --\r\nFile [PATH_TOO_LONG] @ Line # [%d]\r\n", line);
         }
 
         // Output the header to the debug port
@@ -177,10 +173,10 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
                 DEFAULT_ASSERT_UART_DRIVER->Transmit(str_buffer, buflen);
             }
         }
-    }
-    else {
+    } else {
         //TODO: Should manually print out the assertion header
-        DEFAULT_ASSERT_UART_DRIVER->Transmit((uint8_t*)"-- ASSERTION FAILED --\r\nCould not acquire vaListMutex\r\n", 55);
+        DEFAULT_ASSERT_UART_DRIVER->Transmit((uint8_t*)"-- ASSERTION FAILED --\r\nCould not acquire vaListMutex\r\n",
+                                             55);
     }
 
     HAL_NVIC_SystemReset();
@@ -188,4 +184,3 @@ void soar_assert_debug(bool condition, const char* file, const uint16_t line, co
     // We should not reach this code, but if we do, we should resume the scheduler
     xTaskResumeAll();
 }
-

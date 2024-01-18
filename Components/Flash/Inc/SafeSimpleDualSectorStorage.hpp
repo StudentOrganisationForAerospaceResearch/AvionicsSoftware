@@ -15,8 +15,8 @@
 #include "SimpleDualSectorStorage.hpp"
 
 // Macros/Constexprs ---------------------------------------------------------------------
-constexpr uint16_t SSDSS_READ_WRITE_MUTEX_TIMEOUT_MS = 1000; // Waits up to 1 second for the mutex to be available
-constexpr uint16_t SSDSS_MAINTAIN_MUTEX_TIMEOUT_MS = 0;      // Does not wait for the mutex to be available
+constexpr uint16_t SSDSS_READ_WRITE_MUTEX_TIMEOUT_MS = 1000;  // Waits up to 1 second for the mutex to be available
+constexpr uint16_t SSDSS_MAINTAIN_MUTEX_TIMEOUT_MS = 0;       // Does not wait for the mutex to be available
 
 // Class ---------------------------------------------------------------------
 /**
@@ -29,10 +29,9 @@ constexpr uint16_t SSDSS_MAINTAIN_MUTEX_TIMEOUT_MS = 0;      // Does not wait fo
  *
  * @tparam T Type of data to store
  */
-template<typename T>
-class SafeSimpleDualSectorStorage : private SimpleDualSectorStorage<T>
-{
-public:
+template <typename T>
+class SafeSimpleDualSectorStorage : private SimpleDualSectorStorage<T> {
+   public:
     SafeSimpleDualSectorStorage(Flash* flashDriver, uint32_t startAddr);
 
     bool Read(T& data);
@@ -42,15 +41,13 @@ public:
 
     void Erase();
 
-private:
+   private:
     Mutex mutex_;
 };
 
-template<typename T>
-SafeSimpleDualSectorStorage<T>::SafeSimpleDualSectorStorage(Flash* flashDriver, uint32_t startAddr) :
-    SimpleDualSectorStorage<T>(flashDriver, startAddr)
-{
-}
+template <typename T>
+SafeSimpleDualSectorStorage<T>::SafeSimpleDualSectorStorage(Flash* flashDriver, uint32_t startAddr)
+    : SimpleDualSectorStorage<T>(flashDriver, startAddr) {}
 
 /**
  * @brief Reads data from the Safe Simple Dual Sector Storage instance.
@@ -60,9 +57,8 @@ SafeSimpleDualSectorStorage<T>::SafeSimpleDualSectorStorage(Flash* flashDriver, 
  * @return true if successful, false otherwise
  */
 
-template<typename T>
-bool SafeSimpleDualSectorStorage<T>::Read(T& data)
-{
+template <typename T>
+bool SafeSimpleDualSectorStorage<T>::Read(T& data) {
     bool success = false;
     if (mutex_.Lock(SSDSS_READ_WRITE_MUTEX_TIMEOUT_MS)) {
         success = SimpleDualSectorStorage<T>::Read(data);
@@ -78,11 +74,10 @@ bool SafeSimpleDualSectorStorage<T>::Read(T& data)
  * @param data The data to write
  * @return true if successful, false otherwise
  */
-template<typename T>
-bool SafeSimpleDualSectorStorage<T>::Write(T& data)
-{
+template <typename T>
+bool SafeSimpleDualSectorStorage<T>::Write(T& data) {
     bool success = false;
-    if(mutex_.Lock(SSDSS_READ_WRITE_MUTEX_TIMEOUT_MS)) {
+    if (mutex_.Lock(SSDSS_READ_WRITE_MUTEX_TIMEOUT_MS)) {
         success = SimpleDualSectorStorage<T>::Write(data);
         mutex_.Unlock();
     }
@@ -93,10 +88,9 @@ bool SafeSimpleDualSectorStorage<T>::Write(T& data)
  * @brief Maintains the Safe Simple Dual Sector Storage.
  *        Only runs maintain if the mutex can be instantly acquired.
  */
-template<typename T>
-void SafeSimpleDualSectorStorage<T>::Maintain()
-{
-    if(mutex_.Lock(SSDSS_MAINTAIN_MUTEX_TIMEOUT_MS)) {
+template <typename T>
+void SafeSimpleDualSectorStorage<T>::Maintain() {
+    if (mutex_.Lock(SSDSS_MAINTAIN_MUTEX_TIMEOUT_MS)) {
         SimpleDualSectorStorage<T>::Maintain();
         mutex_.Unlock();
     }
@@ -106,15 +100,12 @@ void SafeSimpleDualSectorStorage<T>::Maintain()
  * @brief Erases both sectors of the Safe Simple Dual Sector Storage.
  *        Waits forever for the mutex to be acquired.
  */
-template<typename T>
-void SafeSimpleDualSectorStorage<T>::Erase()
-{
+template <typename T>
+void SafeSimpleDualSectorStorage<T>::Erase() {
     if (mutex_.Lock()) {
         SimpleDualSectorStorage<T>::Erase();
         mutex_.Unlock();
     }
 }
 
-
-
-#endif // SOAR_SAFE_SIMPLE_DUAL_SECTOR_STORAGE_HPP
+#endif  // SOAR_SAFE_SIMPLE_DUAL_SECTOR_STORAGE_HPP
