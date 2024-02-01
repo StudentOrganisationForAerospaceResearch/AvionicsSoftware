@@ -51,6 +51,8 @@ protected:
     uint32_t timestampPT;
     uint32_t numLogsSinceTransmit;
 
+    uint32_t lastPTCProtobufTick;
+
 private:
     PressureTransducerTask();                                        // Private constructor
     PressureTransducerTask(const PressureTransducerTask&);                    // Prevent copy-construction

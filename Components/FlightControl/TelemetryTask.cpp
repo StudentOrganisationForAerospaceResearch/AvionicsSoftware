@@ -115,18 +115,8 @@ void TelemetryTask::RunLogSequence()
 			numNonFlashLogs_ = 0;
 		}
 	}
-	else {
-	    // Just request from pressure-transducer
-//	    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 
-	    // Then log to flash/transmit
-//	    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
-
-	    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_SAMPLE_TRANSMIT_FLASH));
-
-	    //SOAR_PRINT("hi\n");
-
-	}
+	PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_SAMPLE_TRANSMIT_FLASH));
 }
 
 /**
@@ -146,7 +136,7 @@ void TelemetryTask::RequestSample()
 
 
     // Pressure Transducer
-    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+    //PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 }
 
 /**
@@ -164,7 +154,7 @@ void TelemetryTask::RequestTransmit()
 	IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Pressure Transducer
-    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+    //PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
 
     // GPS
     GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));

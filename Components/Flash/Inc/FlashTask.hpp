@@ -20,18 +20,26 @@ constexpr size_t FLASH_HEAP_BUF_SIZE = 256; // The size in bytes of each buffer 
 
 enum FLASH_COMMANDS {
     WRITE_STATE_TO_FLASH = 0,
-    WRITE_DATA_TO_FLASH = 0x31,
-    DUMP_FLASH_DATA = 0x50,
-    ERASE_ALL_FLASH = 0x60,
-	GET_FLASH_OFFSET = 0x70,
-	FLASH_DUMP_AT = 0x80,
-	FLASH_DEBUGWRITE = 0x90,
-	GET_LOGS_PAST_SECOND = 0x99,
-	GET_PAGE_OFFSET = 0xa1,
-	FLASH_READ_FIRST_LOGS = 0xba,
-	TOG_BUFLOGS = 0xbb
+    WRITE_DATA_TO_FLASH = 0x01,
+    DUMP_FLASH_DATA = 0x02,
+    ERASE_ALL_FLASH = 0x03,
+	GET_FLASH_OFFSET = 0x04,
+	FLASH_DUMP_AT = 0x05,
+	FLASH_DEBUGWRITE = 0x06,
+	GET_LOGS_PAST_SECOND = 0x07,
+	GET_PAGE_OFFSET = 0x08,
+	FLASH_READ_FIRST_LOGS = 0x09,
+	TOG_BUFLOGS = 0x0A
 };
 
+enum FLASH_LOG_TYPE {
+	LTYPE_BAROMETER,
+	LTYPE_ACCELGYROMAG,
+	LTYPE_PTC,
+	LTYPE_GPS,
+	LTYPE_PBB_PRES,
+	LTYPE_OTHER
+};
 
 class FlashTask : public Task
 {
@@ -55,9 +63,9 @@ protected:
     void WriteLogDataToFlashPageAligned(uint8_t* data, uint16_t size,uint32_t pageAddr);
     bool ReadLogDataFromFlash();
     void AddLog(const uint8_t* datain, uint32_t size);
-    bool DebugReadLogs(uint32_t numOfLogs);
+    bool DumpFirstNLogs(uint32_t numOfLogs);
 
-    bool writebuftimemsg = true;
+    bool writebuftimemsg = false;
 
 
     static void benchmarkcallback(TimerHandle_t x) {
@@ -104,6 +112,9 @@ private:
     BarometerData lastBaroData;
     AccelGyroMagnetismData lastIMUData;
     PressureTransducerFlashLogData lastPTC;
+    PBBPressureFlashLogData lastPBBPres;
+
+    PBBPressureFlashLogData cachedPBBPres;
 //    GPSDataFlashLog lastGPSFlashData;
 
     uint8_t currentPageStorageByte; // from 0 to pagesize in increments of 8

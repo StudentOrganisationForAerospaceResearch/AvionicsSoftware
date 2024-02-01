@@ -12,16 +12,7 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
-/* GPS Data Flash Log Format -----------------------------------------------------------------*/
-typedef struct
-{
-    uint32_t        time_;
-    LatLongType     latitude_;
-    LatLongType     longitude_;
-    AltitudeType    antennaAltitude_;
-    AltitudeType    geoidAltitude_;
-    AltitudeType    totalAltitude_;
-} GPSDataFlashLog;
+
 
 /* Configuration ------------------------------------------------------------*/
 constexpr uint16_t READ_GPS_PERIOD_MS = 250;    // Period to read GPS data

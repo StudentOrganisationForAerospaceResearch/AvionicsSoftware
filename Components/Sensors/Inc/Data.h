@@ -48,6 +48,20 @@ typedef struct
 
 typedef struct
 {
+	int32_t 	pressure;
+	int32_t 	time;
+} PBBPressureFlashLogSingle;
+
+typedef struct
+{
+	PBBPressureFlashLogSingle a;
+	PBBPressureFlashLogSingle b;
+	PBBPressureFlashLogSingle c;
+	PBBPressureFlashLogSingle d;
+} PBBPressureFlashLogData;
+
+typedef struct
+{
     int32_t     voltage_; // Volts * 1000, eg. 3300 == 3.3V
 } BatteryData;
 
@@ -77,6 +91,19 @@ typedef struct
     AltitudeType    geoidAltitude_;
     AltitudeType    totalAltitude_;
 } GpsData;
+
+/* GPS Data Flash Log Format -----------------------------------------------------------------*/
+typedef struct
+{
+    uint32_t        time_;
+    LatLongType     latitude_;
+    LatLongType     longitude_;
+    AltitudeType    antennaAltitude_;
+    AltitudeType    geoidAltitude_;
+    AltitudeType    totalAltitude_;
+} GPSDataFlashLog;
+
+
 
 
 /* Data Containers */

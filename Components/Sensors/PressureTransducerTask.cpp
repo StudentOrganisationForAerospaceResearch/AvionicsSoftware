@@ -29,6 +29,7 @@
 /* Structs -------------------------------------------------------------------*/
 
 /* Constants -----------------------------------------------------------------*/
+constexpr int MS_PER_PTC_PROTOBUF = 50;
 
 /* Variables -----------------------------------------------------------------*/
 
@@ -42,6 +43,7 @@ PressureTransducerTask::PressureTransducerTask() : Task(TASK_PRESSURE_TRANSDUCER
 {
     data = (PressureTransducerData*)soar_malloc(sizeof(PressureTransducerData));
     numLogsSinceTransmit = 0;
+    lastPTCProtobufTick = 0;
 }
 
 /**
@@ -94,7 +96,8 @@ void PressureTransducerTask::HandleCommand(Command& cm)
     //Switch for the GLOBAL_COMMAND
     switch (cm.GetCommand()) {
     case REQUEST_COMMAND: {
-        HandleRequestCommand(cm.GetTaskCommand());
+
+    	HandleRequestCommand(cm.GetTaskCommand());
     }
     case TASK_SPECIFIC_COMMAND: {
         break;
@@ -130,16 +133,18 @@ void PressureTransducerTask::HandleRequestCommand(uint16_t taskCommand)
     case PT_REQUEST_FLASH_LOG:
     	LogPressure();
     	break;
-    case PT_REQUEST_SAMPLE_TRANSMIT_FLASH:
+    case PT_REQUEST_SAMPLE_TRANSMIT_FLASH: {
     	SamplePressureTransducer();
-    	if(numLogsSinceTransmit > 50) {
-    		TransmitProtocolPressureData(); // uh oh
-    		numLogsSinceTransmit = 0;
+    	uint32_t thisTick = TICKS_TO_MS( HAL_GetTick());
+    	if(thisTick-lastPTCProtobufTick > MS_PER_PTC_PROTOBUF) {
+    		TransmitProtocolPressureData();
+    		lastPTCProtobufTick = thisTick;
+    		//SOAR_PRINT("ptctransmit\n");
     	}
-    	numLogsSinceTransmit++;
 
     	LogPressure();
     	break;
+    }
     default:
         SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
         break;
@@ -197,8 +202,14 @@ void PressureTransducerTask::LogPressure()
 	PressureTransducerFlashLogData flogdata;
 	flogdata.pressure=data->pressure_1;
 	flogdata.time=TICKS_TO_MS(HAL_GetTick());
+
+
     Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    //flashCommand.AllocateData(sizeof(flogdata)+1);
+    //*(flashCommand.GetDataPointer()) = LTYPE_PTC;
+    //memcpy(flashCommand.GetDataPointer(),&flogdata,sizeof(flogdata));
     flashCommand.CopyDataToCommand((uint8_t*)&flogdata.pressure, sizeof(flogdata));
+
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }
 /**
@@ -208,6 +219,7 @@ void PressureTransducerTask::TransmitProtocolPressureData()
 {
     //SOAR_PRINT("Pressure Transducer Transmit...\n");
 
+	//auto start = HAL_GetTick();
     Proto::TelemetryMessage msg;
 	msg.set_source(Proto::Node::NODE_DMB);
 	msg.set_target(Proto::Node::NODE_RCU);
@@ -220,4 +232,7 @@ void PressureTransducerTask::TransmitProtocolPressureData()
 
     // Send the barometer data
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+    //auto end = HAL_GetTick();
+
+    //SOAR_PRINT("send protobuf in %dms\n",end-start);
 }
