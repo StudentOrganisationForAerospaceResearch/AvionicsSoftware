@@ -269,7 +269,7 @@ void GPSTask::LogDataToFlash()
     flashLogData.geoidAltitude_ = data->geoidAltitude_;
     flashLogData.totalAltitude_ = data->totalAltitude_;
 
-    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH | SHIFTED_FLASH_TASK_LOG_TYPE(LTYPE_GPS));
     flashCommand.CopyDataToCommand((uint8_t*)&flashLogData, sizeof(GPSDataFlashLog));
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }

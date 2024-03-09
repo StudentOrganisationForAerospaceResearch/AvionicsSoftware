@@ -168,7 +168,7 @@ void IMUTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case IMU_REQUEST_TRANSMIT:
         TransmitProtocolData();
-        LogDataToFlash();
+        //LogDataToFlash();
         break;
     case IMU_REQUEST_FLASH_LOG:
         LogDataToFlash();
@@ -221,7 +221,7 @@ void IMUTask::TransmitProtocolData()
  */
 void IMUTask::LogDataToFlash()
 {
-    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH | SHIFTED_FLASH_TASK_LOG_TYPE(LTYPE_ACCELGYROMAG));
     flashCommand.CopyDataToCommand((uint8_t*)data, sizeof(AccelGyroMagnetismData));
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }

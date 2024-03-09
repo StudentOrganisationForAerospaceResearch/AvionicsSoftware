@@ -81,6 +81,8 @@ void BarometerTask::InitTask()
 
     //Ensure creation succeded
     SOAR_ASSERT(rtValue == pdPASS, "BarometerTask::InitTask() - xTaskCreate() failed");
+
+
 }
 
 /**
@@ -139,7 +141,7 @@ void BarometerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case BARO_REQUEST_TRANSMIT:
         TransmitProtocolBaroData();
-        LogDataToFlash();
+        //LogDataToFlash();
         break;
     case BARO_REQUEST_FLASH_LOG:
         LogDataToFlash();
@@ -184,7 +186,7 @@ void BarometerTask::TransmitProtocolBaroData()
  */
 void BarometerTask::LogDataToFlash()
 {
-    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH | SHIFTED_FLASH_TASK_LOG_TYPE(LTYPE_BAROMETER));
     flashCommand.CopyDataToCommand((uint8_t*)data, sizeof(BarometerData));
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
 }

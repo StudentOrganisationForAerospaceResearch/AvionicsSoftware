@@ -46,19 +46,18 @@ typedef struct
 	int32_t		time;
 } PressureTransducerFlashLogData;
 
-typedef struct
-{
-	int32_t 	pressure;
-	int32_t 	time;
-} PBBPressureFlashLogSingle;
 
 typedef struct
 {
-	PBBPressureFlashLogSingle a;
-	PBBPressureFlashLogSingle b;
-	PBBPressureFlashLogSingle c;
-	PBBPressureFlashLogSingle d;
+	int32_t 	lower_pv_pressure;
+	int32_t		ib_pressure;
+	int32_t 	time;
 } PBBPressureFlashLogData;
+
+typedef struct
+{
+	int32_t stateandtime; // The highest bit is MEVState
+} MEVStateFlashLogData;
 
 typedef struct
 {
@@ -102,6 +101,7 @@ typedef struct
     AltitudeType    geoidAltitude_;
     AltitudeType    totalAltitude_;
 } GPSDataFlashLog;
+
 
 
 

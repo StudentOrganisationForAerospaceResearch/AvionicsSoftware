@@ -22,8 +22,10 @@
 TelemetryTask::TelemetryTask() : Task(TELEMETRY_TASK_QUEUE_DEPTH_OBJS)
 {
     loggingDelayMs = TELEMETRY_DEFAULT_LOGGING_RATE_MS;
-    numNonFlashLogs_ = 0;
-    lastFullLogTick = 0;
+    lograte = TelemetryRateConfig(1000,1000,1000,100000,100000);
+    protobufrate = TelemetryRateConfig(1000,1000,1000,1000,1000);
+    lastLogTicks = {0};
+    lastProtoTicks = {0};
 }
 
 /**
@@ -43,6 +45,8 @@ void TelemetryTask::InitTask()
             (TaskHandle_t*)&rtTaskHandle);
 
     SOAR_ASSERT(rtValue == pdPASS, "TelemetryTask::InitTask() - xTaskCreate() failed");
+
+
 }
 
 /**
@@ -57,7 +61,8 @@ void TelemetryTask::Run(void* pvParams)
 		while (qEvtQueue->Receive(cm))
             HandleCommand(cm);
 
-        osDelay(loggingDelayMs);
+
+        //osDelay(loggingDelayMs);
         RunLogSequence();
     }
 }
@@ -74,10 +79,52 @@ void TelemetryTask::HandleCommand(Command& cm)
         loggingDelayMs = (uint16_t)cm.GetTaskCommand();
         break;
     case TASK_SPECIFIC_COMMAND: {
-    	if(cm.GetTaskCommand() == TELEMETRY_DEBUG_PRINT_LOGMS) {
+    	switch(cm.GetTaskCommand()) {
+    	case TELEMETRY_DEBUG_PRINT_LOGMS:
     		SOAR_PRINT("Logging rate is currently %dms\n", loggingDelayMs);
+    		break;
+    	case TELEMETRY_SET_LOG_RATE: {
+    		TelemetryRateConfig config = *((TelemetryRateConfig*)cm.GetDataPointer());
+    		SetFlashLogRate(config);
+    		SOAR_PRINT("Set log config to: %d %d %d %d %d\n",config.baro,config.imu,config.ptc,config.gps,config.fStatevDrainBattery);
+    		break;
+    	}
+    	case TELEMETRY_SET_PROTOBUF_RATE: {
+    		TelemetryRateConfig config = *((TelemetryRateConfig*)cm.GetDataPointer());
+    		SetProtobufLogRate(config);
+    		SOAR_PRINT("Set protobuf config to: %d %d %d %d %d\n",config.baro,config.imu,config.ptc,config.gps,config.fStatevDrainBattery);
+    		break;
+    	}
+    	case TELEMETRY_GET_LOG_RATE: {
+    		SOAR_PRINT("Log config is: \n"
+    				"     baro: %d\n"
+    				"     imu: %d\n"
+    				"     ptc: %d\n"
+    				"     gps: %d\n"
+    				"     other: %d\n",
+					lograte.baro,lograte.imu,lograte.ptc,lograte.gps,lograte.fStatevDrainBattery);
+    		break;
+    	}
+    	case TELEMETRY_GET_PROTOBUF_RATE: {
+    		SOAR_PRINT("Protobuf config is: \n"
+    				"     baro: %d\n"
+    				"     imu: %d\n"
+    				"     ptc: %d\n"
+    				"     gps: %d\n"
+    				"     other: %d\n",
+    				protobufrate.baro,protobufrate.imu,protobufrate.ptc,protobufrate.gps,protobufrate.fStatevDrainBattery);
+    		break;
+    	}
+    	case TELEMETRY_SET_BOTH_RATE:
+    		SOAR_PRINT("Setting both\n");
+    		BundledRates br = *((BundledRates*)cm.GetDataPointer());
+    		SetFlashLogRate(br.flash);
+    		SetProtobufLogRate(br.proto);
+    		break;
+
     	}
     	break;
+
     }
     }
     default:
@@ -91,88 +138,96 @@ void TelemetryTask::HandleCommand(Command& cm)
 
 /**
  * @brief Runs a full logging sample/send sequence.
- *        can assume this is called with a period of loggingDelayMs
+ *
  */
 void TelemetryTask::RunLogSequence()
 {
 	uint32_t thistick = HAL_GetTick();
-	if(thistick-lastFullLogTick>=NUM_TICKS_PER_FULL_LOG) {
-		lastFullLogTick = thistick;
-		// Flight State
+
+	// Barometer
+	if(thistick-lastLogTicks.baro>=lograte.baro) {
+		// Barometer
+		BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
+
+		// Barometer
+	    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_FLASH_LOG));
+
+	    lastLogTicks.baro = thistick;
+
+	    if(thistick-lastProtoTicks.baro >= protobufrate.baro) {
+	    	// Barometer Transmit
+	    	BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
+	    	lastProtoTicks.baro = thistick;
+	    }
+	}
+
+	// IMU
+	if(thistick-lastLogTicks.imu>=lograte.imu) {
+
+		// IMU
+		IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
+
+	    // IMU
+	    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_FLASH_LOG));
+
+	    lastLogTicks.imu = thistick;
+
+	    if(thistick-lastProtoTicks.imu >= protobufrate.imu) {
+	    	// IMU Transmit
+	    	IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
+	    	lastProtoTicks.imu = thistick;
+	    }
+	}
+
+	// GPS
+	if(thistick-lastLogTicks.gps>=lograte.gps) {
+
+		// gps no have sample??????????
+
+	    // GPS
+	    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_FLASH_LOG));
+
+	    lastLogTicks.gps = thistick;
+
+	    if(thistick-lastProtoTicks.gps >= protobufrate.gps) {
+	    	// GPS Transmit
+		    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));
+	    	lastProtoTicks.gps = thistick;
+	    }
+	}
+
+	// PTC
+	if(thistick-lastLogTicks.ptc>=lograte.ptc) {
+
+		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_SAMPLE_FLASH));
+
+		lastLogTicks.ptc = thistick;
+
+	    if(thistick-lastProtoTicks.ptc >= protobufrate.ptc) {
+	    	// PTC Transmit
+		    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND,PT_REQUEST_TRANSMIT));
+	    	lastProtoTicks.ptc = thistick;
+	    }
+
+
+	}
+
+	// FlightState, vent drain status, battery. No flash logs
+    if(thistick-lastProtoTicks.fStatevDrainBattery >= protobufrate.fStatevDrainBattery) {
+    	// Flight State Transmit
 		FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
 
 		// GPIO
 		SendVentDrainStatus();
 
-		// Other Sensors
-		RequestSample();
-		RequestTransmit();
+	    // Battery
+	    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
+	    // Battery
+	    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
 
+    	lastProtoTicks.fStatevDrainBattery = thistick;
+    }
 
-		// Request Log to Flash
-		if(++numNonFlashLogs_ >= NUM_SENT_LOGS_PER_FLASH_LOG) {
-			RequestLogToFlash();
-			numNonFlashLogs_ = 0;
-		}
-	}
-
-	PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_SAMPLE_TRANSMIT_FLASH));
-}
-
-/**
- * @brief Poll requests to each sensor
- */
-void TelemetryTask::RequestSample()
-{
-    // Battery
-    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
-
-
-	// Barometer
-	BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_NEW_SAMPLE));
-
-	// IMU
-	IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
-
-
-    // Pressure Transducer
-    //PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
-}
-
-/**
- * @brief Requests transmit to each sensor
- */
-void TelemetryTask::RequestTransmit()
-{
-    // Battery
-    BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_TRANSMIT));
-
-	// Barometer
-	BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_TRANSMIT));
-
-	// IMU
-	IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
-
-    // Pressure Transducer
-    //PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
-
-    // GPS
-    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));
-}
-
-/**
- * @brief Requests log to flash for each sensor that supports it
- */
-void TelemetryTask::RequestLogToFlash()
-{
-	// Barometer
-    BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_FLASH_LOG));
-
-    // IMU
-    IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_FLASH_LOG));
-
-    // GPS
-    GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_FLASH_LOG));
 }
 
 /**
@@ -194,4 +249,19 @@ void TelemetryTask::SendVentDrainStatus()
 
     // Send the control message
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+}
+
+
+void TelemetryTask::SetFlashLogRate(TelemetryRateConfig newlograte) {
+	lograte = newlograte;
+}
+TelemetryRateConfig TelemetryTask::GetFlashLogRate() {
+	return lograte;
+}
+
+void TelemetryTask::SetProtobufLogRate(TelemetryRateConfig newprotobufrate) {
+	protobufrate = newprotobufrate;
+}
+TelemetryRateConfig TelemetryTask::GetProtobufLogRate() {
+	return protobufrate;
 }

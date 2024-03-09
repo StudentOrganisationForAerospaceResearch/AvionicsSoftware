@@ -10,12 +10,31 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
-constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5; // N cycles of telemetry sends for each flash log
-constexpr uint8_t NUM_TICKS_PER_FULL_LOG = 40; // N cycles of telemetry log sequences for Barometer and IMU to be sampled
+constexpr uint8_t NUM_FULL_LOGS_PER_GPS_LOG = 3 * 5; // N cycles of telemetry sends for each flash log
 
 enum TELEMETRY_COMMANDS {
-	TELEMETRY_DEBUG_PRINT_LOGMS
+	TELEMETRY_DEBUG_PRINT_LOGMS,
+	TELEMETRY_SET_LOG_RATE,
+	TELEMETRY_SET_PROTOBUF_RATE,
+	TELEMETRY_GET_LOG_RATE,
+	TELEMETRY_GET_PROTOBUF_RATE,
+	TELEMETRY_SET_BOTH_RATE
 };
+
+struct TelemetryRateConfig {
+    uint32_t baro;
+    uint32_t imu;
+    uint32_t ptc;
+    uint32_t gps;
+
+    uint32_t fStatevDrainBattery;
+};
+
+struct BundledRates {
+	TelemetryRateConfig flash;
+	TelemetryRateConfig proto;
+};
+
 
 class TelemetryTask : public Task
 {
@@ -41,6 +60,12 @@ protected:
 
     void SendVentDrainStatus();
 
+    void SetFlashLogRate(TelemetryRateConfig newlograte);
+    TelemetryRateConfig GetFlashLogRate();
+
+    void SetProtobufLogRate(TelemetryRateConfig newprotobufrate);
+    TelemetryRateConfig GetProtobufLogRate();
+
 
 private:
     // Private Functions
@@ -49,11 +74,13 @@ private:
     TelemetryTask& operator=(const TelemetryTask&);            // Prevent assignment
 
     // Private Variables
-    uint32_t loggingDelayMs; // for pressure transducer
+    TelemetryRateConfig lograte;
+    TelemetryRateConfig protobufrate;
+    TelemetryRateConfig lastLogTicks;
+    TelemetryRateConfig lastProtoTicks;
 
-    uint8_t numNonFlashLogs_;
+    uint16_t loggingDelayMs;
 
-    uint32_t lastFullLogTick;
 };
 
 #endif    // SOAR_TELEMETRYTASK_HPP_

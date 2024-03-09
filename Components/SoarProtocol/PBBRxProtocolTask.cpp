@@ -10,6 +10,7 @@
 #include "TelemetryMessage.hpp"
 #include "UARTTask.hpp"
 #include "MEVManager.hpp"
+#include "FlashTask.hpp"
 
 /**
  * @brief Initialize the PBBRxProtocolTask
@@ -74,11 +75,37 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     if(msg.get_target() == Proto::Node::NODE_DMB)
     	msg.set_target(Proto::Node::NODE_RCU);
 
+
     // Prints for specific message contents
     if(msg.has_mevstate()) {
-    	SOAR_PRINT("PROTO-MEV-STATE: %d\n", msg.get_mevstate().get_mev_open());
+    	//SOAR_PRINT("PROTO-MEV-STATE: %d\n", msg.get_mevstate().get_mev_open());
     	MEVManager::HandleMEVTelemetry(msg);
 
+
+    	uint8_t logstate = msg.get_mevstate().get_mev_open();
+
+    	MEVStateFlashLogData log;
+    	log.stateandtime = (HAL_GetTick() & 0x7fffffff) | ((logstate & 1) << 31);
+
+        Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH | SHIFTED_FLASH_TASK_LOG_TYPE(LTYPE_MEV_STATE));
+        flashCommand.CopyDataToCommand((uint8_t*)&log, sizeof(log));
+        FlashTask::Inst().GetEventQueue()->Send(flashCommand);
+
+
+    }
+    if(msg.has_presspbb()) {
+
+    	auto press = msg.get_presspbb();
+
+    	PBBPressureFlashLogData log;
+    	log.ib_pressure = press.get_ib_pressure();
+    	log.lower_pv_pressure = press.get_lower_pv_pressure();
+
+    	log.time = TICKS_TO_MS(HAL_GetTick());
+
+        Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH | SHIFTED_FLASH_TASK_LOG_TYPE(LTYPE_PBB_PRES));
+        flashCommand.CopyDataToCommand((uint8_t*)&log, sizeof(log));
+        FlashTask::Inst().GetEventQueue()->Send(flashCommand);
     }
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;

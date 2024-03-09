@@ -146,9 +146,31 @@ void DebugTask::HandleDebugMessage(const char* msg)
     }
 
     else if (strncmp(msg, "logms " ,6) == 0) {
-    	int32_t newperiod = ExtractIntParameter(msg, 6);
-    	TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, newperiod));
+    	SOAR_PRINT("Use \"setlograte\" or \"setprate\" instead\n");
+//   	int32_t newperiod = ExtractIntParameter(msg, 6);
+//    	TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, newperiod));
     }
+    else if (strcmp(msg,"rateconfig") == 0) {
+    	TelemetryTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND,TELEMETRY_GET_LOG_RATE));
+    }
+    else if (strcmp(msg,"prateconfig") == 0) {
+    	TelemetryTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND,TELEMETRY_GET_PROTOBUF_RATE));
+    }
+    else if (strncmp(msg,"setlograte ",11) == 0) {
+    	int32_t b = ExtractIntParameter(msg, 11);
+    	Command cmd = Command(TASK_SPECIFIC_COMMAND,TELEMETRY_SET_LOG_RATE);
+    	TelemetryRateConfig e(b,b,b,b,b);
+    	cmd.CopyDataToCommand((uint8_t*)&e, sizeof(e));
+    	TelemetryTask::Inst().GetEventQueue()->Send(cmd);
+    }
+    else if (strncmp(msg,"setprate ",9) == 0) {
+    	int32_t b = ExtractIntParameter(msg, 9);
+    	Command cmd = Command(TASK_SPECIFIC_COMMAND,TELEMETRY_SET_PROTOBUF_RATE);
+    	TelemetryRateConfig e(b,b,b,b,b);
+    	cmd.CopyDataToCommand((uint8_t*)&e, sizeof(e));
+    	TelemetryTask::Inst().GetEventQueue()->Send(cmd);
+    }
+
     else if (strcmp(msg, "blinkled") == 0) {
         // Print message
         SOAR_PRINT("Debug 'LED blink' command requested\n");
@@ -188,12 +210,6 @@ void DebugTask::HandleDebugMessage(const char* msg)
  		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_NEW_SAMPLE));
  		BatteryTask::Inst().SendCommand(Command(REQUEST_COMMAND, BATTERY_REQUEST_DEBUG));
  	}
-    else if (strcmp(msg, "flashdump") == 0) {
-        // Send a request to the flash task to dump the flash data
-        SOAR_PRINT("Dump of sensor data in flash requested\n");
-        Command cmd((uint16_t)DUMP_FLASH_DATA);
-        FlashTask::Inst().GetEventQueue()->Send(cmd);
-    }
     else if (strncmp(msg, "dmpat ", 6) == 0) { // WIP
     	// Takes address to dump in HEX
     	bool hexsuccess;
@@ -210,26 +226,30 @@ void DebugTask::HandleDebugMessage(const char* msg)
     	}
 
 
-    } else if (strcmp(msg, "getfoffset") == 0) { // WIP
-    	SOAR_PRINT("Flash offset requested\n");
-    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)GET_FLASH_OFFSET);
-        FlashTask::Inst().GetEventQueue()->Send(cmd);
+
     } else if (strcmp(msg, "getpoffset") == 0) {
     	SOAR_PRINT("Flash page offset requested\n");
     	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)GET_PAGE_OFFSET);
     	FlashTask::Inst().GetEventQueue()->Send(cmd);
 
-    } else if (strcmp(msg, "flogtest") == 0) {
-    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)FLASH_DEBUGWRITE);
-    	FlashTask::Inst().GetEventQueue()->Send(cmd);
     } else if (strncmp(msg, "dumpfirst ", 10) == 0) {
     	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)FLASH_READ_FIRST_LOGS);
     	int32_t firstn = ExtractIntParameter(msg, 10);
     	cmd.CopyDataToCommand((uint8_t*)&firstn,sizeof(firstn));
-    	FlashTask::Inst().GetEventQueue()->Send(cmd);
-    } else if (strcmp(msg,"togwritebufmsg") == 0) {
+    	FlashTask::Inst().SendPriorityCommand(cmd);
+    } else if(strncmp(msg,"rstflsh ", 8) == 0) {
+    	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)FLASH_RESET_AND_ERASE);
+    	int32_t eraseSectors = ExtractIntParameter(msg,8);
+    	cmd.CopyDataToCommand((uint8_t*)&eraseSectors,sizeof(eraseSectors));
+    	FlashTask::Inst().SendPriorityCommand(cmd);
+
+    }
+
+
+    else if (strcmp(msg,"togwritebufmsg") == 0) {
     	Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)TOG_BUFLOGS);
-    	FlashTask::Inst().GetEventQueue()->Send(cmd);
+    	FlashTask::Inst().SendPriorityCommand(cmd);
+
     }
     else if (strcmp(msg, "flasherase") == 0) 
     {

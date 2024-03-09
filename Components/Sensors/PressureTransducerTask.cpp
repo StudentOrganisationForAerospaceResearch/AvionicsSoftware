@@ -124,7 +124,6 @@ void PressureTransducerTask::HandleRequestCommand(uint16_t taskCommand)
         break;
     case PT_REQUEST_TRANSMIT:
     	TransmitProtocolPressureData();
-    	LogPressure();
         break;
     case PT_REQUEST_DEBUG:
         SOAR_PRINT("|PT_TASK| Pressure (PSI): %d.%d, MCU Timestamp: %u\r\n", data->pressure_1 / 1000, data->pressure_1 % 1000,
@@ -133,15 +132,8 @@ void PressureTransducerTask::HandleRequestCommand(uint16_t taskCommand)
     case PT_REQUEST_FLASH_LOG:
     	LogPressure();
     	break;
-    case PT_REQUEST_SAMPLE_TRANSMIT_FLASH: {
+    case PT_REQUEST_SAMPLE_FLASH: {
     	SamplePressureTransducer();
-    	uint32_t thisTick = TICKS_TO_MS( HAL_GetTick());
-    	if(thisTick-lastPTCProtobufTick > MS_PER_PTC_PROTOBUF) {
-    		TransmitProtocolPressureData();
-    		lastPTCProtobufTick = thisTick;
-    		//SOAR_PRINT("ptctransmit\n");
-    	}
-
     	LogPressure();
     	break;
     }
@@ -204,13 +196,11 @@ void PressureTransducerTask::LogPressure()
 	flogdata.time=TICKS_TO_MS(HAL_GetTick());
 
 
-    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH);
-    //flashCommand.AllocateData(sizeof(flogdata)+1);
-    //*(flashCommand.GetDataPointer()) = LTYPE_PTC;
-    //memcpy(flashCommand.GetDataPointer(),&flogdata,sizeof(flogdata));
+    Command flashCommand(DATA_COMMAND, WRITE_DATA_TO_FLASH | SHIFTED_FLASH_TASK_LOG_TYPE(LTYPE_PTC));
     flashCommand.CopyDataToCommand((uint8_t*)&flogdata.pressure, sizeof(flogdata));
 
     FlashTask::Inst().GetEventQueue()->Send(flashCommand);
+
 }
 /**
  * @brief Transmits a protocol barometer data sample

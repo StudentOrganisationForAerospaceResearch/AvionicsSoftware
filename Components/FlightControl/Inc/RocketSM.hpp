@@ -9,6 +9,7 @@
 
 #include "Command.hpp"
 #include "CoreProto.h"
+#include "TelemetryTask.hpp"
 
 enum RocketState
 {
@@ -138,6 +139,7 @@ public:
     //RocketState HandleGeneralStateCommands(RocketControlCommands rcAction);
 protected:
     RocketState rsStateID = RS_NONE;    //The name of the state we're in
+    void ChangeLogRates(BundledRates rates);
 
 };
 

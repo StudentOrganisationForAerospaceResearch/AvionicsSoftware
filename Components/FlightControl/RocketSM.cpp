@@ -15,10 +15,18 @@
 #include "FlashTask.hpp"
 #include "WatchdogTask.hpp"
 #include "MEVManager.hpp"
+#include "TelemetryTask.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
  */
+
+void BaseRocketState::ChangeLogRates(BundledRates rates) {
+    Command rateset(TASK_SPECIFIC_COMMAND,TELEMETRY_SET_BOTH_RATE);
+    rateset.CopyDataToCommand((uint8_t*)&rates, sizeof(rates));
+    TelemetryTask::Inst().GetEventQueue()->Send(rateset);
+}
+
 RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
 {
     // Setup the internal array of states. Setup in order of enum.
@@ -106,8 +114,8 @@ void RocketSM::HandleCommand(Command& cm)
         Command cmd(TASK_SPECIFIC_COMMAND, (uint16_t)WRITE_STATE_TO_FLASH);
         uint8_t state = nextRocketState;
         cmd.CopyDataToCommand(&state, 1);
-        FlashTask::Inst().GetEventQueue()->Send(cmd);
-        
+        FlashTask::Inst().SendPriorityCommand(cmd);
+
         TransitionState(nextRocketState);
     }
 }
@@ -188,6 +196,12 @@ RocketState PreLaunch::OnEnter()
 
     // Make sure the MEV enable pin is off
     GPIO::MEV_EN::Off();
+
+
+    TelemetryRateConfig logrates = {500,500,500,500,500};
+    TelemetryRateConfig protorates = {500,500,500,500,500};
+    ChangeLogRates({logrates,protorates});
+
 
     return rsStateID;
 }
@@ -327,6 +341,10 @@ RocketState Fill::OnEnter()
         arrArmConfirmFlags[i] = false;
 
     // TODO: Consider automatically beginning fill sequence (since we've already explicitly entered the fill state)
+
+    TelemetryRateConfig logrates = {500,500,10,500,500};
+    TelemetryRateConfig protorates = {500,500,50,500,500};
+    ChangeLogRates({logrates,protorates});
 
     return rsStateID;
 }
@@ -485,6 +503,10 @@ RocketState Ignition::OnEnter()
     GPIO::Drain::Close();
     GPIO::MEV_EN::On();
 
+    TelemetryRateConfig logrates = {25,25,1,500,100};
+    TelemetryRateConfig protorates = {50,50,50,500,100};
+    ChangeLogRates({logrates,protorates});
+
     return rsStateID;
 }
 
@@ -560,6 +582,9 @@ RocketState Launch::OnEnter()
 	
 	MEVManager::OpenMEV();
 	TimerTransitions::Inst().BurnSequence();
+    TelemetryRateConfig logrates = {25,25,1,500,100};
+    TelemetryRateConfig protorates = {50,50,50,500,100};
+    ChangeLogRates({logrates,protorates});
     return rsStateID;
 }
 
@@ -639,6 +664,10 @@ RocketState Burn::OnEnter()
     // Start the coast transition timer (7 seconds - TBD based on sims)
     TimerTransitions::Inst().CoastSequence();
 
+    TelemetryRateConfig logrates = {25,25,1,500,100};
+    TelemetryRateConfig protorates = {50,50,50,500,100};
+    ChangeLogRates({logrates,protorates});
+
     return rsStateID;
 }
 
@@ -708,6 +737,11 @@ RocketState Coast::OnEnter()
 
     // Start Descent Transition Timer (~25 seconds) : Should be well after apogee
 	TimerTransitions::Inst().DescentSequence();
+
+    TelemetryRateConfig logrates = {1000,1000,1000,1000,1000};
+    TelemetryRateConfig protorates = {1000,1000,1000,1000,1000};
+    ChangeLogRates({logrates,protorates});
+
     return rsStateID;
 }
 
@@ -780,6 +814,11 @@ RocketState Descent::OnEnter()
 
     // Start Recovery Transition Timer (~300 seconds) : Should be well into / after descent
     TimerTransitions::Inst().RecoverySequence();
+
+    TelemetryRateConfig logrates = {1000,1000,1000,1000,1000};
+    TelemetryRateConfig protorates = {1000,1000,1000,1000,1000};
+    ChangeLogRates({logrates,protorates});
+
     return rsStateID;
 }
 
@@ -851,6 +890,11 @@ RocketState Recovery::OnEnter()
     //TODO: Consider adding periodic AUTO-VENT timers every 100 seconds to make sure they're open)
     //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
     //TODO: Decrease log rate to 1 Hz - StorageManager should automatically stop logging after it gets near full
+
+    TelemetryRateConfig logrates = {1000,1000,1000,1000,1000};
+    TelemetryRateConfig protorates = {1000,1000,1000,1000,1000};
+    ChangeLogRates({logrates,protorates});
+
 
     return rsStateID;
 }

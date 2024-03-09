@@ -58,6 +58,7 @@ bool Queue::SendToFront(Command& command)
     if (xQueueSendToFront(rtQueueHandle, &command, DEFAULT_QUEUE_SEND_WAIT_TICKS) == pdPASS)
         return true;
 
+
     SOAR_PRINT("Could not send data to front of queue!\n");
     command.Reset();
 
