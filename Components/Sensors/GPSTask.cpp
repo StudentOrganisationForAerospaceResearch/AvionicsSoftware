@@ -215,11 +215,11 @@ bool GPSTask::ReceiveData()
 void GPSTask::TransmitProtocolData()
 {
 
-    Proto::LatLong lat;
+    Proto::CoordinateType lat;
     lat.set_degrees(data->latitude_.degrees_);
     lat.set_minutes(data->latitude_.minutes_);
 
-    Proto::LatLong lon;
+    Proto::CoordinateType lon;
     lon.set_degrees(data->longitude_.degrees_);
     lon.set_minutes(data->longitude_.minutes_);
 
@@ -238,15 +238,14 @@ void GPSTask::TransmitProtocolData()
     Proto::TelemetryMessage msg;
     msg.set_source(Proto::Node::NODE_DMB);
     msg.set_target(Proto::Node::NODE_RCU);
-    msg.set_message_id((uint32_t)Proto::MessageID::MSG_TELEMETRY);
-    Proto::GPS coord;
+    Proto::Gps coord;
     coord.set_latitude(lat);
     coord.set_longitude(lon);
-    coord.set_antenna_alt(antAltitude);
-    coord.set_geoidAltitude(geoIdAltitude);
-    coord.set_total_alt(totalAltitude);
+    coord.set_antenna_altitude(antAltitude);
+    coord.set_geo_id_altitude(geoIdAltitude);
+    coord.set_total_altitude(totalAltitude);
     coord.set_time(data->time_);
-    msg.set_coord(coord);
+    msg.set_gps(coord);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);

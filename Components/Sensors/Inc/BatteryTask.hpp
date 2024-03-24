@@ -44,7 +44,7 @@ protected:
     // Sampling
     void SampleBatteryVoltage();
     void TransmitProtocolBatteryData();
-    enum Proto::Battery::power_source GetPowerState();
+    enum Proto::Battery::PowerSource GetPowerState();
 
     // Data
     BatteryData* data;

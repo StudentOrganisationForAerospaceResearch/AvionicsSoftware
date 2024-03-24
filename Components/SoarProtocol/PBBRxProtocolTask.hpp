@@ -29,10 +29,10 @@ public:
 		Inst().ProtocolTask::SendProtobufMessage(writeBuffer, msgId);
     }
 
-    static void SendPBBCommand(Proto::PBBCommand::Command cmd)
+    static void SendPbbCommand(Proto::PbbCommand::Command cmd)
     {
         Proto::CommandMessage cmdMsg;
-        Proto::PBBCommand pbbCmd;
+        Proto::PbbCommand pbbCmd;
         cmdMsg.set_source(Proto::Node::NODE_DMB);
         cmdMsg.set_target(Proto::Node::NODE_PBB);
         pbbCmd.set_command_enum(cmd);

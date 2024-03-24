@@ -160,7 +160,6 @@ void FlightTask::SendRocketState()
     Proto::ControlMessage msg;
     msg.set_source(Proto::Node::NODE_DMB);
     msg.set_target(Proto::Node::NODE_RCU);
-    msg.set_message_id(Proto::MessageID::MSG_CONTROL);
     Proto::SystemState stateMsg;
     stateMsg.set_sys_state(Proto::SystemState::State::SYS_NORMAL_OPERATION);
     stateMsg.set_rocket_state(rsm_->GetRocketStateAsProto());

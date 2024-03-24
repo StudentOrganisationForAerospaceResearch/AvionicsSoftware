@@ -179,9 +179,9 @@ void PressureTransducerTask::TransmitProtocolPressureData()
     Proto::TelemetryMessage msg;
 	msg.set_source(Proto::Node::NODE_DMB);
 	msg.set_target(Proto::Node::NODE_RCU);
-	Proto::DMBPressure pressData;
+	Proto::DmbPressure pressData;
 	pressData.set_upper_pv_pressure(data->pressure_1);
-	msg.set_pressdmb(pressData);
+	msg.set_dmbPressure(pressData);
 
 	EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
 	msg.serialize(writeBuffer);

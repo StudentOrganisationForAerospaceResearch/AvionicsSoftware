@@ -64,61 +64,61 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
     // Process the db command
     switch (msg.get_dmb_command().get_command_enum())
     {
-    case Proto::DMBCommand::Command::RSC_ANY_TO_ABORT:
+    case Proto::DmbCommand::Command::RSC_ANY_TO_ABORT:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ANY_TO_ABORT));
         break;
-    case Proto::DMBCommand::Command::RSC_OPEN_VENT:
+    case Proto::DmbCommand::Command::RSC_OPEN_VENT:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_OPEN_VENT));
         break;
-    case Proto::DMBCommand::Command::RSC_CLOSE_VENT:
+    case Proto::DmbCommand::Command::RSC_CLOSE_VENT:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_CLOSE_VENT));
         break;
-    case Proto::DMBCommand::Command::RSC_OPEN_DRAIN:
+    case Proto::DmbCommand::Command::RSC_OPEN_DRAIN:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_OPEN_DRAIN));
         break;
-    case Proto::DMBCommand::Command::RSC_CLOSE_DRAIN:
+    case Proto::DmbCommand::Command::RSC_CLOSE_DRAIN:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_CLOSE_DRAIN));
         break;
-    case Proto::DMBCommand::Command::RSC_MEV_CLOSE:
+    case Proto::DmbCommand::Command::RSC_MEV_CLOSE:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_MEV_CLOSE));
         break;
-    case Proto::DMBCommand::Command::RSC_GOTO_FILL:
+    case Proto::DmbCommand::Command::RSC_GOTO_FILL:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_FILL));
         break;
-    case Proto::DMBCommand::Command::RSC_ARM_CONFIRM_1:
+    case Proto::DmbCommand::Command::RSC_ARM_CONFIRM_1:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_1));
         break;
-    case Proto::DMBCommand::Command::RSC_ARM_CONFIRM_2:
+    case Proto::DmbCommand::Command::RSC_ARM_CONFIRM_2:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_2));
         break;
-    case Proto::DMBCommand::Command::RSC_GOTO_ARM:
+    case Proto::DmbCommand::Command::RSC_GOTO_ARM:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_ARM));
         break;
-    case Proto::DMBCommand::Command::RSC_GOTO_PRELAUNCH:
+    case Proto::DmbCommand::Command::RSC_GOTO_PRELAUNCH:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_PRELAUNCH));
         break;
-    case Proto::DMBCommand::Command::RSC_POWER_TRANSITION_ONBOARD:
+    case Proto::DmbCommand::Command::RSC_POWER_TRANSITION_ONBOARD:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_POWER_TRANSITION_ONBOARD));
         break;
-    case Proto::DMBCommand::Command::RSC_POWER_TRANSITION_EXTERNAL:
+    case Proto::DmbCommand::Command::RSC_POWER_TRANSITION_EXTERNAL:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_POWER_TRANSITION_EXTERNAL));
         break;
-    case Proto::DMBCommand::Command::RSC_GOTO_IGNITION:
+    case Proto::DmbCommand::Command::RSC_GOTO_IGNITION:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_IGNITION));
         break;
-    case Proto::DMBCommand::Command::RSC_IGNITION_TO_LAUNCH: // This is the ignition confirmation (we need a button to send this)
+    case Proto::DmbCommand::Command::RSC_IGNITION_TO_LAUNCH: // This is the ignition confirmation (we need a button to send this)
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_IGNITION_TO_LAUNCH));
         break;
-    case Proto::DMBCommand::Command::RSC_TEST_MEV_DISABLE:
+    case Proto::DmbCommand::Command::RSC_TEST_MEV_DISABLE:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_TEST_MEV_DISABLE));
         break;
-    case Proto::DMBCommand::Command::RSC_TEST_MEV_ENABLE:
+    case Proto::DmbCommand::Command::RSC_TEST_MEV_ENABLE:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_TEST_MEV_ENABLE));
         break;
-    case Proto::DMBCommand::Command::RSC_TEST_MEV_OPEN:
+    case Proto::DmbCommand::Command::RSC_TEST_MEV_OPEN:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_TEST_MEV_OPEN));
         break;
-    case Proto::DMBCommand::Command::RSC_GOTO_TEST:
+    case Proto::DmbCommand::Command::RSC_GOTO_TEST:
         FlightTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_TEST));
         break;
     default:
@@ -149,7 +149,6 @@ void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
         // This is a ping message, respond with an ack
         Proto::ControlMessage ackResponse;
         Proto::AckNack ack;
-        ack.set_acking_msg_id(msg.get_message_id());
         ack.set_acking_msg_source(msg.get_source());
         ack.set_acking_sequence_num(msg.get_source_sequence_num());
         ackResponse.set_ack(ack);

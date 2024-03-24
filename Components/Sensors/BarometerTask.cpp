@@ -166,10 +166,9 @@ void BarometerTask::TransmitProtocolBaroData()
     Proto::TelemetryMessage msg;
     msg.set_source(Proto::Node::NODE_DMB);
     msg.set_target(Proto::Node::NODE_RCU);
-    msg.set_message_id((uint32_t)Proto::MessageID::MSG_TELEMETRY);
     Proto::Baro baroData;
 	baroData.set_baro_pressure(data->pressure_);
-    baroData.set_baro_temp(data->temperature_);
+    baroData.set_baro_temperature(data->temperature_);
 	msg.set_baro(baroData);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;

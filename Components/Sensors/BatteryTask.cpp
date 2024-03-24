@@ -145,12 +145,12 @@ void BatteryTask::SampleBatteryVoltage()
 	timestampPT = HAL_GetTick();
 }
 
-Proto::Battery::power_source BatteryTask::GetPowerState() {
+Proto::Battery::PowerSource BatteryTask::GetPowerState() {
 	if (GPIO::PowerSelect::IsInternal()) {
-		return Proto::Battery::power_source::ROCKET;
+		return Proto::Battery::PowerSource::ROCKET;
 	}
 	else {
-		return Proto::Battery::power_source::GROUND;
+		return Proto::Battery::PowerSource::GROUND;
 	}
 }
 
@@ -165,9 +165,9 @@ void BatteryTask::TransmitProtocolBatteryData()
 	msg.set_source(Proto::Node::NODE_DMB);
 	msg.set_target(Proto::Node::NODE_RCU);
 	Proto::Battery bat;
-	bat.set_volt(data->voltage_);
-	bat.set_p_source(GetPowerState());
-	msg.set_bat(bat);
+	bat.set_voltage(data->voltage_);
+	bat.set_power_source(GetPowerState());
+	msg.set_battery(bat);
 
 	EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
 	msg.serialize(writeBuffer);
