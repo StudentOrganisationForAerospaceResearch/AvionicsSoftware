@@ -23,7 +23,9 @@ namespace SPIDriver {
 }
 
 /**
- * @brief Initializes SPI driver for the specified ADC
+ * @brief Initializes SPI driver for the specified ADC (Master)
+ * 		  slaves (barometer,...) are using the read and write
+ * 		  thus they are setting the handles
 */
 void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin)
 {
@@ -86,6 +88,7 @@ void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio
 // inspired by github (modified) ::: was _MCP3561_write
 // manually operates !CS signal, since STM32 hardware NSS signal doesn't work
 void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
+	// port and pin are ADC specific
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(hspi, pData, size, MCP3561_HAL_TIMEOUT);
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
@@ -134,11 +137,14 @@ bool SPIDriver::ReadADC(int channel)
 	// Tell the barometer to convert the pressure to a digital value with an over-sampling ratio of 512
 
 	//--- block of interaction using SPI protocol
+
+	// port and pin are ADC specific
+	// spi handle is slave specific
 	// set GPIO port and pin
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 
 	//
-	HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+	HAL_SPI_Transmit(spi_Handle, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
 
 	//
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
@@ -147,7 +153,7 @@ bool SPIDriver::ReadADC(int channel)
 
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 
-	HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
+	HAL_SPI_Transmit(spi_Handle, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
 	return true;
 }
