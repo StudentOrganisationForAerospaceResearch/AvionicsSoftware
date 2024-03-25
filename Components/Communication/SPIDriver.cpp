@@ -27,12 +27,16 @@ namespace SPIDriver {
  * 		  slaves (barometer,...) are using the read and write
  * 		  thus they are setting the handles
 */
-void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin)
+void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin, CONFIG config)
 {
 		// set driver's handle to the given handle
 		spi_Handle = hspi;
 		gpio_port = gpio_Port;
 		gpio_pin = gpio_Pin;
+
+		// config gives us oversampling ratio
+			// adc mode
+			// all other params
 
 		// // mcp github start - commands need to be changed
 		uint8_t cmd[4] = {0,0,0,0};
