@@ -13,15 +13,15 @@
 //#include "stm32f4xx_hal_rcc.h"
 //#include "stm32f4xx_ll_dma.h"
 //#include "cmsis_os.h"
+#include "stm32f4xx_hal_spi.h"
+#include "stm32f4xx_hal_adc.h"
 
 /* SPI Driver Instances ------------------------------------------------------------------*/
 class SPIDriver;
 
 namespace SPIDriver {
-//	extern UARTDriver uart1;
-//	extern UARTDriver uart2;
-//	extern UARTDriver uart3;
-//	extern UARTDriver uart5;
+//	extern SPIDriver spi1;
+
 }
 
 /* SPI Driver Aliases ------------------------------------------------------------------*/
@@ -63,21 +63,18 @@ public:
 	bool ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver);
 
 
-	// Interrupt Handlers
-//	void HandleIRQ_UART(); // This MUST be called inside USARTx_IRQHandler
-
 protected:
 	// Helper Functions
-//	bool HandleAndClearRxError();
-//	bool GetRxErrors();
+	//	bool HandleAndClearRxError();
+	//	bool GetRxErrors();
 
 
 	// Constants
-//	USART_TypeDef* kUart_; // Stores the UART instance
+	//	USART_TypeDef* kUart_; // Stores the UART instance
 
 	// Variables
 	uint8_t* rxCharBuf_; // Stores a pointer to the buffer to store the received data
-//	UARTReceiverBase* rxReceiver_; // Stores a pointer to the receiver object
+	//	UARTReceiverBase* rxReceiver_; // Stores a pointer to the receiver object
 };
 
 
