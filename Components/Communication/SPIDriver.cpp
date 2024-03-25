@@ -16,38 +16,46 @@
 namespace SPIDriver {
 //    UARTDriver uart1(USART1);
 //	  SPIDriver spi(SPI);
+	SPI_Handle spi_Handle;
+	GPIO_Port gpio_port;
+	GPIO_pin gpio_pin;
 
 }
 
 /**
  * @brief Initializes SPI driver for the specified ADC
 */
-void SPIDriver::InitTask(SPI_HandleTypeDef *hspi, Command& cm)
+void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin)
 {
+		// set driver's handle to the given handle
+		spi_Handle = hspi;
+		gpio_port = gpio_Port;
+		gpio_pin = gpio_Pin;
+
 		// // mcp github start - commands need to be changed
 		uint8_t cmd[4] = {0,0,0,0};
 
 		// 8-bit CONFIG registers
 		cmd[0]  = MCP3561_CONFIG0_WRITE;
 		cmd[1]  = MCP3561_USERCONF_REG0;
-		_MCP3561_write(hspi, cmd, 2);
+		insideWrite(hspi, cmd, 2);
 
 		cmd[0]  = MCP3561_CONFIG1_WRITE;
 		cmd[1]  = MCP3561_USERCONF_REG1;
-		_MCP3561_write(hspi, cmd, 2);
+		insideWrite(hspi, cmd, 2);
 
 		cmd[0]  = MCP3561_CONFIG2_WRITE;
 		cmd[1]  = MCP3561_USERCONF_REG2;
 		cmd[1] += 3; // last two bits must always be '11'
-		_MCP3561_write(hspi, cmd, 2);
+		insideWrite(hspi, cmd, 2);
 
 		cmd[0]  = MCP3561_CONFIG3_WRITE;
 		cmd[1]  = MCP3561_USERCONF_REG3;
-		_MCP3561_write(hspi, cmd, 2);
+		insideWrite(hspi, cmd, 2);
 
 		cmd[0]  = MCP3561_IRQ_WRITE;
 		cmd[1]  = MCP3561_USERCONF_IRQ_REG;
-		_MCP3561_write(hspi, cmd, 2);
+		insideWrite(hspi, cmd, 2);
 
 		// 24-bit CONFIG registers
 
@@ -61,21 +69,21 @@ void SPIDriver::InitTask(SPI_HandleTypeDef *hspi, Command& cm)
 			cmd[1] = (uint8_t)((reg_val >> 16) & 0xff);
 			cmd[2] = (uint8_t)((reg_val >>  8) & 0xff);
 			cmd[3] = (uint8_t)((reg_val)       & 0xff);
-			_MCP3561_write(hspi, cmd, 4);
+			insideWrite(hspi, cmd, 4);
 
 			reg_val = MCP3561_USERCONF_TIMER_VAL;
 			cmd[0] = MCP3561_TIMER_WRITE;
 			cmd[1] = (uint8_t)((reg_val >> 16) & 0xff);
 			cmd[2] = (uint8_t)((reg_val >>  8) & 0xff);
 			cmd[3] = (uint8_t)((reg_val)       & 0xff);
-			_MCP3561_write(hspi, cmd, 4);
+			insideWrite(hspi, cmd, 4);
 		#endif
 
 		// mcp github end
 
 }
 
-// inspired by github
+// inspired by github ::: was _MCP3561_write
 // manually operates !CS signal, since STM32 hardware NSS signal doesn't work
 void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
 	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_RESET);
@@ -89,7 +97,7 @@ void configureChannels(SPI_HandleTypeDef *hspi, uint8_t ch_p, uint8_t ch_n){
 	cmd[0]  = MCP3561_MUX_WRITE;
 	cmd[1]  = (ch_p << 4) | ch_n;   // [7..4] VIN+ / [3..0] VIN-
 	//cmd[1]  = (MCP3561_MUX_CH_IntTemp_P << 4) | MCP3561_MUX_CH_IntTemp_M;   // [7..4] VIN+ / [3..0] VIN-
-	_MCP3561_write(hspi, cmd, 2);
+	insideWrite(hspi, cmd, 2);
 }
 
 /**
@@ -123,8 +131,15 @@ bool SPIDriver::WriteADC(int channel)
 bool SPIDriver::ReadADC(int channel)
 {
 	// Tell the barometer to convert the pressure to a digital value with an over-sampling ratio of 512
+
+	//--- block of interaction using SPI protocol
+	// set GPIO port and pin
 	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+
+	//
 	HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+
+	//
 	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
 
 	osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
