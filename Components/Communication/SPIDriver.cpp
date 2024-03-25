@@ -75,6 +75,23 @@ void SPIDriver::InitTask(SPI_HandleTypeDef *hspi, Command& cm)
 
 }
 
+// inspired by github
+// manually operates !CS signal, since STM32 hardware NSS signal doesn't work
+void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
+	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(hspi, pData, size, MCP3561_HAL_TIMEOUT);
+	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_SET);
+}
+
+// taken from github, dont know if it configures channels exactly
+void configureChannels(SPI_HandleTypeDef *hspi, uint8_t ch_p, uint8_t ch_n){
+	uint8_t cmd[4] = {0,0,0,0};
+	cmd[0]  = MCP3561_MUX_WRITE;
+	cmd[1]  = (ch_p << 4) | ch_n;   // [7..4] VIN+ / [3..0] VIN-
+	//cmd[1]  = (MCP3561_MUX_CH_IntTemp_P << 4) | MCP3561_MUX_CH_IntTemp_M;   // [7..4] VIN+ / [3..0] VIN-
+	_MCP3561_write(hspi, cmd, 2);
+}
+
 /**
  * @brief Transmits data via polling
  * @param data The data to transmit
@@ -105,18 +122,16 @@ bool SPIDriver::WriteADC(int channel)
 */
 bool SPIDriver::ReadADC(int channel)
 {
-//	// Check flags
-//	HandleAndClearRxError();
-//	if (LL_USART_IsActiveFlag_RXNE(kUart_)) {
-//		LL_USART_ClearFlag_RXNE(kUart_);
-//	}
-//
-//	// Set the buffer and receiver
-//	rxCharBuf_ = charBuf;
-//	rxReceiver_ = receiver;
-//
-//	// Enable the receive interrupt
-//	LL_USART_EnableIT_RXNE(kUart_);
+	// Tell the barometer to convert the pressure to a digital value with an over-sampling ratio of 512
+	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+
+	osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
+
+	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+
+	HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
 	return true;
 }
@@ -125,7 +140,7 @@ bool SPIDriver::ReadADC(int channel)
 /**
  * @brief prints the configuration registers content
  */
-void MCP3561_PrintRegisters(SPI_HandleTypeDef *hspi){
+void printRegisters(SPI_HandleTypeDef *hspi){
 	uint8_t reg8 = 0;
 	uint8_t cmd [5] = {0,0,0,0,0};
 
@@ -171,7 +186,5 @@ void MCP3561_PrintRegisters(SPI_HandleTypeDef *hspi){
 	printf("TIMER: %02x %02x %02x\n", resp[1], resp[2], resp[3]);
 
 	/* @todo all the remaining registers */
-
-
 }
 // end of github
