@@ -9,10 +9,6 @@
 */
 
 /* Includes ------------------------------------------------------------------*/
-//#include "stm32f4xx_ll_usart.h"
-//#include "stm32f4xx_hal_rcc.h"
-//#include "stm32f4xx_ll_dma.h"
-//#include "cmsis_os.h"
 #include "stm32f4xx_hal_spi.h"
 #include "stm32f4xx_hal_adc.h"
 
@@ -27,23 +23,7 @@ namespace SPIDriver {
 /* SPI Driver Aliases ------------------------------------------------------------------*/
 namespace SPI {
 //	constexpr UARTDriver* Umbilical_RCU = &Driver::uart1;
-//	constexpr UARTDriver* Radio = &Driver::uart2;
-//	constexpr UARTDriver* Conduit_PBB = &Driver::uart3;
-//	// UART 4 (GPS) uses HAL
-//	constexpr UARTDriver* Debug = &Driver::uart5;
 }
-
-/* SPI Receiver Base Class ------------------------------------------------------------------*/
-/**
- * @brief Any classes that are expected to receive using a UART driver
- *		  must derive from this base class and provide an implementation
- *		  for InterruptRxData
- */
-class SPIReceiverBase
-{
-public:
-	virtual void InterruptRxData(uint8_t errors) = 0;
-};
 
 
 /* SPI Driver Class ------------------------------------------------------------------*/
@@ -58,9 +38,6 @@ public:
 
 	// Polling Functions
 	bool Transmit(uint8_t* data, uint16_t len);
-
-	// Interrupt Functions
-	bool ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver);
 
 
 protected:
