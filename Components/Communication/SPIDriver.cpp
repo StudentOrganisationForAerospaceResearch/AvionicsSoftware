@@ -83,19 +83,20 @@ void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio
 
 }
 
-// inspired by github ::: was _MCP3561_write
+// inspired by github (modified) ::: was _MCP3561_write
 // manually operates !CS signal, since STM32 hardware NSS signal doesn't work
 void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
-	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(hspi, pData, size, MCP3561_HAL_TIMEOUT);
-	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
 }
 
-// taken from github, dont know if it configures channels exactly
-void configureChannels(SPI_HandleTypeDef *hspi, uint8_t ch_p, uint8_t ch_n){
+// taken from github (modified)
+// configures the input channels for the ADC based on the specified positive and negative channel numbers
+void configureChannels(SPI_HandleTypeDef *hspi, uint8_t pos_Input_Channel, uint8_t neg_Input_Channel){
 	uint8_t cmd[4] = {0,0,0,0};
 	cmd[0]  = MCP3561_MUX_WRITE;
-	cmd[1]  = (ch_p << 4) | ch_n;   // [7..4] VIN+ / [3..0] VIN-
+	cmd[1]  = (pos_Input_Channel << 4) | neg_Input_Channel;   // [7..4] VIN+ / [3..0] VIN-
 	//cmd[1]  = (MCP3561_MUX_CH_IntTemp_P << 4) | MCP3561_MUX_CH_IntTemp_M;   // [7..4] VIN+ / [3..0] VIN-
 	insideWrite(hspi, cmd, 2);
 }
@@ -134,17 +135,17 @@ bool SPIDriver::ReadADC(int channel)
 
 	//--- block of interaction using SPI protocol
 	// set GPIO port and pin
-	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 
 	//
 	HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
 
 	//
-	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
 
 	osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
 
-	HAL_GPIO_WritePin(BARO_CS_GPIO_Port, BARO_CS_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 
 	HAL_SPI_Transmit(SystemHandles::SPI_Barometer, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
@@ -186,17 +187,17 @@ void printRegisters(SPI_HandleTypeDef *hspi){
 	cmd[0] = MCP3561_SCAN_SREAD;
 	uint8_t resp [5] = {0,0,0,0,0};
 
-	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 	HAL_SPI_TransmitReceive(hspi, cmd, resp, 4, MCP3561_HAL_TIMEOUT);
-	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
 
 	printf("SCAN : %02x %02x %02x\n", resp[1], resp[2], resp[3]);
 
 	cmd[0] = MCP3561_TIMER_SREAD;
 
-	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 	HAL_SPI_TransmitReceive(hspi, cmd, resp, 4, MCP3561_HAL_TIMEOUT);
-	HAL_GPIO_WritePin(MCP3561_CHIP_SELECT_GPIO_Port, MCP3561_CHIP_SELECT_GPIO_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
 
 	printf("TIMER: %02x %02x %02x\n", resp[1], resp[2], resp[3]);
 
