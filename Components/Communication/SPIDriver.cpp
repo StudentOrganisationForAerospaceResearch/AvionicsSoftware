@@ -24,8 +24,7 @@ namespace SPIDriver {
 
 /**
  * @brief Initializes SPI driver for the specified ADC (Master)
- * 		  slaves (barometer,...) are using the read and write
- * 		  thus they are setting the handles
+ * 		  slaves (barometer,...).
 */
 void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin)
 {
@@ -121,7 +120,7 @@ void configureChannels(SPI_HandleTypeDef *hspi, uint8_t pos_Input_Channel, uint8
  * @param len The length of the data to transmit
  * @return True if the transmission was successful, false otherwise
  */
-bool SPIDriver::WriteADC(int channel)
+bool SPIDriver::WriteADC(int channel, uint8_t data)
 {
 	// take needed params from the given param of the upper function
 	configureChannels(hspi, pos_Input_Channel, neg_Input_Channel);
@@ -226,3 +225,49 @@ void printRegisters(SPI_HandleTypeDef *hspi){
 	/* @todo all the remaining registers */
 }
 // end of github
+
+// another github
+SPIDriver::MCP3x6x(const uint16_t MCP3x6x_DEVICE_TYPE, const uint8_t pinCS, SPIClass *theSPI,
+                 const uint8_t pinMOSI, const uint8_t pinMISO, const uint8_t pinCLK) {
+  switch (MCP3x6x_DEVICE_TYPE) {
+    case MCP3461_DEVICE_TYPE:
+      _resolution_max = 16;
+      _channels_max   = 2;
+      break;
+    case MCP3462_DEVICE_TYPE:
+      _resolution_max = 16;
+      _channels_max   = 4;
+      break;
+    case MCP3464_DEVICE_TYPE:
+      _resolution_max = 16;
+      _channels_max   = 8;
+      break;
+    case MCP3561_DEVICE_TYPE:
+      _resolution_max = 24;
+      _channels_max   = 2;
+      break;
+    case MCP3562_DEVICE_TYPE:
+      _resolution_max = 24;
+      _channels_max   = 4;
+      break;
+    case MCP3564_DEVICE_TYPE:
+      _resolution_max = 24;
+      _channels_max   = 8;
+      break;
+    default:
+#warning "undefined MCP3x6x_DEVICE_TYPE"
+      break;
+  }
+
+  //  settings.id = MCP3x6x_DEVICE_TYPE;
+
+  _spi        = theSPI;
+  _pinMISO    = pinMISO;
+  _pinMOSI    = pinMOSI;
+  _pinCLK     = pinCLK;
+  _pinCS      = pinCS;
+
+  _resolution = _resolution_max;
+  _channel_mask |= 0xff << _channels_max;  // todo use this one
+};
+//
