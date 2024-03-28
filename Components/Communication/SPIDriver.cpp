@@ -27,7 +27,7 @@ namespace SPIDriver {
  * 		  slaves (barometer,...) are using the read and write
  * 		  thus they are setting the handles
 */
-void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin, CONFIG config)
+void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin)
 {
 		// set driver's handle to the given handle
 		spi_Handle = hspi;
@@ -89,6 +89,11 @@ void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio
 
 }
 
+void setConfiguration(CONFIG config){
+	// OSR
+
+}
+
 // inspired by github (modified) ::: was _MCP3561_write
 // manually operates !CS signal, since STM32 hardware NSS signal doesn't work
 void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
@@ -102,8 +107,10 @@ void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
 // configures the input channels for the ADC based on the specified positive and negative channel numbers
 void configureChannels(SPI_HandleTypeDef *hspi, uint8_t pos_Input_Channel, uint8_t neg_Input_Channel){
 	uint8_t cmd[4] = {0,0,0,0};
-	cmd[0]  = MCP3561_MUX_WRITE;
+	cmd[0]  = config;
 	cmd[1]  = (pos_Input_Channel << 4) | neg_Input_Channel;   // [7..4] VIN+ / [3..0] VIN-
+
+	// might have to have special layout commands for special cases like below
 	//cmd[1]  = (MCP3561_MUX_CH_IntTemp_P << 4) | MCP3561_MUX_CH_IntTemp_M;   // [7..4] VIN+ / [3..0] VIN-
 	insideWrite(hspi, cmd, 2);
 }
@@ -116,6 +123,9 @@ void configureChannels(SPI_HandleTypeDef *hspi, uint8_t pos_Input_Channel, uint8
  */
 bool SPIDriver::WriteADC(int channel)
 {
+	// take needed params from the given param of the upper function
+	configureChannels(hspi, pos_Input_Channel, neg_Input_Channel);
+
 //	// Loop through and transmit each byte via. polling
 //	for (uint16_t i = 0; i < len; i++) {
 //		LL_USART_TransmitData8(kUart_, data[i]);
@@ -138,6 +148,8 @@ bool SPIDriver::WriteADC(int channel)
 */
 bool SPIDriver::ReadADC(int channel)
 {
+	// take needed params from the given param of the upper function
+	configureChannels(hspi, pos_Input_Channel, neg_Input_Channel);
 	// Tell the barometer to convert the pressure to a digital value with an over-sampling ratio of 512
 
 	//--- block of interaction using SPI protocol
