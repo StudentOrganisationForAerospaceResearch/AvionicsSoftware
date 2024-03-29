@@ -983,11 +983,10 @@ RocketState Test::OnEnter()
 RocketState Test::OnExit()
 {
 	MEVManager::CloseMEV();
-	GPIO::MEV_EN::On();
 
 	osDelay(BURN_TIMER_PERIOD_MS);
 
-	GPIO::MEV_EN::Off();
+	GPIO::MEV_OPEN::Off();
     return rsStateID;
 }
 
