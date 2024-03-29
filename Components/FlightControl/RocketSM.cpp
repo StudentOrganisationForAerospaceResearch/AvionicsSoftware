@@ -14,7 +14,6 @@
 #include "GPIO.hpp"
 #include "FlashTask.hpp"
 #include "WatchdogTask.hpp"
-#include "MEVManager.hpp"
 /* Rocket State Machine ------------------------------------------------------------------*/
 /**
  * @brief Default constructor for Rocket SM, initializes all states
@@ -238,7 +237,6 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_MEV_CLOSE:
-        MEVManager::CloseMEV();
         break;
     case RSC_POWER_TRANSITION_EXTERNAL:
         GPIO::PowerSelect::UmbilicalPower();
@@ -411,9 +409,6 @@ RocketState Arm::OnEnter()
     GPIO::Vent::Close();
     GPIO::Drain::Close();
 
-    // Turn on the MEV enable pin
-	GPIO::MEV_EN::On();
-
     // Switch to internal power
 	GPIO::PowerSelect::InternalPower();
 
@@ -483,7 +478,6 @@ RocketState Ignition::OnEnter()
     // Assert vent and drain closed, and MEV enable pin on
     GPIO::Vent::Close();
     GPIO::Drain::Close();
-    GPIO::MEV_EN::On();
 
     return rsStateID;
 }
@@ -554,11 +548,9 @@ RocketState Launch::OnEnter()
     // Assert vent and drain closed, MEV enable pin on
     GPIO::Vent::Close();
     GPIO::Drain::Close();
-    GPIO::MEV_EN::On();
 
     //TODO: Disable Heartbeat Check ???
 	
-	MEVManager::OpenMEV();
 	TimerTransitions::Inst().BurnSequence();
     return rsStateID;
 }
@@ -590,6 +582,9 @@ RocketState Launch::HandleCommand(Command& cm)
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
             break;
+        case LAUNCH_COMMAND:
+			GPIO::MEV_EN::On();
+        	break;
         default:
             break;
         }
@@ -982,8 +977,6 @@ RocketState Test::OnEnter()
  */
 RocketState Test::OnExit()
 {
-	MEVManager::CloseMEV();
-	GPIO::MEV_EN::On();
 
 	osDelay(BURN_TIMER_PERIOD_MS);
 
@@ -1006,18 +999,12 @@ RocketState Test::HandleCommand(Command& cm)
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
             break;
-        case RSC_TEST_MEV_OPEN: // Send the open command without enable
-            MEVManager::OpenMEV(); 
-            break;
-        case RSC_MEV_CLOSE: // Send the close command without enable
-            MEVManager::CloseMEV();
-            break;
-        case RSC_TEST_MEV_ENABLE:
-            GPIO::MEV_EN::On();
-            break;
-        case RSC_TEST_MEV_DISABLE:
+        case RSC_TEST_MEV_OPEN: // Send the open command which turns on the mev
+        	GPIO::MEV_EN::On();
+        	break;
+        case RSC_MEV_CLOSE: // Send the close command which turns off the mev
             GPIO::MEV_EN::Off();
-            break;
+        	break;
         default:
             nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());
             break;

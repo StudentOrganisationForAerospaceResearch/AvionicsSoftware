@@ -101,6 +101,8 @@ enum RocketControlCommands
     //-- DESCENT --
     RSC_DESCENT_TO_RECOVERY, // Internal command, should not be triggered externally
     //RSC_GOTO_PRELAUNCH -- ABORT SEQUENCE
+	RSC_LAUNCH,
+	LAUNCH_COMMAND,
 
     //-- ABORT --
     //RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state
