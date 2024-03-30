@@ -13,29 +13,28 @@
 #include "main_avionics.hpp"
 
 // Declare the global SPI driver objects
-namespace SPIDriver {
-	SPI_Handle spi_Handle;
-	GPIO_Port gpio_port;
-	GPIO_pin gpio_pin;
-
-}
+//namespace SPIDriver {
+//
+//
+//}
 
 /**
  * @brief Initializes SPI driver for the specific slave (barometer,...).
 */
-void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_Port gpio_Port, GPIO_Pin gpio_Pin)
+void SPIDriver::Init(SPI_HandleTypeDef *hspi, uint16_t gpio_Port, uint16_t gpio_Pin)
 {
 		// set driver's variables to given slave's parameters
-		spi_Handle = hspi;
+		spi_Handle = *hspi;
 		gpio_port = gpio_Port;
 		gpio_pin = gpio_Pin;
-
+		uint32_t dataFormat = 0;
+		char* mode = "mux";
 }
 
 /**
  *  Sets the specific configuration for each ADC
  */
-void SPIDriver::setConfiguration(CONFIG config){
+void SPIDriver::setConfiguration(uint32_t config){
 	// config gives us oversampling ratio
 		// adc mode
 
@@ -226,15 +225,19 @@ void SPIDriver::setConfiguration(CONFIG config){
 			case 0:
 				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
 				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_24BIT;
+				dataFormat = 0;
 			case 1:
 				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
 				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_32BIT;
+				dataFormat = 1;
 			case 2:
 				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
 				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_SGN;
+				dataFormat = 2;
 			case 3:
 				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
 				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_CHID_SGN;
+				dataFormat = 3;
 	    }
 
 	// end of co-Author
@@ -245,24 +248,24 @@ void SPIDriver::setConfiguration(CONFIG config){
 
 	// 8-bit CONFIG registers
 	cmd[0]  = MCP3561_CONFIG0_WRITE;
-	cmd[1]  = MCP3561_USERCONF_REG0;
+	cmd[1]  = tempConfigReg0;
 	internalWrite(hspi, cmd, 2);
 
 	cmd[0]  = MCP3561_CONFIG1_WRITE;
-	cmd[1]  = MCP3561_USERCONF_REG1;
+	cmd[1]  = tempConfigReg1;
 	internalWrite(hspi, cmd, 2);
 
 	cmd[0]  = MCP3561_CONFIG2_WRITE;
-	cmd[1]  = MCP3561_USERCONF_REG2;
+	cmd[1]  = tempConfigReg2;
 	cmd[1] += 3; // last two bits must always be '11'
 	internalWrite(hspi, cmd, 2);
 
 	cmd[0]  = MCP3561_CONFIG3_WRITE;
-	cmd[1]  = MCP3561_USERCONF_REG3;
+	cmd[1]  = tempConfigReg3;
 	internalWrite(hspi, cmd, 2);
 
 	cmd[0]  = MCP3561_IRQ_WRITE;
-	cmd[1]  = MCP3561_USERCONF_IRQ_REG;
+	cmd[1]  = tempConfigIrqReg;
 	internalWrite(hspi, cmd, 2);
 
 	// 24-bit CONFIG registers
@@ -277,14 +280,14 @@ void SPIDriver::setConfiguration(CONFIG config){
 		cmd[1] = (uint8_t)((reg_val >> 16) & 0xff);
 		cmd[2] = (uint8_t)((reg_val >>  8) & 0xff);
 		cmd[3] = (uint8_t)((reg_val)       & 0xff);
-		insideWrite(hspi, cmd, 4);
+		internalWrite(hspi, cmd, 4);
 
 		reg_val = MCP3561_USERCONF_TIMER_VAL;
 		cmd[0] = MCP3561_TIMER_WRITE;
 		cmd[1] = (uint8_t)((reg_val >> 16) & 0xff);
 		cmd[2] = (uint8_t)((reg_val >>  8) & 0xff);
 		cmd[3] = (uint8_t)((reg_val)       & 0xff);
-		insideWrite(hspi, cmd, 4);
+		internalWrite(hspi, cmd, 4);
 	#endif
 
 	// mcp github end
@@ -293,7 +296,7 @@ void SPIDriver::setConfiguration(CONFIG config){
 
 // inspired by github (modified) ::: was _MCP3561_write
 // manually operates !CS signal, since STM32 hardware NSS signal doesn't work
-void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
+void internalWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
 	// port and pin are ADC specific
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(hspi, pData, size, MCP3561_HAL_TIMEOUT);
@@ -302,40 +305,108 @@ void insideWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
 
 // taken from github (modified)
 // configures the input channels for the ADC based on the specified positive and negative channel numbers
-void configureChannels(SPI_HandleTypeDef *hspi, uint8_t pos_Input_Channel, uint8_t neg_Input_Channel){
-	uint8_t cmd[4] = {0,0,0,0};
-	cmd[0]  = config;
-	cmd[1]  = (pos_Input_Channel << 4) | neg_Input_Channel;   // [7..4] VIN+ / [3..0] VIN-
+void configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
 
-	// might have to have special layout commands for special cases like below
-	//cmd[1]  = (MCP3561_MUX_CH_IntTemp_P << 4) | MCP3561_MUX_CH_IntTemp_M;   // [7..4] VIN+ / [3..0] VIN-
-	internalWrite(hspi, cmd, 2);
+	if (mode == "mux"){
+		uint8_t pos_Input_Channel = 0;
+		uint8_t neg_Input_Channel = 0;
+		switch(channel){
+				case 0:
+					pos_Input_Channel = MCP3561_MUX_CH0;
+					neg_Input_Channel = MCP3561_MUX_CH0;
+				case 1:
+					pos_Input_Channel = MCP3561_MUX_CH1;
+					neg_Input_Channel = MCP3561_MUX_CH1;
+				case 2:
+					pos_Input_Channel = MCP3561_MUX_CH2;
+					neg_Input_Channel = MCP3561_MUX_CH2;
+				case 3:
+					pos_Input_Channel = MCP3561_MUX_CH3;
+					neg_Input_Channel = MCP3561_MUX_CH3;
+				case 4:
+					pos_Input_Channel = MCP3561_MUX_CH4;
+					neg_Input_Channel = MCP3561_MUX_CH4;
+				case 5:
+					pos_Input_Channel = MCP3561_MUX_CH5;
+					neg_Input_Channel = MCP3561_MUX_CH5;
+				case 6:
+					pos_Input_Channel = MCP3561_MUX_CH6;
+					neg_Input_Channel = MCP3561_MUX_CH6;
+				case 7:
+					pos_Input_Channel = MCP3561_MUX_CH7;
+					neg_Input_Channel = MCP3561_MUX_CH7;
+
+		}
+			uint8_t cmd[4] = {0,0,0,0};
+			cmd[0]  = config.osr;
+			cmd[1]  = (pos_Input_Channel << 4) | neg_Input_Channel;   // [7..4] VIN+ / [3..0] VIN-
+			internalWrite(hspi, cmd, 2);
+			// might have to have special layout commands for special cases like below
+			//cmd[1]  = (MCP3561_MUX_CH_IntTemp_P << 4) | MCP3561_MUX_CH_IntTemp_M;   // [7..4] VIN+ / [3..0] VIN-
+
+		}
+//		I will work on this tomorrow, but I have a base idea for this implementation
+		else if(mode =="scan"){
+			tempScanReg = MCP3561_USERCONF_SCAN_REG;
+			switch(channel){
+				case 0:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH0;
+				case 1:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH1;
+				case 2:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH2;
+				case 3:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH3;
+				case 4:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH4;
+				case 5:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH5;
+				case 6:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH6;
+				case 7:
+		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
+					tempConfigReg2 != MCP3561_SCAN_CH7;
+
+		}
+			uint8_t cmd[4] = {0,0,0,0};
+			cmd[0]  = config;
+			cmd[1]  = tempScanReg;   // [7..4] VIN+ / [3..0] VIN-
+			internalWrite(hspi, cmd, 2);
+	}
+
 }
 
-/**
- * @brief Transmits data via polling
- * @param data The data to transmit
- * @param len The length of the data to transmit
- * @return True if the transmission was successful, false otherwise
- */
-bool SPIDriver::WriteADC(int channel, uint8_t data)
-{
-	// take needed params from the given param of the upper function
-	configureChannels(hspi, pos_Input_Channel, neg_Input_Channel);
-
-//	// Loop through and transmit each byte via. polling
-//	for (uint16_t i = 0; i < len; i++) {
-//		LL_USART_TransmitData8(kUart_, data[i]);
+///**
+// * @brief Transmits data via polling
+// * @param data The data to transmit
+// * @param len The length of the data to transmit
+// * @return True if the transmission was successful, false otherwise
+// */
+//bool SPIDriver::WriteADC(int channel, uint8_t data)
+//{
+//	// take needed params from the given param of the upper function
+//	configureChannels(hspi, pos_Input_Channel, neg_Input_Channel);
 //
-//		// Wait until the TX Register Empty Flag is set
-//		while (!LL_USART_IsActiveFlag_TXE(kUart_)) {}
-//	}
+////	// Loop through and transmit each byte via. polling
+////	for (uint16_t i = 0; i < len; i++) {
+////		LL_USART_TransmitData8(kUart_, data[i]);
+////
+////		// Wait until the TX Register Empty Flag is set
+////		while (!LL_USART_IsActiveFlag_TXE(kUart_)) {}
+////	}
+////
+////	// Wait until the transfer complete flag is set
+////	while (!LL_USART_IsActiveFlag_TC(kUart_)) {}
 //
-//	// Wait until the transfer complete flag is set
-//	while (!LL_USART_IsActiveFlag_TC(kUart_)) {}
-
-	return true;
-}
+//	return true;
+//}
 
 
 /**
@@ -343,129 +414,151 @@ bool SPIDriver::WriteADC(int channel, uint8_t data)
 * @param receiver
 * @return TRUE if interrupt was successfully enabled, FALSE otherwise
 */
-bool SPIDriver::ReadADC(int channel)
+int32_t SPIDriver::ReadADC(int channel)
 {
 	// take needed params from the given param of the upper function
-	configureChannels(hspi, pos_Input_Channel, neg_Input_Channel);
-	// Tell the barometer to convert the pressure to a digital value with an over-sampling ratio of 512
+	configureChannels(hspi, channel);
 
 	//--- block of interaction using SPI protocol
 
 	// port and pin are ADC specific
 	// spi handle is slave specific
 	// set GPIO port and pin
-	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
+	uint8_t val[5] = {0,0,0,0,0};
+	uint8_t cmd[5] = {0,0,0,0,0};
+	cmd[0] = MCP3561_SREAD_DATA_COMMAND;
+	insideWrite(hspi, cmd, 4);
+	uint32_t value = 0;
 
-	//
-	HAL_SPI_Transmit(spi_Handle, &ADC_D1_512_CONV_CMD, CMD_SIZE, CMD_TIMEOUT);
+	if (mode == "mux"){
+		switch(dataFormat){
+			case 0:
+				value = (val[1] << 16) | (val[2] << 8) | val[3];
+			case 1:
+				value = (val[1] << 16) | (val[2] << 8) | val[3];
+			case 2:
+				value = ((val[1] & 0x01) << 31) | (val[2] << 16) | (val[3] << 8) | val[4];
+			case 3:
+				value = ((val[1] & 0x01) << 31) | (val[2] << 16) | (val[3] << 8) | val[4];
+		}
+	}
+	else if(mode == "scan"){
+		switch(dataFormat){
+			case 0:
+				value = (val[1] << 16) | (val[2] << 8) | val[3];
+			case 3:
+				value[3] = { val[0],
+						( (val[1] & 0xF0) >> 4 ) ,
+						( (val[1] & 0x01) << 31) | (val[2] << 16) | (val[3] << 8) | val[4]};
+		}
+	}
 
-	//
-	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
 
-	osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
+//Unsure of what exactly this code's function is
+//	osDelay(2); // 1.17ms max conversion time for an over-sampling ratio of 512
+//	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
+//	HAL_SPI_Transmit(spi_Handle, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
 
-	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
 
-	HAL_SPI_Transmit(spi_Handle, &ADC_READ_CMD, CMD_SIZE, CMD_TIMEOUT);
-
-	return true;
 }
 
-// start of github
-/**
- * @brief prints the configuration registers content
- */
-void printRegisters(SPI_HandleTypeDef *hspi){
-	uint8_t reg8 = 0;
-	uint8_t cmd [5] = {0,0,0,0,0};
 
-	cmd[0] = MCP3561_CONFIG0_SREAD;
-	reg8 = _MCP3561_sread(hspi, cmd);
-	printf("CONF0: %02x\n", reg8);
 
-	cmd[0] = MCP3561_CONFIG1_SREAD;
-	reg8 = _MCP3561_sread(hspi, cmd);
-	printf("CONF1: %02x\n", reg8);
-
-	cmd[0] = MCP3561_CONFIG2_SREAD;
-	reg8 = _MCP3561_sread(hspi, cmd);
-	printf("CONF2: %02x\n", reg8);
-
-	cmd[0] = MCP3561_CONFIG3_SREAD;
-	reg8 = _MCP3561_sread(hspi, cmd);
-	printf("CONF3: %02x\n", reg8);
-
-	cmd[0] = MCP3561_IRQ_SREAD;
-	reg8 = _MCP3561_sread(hspi, cmd);
-	printf("IRQ  : %02x\n", reg8);
-
-	cmd[0] = MCP3561_MUX_SREAD;
-	reg8 = _MCP3561_sread(hspi, cmd);
-	printf("MUX  : %02x\n", reg8);
-
-	cmd[0] = MCP3561_SCAN_SREAD;
-	uint8_t resp [5] = {0,0,0,0,0};
-
-	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
-	HAL_SPI_TransmitReceive(hspi, cmd, resp, 4, MCP3561_HAL_TIMEOUT);
-	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
-
-	printf("SCAN : %02x %02x %02x\n", resp[1], resp[2], resp[3]);
-
-	cmd[0] = MCP3561_TIMER_SREAD;
-
-	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
-	HAL_SPI_TransmitReceive(hspi, cmd, resp, 4, MCP3561_HAL_TIMEOUT);
-	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
-
-	printf("TIMER: %02x %02x %02x\n", resp[1], resp[2], resp[3]);
-
-	/* @todo all the remaining registers */
-}
-// end of github
+//// start of github
+///**
+// * @brief prints the configuration registers content
+// */
+//void printRegisters(SPI_HandleTypeDef *hspi){
+//	uint8_t reg8 = 0;
+//	uint8_t cmd [5] = {0,0,0,0,0};
+//
+//	cmd[0] = MCP3561_CONFIG0_SREAD;
+//	reg8 = _MCP3561_sread(hspi, cmd);
+//	printf("CONF0: %02x\n", reg8);
+//
+//	cmd[0] = MCP3561_CONFIG1_SREAD;
+//	reg8 = _MCP3561_sread(hspi, cmd);
+//	printf("CONF1: %02x\n", reg8);
+//
+//	cmd[0] = MCP3561_CONFIG2_SREAD;
+//	reg8 = _MCP3561_sread(hspi, cmd);
+//	printf("CONF2: %02x\n", reg8);
+//
+//	cmd[0] = MCP3561_CONFIG3_SREAD;
+//	reg8 = _MCP3561_sread(hspi, cmd);
+//	printf("CONF3: %02x\n", reg8);
+//
+//	cmd[0] = MCP3561_IRQ_SREAD;
+//	reg8 = _MCP3561_sread(hspi, cmd);
+//	printf("IRQ  : %02x\n", reg8);
+//
+//	cmd[0] = MCP3561_MUX_SREAD;
+//	reg8 = _MCP3561_sread(hspi, cmd);
+//	printf("MUX  : %02x\n", reg8);
+//
+//	cmd[0] = MCP3561_SCAN_SREAD;
+//	uint8_t resp [5] = {0,0,0,0,0};
+//
+//	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
+//	HAL_SPI_TransmitReceive(hspi, cmd, resp, 4, MCP3561_HAL_TIMEOUT);
+//	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
+//
+//	printf("SCAN : %02x %02x %02x\n", resp[1], resp[2], resp[3]);
+//
+//	cmd[0] = MCP3561_TIMER_SREAD;
+//
+//	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
+//	HAL_SPI_TransmitReceive(hspi, cmd, resp, 4, MCP3561_HAL_TIMEOUT);
+//	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
+//
+//	printf("TIMER: %02x %02x %02x\n", resp[1], resp[2], resp[3]);
+//
+//	/* @todo all the remaining registers */
+//}
+//// end of github
 
 // another github
-SPIDriver::MCP3x6x(const uint16_t MCP3x6x_DEVICE_TYPE, const uint8_t pinCS, SPIClass *theSPI,
+void SPIDriver::MCP3x6x(const uint16_t MCP3x6x_DEVICE_TYPE, const uint8_t pinCS, SPI_HandleTypeDef *theSPI,
                  const uint8_t pinMOSI, const uint8_t pinMISO, const uint8_t pinCLK) {
-  switch (MCP3x6x_DEVICE_TYPE) {
-    case MCP3461_DEVICE_TYPE:
-      _resolution_max = 16;
-      _channels_max   = 2;
-      break;
-    case MCP3462_DEVICE_TYPE:
-      _resolution_max = 16;
-      _channels_max   = 4;
-      break;
-    case MCP3464_DEVICE_TYPE:
-      _resolution_max = 16;
-      _channels_max   = 8;
-      break;
-    case MCP3561_DEVICE_TYPE:
-      _resolution_max = 24;
-      _channels_max   = 2;
-      break;
-    case MCP3562_DEVICE_TYPE:
-      _resolution_max = 24;
-      _channels_max   = 4;
-      break;
-    case MCP3564_DEVICE_TYPE:
-      _resolution_max = 24;
-      _channels_max   = 8;
-      break;
-    default:
-#warning "undefined MCP3x6x_DEVICE_TYPE"
-      break;
-  }
-
-  //  settings.id = MCP3x6x_DEVICE_TYPE;
-
-  _spi        = theSPI;
-  _pinMISO    = pinMISO;
-  _pinMOSI    = pinMOSI;
-  _pinCLK     = pinCLK;
-  _pinCS      = pinCS;
-
-  _resolution = _resolution_max;
-  _channel_mask |= 0xff << _channels_max;  // todo use this one
+//  switch (MCP3x6x_DEVICE_TYPE) {
+//    case MCP3461_DEVICE_TYPE:
+//      _resolution_max = 16;
+//      _channels_max   = 2;
+//      break;
+//    case MCP3462_DEVICE_TYPE:
+//      _resolution_max = 16;
+//      _channels_max   = 4;
+//      break;
+//    case MCP3464_DEVICE_TYPE:
+//      _resolution_max = 16;
+//      _channels_max   = 8;
+//      break;
+//    case MCP3561_DEVICE_TYPE:
+//      _resolution_max = 24;
+//      _channels_max   = 2;
+//      break;
+//    case MCP3562_DEVICE_TYPE:
+//      _resolution_max = 24;
+//      _channels_max   = 4;
+//      break;
+//    case MCP3564_DEVICE_TYPE:
+//      _resolution_max = 24;
+//      _channels_max   = 8;
+//      break;
+//    default:
+//#warning "undefined MCP3x6x_DEVICE_TYPE"
+//      break;
+//  }
+//
+//  //  settings.id = MCP3x6x_DEVICE_TYPE;
+//
+//  _spi        = theSPI;
+//  _pinMISO    = pinMISO;
+//  _pinMOSI    = pinMOSI;
+//  _pinCLK     = pinCLK;
+//  _pinCS      = pinCS;
+//
+//  _resolution = _resolution_max;
+//  _channel_mask |= 0xff << _channels_max;  // todo use this one
 };
 //
