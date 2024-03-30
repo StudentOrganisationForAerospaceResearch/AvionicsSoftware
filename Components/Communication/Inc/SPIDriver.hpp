@@ -178,6 +178,7 @@
 #define MCP3561_SCAN_CH_IntVcm    (1 << 0xE)
 #define MCP3561_SCAN_CH_AVDD      (1 << 0xD)
 #define MCP3561_SCAN_CH_TEMP      (1 << 0xC)
+#define MCP3561_SCAN_CH_MASK	  (0 << 0xB)
 #define MCP3561_SCAN_CH_DIFF_D    (1 << 0xB)
 #define MCP3561_SCAN_CH_DIFF_C    (1 << 0xA)
 #define MCP3561_SCAN_CH_DIFF_B    (1 << 0x9)
@@ -246,12 +247,15 @@
 #define MCP3561_USERCONF_SCAN_REG (MCP3561_SCAN_DLY_512 | MCP3561_SCAN_CH_DIFF_A | MCP3561_SCAN_CH_DIFF_B | MCP3561_SCAN_CH_DIFF_C | MCP3561_SCAN_CH_DIFF_D)
 #define MCP3561_USERCONF_TIMER_VAL (1206222)
 /* SPI Driver Instances ------------------------------------------------------------------*/
-class SPIDriver;
+//class SPIDriver;
 
-namespace SPIDriver {
-//	extern SPIDriver spi1;
-
-}
+//namespace SPIDriverNameSpace {
+////	extern SPIDriver spi1;
+//	SPI_Handle spi_Handle;
+//	GPIO_Port gpio_port;
+//	GPIO_pin gpio_pin;
+//
+//}
 
 /* SPI Driver Aliases ------------------------------------------------------------------*/
 namespace SPI {
@@ -277,34 +281,38 @@ struct config{
 
 /* SPI Driver Class ------------------------------------------------------------------*/
 
-class SPIDriver
-{
-public:
-//	UARTDriver(USART_TypeDef* uartInstance) :
-//		kUart_(uartInstance),
-//		rxCharBuf_(nullptr),
-//		rxReceiver_(nullptr) {}
+	class SPIDriver
+	{
+	public:
 
-//	Configuring the registers based on user-requirements
-	void setConfig(config conf);
+	void Init(SPI_HandleTypeDef *hspi, uint16_t gpio_Port, uint16_t gpio_pin);
+
+	int32_t ReadADC(int channel);
+
+	//	Configuring the registers based on user-requirements
+	void setConfiguration(uint32_t config);
+
+	void MCP3x6x(const uint16_t MCP3x6x_DEVICE_TYPE, const uint8_t pinCS, SPI_HandleTypeDef *theSPI,
+	                 const uint8_t pinMOSI, const uint8_t pinMISO, const uint8_t pinCLK);
 
 	// Polling Functions
 	bool Transmit(uint8_t* data, uint16_t len);
 
+	// Variables
+	SPI_HandleTypeDef spi_Handle;
+	uint16_t gpio_port;
+	uint16_t gpio_pin;
+
 protected:
 	// Helper Functions
-	//	bool HandleAndClearRxError();
-	//	bool GetRxErrors();
 
 
 	// Constants
-	//	USART_TypeDef* kUart_; // Stores the UART instance
 
 	// Variables
-	uint8_t* rxCharBuf_; // Stores a pointer to the buffer to store the received data
-	//	UARTReceiverBase* rxReceiver_; // Stores a pointer to the receiver object
+
 };
 
 
 
-#endif // SOAR_SPI_DRIVER_HPP_
+#endif //SOAR_SPI_DRIVER_HPP_
