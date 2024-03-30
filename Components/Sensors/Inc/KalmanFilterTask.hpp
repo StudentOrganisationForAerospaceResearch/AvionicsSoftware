@@ -11,6 +11,13 @@
 #include "Data.h"
 #include "SystemDefines.hpp"
 
+/* Macros/Enums ------------------------------------------------------------*/
+enum KALMAN_TASK_COMMANDS {
+    KALMAN_NONE = 0,
+    READ_NEW_SAMPLE,// Get a new IMU sample, task will be blocked for polling time
+	TASK_SPECIFIC_COMMAND,
+};
+
 
 /* Class ------------------------------------------------------------------*/
 class KalmanFilterTask : public Task
