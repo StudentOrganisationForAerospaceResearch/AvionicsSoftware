@@ -411,8 +411,8 @@ RocketState Arm::OnEnter()
     GPIO::Vent::Close();
     GPIO::Drain::Close();
 
-    // Turn on the MEV enable pin
-	GPIO::MEV_EN::On();
+    // Ensure MEV Enable is off
+	GPIO::MEV_EN::Off();
 
     // Switch to internal power
 	GPIO::PowerSelect::InternalPower();
@@ -483,7 +483,7 @@ RocketState Ignition::OnEnter()
     // Assert vent and drain closed, and MEV enable pin on
     GPIO::Vent::Close();
     GPIO::Drain::Close();
-    GPIO::MEV_EN::On();
+    GPIO::MEV_EN::Off();
 
     return rsStateID;
 }
@@ -982,12 +982,9 @@ RocketState Test::OnEnter()
  */
 RocketState Test::OnExit()
 {
-	MEVManager::CloseMEV();
-	GPIO::MEV_EN::On();
-
 	osDelay(BURN_TIMER_PERIOD_MS);
 
-	GPIO::MEV_EN::Off();
+	MEVManager::CloseMEV();
     return rsStateID;
 }
 
@@ -1013,10 +1010,8 @@ RocketState Test::HandleCommand(Command& cm)
             MEVManager::CloseMEV();
             break;
         case RSC_TEST_MEV_ENABLE:
-            GPIO::MEV_EN::On();
             break;
         case RSC_TEST_MEV_DISABLE:
-            GPIO::MEV_EN::Off();
             break;
         default:
             nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());

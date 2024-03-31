@@ -77,7 +77,7 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     // Prints for specific message contents
     if(msg.has_combustionControlStatus()) {
     	SOAR_PRINT("PROTO-MEV-STATE: %d\n", msg.get_combustionControlStatus().get_mev_open());
-    	MEVManager::HandleMEVTelemetry(msg);
+    	//MEVManager::HandleMEVTelemetry(msg);
 
     }
 
