@@ -93,6 +93,11 @@ constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 2;			// Priority of the pr
 constexpr uint8_t TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
 constexpr uint16_t TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
 
+// KALMAN FILTER TASK
+constexpr uint8_t TASK_KALMAN_FILTER_PRIORITY = 2;			// Priority of the pressure transducer task
+constexpr uint8_t TASK_KALMAN_FILTER_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
+constexpr uint16_t TASK_KALMAN_FILTER_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
+
 // BATTERY VOLTAGE Task
 constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 2;            // Priority of the battery voltage task
 constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the battery voltage task queue
