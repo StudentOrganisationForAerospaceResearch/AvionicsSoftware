@@ -10,7 +10,7 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
-constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5; // N cycles of telemetry sends for each flash log
+constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 2 * 3 * 5; // N cycles of telemetry sends for each flash log
 
 class TelemetryTask : public Task
 {
