@@ -15,7 +15,6 @@
 enum KALMAN_TASK_COMMANDS {
     KALMAN_NONE = 0,
     READ_NEW_SAMPLE,// Get a new IMU sample, task will be blocked for polling time
-	TASK_SPECIFIC_COMMAND,
 };
 
 
@@ -38,9 +37,18 @@ class KalmanFilterTask : public Task
 
 	    void ReadSensors();
 
+	    void Test();
+
+
 
 	    // Data
 	    AccelGyroMagnetismData* data;
+
+	private:
+	    KalmanFilterTask();                                        // Private constructor
+	    KalmanFilterTask(const KalmanFilterTask&);                    // Prevent copy-construction
+	    KalmanFilterTask& operator=(const KalmanFilterTask&);            // Prevent assignment
+
 
 
 };

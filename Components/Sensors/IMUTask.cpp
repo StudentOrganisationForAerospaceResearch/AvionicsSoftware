@@ -213,6 +213,8 @@ void IMUTask::TransmitProtocolData()
 
     // Send the barometer data
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+
+//    KalmanFilterTask::ReadSensors();
 }
 
 /**
