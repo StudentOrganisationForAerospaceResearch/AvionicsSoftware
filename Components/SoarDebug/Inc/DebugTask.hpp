@@ -34,6 +34,8 @@ public:
     // Interrupt receive callback
     void InterruptRxData(uint8_t errors);
 
+    void ReceiveDMAData(uint8_t* buf);
+
 protected:
     static void RunTask(void* pvParams) { DebugTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
@@ -49,8 +51,10 @@ protected:
     static int32_t ExtractIntParameter(const char* msg, uint16_t identifierLen);
     
     // Member variables
-    uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];
-    uint8_t debugMsgIdx;
+    //uint8_t debugBuffer[DEBUG_RX_BUFFER_SZ_BYTES+1];
+    uint8_t* debugBuffer;
+    int16_t debugMsgIdx;
+    int16_t oldDebugMsgIdx;
     bool isDebugMsgReady;
 
     uint8_t debugRxChar; // Character received from UART Interrupt

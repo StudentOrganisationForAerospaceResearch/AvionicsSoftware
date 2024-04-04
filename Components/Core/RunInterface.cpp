@@ -33,6 +33,23 @@ extern "C" {
     {
         Driver::uart5.HandleIRQ_UART();
     }
+
+    void cpp_DMA1_Stream0_IRQHandler() {
+        void* d = (void *)1;
+        /* Check half-transfer complete interrupt */
+        if (LL_DMA_IsEnabledIT_HT(DMA1, LL_DMA_STREAM_0) && LL_DMA_IsActiveFlag_HT0(DMA1)) {
+            LL_DMA_ClearFlag_HT0(DMA1);             /* Clear half-transfer complete flag */
+
+        }
+
+        /* Check transfer-complete interrupt */
+        if (LL_DMA_IsEnabledIT_TC(DMA1, LL_DMA_STREAM_0) && LL_DMA_IsActiveFlag_TC0(DMA1)) {
+            LL_DMA_ClearFlag_TC0(DMA1);             /* Clear transfer complete flag */
+
+        }
+        //SOAR_PRINT("PLEASE\n");
+
+    }
 }
 
 

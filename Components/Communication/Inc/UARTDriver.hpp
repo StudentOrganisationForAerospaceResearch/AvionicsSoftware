@@ -65,6 +65,11 @@ public:
 	// Interrupt Functions
 	bool ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver);
 
+	// yeah
+	bool TransmitDMA(uint8_t* data, uint16_t len);
+
+	// yeah ok
+	bool ReceiveDMA(uint8_t* charbuf, uint16_t len);
 
 	// Interrupt Handlers
 	void HandleIRQ_UART(); // This MUST be called inside USARTx_IRQHandler

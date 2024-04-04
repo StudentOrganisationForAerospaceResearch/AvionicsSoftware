@@ -42,6 +42,8 @@ protected:
     void ConfigureUART();
     void HandleCommand(Command& cm);
 
+    uint8_t *DMABUF;
+
 private:
     UARTTask() : Task(UART_TASK_QUEUE_DEPTH_OBJS) {}    // Private constructor
     UARTTask(const UARTTask&);                        // Prevent copy-construction
