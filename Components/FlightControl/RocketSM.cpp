@@ -186,8 +186,8 @@ RocketState PreLaunch::OnEnter()
     GPIO::Drain::Close();
     GPIO::Vent::Close();
 
-    // Make sure the MEV enable pin is off
-    GPIO::MEV_EN::Off();
+    // Make sure the MEV is closed
+    MEVManager::MEV_CLOSE();
 
     return rsStateID;
 }
@@ -238,7 +238,7 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_MEV_CLOSE:
-        MEVManager::CloseMEV();
+        MEVManager::MEV_CLOSE();
         break;
     case RSC_POWER_TRANSITION_EXTERNAL:
         GPIO::PowerSelect::UmbilicalPower();
@@ -319,8 +319,8 @@ RocketState Fill::OnEnter()
     GPIO::Vent::Close();
     GPIO::Drain::Close();
 
-    // Make sure the MEV enable pin is off
-    GPIO::MEV_EN::Off();
+    // Make sure the MEV is closed
+    MEVManager::MEV_CLOSE();
 
     // Clear the arm flags
     for (uint8_t i = 0; i < 2; i++)
@@ -411,8 +411,8 @@ RocketState Arm::OnEnter()
     GPIO::Vent::Close();
     GPIO::Drain::Close();
 
-    // Ensure MEV Enable is off
-	GPIO::MEV_EN::Off();
+    // Ensure MEV is closed
+	MEVManager::MEV_CLOSE();
 
     // Switch to internal power
 	GPIO::PowerSelect::InternalPower();
@@ -480,10 +480,10 @@ Ignition::Ignition()
  */
 RocketState Ignition::OnEnter()
 {
-    // Assert vent and drain closed, and MEV enable pin on
+    // Assert vent and drain closed, and MEV closed
     GPIO::Vent::Close();
     GPIO::Drain::Close();
-    GPIO::MEV_EN::Off();
+    MEVManager::MEV_CLOSE();
 
     return rsStateID;
 }
@@ -551,15 +551,11 @@ Launch::Launch()
  */
 RocketState Launch::OnEnter()
 {
-    // Assert vent and drain closed, MEV enable pin on
+    // Assert vent and drain closed, MEV open
     GPIO::Vent::Close();
     GPIO::Drain::Close();
-    GPIO::MEV_EN::On();
-
-    //TODO: Disable Heartbeat Check ???
-	
-	MEVManager::OpenMEV();
-	TimerTransitions::Inst().BurnSequence();
+    MEVManager::MEV_OPEN();
+    TimerTransitions::Inst().BurnSequence();
     return rsStateID;
 }
 
@@ -634,7 +630,7 @@ RocketState Burn::OnEnter()
 
     // Turn off the MEV power
     //TODO: Make sure the MEV is fully open before turning off power!
-    GPIO::MEV_EN::Off();
+    MEVManager::MEV_CLOSE();
 
     // Start the coast transition timer (7 seconds - TBD based on sims)
     TimerTransitions::Inst().CoastSequence();
@@ -704,7 +700,7 @@ RocketState Coast::OnEnter()
     GPIO::Drain::Close();
 
     // Assert MEV power
-    GPIO::MEV_EN::Off();
+    MEVManager::MEV_CLOSE();
 
     // Start Descent Transition Timer (~25 seconds) : Should be well after apogee
 	TimerTransitions::Inst().DescentSequence();
@@ -773,7 +769,7 @@ RocketState Descent::OnEnter()
     GPIO::Drain::Open();
 
     // Assert MEV power
-    GPIO::MEV_EN::Off();
+    MEVManager::MEV_CLOSE();
 
     SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
     SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(rsStateID));
@@ -846,7 +842,7 @@ RocketState Recovery::OnEnter()
     GPIO::Drain::Open();
 
     // Make sure MEV power is off
-    GPIO::MEV_EN::Off();
+    MEVManager::MEV_CLOSE();
     
     //TODO: Consider adding periodic AUTO-VENT timers every 100 seconds to make sure they're open)
     //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
@@ -907,10 +903,10 @@ Abort::Abort()
  */
 RocketState Abort::OnEnter()
 {
-    // Make sure the MEV enable pin is off and vents are open
+    // Make sure the MEV closed and vents are open
 	GPIO::Vent::Open();
 	GPIO::Drain::Open();
-    GPIO::MEV_EN::Off();
+    MEVManager::MEV_CLOSE();
 
     return rsStateID;
 }
@@ -982,9 +978,7 @@ RocketState Test::OnEnter()
  */
 RocketState Test::OnExit()
 {
-	osDelay(BURN_TIMER_PERIOD_MS);
-
-	MEVManager::CloseMEV();
+	MEVManager::MEV_CLOSE();
     return rsStateID;
 }
 
@@ -1003,11 +997,11 @@ RocketState Test::HandleCommand(Command& cm)
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
             break;
-        case RSC_TEST_MEV_OPEN: // Send the open command without enable
-            MEVManager::OpenMEV(); 
+        case RSC_TEST_MEV_OPEN: // Send the open command
+            MEVManager::MEV_OPEN();
             break;
-        case RSC_MEV_CLOSE: // Send the close command without enable
-            MEVManager::CloseMEV();
+        case RSC_MEV_CLOSE: // Send the close command
+            MEVManager::MEV_CLOSE();
             break;
         case RSC_TEST_MEV_ENABLE:
             break;

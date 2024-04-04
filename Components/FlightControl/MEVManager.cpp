@@ -5,15 +5,12 @@
 
 MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
 
-void MEVManager::OpenMEV() {
+void MEVManager::MEV_OPEN() {
     shouldMevBeOpen = OPEN;
-    GPIO::MEV_EN::On();
+    GPIO::_MAIN_ENGINE_VALVE::Open();
 }
 
-void MEVManager::CloseMEV() {
+void MEVManager::MEV_CLOSE() {
     shouldMevBeOpen = CLOSE;
-    GPIO::MEV_EN::Off();
-}
-
-void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {
+    GPIO::_MAIN_ENGINE_VALVE::Close();
 }

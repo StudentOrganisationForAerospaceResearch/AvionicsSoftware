@@ -67,18 +67,13 @@ void PBBRxProtocolTask::HandleProtobufTelemetryMessage(EmbeddedProto::ReadBuffer
     msg.deserialize(readBuffer);
 
     // Verify the source node is the PBB
-    if (msg.get_source() != Proto::Node::NODE_PBB)
+    if (msg.get_source() != Proto::Node::NODE_PBB) {
         return;
+    }
 
     // If the target is the DMB, forward it to the RCU
-    if(msg.get_target() == Proto::Node::NODE_DMB)
+    if(msg.get_target() == Proto::Node::NODE_DMB) {
     	msg.set_target(Proto::Node::NODE_RCU);
-
-    // Prints for specific message contents
-    if(msg.has_combustionControlStatus()) {
-    	SOAR_PRINT("PROTO-MEV-STATE: %d\n", msg.get_combustionControlStatus().get_mev_open());
-    	//MEVManager::HandleMEVTelemetry(msg);
-
     }
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
