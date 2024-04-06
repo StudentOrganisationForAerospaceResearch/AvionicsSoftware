@@ -1,28 +1,16 @@
 #include "MEVManager.hpp"
 #include "PBBRxProtocolTask.hpp"
 #include "CommandMessage.hpp"
+#include "GPIO.hpp"
 
 MEVManager::MEVState MEVManager::shouldMevBeOpen = INDETERMINATE;
 
-void MEVManager::OpenMEV() {
+void MEVManager::MEV_OPEN() {
     shouldMevBeOpen = OPEN;
-    PBBRxProtocolTask::SendPbbCommand(Proto::PbbCommand::Command::PBB_OPEN_MEV);
+    GPIO::_MAIN_ENGINE_VALVE::Open();
 }
 
-void MEVManager::CloseMEV() {
+void MEVManager::MEV_CLOSE() {
     shouldMevBeOpen = CLOSE;
-    PBBRxProtocolTask::SendPbbCommand(Proto::PbbCommand::Command::PBB_CLOSE_MEV);
-}
-
-void MEVManager::HandleMEVTelemetry(Proto::TelemetryMessage& msg) {
-    if (shouldMevBeOpen == INDETERMINATE || !msg.has_combustionControlStatus()) {
-        // Do nothing
-        return;
-    }
-
-    if (!msg.combustionControlStatus().mev_open() && shouldMevBeOpen == OPEN) {
-        OpenMEV();
-    } else if (msg.combustionControlStatus().mev_open() && shouldMevBeOpen == CLOSE) {
-        CloseMEV();
-    }
+    GPIO::_MAIN_ENGINE_VALVE::Close();
 }

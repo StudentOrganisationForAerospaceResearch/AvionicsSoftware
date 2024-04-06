@@ -19,9 +19,8 @@ public:
         CLOSE
     };
 
-    static void OpenMEV();
-    static void CloseMEV();
-    static void HandleMEVTelemetry(Proto::TelemetryMessage& msg);
+    static void MEV_OPEN();
+    static void MEV_CLOSE();
 
 private:
     static MEVState shouldMevBeOpen;
