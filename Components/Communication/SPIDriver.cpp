@@ -28,7 +28,7 @@ void SPIDriver::Init(SPI_HandleTypeDef *hspi, uint16_t gpio_Port, uint16_t gpio_
 		gpio_port = gpio_Port;
 		gpio_pin = gpio_Pin;
 		uint32_t dataFormat = 0;
-		char* mode = "mux";
+		const char* mode = "mux";
 }
 
 /**
@@ -47,16 +47,16 @@ void SPIDriver::setConfiguration(uint32_t config){
 	uint32_t tempConfigScanReg = MCP3561_USERCONF_SCAN_REG;
 
 	//Configure Register 0
-	switch (conf.Mode) {
+	switch (conf.mode) {
 		case "Standby":
 			tempConfigReg0 &= ~MCP3561_CONFIG0_ADC_MODE_MASK;
-			tempConfigReg0 |= MCP3561_CONFIG0_MODE_STANDBY;
+			tempConfigReg0 |= MCP3561_CONFIG0_ADC_MODE_STANDBY;
 		case "CONV":
 			tempConfigReg0 &= ~MCP3561_CONFIG0_ADC_MODE_MASK;
-			tempConfigReg0 |= MCP3561_CONFIG0_MODE_CONV;
+			tempConfigReg0 |= MCP3561_CONFIG0_ADC_MODE_CONV;
 		case "OFF":
 			tempConfigReg0 &= ~MCP3561_CONFIG0_ADC_MODE_MASK;
-			tempConfigReg0 |= MCP3561_CONFIG0_MODE_OFF;
+			tempConfigReg0 |= MCP3561_CONFIG0_ADC_MODE_OFF;
 
 	    }
 
@@ -77,7 +77,7 @@ void SPIDriver::setConfiguration(uint32_t config){
 	    }
 
 	//    Configure Register 1
-	    switch (conf.OSR) {
+	    switch (conf.osr) {
 	        case 32:
 	            tempConfigReg1 &= ~MCP3561_CONFIG1_OSR_MASK;
 	            tempConfigReg1 |= MCP3561_CONFIG1_OSR_32;
@@ -211,32 +211,32 @@ void SPIDriver::setConfiguration(uint32_t config){
 	    //	int convMode = 0; //0 is one-shot and shutdown, 1 is one-shot and standby, 2 is continuous.
 	    switch(conf.convMode){
 			case 0:
-				tempConfigReg2 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg2 != MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_OFF;
+				tempConfigReg3 &= ~MCP3561_CONFIG2_BOOST_MASK;
+				tempConfigReg3 != MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_OFF;
 			case 1:
-				tempConfigReg2 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg2 != MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_STANDBY;
+				tempConfigReg3 &= ~MCP3561_CONFIG2_BOOST_MASK;
+				tempConfigReg3 != MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_STANDBY;
 			case 2:
-				tempConfigReg2 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg2 != MCP3561_CONFIG3_CONV_MODE_CONTINUOUS;
+				tempConfigReg3 &= ~MCP3561_CONFIG2_BOOST_MASK;
+				tempConfigReg3 != MCP3561_CONFIG3_CONV_MODE_CONTINUOUS;
 	    }
 
 	    switch(conf.dataFormat){
 			case 0:
-				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_24BIT;
+				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
+				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_24BIT;
 				dataFormat = 0;
 			case 1:
-				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_32BIT;
+				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
+				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_32BIT;
 				dataFormat = 1;
 			case 2:
-				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_SGN;
+				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
+				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_SGN;
 				dataFormat = 2;
 			case 3:
-				tempConfigReg2 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg2 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_CHID_SGN;
+				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
+				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_CHID_SGN;
 				dataFormat = 3;
 	    }
 
