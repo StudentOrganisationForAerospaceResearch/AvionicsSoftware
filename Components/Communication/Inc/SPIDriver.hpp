@@ -44,10 +44,12 @@
 #define MCP3561_CONFIG0_CLK_SEL_INT      (0x03 << _MCP3561_CONFIG0_CLK_SEL_POS)  // 0b11 << _CONFIG0_CLK_SEL_POS
 #define MCP3561_CONFIG0_CLK_SEL_EXT      (0x00 << _MCP3561_CONFIG0_CLK_SEL_POS)  // 0b00 << _CONFIG0_CLK_SEL_POS
 #define _MCP3561_CONFIG0_CS_SEL_POS      (2)
+#define MCP3561_CONFIG0_CS_SEL_MASK		 (0x12) //0b00001100
 #define MCP3561_CONFIG0_CS_SEL_15uA      (0x03 << _MCP3561_CONFIG0_CS_SEL_POS)
 #define MCP3561_CONFIG0_CS_SEL_3_7uA     (0x02 << _MCP3561_CONFIG0_CS_SEL_POS)
 #define MCP3561_CONFIG0_CS_SEL_0_9uA     (0x01 << _MCP3561_CONFIG0_CS_SEL_POS)
 #define MCP3561_CONFIG0_CS_SEL_NONE      (0x00 << _MCP3561_CONFIG0_CS_SEL_POS)
+#define MCP3561_CONFIG0_ADC_MODE_MASK	 (0x3) //0b00001100
 #define _MCP3561_CONFIG0_ADC_MODE_POS    (0)
 #define MCP3561_CONFIG0_ADC_MODE_CONV    (0x03 << _MCP3561_CONFIG0_ADC_MODE_POS) // 0b11 << _CONFIG0_ADC_MODE_POS
 #define MCP3561_CONFIG0_ADC_MODE_STANDBY (0x02 << _MCP3561_CONFIG0_ADC_MODE_POS)
@@ -87,7 +89,7 @@
 #define MCP3561_CONFIG2_SREAD       (MCP3561_CONFIG2_ADDR << _MCP3561_COMMAND_ADDR_POS) | MCP3561_SREAD_DATA_COMMAND
 #define MCP3561_CONFIG2_IREAD       (MCP3561_CONFIG2_ADDR << _MCP3561_COMMAND_ADDR_POS) | MCP3561_IREAD_COMMAND
 #define _MCP3561_CONFIG2_BOOST_POS  (6)
-#define MCP3561_CONFIG1_BOOST_MASK 	(0xC0)
+#define MCP3561_CONFIG2_BOOST_MASK 	(0xC0)
 #define MCP3561_CONFIG2_BOOST_x2    (0x03 << _MCP3561_CONFIG2_BOOST_POS)
 #define MCP3561_CONFIG2_BOOST_x1    (0x02 << _MCP3561_CONFIG2_BOOST_POS)
 #define MCP3561_CONFIG2_BOOST_2DIV3 (0x01 << _MCP3561_CONFIG2_BOOST_POS)
@@ -263,18 +265,7 @@ namespace SPI {
 }
 
 // Author: Aly Masani
-struct config{
-	// these values are the default for each register
-	char* mode = "Standby";
-	int csSel = 0;
-	int amclk = 0;
-	int osr = 32;
-	int gain = 1;
-	int boost = 2;
-	int convMode = 0; //0 is one-shot and shutdown, 1 is one-shot and standby, 2 is continuous.
-	int dateFormat = 0;
 
-};
 // end of co-author code
 
 
@@ -308,6 +299,18 @@ protected:
 
 
 	// Constants
+	struct config{
+		// these values are the default for each register
+		const char* mode = "Standby";
+		int csSel = 0;
+		int amclk = 0;
+		int osr = 32;
+		int gain = 1;
+		int boost = 2;
+		int convMode = 0; //0 is one-shot and shutdown, 1 is one-shot and standby, 2 is continuous.
+		int dateFormat = 0;
+
+	}conf;
 
 	// Variables
 
