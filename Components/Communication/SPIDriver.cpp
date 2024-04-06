@@ -21,7 +21,7 @@
 /**
  * @brief Initializes SPI driver for the specific slave (barometer,...).
 */
-void SPIDriver::Init(SPI_HandleTypeDef *hspi, uint16_t gpio_Port, uint16_t gpio_Pin)
+void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_TypeDef *gpio_Port, uint16_t gpio_Pin)
 {
 		// set driver's variables to given slave's parameters
 		spi_Handle = *hspi;
@@ -249,24 +249,24 @@ void SPIDriver::setConfiguration(uint32_t config){
 	// 8-bit CONFIG registers
 	cmd[0]  = MCP3561_CONFIG0_WRITE;
 	cmd[1]  = tempConfigReg0;
-	internalWrite(hspi, cmd, 2);
+	internalWrite(&spi_Handle, cmd, 2);
 
 	cmd[0]  = MCP3561_CONFIG1_WRITE;
 	cmd[1]  = tempConfigReg1;
-	internalWrite(hspi, cmd, 2);
+	internalWrite(&spi_Handle, cmd, 2);
 
 	cmd[0]  = MCP3561_CONFIG2_WRITE;
 	cmd[1]  = tempConfigReg2;
 	cmd[1] += 3; // last two bits must always be '11'
-	internalWrite(hspi, cmd, 2);
+	internalWrite(&spi_Handle, cmd, 2);
 
 	cmd[0]  = MCP3561_CONFIG3_WRITE;
 	cmd[1]  = tempConfigReg3;
-	internalWrite(hspi, cmd, 2);
+	internalWrite(&spi_Handle, cmd, 2);
 
 	cmd[0]  = MCP3561_IRQ_WRITE;
 	cmd[1]  = tempConfigIrqReg;
-	internalWrite(hspi, cmd, 2);
+	internalWrite(&spi_Handle, cmd, 2);
 
 	// 24-bit CONFIG registers
 
@@ -280,14 +280,14 @@ void SPIDriver::setConfiguration(uint32_t config){
 		cmd[1] = (uint8_t)((reg_val >> 16) & 0xff);
 		cmd[2] = (uint8_t)((reg_val >>  8) & 0xff);
 		cmd[3] = (uint8_t)((reg_val)       & 0xff);
-		internalWrite(hspi, cmd, 4);
+		internalWrite(&spi_Handle, cmd, 4);
 
 		reg_val = MCP3561_USERCONF_TIMER_VAL;
 		cmd[0] = MCP3561_TIMER_WRITE;
 		cmd[1] = (uint8_t)((reg_val >> 16) & 0xff);
 		cmd[2] = (uint8_t)((reg_val >>  8) & 0xff);
 		cmd[3] = (uint8_t)((reg_val)       & 0xff);
-		internalWrite(hspi, cmd, 4);
+		internalWrite(&spi_Handle, cmd, 4);
 	#endif
 
 	// mcp github end
@@ -296,16 +296,16 @@ void SPIDriver::setConfiguration(uint32_t config){
 
 // inspired by github (modified) ::: was _MCP3561_write
 // manually operates !CS signal, since STM32 hardware NSS signal doesn't work
-void internalWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
+void SPIDriver::internalWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
 	// port and pin are ADC specific
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(hspi, pData, size, MCP3561_HAL_TIMEOUT);
+	HAL_SPI_Transmit(hspi, pData, size, HAL_TIMEOUT);
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
 }
 
 // taken from github (modified)
 // configures the input channels for the ADC based on the specified positive and negative channel numbers
-void configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
+void SPIDriver::configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
 
 	if (mode == "mux"){
 		uint8_t pos_Input_Channel = 0;
@@ -338,9 +338,9 @@ void configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
 
 		}
 			uint8_t cmd[4] = {0,0,0,0};
-			cmd[0]  = config.osr;
+			cmd[0]  = conf.osr;
 			cmd[1]  = (pos_Input_Channel << 4) | neg_Input_Channel;   // [7..4] VIN+ / [3..0] VIN-
-			internalWrite(hspi, cmd, 2);
+			internalWrite(&spi_Handle, cmd, 2);
 			// might have to have special layout commands for special cases like below
 			//cmd[1]  = (MCP3561_MUX_CH_IntTemp_P << 4) | MCP3561_MUX_CH_IntTemp_M;   // [7..4] VIN+ / [3..0] VIN-
 
@@ -378,7 +378,7 @@ void configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
 			uint8_t cmd[4] = {0,0,0,0};
 			cmd[0]  = config;
 			cmd[1]  = tempScanReg;   // [7..4] VIN+ / [3..0] VIN-
-			internalWrite(hspi, cmd, 2);
+			internalWrite(&spi_Handle, cmd, 2);
 	}
 
 }
@@ -414,10 +414,10 @@ void configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
 * @param receiver
 * @return TRUE if interrupt was successfully enabled, FALSE otherwise
 */
-int32_t SPIDriver::ReadADC(int channel)
+int32_t SPIDriver::ReadADC(uint8_t channel)
 {
 	// take needed params from the given param of the upper function
-	configureChannels(hspi, channel);
+	configureChannels(&spi_Handle, channel);
 
 	//--- block of interaction using SPI protocol
 
@@ -427,7 +427,7 @@ int32_t SPIDriver::ReadADC(int channel)
 	uint8_t val[5] = {0,0,0,0,0};
 	uint8_t cmd[5] = {0,0,0,0,0};
 	cmd[0] = MCP3561_SREAD_DATA_COMMAND;
-	insideWrite(hspi, cmd, 4);
+	internalWrite(&spi_Handle, cmd, 4);
 	uint32_t value = 0;
 
 	if (mode == "mux"){
