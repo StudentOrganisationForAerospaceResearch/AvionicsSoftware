@@ -21,40 +21,40 @@
 /**
  * @brief Initializes SPI driver for the specific slave (barometer,...).
 */
-void SPIDriver::Init(SPI_HandleTypeDef *hspi, GPIO_TypeDef *gpio_Port, uint16_t gpio_Pin)
+void SPIDriver::Init(SPI_HandleTypeDef *hspi,  GPIO_TypeDef *gpio_Port, uint16_t gpio_Pin)
 {
 		// set driver's variables to given slave's parameters
 		spi_Handle = *hspi;
 		gpio_port = gpio_Port;
 		gpio_pin = gpio_Pin;
-		uint32_t dataFormat = 0;
-		const char* mode = "mux";
+		dataFormat = 0;
+		mode = "mux";
+		tempConfigReg0 = MCP3561_USERCONF_REG0;
+		tempConfigReg1 = MCP3561_USERCONF_REG1;
+		tempConfigReg2 = MCP3561_USERCONF_REG2;
+		tempConfigReg3 = MCP3561_USERCONF_REG3;
+		tempConfigIrqReg = MCP3561_USERCONF_IRQ_REG;
+		tempConfigScanReg = MCP3561_USERCONF_SCAN_REG;
+		tempScanReg = MCP3561_USERCONF_SCAN_REG;
 }
 
 /**
  *  Sets the specific configuration for each ADC
  */
-void SPIDriver::setConfiguration(uint32_t config){
+void SPIDriver::setConfiguration(config conf){
 	// config gives us oversampling ratio
 		// adc mode
 
 	// Author - Aly Masani
-	uint32_t tempConfigReg0 = MCP3561_USERCONF_REG0;
-	uint32_t tempConfigReg1 = MCP3561_USERCONF_REG1;
-	uint32_t tempConfigReg2 = MCP3561_USERCONF_REG2;
-	uint32_t tempConfigReg3 = MCP3561_USERCONF_REG3;
-	uint32_t tempConfigIrqReg = MCP3561_USERCONF_IRQ_REG;
-	uint32_t tempConfigScanReg = MCP3561_USERCONF_SCAN_REG;
-
 	//Configure Register 0
 	switch (conf.mode) {
-		case "Standby":
+		case 1:
 			tempConfigReg0 &= ~MCP3561_CONFIG0_ADC_MODE_MASK;
 			tempConfigReg0 |= MCP3561_CONFIG0_ADC_MODE_STANDBY;
-		case "CONV":
+		case 2:
 			tempConfigReg0 &= ~MCP3561_CONFIG0_ADC_MODE_MASK;
 			tempConfigReg0 |= MCP3561_CONFIG0_ADC_MODE_CONV;
-		case "OFF":
+		case 0:
 			tempConfigReg0 &= ~MCP3561_CONFIG0_ADC_MODE_MASK;
 			tempConfigReg0 |= MCP3561_CONFIG0_ADC_MODE_OFF;
 
@@ -149,7 +149,7 @@ void SPIDriver::setConfiguration(uint32_t config){
 				tempConfigReg1 |= MCP3561_CONFIG1_AMCLK_DIV8;
 				break;
 			case 2:
-				tempConfigReg1 &= ~MCP3561_CONFIG2_AMCLK_MASK;
+				tempConfigReg1 &= ~MCP3561_CONFIG1_AMCLK_MASK;
 				tempConfigReg1 |= MCP3561_CONFIG1_AMCLK_DIV2;
 				break;
 			case 4:
@@ -157,7 +157,7 @@ void SPIDriver::setConfiguration(uint32_t config){
 				tempConfigReg1 |= MCP3561_CONFIG1_AMCLK_DIV4;
 				break;
 			case 8:
-				tempConfigReg1 &= ~MCP3561_CONFIG2_AMCLK_MASK;
+				tempConfigReg1 &= ~MCP3561_CONFIG1_AMCLK_MASK;
 				tempConfigReg1 |= MCP3561_CONFIG1_AMCLK_DIV8;
 				break;
 	    }
@@ -167,43 +167,43 @@ void SPIDriver::setConfiguration(uint32_t config){
 	    switch(conf.gain){
 	    	case 1:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_x1;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_x1;
 	    	case 2:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_x2;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_x2;
 	    	case 4:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_x4;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_x4;
 	    	case 8:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_x8;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_x8;
 	    	case 16:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_x16;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_x16;
 	    	case 32:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_x32;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_x32;
 	    	case 64:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_x64;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_x64;
 	    	case 13:
 	    		tempConfigReg2 &= ~MCP3561_CONFIG2_GAIN_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_GAIN_DIV3;
+				tempConfigReg2 |= MCP3561_CONFIG2_GAIN_DIV3;
 	    }
 
 	    switch(conf.boost){
 			case 1:
 				tempConfigReg2 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_BOOST_x1;
+				tempConfigReg2 |= MCP3561_CONFIG2_BOOST_x1;
 			case 2:
 				tempConfigReg2 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_BOOST_x2;
+				tempConfigReg2 |= MCP3561_CONFIG2_BOOST_x2;
 			case 23:
 				tempConfigReg2 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_BOOST_2DIV3;
+				tempConfigReg2 |= MCP3561_CONFIG2_BOOST_2DIV3;
 			case 12:
 				tempConfigReg2 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg2 != MCP3561_CONFIG2_BOOST_DIV2;
+				tempConfigReg2 |= MCP3561_CONFIG2_BOOST_DIV2;
 	    }
 
 	//Configure Register 3
@@ -212,31 +212,31 @@ void SPIDriver::setConfiguration(uint32_t config){
 	    switch(conf.convMode){
 			case 0:
 				tempConfigReg3 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg3 != MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_OFF;
+				tempConfigReg3 |= MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_OFF;
 			case 1:
 				tempConfigReg3 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg3 != MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_STANDBY;
+				tempConfigReg3 |= MCP3561_CONFIG3_CONV_MODE_ONE_SHOT_STANDBY;
 			case 2:
 				tempConfigReg3 &= ~MCP3561_CONFIG2_BOOST_MASK;
-				tempConfigReg3 != MCP3561_CONFIG3_CONV_MODE_CONTINUOUS;
+				tempConfigReg3 |= MCP3561_CONFIG3_CONV_MODE_CONTINUOUS;
 	    }
 
 	    switch(conf.dataFormat){
 			case 0:
-				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_24BIT;
+				tempConfigReg3 &= ~MCP3561_CONFIG0_CLK_SEL_MASK;
+				tempConfigReg3 |= MCP3561_CONFIG3_DATA_FORMAT_24BIT;
 				dataFormat = 0;
 			case 1:
-				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_32BIT;
+				tempConfigReg3 &= ~MCP3561_CONFIG0_CLK_SEL_MASK;
+				tempConfigReg3 |= MCP3561_CONFIG3_DATA_FORMAT_32BIT;
 				dataFormat = 1;
 			case 2:
-				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_SGN;
+				tempConfigReg3 &= ~MCP3561_CONFIG0_CLK_SEL_MASK;
+				tempConfigReg3 |= MCP3561_CONFIG3_DATA_FORMAT_32BIT_SGN;
 				dataFormat = 2;
 			case 3:
-				tempConfigReg3 &= ~MCP3561_CONFIG3_DATA_FORMAT_MASK;
-				tempConfigReg3 != MCP3561_CONFIG3_DATA_FORMAT_32BIT_CHID_SGN;
+				tempConfigReg3 &= ~MCP3561_CONFIG0_CLK_SEL_MASK;
+				tempConfigReg3 |= MCP3561_CONFIG3_DATA_FORMAT_32BIT_CHID_SGN;
 				dataFormat = 3;
 	    }
 
@@ -299,7 +299,7 @@ void SPIDriver::setConfiguration(uint32_t config){
 void SPIDriver::internalWrite(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t size){
 	// port and pin are ADC specific
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(hspi, pData, size, HAL_TIMEOUT);
+	HAL_SPI_Transmit(hspi, pData, size, MCP3561_HAL_TIMEOUT);
 	HAL_GPIO_WritePin(gpio_port, gpio_pin, GPIO_PIN_SET);
 }
 
@@ -338,7 +338,7 @@ void SPIDriver::configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
 
 		}
 			uint8_t cmd[4] = {0,0,0,0};
-			cmd[0]  = conf.osr;
+			cmd[0]  = MCP3561_MUX_WRITE;
 			cmd[1]  = (pos_Input_Channel << 4) | neg_Input_Channel;   // [7..4] VIN+ / [3..0] VIN-
 			internalWrite(&spi_Handle, cmd, 2);
 			// might have to have special layout commands for special cases like below
@@ -347,36 +347,36 @@ void SPIDriver::configureChannels(SPI_HandleTypeDef *hspi, uint8_t channel){
 		}
 //		I will work on this tomorrow, but I have a base idea for this implementation
 		else if(mode =="scan"){
-			tempScanReg = MCP3561_USERCONF_SCAN_REG;
+			uint32_t tempScanReg = MCP3561_USERCONF_SCAN_REG;
 			switch(channel){
 				case 0:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH0;
+					tempScanReg |= MCP3561_SCAN_CH0;
 				case 1:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH1;
+					tempConfigReg2 |= MCP3561_SCAN_CH1;
 				case 2:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH2;
+					tempConfigReg2 |= MCP3561_SCAN_CH2;
 				case 3:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH3;
+					tempConfigReg2 |= MCP3561_SCAN_CH3;
 				case 4:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH4;
+					tempConfigReg2 |= MCP3561_SCAN_CH4;
 				case 5:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH5;
+					tempConfigReg2 |= MCP3561_SCAN_CH5;
 				case 6:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH6;
+					tempConfigReg2 |= MCP3561_SCAN_CH6;
 				case 7:
 		    		tempScanReg &= ~MCP3561_SCAN_CH_MASK;
-					tempConfigReg2 != MCP3561_SCAN_CH7;
+					tempConfigReg2 |= MCP3561_SCAN_CH7;
 
 		}
 			uint8_t cmd[4] = {0,0,0,0};
-			cmd[0]  = config;
+			cmd[0]  = MCP3561_SCAN_WRITE;
 			cmd[1]  = tempScanReg;   // [7..4] VIN+ / [3..0] VIN-
 			internalWrite(&spi_Handle, cmd, 2);
 	}
@@ -447,9 +447,7 @@ int32_t SPIDriver::ReadADC(uint8_t channel)
 			case 0:
 				value = (val[1] << 16) | (val[2] << 8) | val[3];
 			case 3:
-				value[3] = { val[0],
-						( (val[1] & 0xF0) >> 4 ) ,
-						( (val[1] & 0x01) << 31) | (val[2] << 16) | (val[3] << 8) | val[4]};
+				value = { val[0]|((val[1] & 0xF0) >> 4 )|( (val[1] & 0x01) << 31) | (val[2] << 16) | (val[3] << 8) | val[4]};
 		}
 	}
 
@@ -518,47 +516,47 @@ int32_t SPIDriver::ReadADC(uint8_t channel)
 //// end of github
 
 // another github
-void SPIDriver::MCP3x6x(const uint16_t MCP3x6x_DEVICE_TYPE, const uint8_t pinCS, SPI_HandleTypeDef *theSPI,
-                 const uint8_t pinMOSI, const uint8_t pinMISO, const uint8_t pinCLK) {
-//  switch (MCP3x6x_DEVICE_TYPE) {
-//    case MCP3461_DEVICE_TYPE:
-//      _resolution_max = 16;
-//      _channels_max   = 2;
-//      break;
-//    case MCP3462_DEVICE_TYPE:
-//      _resolution_max = 16;
-//      _channels_max   = 4;
-//      break;
-//    case MCP3464_DEVICE_TYPE:
-//      _resolution_max = 16;
-//      _channels_max   = 8;
-//      break;
-//    case MCP3561_DEVICE_TYPE:
-//      _resolution_max = 24;
-//      _channels_max   = 2;
-//      break;
-//    case MCP3562_DEVICE_TYPE:
-//      _resolution_max = 24;
-//      _channels_max   = 4;
-//      break;
-//    case MCP3564_DEVICE_TYPE:
-//      _resolution_max = 24;
-//      _channels_max   = 8;
-//      break;
-//    default:
-//#warning "undefined MCP3x6x_DEVICE_TYPE"
-//      break;
-//  }
-//
-//  //  settings.id = MCP3x6x_DEVICE_TYPE;
-//
-//  _spi        = theSPI;
-//  _pinMISO    = pinMISO;
-//  _pinMOSI    = pinMOSI;
-//  _pinCLK     = pinCLK;
-//  _pinCS      = pinCS;
-//
-//  _resolution = _resolution_max;
-//  _channel_mask |= 0xff << _channels_max;  // todo use this one
-};
-//
+//void SPIDriver::MCP3x6x(const uint16_t MCP3x6x_DEVICE_TYPE, const uint8_t pinCS, SPI_HandleTypeDef *theSPI,
+//                 const uint8_t pinMOSI, const uint8_t pinMISO, const uint8_t pinCLK) {
+////  switch (MCP3x6x_DEVICE_TYPE) {
+////    case MCP3461_DEVICE_TYPE:
+////      _resolution_max = 16;
+////      _channels_max   = 2;
+////      break;
+////    case MCP3462_DEVICE_TYPE:
+////      _resolution_max = 16;
+////      _channels_max   = 4;
+////      break;
+////    case MCP3464_DEVICE_TYPE:
+////      _resolution_max = 16;
+////      _channels_max   = 8;
+////      break;
+////    case MCP3561_DEVICE_TYPE:
+////      _resolution_max = 24;
+////      _channels_max   = 2;
+////      break;
+////    case MCP3562_DEVICE_TYPE:
+////      _resolution_max = 24;
+////      _channels_max   = 4;
+////      break;
+////    case MCP3564_DEVICE_TYPE:
+////      _resolution_max = 24;
+////      _channels_max   = 8;
+////      break;
+////    default:
+////#warning "undefined MCP3x6x_DEVICE_TYPE"
+////      break;
+////  }
+////
+////  //  settings.id = MCP3x6x_DEVICE_TYPE;
+////
+////  _spi        = theSPI;
+////  _pinMISO    = pinMISO;
+////  _pinMOSI    = pinMOSI;
+////  _pinCLK     = pinCLK;
+////  _pinCS      = pinCS;
+////
+////  _resolution = _resolution_max;
+////  _channel_mask |= 0xff << _channels_max;  // todo use this one
+//};
+////
