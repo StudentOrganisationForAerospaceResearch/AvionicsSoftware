@@ -23,10 +23,16 @@ void UARTTask::ConfigureUART()
 	// DMA IS BEGINNING WOW!!!!!!!!!!!
 
 	LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_0, (uint32_t)DMABUF);
-	LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_0, 64);
+	LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_0, DEBUG_DMA_RX_BUF_SIZE);
+
+	LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_7, (uint32_t)TXBUF);
+	LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_7, DEBUG_DMA_TX_BUF_SIZE);
 
 	  LL_DMA_EnableIT_HT(DMA1, LL_DMA_STREAM_0);
 	  LL_DMA_EnableIT_TC(DMA1, LL_DMA_STREAM_0);
+
+	  LL_DMA_EnableIT_HT(DMA1, LL_DMA_STREAM_7);
+	  LL_DMA_EnableIT_TC(DMA1, LL_DMA_STREAM_7);
 	 // HAL_UART_Receive_DMA(huart4, DMABUF, 40);
 
 
@@ -39,13 +45,16 @@ void UARTTask::ConfigureUART()
 
 
 	  LL_USART_EnableDMAReq_RX(UART5);
+	  LL_USART_EnableDMAReq_TX(UART5);
 
 
 	    LL_DMA_SetPeriphAddress(DMA1, LL_DMA_STREAM_0, LL_USART_DMA_GetRegAddr(UART5));
+	    LL_DMA_SetPeriphAddress(DMA1, LL_DMA_STREAM_7, LL_USART_DMA_GetRegAddr(UART5));
 
 
 
 	LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_0);
+	LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_7);
 
 
 	// WHY
@@ -79,9 +88,13 @@ void UARTTask::InitTask()
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize UART task twice");
     
-    DMABUF = new uint8_t[64];
-    memset(DMABUF,0xab,64);
+    DMABUF = new uint8_t[DEBUG_DMA_RX_BUF_SIZE];
+    memset(DMABUF,0xab,DEBUG_DMA_RX_BUF_SIZE);
 
+    TXBUF = new uint8_t[DEBUG_DMA_TX_BUF_SIZE];
+    memset(TXBUF,0xbc,DEBUG_DMA_TX_BUF_SIZE);
+
+    strcpy((char*)TXBUF,"hello world");
     // Start the task
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)UARTTask::RunTask,

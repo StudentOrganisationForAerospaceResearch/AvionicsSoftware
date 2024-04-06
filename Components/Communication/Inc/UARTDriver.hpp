@@ -14,6 +14,10 @@
 #include "stm32f4xx_ll_dma.h"
 #include "cmsis_os.h"
 
+/* Macros ----------------------------------------------------------------*/
+constexpr uint16_t DEBUG_DMA_RX_BUF_SIZE = 64;
+constexpr uint16_t DEBUG_DMA_TX_BUF_SIZE = 64;
+
 /* UART Driver Instances ------------------------------------------------------------------*/
 class UARTDriver;
 
@@ -57,7 +61,8 @@ public:
 	UARTDriver(USART_TypeDef* uartInstance) :
 		kUart_(uartInstance),
 		rxCharBuf_(nullptr),
-		rxReceiver_(nullptr) {}
+		rxReceiver_(nullptr),
+		transmittingDMA(false) {}
 
 	// Polling Functions
 	bool Transmit(uint8_t* data, uint16_t len);
@@ -65,11 +70,8 @@ public:
 	// Interrupt Functions
 	bool ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver);
 
-	// yeah
-	bool TransmitDMA(uint8_t* data, uint16_t len);
-
 	// yeah ok
-	bool ReceiveDMA(uint8_t* charbuf, uint16_t len);
+	void FinishDMA();
 
 	// Interrupt Handlers
 	void HandleIRQ_UART(); // This MUST be called inside USARTx_IRQHandler
@@ -86,6 +88,8 @@ protected:
 	// Variables
 	uint8_t* rxCharBuf_; // Stores a pointer to the buffer to store the received data
 	UARTReceiverBase* rxReceiver_; // Stores a pointer to the receiver object
+
+	bool transmittingDMA;
 };
 
 

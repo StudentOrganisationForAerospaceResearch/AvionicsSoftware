@@ -33,6 +33,21 @@ namespace Driver {
  */
 bool UARTDriver::Transmit(uint8_t* data, uint16_t len)
 {
+	if(this == &Driver::uart5) {
+
+		while(transmittingDMA) {};
+
+		transmittingDMA = true;
+
+		LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_7, len);
+
+		memcpy((uint8_t*)LL_DMA_GetMemoryAddress(DMA1, LL_DMA_STREAM_7),data,len);
+
+		LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_7);
+
+		LL_DMA_SetCurrentTargetMem(DMA1, LL_DMA_STREAM_7, (uint32_t)LL_DMA_GetMemoryAddress(DMA1, LL_DMA_STREAM_7));
+
+	} else {
 	// Loop through and transmit each byte via. polling
 	for (uint16_t i = 0; i < len; i++) {
 		LL_USART_TransmitData8(kUart_, data[i]);
@@ -43,6 +58,7 @@ bool UARTDriver::Transmit(uint8_t* data, uint16_t len)
 
 	// Wait until the transfer complete flag is set
 	while (!LL_USART_IsActiveFlag_TC(kUart_)) {}
+	}
 
 	return true;
 }
@@ -51,8 +67,8 @@ bool UARTDriver::Transmit(uint8_t* data, uint16_t len)
 
 
 // yeah ok
-bool UARTDriver::ReceiveDMA(uint8_t* charbuf, uint16_t len) {
-
+void UARTDriver::FinishDMA() {
+	transmittingDMA = false;
 }
 
 
@@ -145,7 +161,7 @@ void UARTDriver::HandleIRQ_UART()
     if(kUart_ == Driver::uart5.kUart_) {
     	if (LL_USART_IsEnabledIT_IDLE(kUart_) && LL_USART_IsActiveFlag_IDLE(kUart_)) {
     		LL_USART_ClearFlag_IDLE(kUart_);        /* Clear IDLE line flag */
-    		rxReceiver_->InterruptRxData(64-LL_DMA_GetDataLength(DMA1, LL_DMA_STREAM_0));
+    		rxReceiver_->InterruptRxData(DEBUG_DMA_RX_BUF_SIZE-LL_DMA_GetDataLength(DMA1, LL_DMA_STREAM_0));
 
 
     	}

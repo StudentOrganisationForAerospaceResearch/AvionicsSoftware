@@ -43,6 +43,7 @@ protected:
     void HandleCommand(Command& cm);
 
     uint8_t *DMABUF;
+    uint8_t *TXBUF;
 
 private:
     UARTTask() : Task(UART_TASK_QUEUE_DEPTH_OBJS) {}    // Private constructor

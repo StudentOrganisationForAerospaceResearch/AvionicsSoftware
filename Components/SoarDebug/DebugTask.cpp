@@ -58,7 +58,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
  */
 DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::Debug)
 {
-    memset(debugBuffer, 0, sizeof(debugBuffer));
+   // memset(debugBuffer, 0, DEBUG_DMA_RX_BUF_SIZE);
     debugMsgIdx = 0;
     isDebugMsgReady = false;
 }
@@ -96,6 +96,8 @@ void DebugTask::Run(void * pvParams)
 
     debugBuffer = (uint8_t*)LL_DMA_GetMemoryAddress(DMA1, LL_DMA_STREAM_0);
 
+    memset(debugBuffer, 0, DEBUG_DMA_RX_BUF_SIZE);
+
     while (1) {
         Command cm;
 
@@ -108,6 +110,8 @@ void DebugTask::Run(void * pvParams)
         }
 
         cm.Reset();
+
+        //Command()
     }
 }
 
@@ -117,15 +121,14 @@ void DebugTask::Run(void * pvParams)
  */
 void DebugTask::HandleDebugMessage(const char* msg)
 {
-
-	char b[64];
+	char b[DEBUG_DMA_RX_BUF_SIZE];
 	//SOAR_PRINT("%d to %d\n",oldDebugMsgIdx,debugMsgIdx);
 	if(oldDebugMsgIdx > debugMsgIdx) {
-		memcpy(b,msg+oldDebugMsgIdx,64-oldDebugMsgIdx);
-		memcpy(b+64-oldDebugMsgIdx,msg,debugMsgIdx);
+		memcpy(b,msg+oldDebugMsgIdx,DEBUG_DMA_RX_BUF_SIZE-oldDebugMsgIdx);
+		memcpy(b+DEBUG_DMA_RX_BUF_SIZE-oldDebugMsgIdx,msg,debugMsgIdx);
 		//SOAR_PRINT("WRONG!\n");
 
-		b[debugMsgIdx+64-oldDebugMsgIdx-1] = 0;
+		b[debugMsgIdx+DEBUG_DMA_RX_BUF_SIZE-oldDebugMsgIdx-1] = 0;
 
 	} else {
 
@@ -310,12 +313,12 @@ bool DebugTask::ReceiveData()
 void DebugTask::InterruptRxData(uint8_t errors)
 {
 	if(!isDebugMsgReady) {
-	Command cm(DATA_COMMAND,EVENT_DEBUG_RX_COMPLETE);
-	//cm.CopyDataToCommand(debugBuffer, 64);
-	debugMsgIdx = errors;
-	isDebugMsgReady = true;
+		Command cm(DATA_COMMAND,EVENT_DEBUG_RX_COMPLETE);
+		//cm.CopyDataToCommand(debugBuffer, 64);
+		debugMsgIdx = errors;
+		isDebugMsgReady = true;
 
-	qEvtQueue->SendFromISR(cm);
+		qEvtQueue->SendFromISR(cm);
 	}
 	return;
 

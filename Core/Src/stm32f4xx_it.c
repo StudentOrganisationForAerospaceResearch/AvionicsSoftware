@@ -250,7 +250,7 @@ void USART3_IRQHandler(void)
 void DMA1_Stream7_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream7_IRQn 0 */
-
+	cpp_DMA1_Stream7_IRQHandler();
   /* USER CODE END DMA1_Stream7_IRQn 0 */
 
   /* USER CODE BEGIN DMA1_Stream7_IRQn 1 */

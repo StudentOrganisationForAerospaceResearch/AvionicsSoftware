@@ -662,6 +662,7 @@ static void MX_UART5_Init(void)
 
 }
 
+
 /**
   * @brief USART1 Initialization Function
   * @param None
