@@ -192,7 +192,7 @@ void FlashTask::HandleCommand(Command &cm) {
 			writebuftimemsg = !writebuftimemsg;
 		} else if (cm.GetTaskCommand() == FLASH_RESET_AND_ERASE) {
 			int32_t eraseSectors = *(int32_t*)cm.GetDataPointer();
-			eraseSectors = min(eraseSectors,(0x400000-SPI_FLASH_LOGGING_STORAGE_START_ADDR)/4096);
+			eraseSectors = min(eraseSectors,(0x4000000-SPI_FLASH_LOGGING_STORAGE_START_ADDR)/4096);
 			SOAR_PRINT("Erasing %d sectors...\n",eraseSectors);
 			for(int32_t i = 0; i < eraseSectors; i++) {
 				if(!SPIFlash::Inst().Erase(SPI_FLASH_LOGGING_STORAGE_START_ADDR+i*SPIFlash::Inst().GetSectorSize())){
@@ -200,12 +200,15 @@ void FlashTask::HandleCommand(Command &cm) {
 				}
 			}
 			currentLogPage = SPI_FLASH_LOGGING_STORAGE_START_ADDR/256;
+
 			offsetWithinBuf = 0;
 			lastBaroData = {0};
 			lastIMUData = {0};
 			lastPTC = {0};
 			lastPBBPres = {0};
 			memset(currbuf,0x00,FLASH_HEAP_BUF_SIZE);
+			W25qxx_EraseSector(SPI_FLASH_PAGE_OFFSET_STORAGE/w25qxx.SectorSize);
+			W25qxx_EraseSector(SPI_FLASH_PAGE_OFFSET_STORAGE/w25qxx.SectorSize+1);
 			SOAR_PRINT("Done.\n");
 		}
 		else {
