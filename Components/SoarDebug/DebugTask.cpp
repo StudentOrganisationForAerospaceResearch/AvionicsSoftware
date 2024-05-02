@@ -58,7 +58,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
  */
 DebugTask::DebugTask() : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::Debug)
 {
-    memset(debugBuffer, 0, sizeof(debugBuffer));
+   // memset(debugBuffer, 0, DEBUG_DMA_RX_BUF_SIZE);
     debugMsgIdx = 0;
     isDebugMsgReady = false;
 }
@@ -93,6 +93,11 @@ void DebugTask::Run(void * pvParams)
     // Arm the interrupt
     ReceiveData();
 
+
+    debugBuffer = (uint8_t*)LL_DMA_GetMemoryAddress(DMA1, LL_DMA_STREAM_0);
+
+    memset(debugBuffer, 0, DEBUG_DMA_RX_BUF_SIZE);
+
     while (1) {
         Command cm;
 
@@ -105,6 +110,8 @@ void DebugTask::Run(void * pvParams)
         }
 
         cm.Reset();
+
+        //Command()
     }
 }
 
@@ -114,6 +121,21 @@ void DebugTask::Run(void * pvParams)
  */
 void DebugTask::HandleDebugMessage(const char* msg)
 {
+	char b[DEBUG_DMA_RX_BUF_SIZE];
+	//SOAR_PRINT("%d to %d\n",oldDebugMsgIdx,debugMsgIdx);
+	if(oldDebugMsgIdx > debugMsgIdx) {
+		memcpy(b,msg+oldDebugMsgIdx,DEBUG_DMA_RX_BUF_SIZE-oldDebugMsgIdx);
+		memcpy(b+DEBUG_DMA_RX_BUF_SIZE-oldDebugMsgIdx,msg,debugMsgIdx);
+		//SOAR_PRINT("WRONG!\n");
+
+		b[debugMsgIdx+DEBUG_DMA_RX_BUF_SIZE-oldDebugMsgIdx-1] = 0;
+
+	} else {
+
+		memcpy(b,msg+oldDebugMsgIdx,debugMsgIdx-oldDebugMsgIdx);
+		b[debugMsgIdx-oldDebugMsgIdx-1] = 0;
+	}
+	msg = (const char*)&b;
     //-- PARAMETRIZED COMMANDS -- (Must be first)
     if (strncmp(msg, "rsc ", 4) == 0) {
         // Get parameter and send as a control action to flight task
@@ -264,7 +286,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
     }
 
     //We've read the data, clear the buffer
-    debugMsgIdx = 0;
+    oldDebugMsgIdx = debugMsgIdx;
     isDebugMsgReady = false;
 }
 
@@ -274,6 +296,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
 bool DebugTask::ReceiveData()
 {
     return kUart_->ReceiveIT(&debugRxChar, this);
+
 }
 
 /**
@@ -282,31 +305,16 @@ bool DebugTask::ReceiveData()
  */
 void DebugTask::InterruptRxData(uint8_t errors)
 {
-    // If we already have an unprocessed debug message, ignore this byte
-    if (!isDebugMsgReady) {
-        // Check byte for end of message - note if using termite you must turn on append CR
-        if (debugRxChar == '\r' || debugMsgIdx == DEBUG_RX_BUFFER_SZ_BYTES) {
-            // Null terminate and process
-            debugBuffer[debugMsgIdx++] = '\0';
-            isDebugMsgReady = true;
+	if(!isDebugMsgReady) {
+		Command cm(DATA_COMMAND,EVENT_DEBUG_RX_COMPLETE);
+		//cm.CopyDataToCommand(debugBuffer, 64);
+		debugMsgIdx = errors;
+		isDebugMsgReady = true;
 
-            // Notify the debug task
-            Command cm(DATA_COMMAND, EVENT_DEBUG_RX_COMPLETE);
-            bool res = qEvtQueue->SendFromISR(cm);
+		qEvtQueue->SendFromISR(cm);
+	}
+	return;
 
-            // If we failed to send the event, we should reset the buffer, that way DebugTask doesn't stall
-            if (res == false) {
-                debugMsgIdx = 0;
-                isDebugMsgReady = false;
-            }
-        }
-        else {
-            debugBuffer[debugMsgIdx++] = debugRxChar;
-        }
-    }
-
-    //Re-arm the interrupt
-    ReceiveData();
 }
 
 /* Helper Functions --------------------------------------------------------------*/

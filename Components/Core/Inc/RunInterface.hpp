@@ -14,5 +14,6 @@ void cpp_USART1_IRQHandler();
 void cpp_USART2_IRQHandler();
 void cpp_USART3_IRQHandler();
 void cpp_USART5_IRQHandler();
+void cpp_DMA1_Stream0_IRQHandler();
 
 #endif /* C__IFACE_HPP_ */
