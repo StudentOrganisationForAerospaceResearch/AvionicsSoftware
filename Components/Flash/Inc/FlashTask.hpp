@@ -20,7 +20,7 @@ constexpr uint16_t MAX_FLASH_TASK_WAIT_TIME_MS = 5000; // The max time to wait f
 
 enum FLASH_COMMANDS {
     WRITE_STATE_TO_FLASH = 0,
-    WRITE_DATA_TO_FLASH = 0x01, // The top 3 bits of this contain the ID of the log type to be logged
+    WRITE_DATA_TO_FLASH = 0x01, //Must be less than 0x20, the top 3 bits of this contain the ID of the log type to be logged, as defined in FLASH_LOG_TYPE
     DUMP_FLASH_DATA,
     ERASE_ALL_FLASH,
 	GET_FLASH_OFFSET,
@@ -61,7 +61,6 @@ protected:
 
     static void benchmarkcallback(TimerHandle_t x) {
 
-
         Command cmd((uint16_t)GET_LOGS_PAST_SECOND);
         FlashTask::Inst().SendPriorityCommand(cmd);
 
@@ -83,8 +82,6 @@ private:
     };
 
     FlashLogHandler* loghandler;
-
-
 
     bool flashDumpVerbose;
 

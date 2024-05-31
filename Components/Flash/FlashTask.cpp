@@ -152,7 +152,6 @@ void FlashTask::HandleCommand(Command &cm) {
 			break;
 		}
 
-
 		FLASH_LOG_TYPE thisType = (FLASH_LOG_TYPE)((cm.GetTaskCommand()>>5)&0b00000111);
 		if(thisType == LTYPE_INVAL || thisType >= LTYPE_OTHER) {
 			SOAR_PRINT("Unknown log type asked to flash %d\n",thisType);

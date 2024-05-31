@@ -50,7 +50,7 @@ etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConf
 };
 
 
-#define DEBUGBUZZERSTARTMUTED true
+#define DEBUGBUZZERSTARTMUTED false
 /**
 * @brief Constructor for HDITask
 */
