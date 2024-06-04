@@ -178,7 +178,7 @@ void TelemetryTask::SendVentDrainStatus()
     Proto::CombustionControlStatus gpioMsg;
     gpioMsg.set_drain_open(GPIO::Drain::IsOpen());
     gpioMsg.set_vent_open(GPIO::Vent::IsOpen());
-    gpioMsg.set_mev_open(GPIO::MEV_EN::IsOn());
+    gpioMsg.set_mev_open(GPIO::_MAIN_ENGINE_VALVE::IsOpen());
     teleMsg.set_combustionControlStatus(gpioMsg);
 
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;

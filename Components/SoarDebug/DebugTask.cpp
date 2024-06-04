@@ -197,18 +197,11 @@ void DebugTask::HandleDebugMessage(const char* msg)
     else if (strcmp(msg, "disablehb") == 0) {
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, RADIOHB_DISABLED));
     }
-    else if (strcmp(msg, "mev enable") == 0) {
-    	GPIO::MEV_EN::On();
+    else if (strcmp(msg, "mev close.warn") == 0) {
+    	SOAR_PRINT("MEV Close via Debug Not Permitted\n");
     }
-    else if (strcmp(msg, "mev disable") == 0) {
-    	GPIO::MEV_EN::Off();
-    }
-    else if (strcmp(msg, "mev close") == 0) {
-    	MEVManager::CloseMEV();
-    }
-    else if (strcmp(msg, "mev open") == 0) {
-    	//TODO: Remember to remove / make sure not enabled in final code
-    	MEVManager::OpenMEV();
+    else if (strcmp(msg, "mev open.warn") == 0) {
+        SOAR_PRINT("MEV Open via Debug Not Permitted\n");
     }
     else if (strcmp(msg, "ptc") == 0) {
 		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");

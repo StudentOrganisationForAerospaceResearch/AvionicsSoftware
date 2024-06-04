@@ -44,13 +44,12 @@ namespace GPIO
         inline bool IsOn() { return HAL_GPIO_ReadPin(LED_3_GPIO_Port, LED_3_Pin) == GPIO_PIN_SET; }
     }
 
-    namespace MEV_EN
+    namespace _MAIN_ENGINE_VALVE // Main engine valve GPIO Open/Close should ONLY be touched by MEVManager
     {
-        inline void On() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_SET); }
-        inline void Off() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_RESET); }
-        inline void Toggle() { HAL_GPIO_TogglePin(LAUNCH_GPIO_Port, LAUNCH_Pin); }
+        inline void Open() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_SET); }
+        inline void Close() { HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_RESET); }
 
-        inline bool IsOn() { return HAL_GPIO_ReadPin(LAUNCH_GPIO_Port, LAUNCH_Pin) == GPIO_PIN_SET; }
+        inline bool IsOpen() { return HAL_GPIO_ReadPin(LAUNCH_GPIO_Port, LAUNCH_Pin) == GPIO_PIN_SET; }
     }
 
 	
