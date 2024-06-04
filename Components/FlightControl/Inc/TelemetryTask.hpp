@@ -47,8 +47,8 @@ private:
     // Private Variables
     uint32_t loggingDelayMs;
 
-    uint8_t numNonFlashLogs_;
-    uint8_t numNonControlLogs_;
+    uint16_t numNonFlashLogs_;
+    uint16_t numNonControlLogs_;
 };
 
 #endif    // SOAR_TELEMETRYTASK_HPP_
