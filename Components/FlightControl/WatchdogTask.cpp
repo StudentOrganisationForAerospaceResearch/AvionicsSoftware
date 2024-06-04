@@ -164,7 +164,7 @@ void WatchdogTask::SendHeartbeatStatus()
     hbs.set_timer_state(ConvertTimerStateToProto(heartbeatTimer->GetState()));
     hbs.set_timer_period(heartbeatTimer->GetPeriodMs());
     hbs.set_timer_remaining(heartbeatTimer->GetRemainingTimeMs());
-
+    msg.set_hb_state(hbs);
     EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
     msg.serialize(writeBuffer);
 
