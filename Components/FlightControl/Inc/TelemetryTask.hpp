@@ -11,7 +11,7 @@
 #include "SystemDefines.hpp"
 
 constexpr uint16_t TELEMETRY_HEARTBEAT_TIMER_PERIOD_MS = 2000; // 2s between heartbeat telemetry
-constexpr uint16_t PERIOD_BETWEEN_FLASH_LOGS_MS = 5000; // 5s between logs to flash
+constexpr uint16_t PERIOD_BETWEEN_FLASH_LOGS_MS = 10000; // 10s between logs to flash
 
 class TelemetryTask : public Task
 {
