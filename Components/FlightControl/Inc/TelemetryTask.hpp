@@ -10,7 +10,8 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
-constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = 3 * 5; // N cycles of telemetry sends for each flash log
+constexpr uint16_t TELEMETRY_HEARTBEAT_TIMER_PERIOD_MS = 2000; // 2s between heartbeat telemetry
+constexpr uint16_t PERIOD_BETWEEN_FLASH_LOGS_MS = 5000; // 5s between logs to flash
 
 class TelemetryTask : public Task
 {
@@ -47,6 +48,7 @@ private:
     uint32_t loggingDelayMs;
 
     uint8_t numNonFlashLogs_;
+    uint8_t numNonControlLogs_;
 };
 
 #endif    // SOAR_TELEMETRYTASK_HPP_
