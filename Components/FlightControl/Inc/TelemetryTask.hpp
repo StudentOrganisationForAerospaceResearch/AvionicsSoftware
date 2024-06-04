@@ -12,6 +12,7 @@
 
 constexpr uint16_t TELEMETRY_HEARTBEAT_TIMER_PERIOD_MS = 2000; // 2s between heartbeat telemetry
 constexpr uint16_t PERIOD_BETWEEN_FLASH_LOGS_MS = 10000; // 10s between logs to flash
+constexpr uint16_t SLOW_SENSOR_LOG_PERIOD_MS = 1000; // 1s between slow sensor logs
 
 class TelemetryTask : public Task
 {
@@ -49,6 +50,7 @@ private:
 
     uint16_t numNonFlashLogs_;
     uint16_t numNonControlLogs_;
+    uint16_t numSlowSensorLogs_;
 };
 
 #endif    // SOAR_TELEMETRYTASK_HPP_
