@@ -25,7 +25,6 @@ TelemetryTask::TelemetryTask() : Task(TELEMETRY_TASK_QUEUE_DEPTH_OBJS)
     loggingDelayMs = TELEMETRY_DEFAULT_LOGGING_RATE_MS;
     numNonFlashLogs_ = 0;
     numNonControlLogs_ = 0;
-    numSlowSensorLogs_ = 0;
 }
 
 /**
@@ -106,12 +105,6 @@ void TelemetryTask::RunLogSequence()
     // Other Sensors
     RequestSample();
     RequestTransmit();
-
-    // Slow sensors
-    if(++numSlowSensorLogs_ >= (SLOW_SENSOR_LOG_PERIOD_MS / loggingDelayMs)) {
-        numSlowSensorLogs_ = 0;
-
-    }
 
     // Request Log to Flash
     if(++numNonFlashLogs_ >= (PERIOD_BETWEEN_FLASH_LOGS_MS / loggingDelayMs)) {
