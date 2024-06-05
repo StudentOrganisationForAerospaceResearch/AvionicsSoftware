@@ -9,6 +9,7 @@
 #include "Timer.hpp"
 #include "WatchdogTask.hpp"
 #include "FlightTask.hpp"
+#include "DMBProtocolTask.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
 constexpr uint32_t HEARTBEAT_TIMER_PERIOD_MS = 20 * 60 * 1000;
@@ -60,12 +61,16 @@ void WatchdogTask::HandleCommand(Command& cm)
         HandleHeartbeat(cm.GetTaskCommand());
     }
     case TASK_SPECIFIC_COMMAND: {
+        if(cm.GetTaskCommand() == HB_STATUS_SEND) {
+            SendHeartbeatStatus();
+        }
         break;
     }
-    case RADIOHB_CHANGE_PERIOD:
+    case RADIOHB_CHANGE_PERIOD: {
         SOAR_PRINT("HB Period Changed to %d s\n", (cm.GetTaskCommand()));
         heartbeatTimer->ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
         break;
+    }
     default:
         SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n", cm.GetCommand());
         break;
@@ -126,4 +131,43 @@ void WatchdogTask::Run(void * pvParams)
         }
 
     }
+}
+
+/**
+ * @brief Utility function to convert heartbeat state
+ */
+static Proto::HeartbeatState::TimerState ConvertTimerStateToProto(TimerState ts) {
+    switch(ts) {
+    case TimerState::UNINITIALIZED:
+        return Proto::HeartbeatState::TimerState::UNINITIALIZED;
+    case TimerState::COUNTING:
+        return Proto::HeartbeatState::TimerState::COUNTING;
+    case TimerState::PAUSED:
+        return Proto::HeartbeatState::TimerState::PAUSED;
+    case TimerState::COMPLETE:
+        return Proto::HeartbeatState::TimerState::COMPLETE;
+    default:
+        return Proto::HeartbeatState::TimerState::UNINITIALIZED;
+    }
+}
+
+/**
+ * @brief Sends a heartbeat status control message to the ground station
+ */
+void WatchdogTask::SendHeartbeatStatus()
+{
+    // Generate a PROTOBUF message and send it to the Protocol Task
+    Proto::ControlMessage msg;
+    msg.set_source(Proto::Node::NODE_DMB);
+    msg.set_target(Proto::Node::NODE_RCU);
+    Proto::HeartbeatState hbs;
+    hbs.set_timer_state(ConvertTimerStateToProto(heartbeatTimer->GetState()));
+    hbs.set_timer_period(heartbeatTimer->GetPeriodMs());
+    hbs.set_timer_remaining(heartbeatTimer->GetRemainingTimeMs());
+    msg.set_hb_state(hbs);
+    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    msg.serialize(writeBuffer);
+
+    // Send the control message
+    DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }

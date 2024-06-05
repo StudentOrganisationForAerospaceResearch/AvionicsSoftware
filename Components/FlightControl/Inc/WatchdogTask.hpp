@@ -15,6 +15,7 @@
 enum HEARTBEAT_COMMANDS  {
     RADIOHB_NONE = 0,
     RADIOHB_REQUEST,        // Heartbeat countdown timer is reset when HEARTBEAT_COMMAND is sent
+    HB_STATUS_SEND,         // Sends the status of the heartbeat
     RADIOHB_DISABLED
 };
 
@@ -32,6 +33,8 @@ public:
 protected:
     static void RunTask(void* pvParams) { WatchdogTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
     void Run(void * pvParams); // Main run code
+
+    void SendHeartbeatStatus();
 
     static void HeartbeatFailureCallback(TimerHandle_t rtTimerHandle);    // Callback for timer which aborts system in case of data ghosting
     void HandleCommand(Command& cm);

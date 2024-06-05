@@ -44,6 +44,7 @@ private:
 
     // Private Variables
     RocketSM* rsm_;
+    bool firstStateSent_;
 };
 
 #endif    // SOAR_FLIGHTTASK_HPP_

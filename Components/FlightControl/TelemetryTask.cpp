@@ -15,6 +15,7 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+#include "WatchdogTask.hpp"
 
 /**
  * @brief Constructor for TelemetryTask
@@ -23,6 +24,7 @@ TelemetryTask::TelemetryTask() : Task(TELEMETRY_TASK_QUEUE_DEPTH_OBJS)
 {
     loggingDelayMs = TELEMETRY_DEFAULT_LOGGING_RATE_MS;
     numNonFlashLogs_ = 0;
+    numNonControlLogs_ = 0;
 }
 
 /**
@@ -53,7 +55,7 @@ void TelemetryTask::Run(void* pvParams)
     while (1) {
         //Process all commands in queue this cycle
         Command cm;
-		while (qEvtQueue->Receive(cm))
+        while (qEvtQueue->Receive(cm))
             HandleCommand(cm);
 
         osDelay(loggingDelayMs);
@@ -71,7 +73,7 @@ void TelemetryTask::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case TELEMETRY_CHANGE_PERIOD: {
         loggingDelayMs = (uint16_t)cm.GetTaskCommand();
-	break;
+    break;
     }
     default:
         SOAR_PRINT("TelemetryTask - Received Unsupported Command {%d}\n", cm.GetCommand());
@@ -91,18 +93,24 @@ void TelemetryTask::RunLogSequence()
     // Flight State
     FlightTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)FT_REQUEST_TRANSMIT_STATE));
 
+    // Heartbeat Status (limited to every 2 seconds)
+    if (++numNonControlLogs_ >= (TELEMETRY_HEARTBEAT_TIMER_PERIOD_MS / loggingDelayMs)) {
+        numNonControlLogs_ = 0;
+        WatchdogTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HB_STATUS_SEND));
+    }
+
     // GPIO
-	SendVentDrainStatus();
+    SendVentDrainStatus();
 
-	// Other Sensors
-	RequestSample();
-	RequestTransmit();
+    // Other Sensors
+    RequestSample();
+    RequestTransmit();
 
-	// Request Log to Flash
-	if(++numNonFlashLogs_ >= NUM_SENT_LOGS_PER_FLASH_LOG) {
-	    RequestLogToFlash();
-	    numNonFlashLogs_ = 0;
-	}
+    // Request Log to Flash
+    if(++numNonFlashLogs_ >= (PERIOD_BETWEEN_FLASH_LOGS_MS / loggingDelayMs)) {
+        numNonFlashLogs_ = 0;
+        RequestLogToFlash();
+    }
 }
 
 /**
@@ -149,7 +157,7 @@ void TelemetryTask::RequestTransmit()
  */
 void TelemetryTask::RequestLogToFlash()
 {
-	// Barometer
+    // Barometer
     BarometerTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)BARO_REQUEST_FLASH_LOG));
 
     // IMU

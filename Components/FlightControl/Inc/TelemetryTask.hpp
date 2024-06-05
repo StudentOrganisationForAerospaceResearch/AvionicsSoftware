@@ -10,9 +10,8 @@
 #include "Task.hpp"
 #include "SystemDefines.hpp"
 
-constexpr uint8_t FLASH_LOG_SECONDS_FACTOR = 10; // How many seconds to wait between each flash log (assuming FLASH_LOG_RATE_FACTOR is correct)
-constexpr uint8_t FLASH_LOG_RATE_FACTOR = 3;     // Rate factor, e.g. 3 Hz -> 3 to normalize to 1 Hz flash logs
-constexpr uint8_t NUM_SENT_LOGS_PER_FLASH_LOG = FLASH_LOG_RATE_FACTOR * FLASH_LOG_SECONDS_FACTOR; // N cycles of telemetry sends for each flash log
+constexpr uint16_t TELEMETRY_HEARTBEAT_TIMER_PERIOD_MS = 2000; // 2s between heartbeat telemetry
+constexpr uint16_t PERIOD_BETWEEN_FLASH_LOGS_MS = 10000; // 10s between logs to flash
 
 class TelemetryTask : public Task
 {
@@ -48,7 +47,8 @@ private:
     // Private Variables
     uint32_t loggingDelayMs;
 
-    uint8_t numNonFlashLogs_;
+    uint16_t numNonFlashLogs_;
+    uint16_t numNonControlLogs_;
 };
 
 #endif    // SOAR_TELEMETRYTASK_HPP_
