@@ -11,6 +11,8 @@
 #include "RocketSM.hpp"
 
 /* Macros/Enums ------------------------------------------------------------*/
+constexpr uint16_t FLIGHT_TASK_BOOTUP_TELE_CYCLES = 20;
+
 enum FlightTaskRequests
 {
 	FT_REQUEST_NONE = 0, 
@@ -44,7 +46,7 @@ private:
 
     // Private Variables
     RocketSM* rsm_;
-    bool firstStateSent_;
+    uint16_t firstStateSent_;
 };
 
 #endif    // SOAR_FLIGHTTASK_HPP_
