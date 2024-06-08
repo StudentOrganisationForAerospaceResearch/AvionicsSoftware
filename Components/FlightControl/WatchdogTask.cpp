@@ -122,12 +122,11 @@ void WatchdogTask::Run(void * pvParams)
 
         Command cm;
 
-        //Wait forever for a command
-        bool res = qEvtQueue->Receive(cm);
-
-        if (res) {
-            //Process the command
+        // Ingest the command queue, up to 5 commands
+        uint8_t proced = 0;
+        while (qEvtQueue->Receive(cm) && (proced < 5)) {
             HandleCommand(cm);
+            ++proced;
         }
 
     }

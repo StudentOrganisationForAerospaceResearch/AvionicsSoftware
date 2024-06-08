@@ -19,7 +19,7 @@
 FlightTask::FlightTask() : Task(FLIGHT_TASK_QUEUE_DEPTH_OBJS)
 {
     rsm_ = nullptr;
-    firstStateSent_ = false;
+    firstStateSent_ = 0;
 }
 
 /**
@@ -162,9 +162,14 @@ void FlightTask::SendRocketState()
     msg.set_source(Proto::Node::NODE_DMB);
     msg.set_target(Proto::Node::NODE_RCU);
     Proto::SystemState stateMsg;
-    if(!firstStateSent_) {
-        firstStateSent_ = true;
-        stateMsg.set_sys_state(Proto::SystemState::State::SYS_BOOTUP_COMPLETE);
+    if(firstStateSent_ < FLIGHT_TASK_BOOTUP_TELE_CYCLES) {
+        if(firstStateSent_ < 1) {
+            stateMsg.set_sys_state(Proto::SystemState::State::SYS_UNCAUGHT_RESET);
+        }
+        else {
+            stateMsg.set_sys_state(Proto::SystemState::State::SYS_BOOTUP_COMPLETE);
+        }
+        firstStateSent_ += 1;
     }
     else {
         stateMsg.set_sys_state(Proto::SystemState::State::SYS_NORMAL_OPERATION);
