@@ -189,6 +189,8 @@ RocketState PreLaunch::OnEnter()
     // Make sure the MEV is closed
     MEVManager::MEV_CLOSE();
 
+    PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_RESET);
+
     return rsStateID;
 }
 
@@ -484,6 +486,7 @@ RocketState Ignition::OnEnter()
     GPIO::Vent::Close();
     GPIO::Drain::Close();
     MEVManager::MEV_CLOSE();
+    PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_PEND);
 
     return rsStateID;
 }
@@ -556,6 +559,7 @@ RocketState Launch::OnEnter()
     GPIO::Drain::Close();
     MEVManager::MEV_OPEN();
     TimerTransitions::Inst().BurnSequence();
+    PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_START);
     return rsStateID;
 }
 
@@ -907,7 +911,6 @@ RocketState Abort::OnEnter()
 	GPIO::Vent::Open();
 	GPIO::Drain::Open();
     MEVManager::MEV_CLOSE();
-
     return rsStateID;
 }
 

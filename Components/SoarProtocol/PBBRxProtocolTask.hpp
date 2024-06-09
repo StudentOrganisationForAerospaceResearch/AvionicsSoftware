@@ -42,6 +42,21 @@ public:
         PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_COMMAND);
     }
 
+    static void SendFastLogCommand(Proto::FastLog::FastLogCommand cmd)
+    {
+        Proto::ControlMessage ctrlMsg;
+        Proto::FastLog fastLogCmd;
+        ctrlMsg.set_source(Proto::Node::NODE_DMB);
+        ctrlMsg.set_target(Proto::Node::NODE_PBB);
+        fastLogCmd.set_cmd(cmd);
+        ctrlMsg.set_fast_log(fastLogCmd);
+        EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+        ctrlMsg.serialize(writeBuffer);
+        PBBRxProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
+    }
+
+
+
 protected:
     static void RunTask(void* pvParams) { PBBRxProtocolTask::Inst().Run(pvParams); } // Static Task Interface, passes control to the instance Run();
 
