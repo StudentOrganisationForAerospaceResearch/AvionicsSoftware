@@ -47,6 +47,9 @@ constexpr uint16_t FLIGHT_TASK_STACK_DEPTH_WORDS = 512;        // Size of the fl
 
 constexpr uint16_t FLIGHT_PHASE_DISPLAY_FREQ = 1000;    // Display frequency for flight phase information
 
+// DMB PROTOCOL TASK
+constexpr uint16_t DMB_PROTOCOL_TASK_PRIORITY = 3;     // Priority of DMB protocol task (Rx from Ground Systems)
+
 // UART TASK
 constexpr uint8_t UART_TASK_RTOS_PRIORITY = 2;            // Priority of the uart task
 constexpr uint8_t UART_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the uart task queue

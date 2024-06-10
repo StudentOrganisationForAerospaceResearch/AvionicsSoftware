@@ -26,7 +26,7 @@ void DMBProtocolTask::InitTask()
             (const char*)"ProtocolTask",
             (uint16_t)TASK_PROTOCOL_STACK_DEPTH_WORDS,
             (void*)this,
-            (UBaseType_t)TASK_PROTOCOL_PRIORITY,
+            (UBaseType_t)DMB_PROTOCOL_TASK_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
