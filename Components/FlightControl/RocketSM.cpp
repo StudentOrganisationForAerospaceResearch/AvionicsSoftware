@@ -488,6 +488,7 @@ RocketState Ignition::OnEnter()
     GPIO::Drain::Close();
     MEVManager::MEV_CLOSE();
     PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_PEND);
+    PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_PEND);
 
     return rsStateID;
 }
