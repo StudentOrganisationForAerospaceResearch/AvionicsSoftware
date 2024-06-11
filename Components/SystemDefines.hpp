@@ -33,7 +33,7 @@
 #include "UARTDriver.hpp"
 
 /* Specific Task Configuration  ------------------------------------------------------------------*/
-constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 250; // Default logging delay for telemetry task
+constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 50; // Default logging delay for telemetry task
 constexpr uint32_t TELEMETRY_MINIMUM_LOG_PERIOD_MS = 20; // (1000/20 = 50hz) The minimum log period / max log rate
 
 
