@@ -25,7 +25,7 @@ void PBBRxProtocolTask::InitTask()
             (const char*)"PbbProtocol",
             (uint16_t)TASK_PROTOCOL_STACK_DEPTH_WORDS,
             (void*)this,
-            (UBaseType_t)TASK_PROTOCOL_PRIORITY,
+            (UBaseType_t)PBB_PROTOCOL_TASK_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
 
     //Ensure creation succeded
