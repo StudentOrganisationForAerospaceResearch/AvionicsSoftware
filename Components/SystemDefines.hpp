@@ -33,7 +33,7 @@
 #include "UARTDriver.hpp"
 
 /* Specific Task Configuration  ------------------------------------------------------------------*/
-constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 333; // Default logging delay for telemetry task
+constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 100; // Default logging delay for telemetry task
 constexpr uint32_t TELEMETRY_MINIMUM_LOG_PERIOD_MS = 20; // (1000/20 = 50hz) The minimum log period / max log rate
 
 
@@ -41,22 +41,25 @@ constexpr uint32_t TELEMETRY_MINIMUM_LOG_PERIOD_MS = 20; // (1000/20 = 50hz) The
 /* - Lower priority number means lower priority task ---------------------------------*/
 
 // FLIGHT PHASE
-constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 3;            // Priority of the flight task
+constexpr uint8_t FLIGHT_TASK_RTOS_PRIORITY = 4;            // Priority of the flight task
 constexpr uint8_t FLIGHT_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
 constexpr uint16_t FLIGHT_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
 
 constexpr uint16_t FLIGHT_PHASE_DISPLAY_FREQ = 1000;    // Display frequency for flight phase information
 
 // DMB PROTOCOL TASK
-constexpr uint16_t DMB_PROTOCOL_TASK_PRIORITY = 3;     // Priority of DMB protocol task (Rx from Ground Systems)
+constexpr uint16_t DMB_PROTOCOL_TASK_PRIORITY = 4;     // Priority of DMB protocol task (Rx from Ground Systems)
+
+// PBB PROTOCOL TASK
+constexpr uint16_t PBB_PROTOCOL_TASK_PRIORITY = 3;     // Priority of PBB protocol task (Rx from Plumbing Bay Board)
 
 // UART TASK
-constexpr uint8_t UART_TASK_RTOS_PRIORITY = 2;            // Priority of the uart task
+constexpr uint8_t UART_TASK_RTOS_PRIORITY = 3;            // Priority of the uart task
 constexpr uint8_t UART_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the uart task queue
 constexpr uint16_t UART_TASK_STACK_DEPTH_WORDS = 512;    // Size of the uart task stack
 
 // DEBUG TASK
-constexpr uint8_t TASK_DEBUG_PRIORITY = 2;            // Priority of the debug task
+constexpr uint8_t TASK_DEBUG_PRIORITY = 1;            // Priority of the debug task
 constexpr uint8_t TASK_DEBUG_QUEUE_DEPTH_OBJS = 10;        // Size of the debug task queue
 constexpr uint16_t TASK_DEBUG_STACK_DEPTH_WORDS = 512;        // Size of the debug task stack
 
@@ -96,12 +99,12 @@ constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the te
 constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the telemetry task stack
 
 // PRESSURE TRANSDUCER TASK
-constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 2;			// Priority of the pressure transducer task
+constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 1;			// Priority of the pressure transducer task
 constexpr uint8_t TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
 constexpr uint16_t TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
 
 // BATTERY VOLTAGE Task
-constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 2;            // Priority of the battery voltage task
+constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 1;            // Priority of the battery voltage task
 constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the battery voltage task queue
 constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the battery voltage task stack
 

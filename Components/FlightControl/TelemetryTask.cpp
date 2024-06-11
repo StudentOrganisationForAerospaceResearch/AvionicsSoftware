@@ -107,10 +107,10 @@ void TelemetryTask::RunLogSequence()
     RequestTransmit();
 
     // Request Log to Flash
-    if(++numNonFlashLogs_ >= (PERIOD_BETWEEN_FLASH_LOGS_MS / loggingDelayMs)) {
-        numNonFlashLogs_ = 0;
-        RequestLogToFlash();
-    }
+//    if(++numNonFlashLogs_ >= (PERIOD_BETWEEN_FLASH_LOGS_MS / loggingDelayMs)) {
+//        numNonFlashLogs_ = 0;
+//        RequestLogToFlash();
+//    }
 }
 
 /**
@@ -128,7 +128,7 @@ void TelemetryTask::RequestSample()
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_NEW_SAMPLE));
 
     // Pressure Transducer
-    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+    //PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
 }
 
 /**
@@ -146,7 +146,7 @@ void TelemetryTask::RequestTransmit()
     IMUTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)IMU_REQUEST_TRANSMIT));
 
     // Pressure Transducer
-    PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
+    //PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_TRANSMIT));
 
     // GPS
     GPSTask::Inst().SendCommand(Command(REQUEST_COMMAND, (uint16_t)GPS_REQUEST_TRANSMIT));
