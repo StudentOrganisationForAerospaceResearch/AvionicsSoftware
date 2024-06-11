@@ -190,6 +190,7 @@ RocketState PreLaunch::OnEnter()
     MEVManager::MEV_CLOSE();
 
     PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_RESET);
+    PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_RESET);
 
     return rsStateID;
 }
