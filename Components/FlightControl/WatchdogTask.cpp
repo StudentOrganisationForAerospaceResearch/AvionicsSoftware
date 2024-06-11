@@ -85,7 +85,7 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
     switch (taskCommand) {
     case RADIOHB_REQUEST:
         GPIO::LED2::Toggle();
-        SOAR_PRINT("HEARTBEAT RECEIVED \n");
+        // SOAR_PRINT("HEARTBEAT RECEIVED \n");
         heartbeatTimer->ResetTimerAndStart();
         break;
     case RADIOHB_DISABLED:
@@ -118,7 +118,7 @@ void WatchdogTask::Run(void * pvParams)
         osDelay(500);
 
         //Every cycle, print something out (for testing)
-        SOAR_PRINT("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
+        // ("FlightTask::Run() - [%d] Seconds\n", tempSecondCounter++);
 
         Command cm;
 

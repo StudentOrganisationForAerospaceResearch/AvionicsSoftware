@@ -59,7 +59,7 @@ void DMBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
     if (!msg.has_dmb_command())
         return;
 
-    SOAR_PRINT("PROTO-INFO: Received DMB Command Message\n");
+    // SOAR_PRINT("PROTO-INFO: Received DMB Command Message\n");
 
     // Process the db command
     switch (msg.get_dmb_command().get_command_enum())
@@ -142,7 +142,7 @@ void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
     // Handle based on the message type
     if(msg.has_hb()) {
         // This is a heartbeat message, update the heartbeat
-        SOAR_PRINT("PROTO-INFO: Received Heartbeat Message\n");
+        // SOAR_PRINT("PROTO-INFO: Received Heartbeat Message\n");
         WatchdogTask::Inst().SendCommand(Command(HEARTBEAT_COMMAND, (uint16_t)RADIOHB_REQUEST));
     }
     else if(msg.has_ping()) {

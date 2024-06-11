@@ -226,31 +226,31 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
         return RS_ABORT;
     case RSC_OPEN_VENT:
         GPIO::Vent::Open();
-        SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(currentState));
+        // SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_CLOSE_VENT:
         GPIO::Vent::Close();
-        SOAR_PRINT("Vents were closed in [ %s ] state\n", StateToString(currentState));
+        // SOAR_PRINT("Vents were closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_OPEN_DRAIN:
         GPIO::Drain::Open();
-        SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
+        // SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_CLOSE_DRAIN:
         GPIO::Drain::Close();
-        SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
+        // SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
         break;
     case RSC_MEV_CLOSE:
         MEVManager::MEV_CLOSE();
         break;
     case RSC_POWER_TRANSITION_EXTERNAL:
         GPIO::PowerSelect::UmbilicalPower();
-        SOAR_PRINT("Switched to umbilical power in [ %s ] state\n", StateToString(currentState));
+        // SOAR_PRINT("Switched to umbilical power in [ %s ] state\n", StateToString(currentState));
         //TODO: we should check to make sure umbilical power is available before doing so
         break;
     case RSC_POWER_TRANSITION_ONBOARD:
         GPIO::PowerSelect::InternalPower();
-        SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(currentState));
+        // SOAR_PRINT("Switched to internal power in [ %s ] state\n", StateToString(currentState));
         break;
     default:
         break;
@@ -624,10 +624,10 @@ RocketState Burn::OnEnter()
 {
     // TODO: Debug print - can remove in final versions
     if (GPIO::Vent::IsOpen()) {
-        SOAR_PRINT("Vents were not closed in [ %s ] state\n", StateToString(rsStateID));
+        // SOAR_PRINT("Vents were not closed in [ %s ] state\n", StateToString(rsStateID));
     }
     if (GPIO::Drain::IsOpen()) {
-        SOAR_PRINT("Drain was not closed in [ %s ] state\n", StateToString(rsStateID));
+        // SOAR_PRINT("Drain was not closed in [ %s ] state\n", StateToString(rsStateID));
     }
 
     // Assert vent/drain state
@@ -777,8 +777,8 @@ RocketState Descent::OnEnter()
     // Assert MEV power
     MEVManager::MEV_CLOSE();
 
-    SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
-    SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(rsStateID));
+    // SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
+    // SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(rsStateID));
 
     // Start Recovery Transition Timer (~300 seconds) : Should be well into / after descent
     TimerTransitions::Inst().RecoverySequence();
