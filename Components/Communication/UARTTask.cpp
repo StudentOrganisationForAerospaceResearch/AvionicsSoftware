@@ -7,16 +7,78 @@
 
 #include "UARTTask.hpp"
 #include "UARTDriver.hpp"
+#include <cstring>
+#include "cmsis_os.h"
 
 /**
  * TODO: Currently not used, would be used for DMA buffer configuration or interrupt setup
  * @brief Configures UART DMA buffers and interrupts
  * 
 */
+
+
 void UARTTask::ConfigureUART()
 {
     // UART 5 - Uses polling for now (switch to DMA or interrupts once SOAR-Protocol is defined)
+	// DMA IS BEGINNING WOW!!!!!!!!!!!
+
+	LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_0, (uint32_t)DMABUF);
+	LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_0, DEBUG_DMA_RX_BUF_SIZE);
+
+	LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_7, (uint32_t)TXBUF);
+	LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_7, DEBUG_DMA_TX_BUF_SIZE);
+
+	  LL_DMA_EnableIT_HT(DMA1, LL_DMA_STREAM_0);
+	  LL_DMA_EnableIT_TC(DMA1, LL_DMA_STREAM_0);
+
+	  LL_DMA_EnableIT_HT(DMA1, LL_DMA_STREAM_7);
+	  LL_DMA_EnableIT_TC(DMA1, LL_DMA_STREAM_7);
+	 // HAL_UART_Receive_DMA(huart4, DMABUF, 40);
+
+
+//	  NVIC_SetPriority(DMA1_Stream0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0));
+//	  NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+
+
+	LL_USART_EnableIT_IDLE(UART5);
+
+
+
+	  LL_USART_EnableDMAReq_RX(UART5);
+	  LL_USART_EnableDMAReq_TX(UART5);
+
+
+	    LL_DMA_SetPeriphAddress(DMA1, LL_DMA_STREAM_0, LL_USART_DMA_GetRegAddr(UART5));
+	    LL_DMA_SetPeriphAddress(DMA1, LL_DMA_STREAM_7, LL_USART_DMA_GetRegAddr(UART5));
+
+
+
+	LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_0);
+	LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_7);
+
+
+	// WHY
+	LL_USART_ClearFlag_FE(UART5);
+	LL_USART_ClearFlag_IDLE(UART5);
+	LL_USART_ClearFlag_LBD(UART5);
+	LL_USART_ClearFlag_NE(UART5);
+	LL_USART_ClearFlag_ORE(UART5);
+	LL_USART_ClearFlag_PE(UART5);
+	LL_USART_ClearFlag_RXNE(UART5);
+	LL_USART_ClearFlag_TC(UART5);
+	LL_USART_ClearFlag_nCTS(UART5);
+
+	LL_DMA_ClearFlag_DME4(DMA1);
+	LL_DMA_ClearFlag_FE4(DMA1);
+	LL_DMA_ClearFlag_HT4(DMA1);
+	LL_DMA_ClearFlag_TC4(DMA1);
+	LL_DMA_ClearFlag_TE4(DMA1);
+
+
+
 }
+
+
 
 /**
  * @brief Initializes UART task with the RTOS scheduler
@@ -26,6 +88,13 @@ void UARTTask::InitTask()
     // Make sure the task is not already initialized
     SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize UART task twice");
     
+    DMABUF = new uint8_t[DEBUG_DMA_RX_BUF_SIZE];
+    memset(DMABUF,0xab,DEBUG_DMA_RX_BUF_SIZE);
+
+    TXBUF = new uint8_t[DEBUG_DMA_TX_BUF_SIZE];
+    memset(TXBUF,0xbc,DEBUG_DMA_TX_BUF_SIZE);
+
+    strcpy((char*)TXBUF,"hello world");
     // Start the task
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)UARTTask::RunTask,
@@ -39,6 +108,7 @@ void UARTTask::InitTask()
     SOAR_ASSERT(rtValue == pdPASS, "UARTTask::InitTask() - xTaskCreate() failed");
 
     // Configure DMA
+    ConfigureUART();
      
 }
 
@@ -57,6 +127,7 @@ void UARTTask::Run(void * pvParams)
         
         //Process the command
         HandleCommand(cm);
+
     }
 }
 

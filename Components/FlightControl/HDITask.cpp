@@ -52,7 +52,7 @@ etl::map<RocketState, HDIConfig, 11> stateBlinks = etl::map<RocketState, HDIConf
 /**
 * @brief Constructor for HDITask
 */
-HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(false)
+HDITask::HDITask():Task(HDI_TASK_QUEUE_DEPTH_OBJS), buzzerMuted_(true)
 {
 }
 
