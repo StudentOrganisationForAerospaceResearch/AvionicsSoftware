@@ -186,12 +186,7 @@ void Timer::SetAutoReload(bool setReloadOn)
 */
 const bool Timer::GetIfAutoReload()
 {
-    if ((uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdTRUE)) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return uxTimerGetReloadMode(rtTimerHandle)) == (( UBaseType_t ) pdTRUE)
 }
 
 /**
