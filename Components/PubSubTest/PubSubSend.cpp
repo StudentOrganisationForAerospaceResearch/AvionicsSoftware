@@ -68,7 +68,7 @@ void PubSubSend::Run(void * pvParams)
 
 	while(1) {
 		Command cm;
-		if(qEvtQueue->Receive(cm, 1000)) {
+		if(qEvtQueue->Receive(cm, 2000)) {
 			HandleCommand(cm);
 		}
 		else {
@@ -89,6 +89,12 @@ void PubSubSend::Run(void * pvParams)
 void PubSubSend::HandleCommand(Command& cm)
 {
     switch (cm.GetCommand()) {
+
+    case DATA_BROKER_COMMAND:
+    	break;
+//    	IMUData* newData = parseData(&data);
+
+
 
     default:
         SOAR_PRINT("PubSubSend - Received Unsupported Command {%d}\n", cm.GetCommand());

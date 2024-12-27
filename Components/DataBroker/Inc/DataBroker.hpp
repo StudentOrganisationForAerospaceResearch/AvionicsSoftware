@@ -27,18 +27,19 @@
 /************************************
  * TYPEDEFS
  ************************************/
+// list of publishers
+static Publisher<IMUData> IMU_Data_publisher {DataBrokerMessageTypes::IMU_DATA};
+static Publisher<ThermocoupleData> Thermocouple_Data_publisher {DataBrokerMessageTypes::THERMOCOUPLE_DATA};
 
 /************************************
  * CLASS DEFINITIONS
  ************************************/
 class DataBroker {
  public:
-
-	// list of publishers
-	static Publisher<IMUData> IMU_Data_publisher;
-	static Publisher<ThermocoupleData> Thermocouple_Data_publisher;
-
-  // publish system message
+  /**
+   * @brief Publish data of a certain type
+   * 				NOTE: You must ensure that there is a publisher for that type
+   */
   template <typename T>
   static void PublishData(T* dataToPublish) {
   	auto publisher = getPublisher<T>();
@@ -46,8 +47,28 @@ class DataBroker {
     	publisher->Publish(dataToPublish);
     }
     else {
-    	SOAR_PRINT("Data Publisher ERROR \n");
+    	SOAR_ASSERT("Data Publisher not found \n");
     }
+  }
+
+  /**
+   * @brief Subscribe to a certain type of data in the system
+   * @param taskToSubscribe Task Handle of the task that will receive
+   *        and handle the data. (i.e. -> Subscribe(this))
+   */
+  template <typename T>
+  static void Subscribe(Task* taskToSubscribe) {
+  	auto publisher = getPublisher<T>();
+		if (publisher != nullptr) {
+			publisher->Subscribe(taskToSubscribe);
+		}
+		else {
+			SOAR_ASSERT("Data Publisher not found \n");
+		}
+  }
+
+  static constexpr DataBrokerMessageTypes getDataBrokerMessageType(uint16_t messageType) {
+  	return static_cast<DataBrokerMessageTypes>(messageType);
   }
 
  private:

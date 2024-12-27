@@ -18,6 +18,8 @@
 #include "Task.hpp"
 #include "Subscriber.hpp"
 #include "DataBrokerMessageTypes.hpp"
+#include "SystemDefines.hpp"
+
 
 /************************************
  * MACROS AND DEFINES
@@ -39,13 +41,50 @@ class Publisher {
   }
 
   // subscribe
-  void Subscribe(Task* taskToSubscribe);
+  void Subscribe(Task* taskToSubscribe) {
+  	bool subscriberAdded = false;
+  	  for (Subscriber subscriber : subscribersList) {
+  	    if (subscriber.getSubscriberTaskHandle() == nullptr) {
+  	      subscriber.Init(taskToSubscribe);
+  	      subscriberAdded = true;
+  	    }
+  	  }
+
+  	  SOAR_ASSERT(subscriberAdded, "Failed to add subscriber\n");
+  	  return;
+  }
 
   // unsubscribe
-  void Unsubscribe(Task* taskToUnsubscribe);
+  void Unsubscribe(Task* taskToUnsubscribe) {
+  	bool subscriberDeleted = false;
+  	  for (Subscriber subscriber : subscribersList) {
+  	    if (subscriber.getSubscriberTaskHandle() == taskToUnsubscribe) {
+  	      subscriber.Delete();
+  	      subscriberDeleted = true;
+  	    }
+  	  }
+
+  	  SOAR_ASSERT(subscriberDeleted, "Subscriber not Deleted\n");
+  }
 
   // publish
-  void Publish(T* dataToPublish);
+  void Publish(T* dataToPublish) {
+  	  for (const Subscriber& subscriber : subscribersList) {
+  	    if (subscriber.getSubscriberTaskHandle() != nullptr) {
+  	    	// create command
+  				uint16_t messageType = static_cast<uint16_t>(publisherMessageType);
+
+  				Command brokerData(DATA_BROKER_COMMAND, messageType);
+
+  				uint8_t* messsageData = reinterpret_cast<uint8_t*>(dataToPublish);
+
+  	    	// copy data to command
+  				brokerData.CopyDataToCommand(messsageData, sizeof(T));
+
+  	    	subscriber.getSubscriberQueueHandle()->Send(brokerData);
+  	    }
+  	  }
+  }
 
  private:
   // list of subscribers

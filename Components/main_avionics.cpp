@@ -41,7 +41,8 @@ Mutex Global::vaListMutex;
  * @brief Main function interface, called inside main.cpp before os initialization takes place.
 */
 void run_main() {
-    // Init Tasks
+	HAL_GPIO_WritePin(GPIOA, BUZZER_PWM_Pin, GPIO_PIN_RESET);
+	// Init Tasks
     WatchdogTask::Inst().InitTask();
     FlightTask::Inst().InitTask();
     UARTTask::Inst().InitTask();
