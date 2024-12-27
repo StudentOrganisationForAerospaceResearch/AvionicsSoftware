@@ -108,6 +108,15 @@ constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 1;            // Priority of the 
 constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the battery voltage task queue
 constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the battery voltage task stack
 
+// PUBSUB SEND Task
+constexpr uint8_t PUBSUB_SEND_TASK_RTOS_PRIORITY = 1;            // Priority of the pubsub send task
+constexpr uint8_t PUBSUB_SEND_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the pubsub send task queue
+constexpr uint16_t PUBSUB_SEND_TASK_STACK_DEPTH_WORDS = 512;        // Size of the pubsub send task stack
+
+// PUBSUB RECEIVE Task
+constexpr uint8_t PUBSUB_RECEIVE_TASK_RTOS_PRIORITY = 1;            // Priority of the pubsub receive task
+constexpr uint8_t PUBSUB_RECEIVE_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the pubsub receive task queue
+constexpr uint16_t PUBSUB_RECEIVE_TASK_STACK_DEPTH_WORDS = 512;        // Size of the pubsub receive task stack
 
 /* Flash Addresses ------------------------------------------------------------------*/
 // Start of the system storage area (spans 2 sectors)

@@ -30,6 +30,8 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+#include "PubSubReceive.hpp"
+#include "PubSubSend.hpp"
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
@@ -46,7 +48,7 @@ void run_main() {
     DebugTask::Inst().InitTask();
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
-    HDITask::Inst().InitTask();
+//    HDITask::Inst().InitTask();
     DMBProtocolTask::Inst().InitTask();
     PBBRxProtocolTask::Inst().InitTask();
     TelemetryTask::Inst().InitTask();
@@ -54,6 +56,8 @@ void run_main() {
     BatteryTask::Inst().InitTask();
     GPSTask::Inst().InitTask();
     FlashTask::Inst().InitTask();
+    PubSubReceive::Inst().InitTask();
+    PubSubSend::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
     SOAR_PRINT("\n-- SOAR AVIONICS --\n");

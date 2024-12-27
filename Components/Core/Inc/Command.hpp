@@ -25,7 +25,8 @@ enum GLOBAL_COMMANDS : uint8_t
     HEARTBEAT_COMMAND,            // Control actions for heartbeat commands
     RADIOHB_CHANGE_PERIOD,        // Change Radio HB Period to Provided TaskCommand Period in Seconds
     PROTOCOL_COMMAND,           // Protocol command, used for commands to the Protocol Task
-	TELEMETRY_CHANGE_PERIOD,	// Change Telemetry Period to Provided TaskCommand Period in Milliseconds
+		TELEMETRY_CHANGE_PERIOD,	// Change Telemetry Period to Provided TaskCommand Period in Milliseconds
+		DATA_BROKER_COMMAND,
 };
 
 /* Class -----------------------------------------------------------------*/
