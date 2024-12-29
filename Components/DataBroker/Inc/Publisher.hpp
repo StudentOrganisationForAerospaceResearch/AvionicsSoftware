@@ -13,11 +13,11 @@
 /************************************
  * INCLUDES
  ************************************/
+#include <DataBrokerMessageTypes.hpp>
 #include <stdint.h>
 #include <array>
 #include "Task.hpp"
 #include "Subscriber.hpp"
-#include "DataBrokerMessageTypes.hpp"
 #include "SystemDefines.hpp"
 
 

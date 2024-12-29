@@ -108,11 +108,12 @@ void PubSubReceive::HandleDataBrokerCommand(const Command& cm) {
 	DataBrokerMessageTypes messageType = DataBroker::getDataBrokerMessageType(cm.GetTaskCommand());
 	switch (messageType) {
 		case DataBrokerMessageTypes::IMU_DATA: {
-			IMUData* imu_data = reinterpret_cast<IMUData*>(cm.GetDataPointer());
+//			IMUData* imu_data = reinterpret_cast<IMUData*>(cm.GetDataPointer());
+			IMUData imu_data = DataBroker::ExtractDataCommandInfo<IMUData>(cm);
 			SOAR_PRINT("\n IMU DATA : \n");
-			SOAR_PRINT("  X -> %d \n", imu_data->accelX);
-			SOAR_PRINT("  Y -> %d \n", imu_data->accelY);
-			SOAR_PRINT("  Z -> %d \n", imu_data->accelZ);
+			SOAR_PRINT("  X -> %d \n", imu_data.accelX);
+			SOAR_PRINT("  Y -> %d \n", imu_data.accelY);
+			SOAR_PRINT("  Z -> %d \n", imu_data.accelZ);
 			SOAR_PRINT("--DATA_END--\n\n");
 			break;
 		}

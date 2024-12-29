@@ -20,7 +20,7 @@
 #include "SystemDefines.hpp"
 #include "Mutex.hpp"
 #include <type_traits>
-#include <typeinfo>
+#include <cstring>
 
 /************************************
  * MACROS AND DEFINES
@@ -61,7 +61,7 @@ class DataBroker {
   /**
    * @brief Subscribe to a certain type of data in the system
    * @param taskToSubscribe Task Handle of the task that will receive
-   *        and handle the data. (i.e. -> Subscribe(this))
+   *        and handle the data. (i.e. -> Subscribe<T>(this))
    */
   template <typename T>
   static void Subscribe(Task* taskToSubscribe) {
@@ -84,8 +84,8 @@ class DataBroker {
 
   /**
    * @brief Unsubscribe to a certain type of data in the system
-   * @param taskToUnsubscribe Task Handle of the task that will stop receiving
-   *        and handle the data. (i.e. -> Subscribe(this))
+   * @param taskToUnsubscribe Task Handle of the task that will stop
+   *        receiving the data. (i.e. -> Unsubscribe<T>(this))
    */
   template <typename T>
   static void Unsubscribe(Task* taskToUnsubscribe) {
@@ -104,6 +104,23 @@ class DataBroker {
   		SOAR_PRINT("Could Not Unsubscribe to Data Broker Publisher \n");
   	}
   	return;
+  }
+
+  template <typename T>
+  static T ExtractDataCommandInfo(const Command &cm) {
+  	if (cm.GetCommand() != DATA_BROKER_COMMAND) {
+			SOAR_ASSERT("Not a Data Broker Command!\n");
+		}
+
+  	// The data allocated by this command ptr will be freed when cm.Reset()]
+  	// is called. So we do not have to free this memory here
+  	T* dataPtr = reinterpret_cast<T*>(cm.GetDataPointer());
+
+  	T data{};
+
+  	std::memcpy(&data, dataPtr, sizeof(T));
+
+  	return data;
   }
 
   static constexpr DataBrokerMessageTypes getDataBrokerMessageType(uint16_t messageType) {
