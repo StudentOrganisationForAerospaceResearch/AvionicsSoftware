@@ -66,6 +66,7 @@ void PubSubReceive::Run(void * pvParams)
 {
 //  SOAR_PRINT("PUBSUB RECIEVE STARTED\n");
   DataBroker::Subscribe<IMUData>(this);
+//  DataBroker::Unsubscribe<IMUData>(this);
     while (1) {
         /* Process commands in blocking mode */
         Command cm;

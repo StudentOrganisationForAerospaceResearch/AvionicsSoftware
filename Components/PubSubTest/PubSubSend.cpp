@@ -77,7 +77,12 @@ void PubSubSend::Run(void * pvParams)
           .accelY = 2,
           .accelZ = 3,
       };
-      DataBroker::PublishData<IMUData>(&imuData);
+      DataBroker::Publish<IMUData>(&imuData);
+
+      ThermocoupleData thermData = {
+      		.temperature = -52,
+      };
+      DataBroker::Publish<ThermocoupleData>(&thermData);
     }
   }
 }

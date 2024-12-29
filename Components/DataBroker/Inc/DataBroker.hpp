@@ -40,7 +40,7 @@ class DataBroker {
    *         NOTE: You must ensure that there is a publisher for that type
    */
   template <typename T>
-  static void PublishData(T* dataToPublish) {
+  static void Publish(T* dataToPublish) {
     if (subscriberListLock.Lock(SUBSCRIBER_LIST_MUTEX_TIMEOUT)) {
       Publisher<T>* publisher = getPublisher<T>();
       if (publisher != nullptr) {
