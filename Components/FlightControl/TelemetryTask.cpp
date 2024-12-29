@@ -55,7 +55,7 @@ void TelemetryTask::Run(void* pvParams)
             HandleCommand(cm);
 
         osDelay(loggingDelayMs);
-        RunLogSequence();
+//        RunLogSequence();
     }
 }
 

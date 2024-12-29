@@ -94,6 +94,16 @@ constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the b
 
 constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 1000; // Default logging delay for telemetry task
 
+// PUBSUB SEND Task
+constexpr uint8_t PUBSUB_SEND_TASK_RTOS_PRIORITY = 1;            // Priority of the pubsub send task
+constexpr uint8_t PUBSUB_SEND_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the pubsub send task queue
+constexpr uint16_t PUBSUB_SEND_TASK_STACK_DEPTH_WORDS = 512;        // Size of the pubsub send task stack
+
+// PUBSUB RECEIVE Task
+constexpr uint8_t PUBSUB_RECEIVE_TASK_RTOS_PRIORITY = 1;            // Priority of the pubsub receive task
+constexpr uint8_t PUBSUB_RECEIVE_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the pubsub receive task queue
+constexpr uint16_t PUBSUB_RECEIVE_TASK_STACK_DEPTH_WORDS = 512;        // Size of the pubsub receive task stack
+
 /* Flash Addresses ------------------------------------------------------------------*/
 // Start of the system storage area (spans 2 sectors)
 // Holds previous Rocket State, and other low-frequency state information

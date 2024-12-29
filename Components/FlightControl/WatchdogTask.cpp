@@ -9,6 +9,7 @@
 #include "Timer.hpp"
 #include "WatchdogTask.hpp"
 #include "FlightTask.hpp"
+#include "DataBroker.hpp"
 
 
 /**
@@ -64,6 +65,9 @@ void WatchdogTask::HandleCommand(Command& cm)
         SOAR_PRINT("HB Period Changed to %d s\n", (cm.GetTaskCommand()));
         heartbeatTimer->ChangePeriodMsAndStart((cm.GetTaskCommand()*1000));
         break;
+    case DATA_BROKER_COMMAND:
+				HandleDataBrokerCommand(cm);
+				break;
     default:
         SOAR_PRINT("WatchdogTask - Received Unsupported Command {%d}\n", cm.GetCommand());
         break;
@@ -103,6 +107,8 @@ void WatchdogTask::Run(void * pvParams)
     heartbeatTimer->ChangePeriodMs(5000);
     heartbeatTimer->Start();
 
+    DataBroker::Subscribe<ThermocoupleData>(this);
+
     while (1) {
         //TODO: Move into HID Task
         GPIO::LED1::On();
@@ -128,4 +134,30 @@ void WatchdogTask::Run(void * pvParams)
         }
 
     }
+}
+
+/**
+ * @brief Handle all data broker commands
+ * @param cm The command object with the data
+ *            Use cm.GetTaskCommand() to get the message type
+ *              Message types must be cast back into DataBrokerMessageTypes enum
+ *            Use cm.GetDataPointer() to get the pointer to the data
+ */
+void WatchdogTask::HandleDataBrokerCommand(const Command& cm) {
+  DataBrokerMessageTypes messageType = DataBroker::getMessageType(cm);
+  switch (messageType) {
+
+    case DataBrokerMessageTypes::THERMOCOUPLE_DATA: {
+    	ThermocoupleData thermData = DataBroker::ExtractData<ThermocoupleData>(cm);
+			SOAR_PRINT("\n THERMOCOUPLE DATA START: \n");
+			SOAR_PRINT("  Temp -> %d \n", thermData.temperature);
+			SOAR_PRINT("--DATA_END--\n\n");
+			break;
+    }
+
+    case DataBrokerMessageTypes::INVALID:
+      [[fallthrough]];
+    default:
+      break;
+  }
 }
