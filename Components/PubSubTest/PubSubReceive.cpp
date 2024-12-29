@@ -86,7 +86,6 @@ void PubSubReceive::HandleCommand(Command& cm)
   switch (cm.GetCommand()) {
     case DATA_BROKER_COMMAND:
       HandleDataBrokerCommand(cm);
-//      SOAR_PRINT("DATA_BROKER_COMMAND RECEIVED \n");
       break;
 
     default:
