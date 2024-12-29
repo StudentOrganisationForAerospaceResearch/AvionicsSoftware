@@ -24,7 +24,7 @@
  ************************************/
 enum class DataBrokerMessageTypes : uint8_t {
   INVALID = 0,
-	IMU_DATA,
+  IMU_DATA,
   THERMOCOUPLE_DATA,
 };
 

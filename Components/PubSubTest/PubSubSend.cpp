@@ -55,7 +55,7 @@ void PubSubSend::InitTask()
             (UBaseType_t)PUBSUB_SEND_TASK_RTOS_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
 
-						SOAR_ASSERT(rtValue == pdPASS, "PubSubSend::InitTask() - xTaskCreate() failed");
+            SOAR_ASSERT(rtValue == pdPASS, "PubSubSend::InitTask() - xTaskCreate() failed");
 }
 
 /**
@@ -64,22 +64,22 @@ void PubSubSend::InitTask()
  */
 void PubSubSend::Run(void * pvParams)
 {
-//	SOAR_PRINT("\nPUBSUB SEND STARTED\n");
+//  SOAR_PRINT("\nPUBSUB SEND STARTED\n");
 
-	while(1) {
-		Command cm;
-		if(qEvtQueue->Receive(cm, 5000)) {
-			HandleCommand(cm);
-		}
-		else {
-			IMUData imuData = {
-					.accelX = 1,
-					.accelY = 2,
-					.accelZ = 3,
-			};
-			DataBroker::PublishData<IMUData>(&imuData);
-		}
-	}
+  while(1) {
+    Command cm;
+    if(qEvtQueue->Receive(cm, 5000)) {
+      HandleCommand(cm);
+    }
+    else {
+      IMUData imuData = {
+          .accelX = 1,
+          .accelY = 2,
+          .accelZ = 3,
+      };
+      DataBroker::PublishData<IMUData>(&imuData);
+    }
+  }
 }
 
 /**

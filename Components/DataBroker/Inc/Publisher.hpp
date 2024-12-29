@@ -37,60 +37,60 @@ class Publisher {
  public:
   // Constructor
   Publisher(DataBrokerMessageTypes messageType) {
-  	publisherMessageType = messageType;
+    publisherMessageType = messageType;
   }
 
   // subscribe
   bool Subscribe(Task* taskToSubscribe) {
-		// Check if subscriber already exists
-  	for (Subscriber& subscriber : subscribersList) {
-			if (subscriber.getSubscriberTaskHandle() == taskToSubscribe) {
-				return true;
-			}
-		}
+    // Check if subscriber already exists
+    for (Subscriber& subscriber : subscribersList) {
+      if (subscriber.getSubscriberTaskHandle() == taskToSubscribe) {
+        return true;
+      }
+    }
 
-  	// Add the subscriber
-  	for (Subscriber& subscriber : subscribersList) {
-			if (subscriber.getSubscriberTaskHandle() == nullptr) {
-				subscriber.Init(taskToSubscribe);
-				return true;
-			}
-		}
+    // Add the subscriber
+    for (Subscriber& subscriber : subscribersList) {
+      if (subscriber.getSubscriberTaskHandle() == nullptr) {
+        subscriber.Init(taskToSubscribe);
+        return true;
+      }
+    }
 
-		SOAR_ASSERT(true, "Failed to add subscriber\n");
-		return false;
+    SOAR_ASSERT(true, "Failed to add subscriber\n");
+    return false;
   }
 
   // unsubscribe
   bool Unsubscribe(Task* taskToUnsubscribe) {
-		for (Subscriber& subscriber : subscribersList) {
-			if (subscriber.getSubscriberTaskHandle() == taskToUnsubscribe) {
-				subscriber.Delete();
-				return true;
-			}
-		}
+    for (Subscriber& subscriber : subscribersList) {
+      if (subscriber.getSubscriberTaskHandle() == taskToUnsubscribe) {
+        subscriber.Delete();
+        return true;
+      }
+    }
 
-		SOAR_ASSERT(true, "Subscriber not Deleted\n");
-		return false;
+    SOAR_ASSERT(true, "Subscriber not Deleted\n");
+    return false;
   }
 
   // publish
   void Publish(T* dataToPublish) {
-  	  for (const Subscriber& subscriber : subscribersList) {
-  	    if (subscriber.getSubscriberTaskHandle() != nullptr) {
-  	    	// create command
-  				uint16_t messageType = static_cast<uint16_t>(publisherMessageType);
+      for (const Subscriber& subscriber : subscribersList) {
+        if (subscriber.getSubscriberTaskHandle() != nullptr) {
+          // create command
+          uint16_t messageType = static_cast<uint16_t>(publisherMessageType);
 
-  				Command brokerData(DATA_BROKER_COMMAND, messageType);
+          Command brokerData(DATA_BROKER_COMMAND, messageType);
 
-  				uint8_t* messsageData = reinterpret_cast<uint8_t*>(dataToPublish);
+          uint8_t* messsageData = reinterpret_cast<uint8_t*>(dataToPublish);
 
-  	    	// copy data to command
-  				brokerData.CopyDataToCommand(messsageData, sizeof(T));
+          // copy data to command
+          brokerData.CopyDataToCommand(messsageData, sizeof(T));
 
-  	    	subscriber.getSubscriberQueueHandle()->Send(brokerData);
-  	    }
-  	  }
+          subscriber.getSubscriberQueueHandle()->Send(brokerData);
+        }
+      }
   }
 
  private:
