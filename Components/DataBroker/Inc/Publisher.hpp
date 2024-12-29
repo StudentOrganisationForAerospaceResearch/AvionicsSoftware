@@ -42,7 +42,15 @@ class Publisher {
 
   // subscribe
   bool Subscribe(Task* taskToSubscribe) {
-		for (Subscriber& subscriber : subscribersList) {
+		// Check if subscriber already exists
+  	for (Subscriber& subscriber : subscribersList) {
+			if (subscriber.getSubscriberTaskHandle() == taskToSubscribe) {
+				return true;
+			}
+		}
+
+  	// Add the subscriber
+  	for (Subscriber& subscriber : subscribersList) {
 			if (subscriber.getSubscriberTaskHandle() == nullptr) {
 				subscriber.Init(taskToSubscribe);
 				return true;
