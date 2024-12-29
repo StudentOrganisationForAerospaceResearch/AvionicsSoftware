@@ -107,7 +107,7 @@ class DataBroker {
   }
 
   template <typename T>
-  static T ExtractDataCommandInfo(const Command &cm) {
+  static T ExtractData(const Command &cm) {
   	if (cm.GetCommand() != DATA_BROKER_COMMAND) {
 			SOAR_ASSERT("Not a Data Broker Command!\n");
 		}
@@ -123,7 +123,7 @@ class DataBroker {
   	return data;
   }
 
-  static constexpr DataBrokerMessageTypes getDataBrokerMessageType(uint16_t messageType) {
+  static constexpr DataBrokerMessageTypes getMessageType(uint16_t messageType) {
   	return static_cast<DataBrokerMessageTypes>(messageType);
   }
 
