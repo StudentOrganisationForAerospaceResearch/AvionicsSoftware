@@ -18,7 +18,9 @@
 #include "Command.hpp"
 #include "DataBrokerMessageTypes.hpp"
 #include "SystemDefines.hpp"
+#include "Mutex.hpp"
 #include <type_traits>
+#include <typeinfo>
 
 /************************************
  * MACROS AND DEFINES
@@ -39,14 +41,21 @@ class DataBroker {
    */
   template <typename T>
   static void PublishData(T* dataToPublish) {
-  	Publisher<T>* publisher = getPublisher<T>();
-//  	SOAR_PRINT("\nADDRESS OF PUBLISHER :: %d \n", publisher);
-    if (publisher != nullptr) {
-    	publisher->Publish(dataToPublish);
-    }
-    else {
-    	SOAR_ASSERT("Data Publisher not found \n");
-    }
+		if (subscriberListLock.Lock(SUBSCRIBER_LIST_MUTEX_TIMEOUT)) {
+			Publisher<T>* publisher = getPublisher<T>();
+			if (publisher != nullptr) {
+				publisher->Publish(dataToPublish);
+			}
+			else {
+				SOAR_ASSERT("Data Publisher not found \n");
+			}
+			subscriberListLock.Unlock();
+			return;
+		}
+		else {
+			SOAR_PRINT("Could Not Subscribe to Data Broker Publisher \n");
+		}
+  	return;
   }
 
   /**
@@ -56,14 +65,45 @@ class DataBroker {
    */
   template <typename T>
   static void Subscribe(Task* taskToSubscribe) {
-  	Publisher<T>* publisher = getPublisher<T>();
-//  	SOAR_PRINT("\nADDRESS OF PUBLISHER SUBSCRIBED TOO :: %d\n", publisher);
-		if (publisher != nullptr) {
-			publisher->Subscribe(taskToSubscribe);
-		}
-		else {
-			SOAR_ASSERT("Data Publisher not found \n");
-		}
+  	if (subscriberListLock.Lock(SUBSCRIBER_LIST_MUTEX_TIMEOUT)) {
+  		Publisher<T>* publisher = getPublisher<T>();
+			if (publisher != nullptr) {
+				publisher->Subscribe(taskToSubscribe);
+			}
+			else {
+				SOAR_ASSERT("Data Publisher not found \n");
+			}
+			subscriberListLock.Unlock();
+			return;
+  	}
+  	else {
+  		SOAR_PRINT("Could Not Subscribe to Data Broker Publisher \n");
+  	}
+  	return;
+  }
+
+  /**
+   * @brief Unsubscribe to a certain type of data in the system
+   * @param taskToUnsubscribe Task Handle of the task that will stop receiving
+   *        and handle the data. (i.e. -> Subscribe(this))
+   */
+  template <typename T>
+  static void Unsubscribe(Task* taskToUnsubscribe) {
+  	if (subscriberListLock.Lock(SUBSCRIBER_LIST_MUTEX_TIMEOUT)) {
+  		Publisher<T>* publisher = getPublisher<T>();
+			if (publisher != nullptr) {
+				publisher->Unsubscribe(taskToUnsubscribe);
+			}
+			else {
+				SOAR_ASSERT("Data Publisher not found \n");
+			}
+			subscriberListLock.Unlock();
+			return;
+  	}
+  	else {
+  		SOAR_PRINT("Could Not Unsubscribe to Data Broker Publisher \n");
+  	}
+  	return;
   }
 
   static constexpr DataBrokerMessageTypes getDataBrokerMessageType(uint16_t messageType) {
@@ -80,6 +120,11 @@ class DataBroker {
 
 	// Deleting assignment operator to prevent assignment operations
 	DataBroker& operator=(DataBroker const&) = delete;
+
+	// Mutex to access the Subscriber List
+	inline static Mutex subscriberListLock{};
+	// Mutex lock wait time
+	static constexpr uint16_t SUBSCRIBER_LIST_MUTEX_TIMEOUT = 1000;
 
   // matcher - match template type with publisher type
   template <typename T, typename U>
