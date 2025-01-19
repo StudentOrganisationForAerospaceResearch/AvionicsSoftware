@@ -19,6 +19,32 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "stdio.h"
+#include "W25Qxx.h"
+
+#include <stdarg.h>
+
+
+//#include "GPIO.hpp"
+//#include "SystemDefines.hpp"
+//#include "Utils.hpp"
+//#include "Timer.hpp"
+//#include "RocketSM.hpp"
+//#include "SPIFlash.hpp"
+//#include "Data.h"
+#include <string.h>
+#include <stdbool.h>
+
+
+
+//#include "lfs.h"
+//#include "lfs_util.h"
+
+//#include "memorymap.h"
+//#include "spi.h"
+//#include "tim.h"
+//#include "usart.h"
+//#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -76,6 +102,9 @@ static void MX_ADC1_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+void UART_Printf(const char* format, ...); // Added prototype
+
 
 /* USER CODE END PFP */
 
@@ -90,8 +119,13 @@ void StartDefaultTask(void const * argument);
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
 
+
+  /* USER CODE BEGIN 1 */
+	const char* fn_templ1 = "F%u.tst";
+	const char* fn_templ2 = "R%u.tst";
+	char fn[32], fn2[32];
+	lfs_file_t fp;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -127,7 +161,130 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
+  /* USER CODE BEGIN 2 */
+
+  HAL_TIM_Base_Start(&htim2);										// Not used
+
+  UART_Printf("\n\nlittlefs version %x\n",LFS_VERSION);
+
+  W25Q_Reset();
+
+  UART_Printf("Flash Identifier = 0x%08lx\n",W25Q_ReadID());
+
+  W25Q_ReadUniqueID();
+
+  UART_Printf("StatusReg1=%02x\n",W25Q_ReadStatus(1));
+  UART_Printf("StatusReg2=%02x\n",W25Q_ReadStatus(2));
+  UART_Printf("StatusReg3=%02x\n",W25Q_ReadStatus(3));
+
+  UART_Printf("\nRead SFDP Table:\n");
+  uint8_t sfdp[256]={0};
+  W25Q_ReadSFDP(sfdp);
+  UART_Printf("%c %c %c %c ",sfdp[0],sfdp[1],sfdp[2],sfdp[3]);
+  for (int i=4;i<256;i++) UART_Printf("%02x ",sfdp[i]);
+  UART_Printf("\n\n");
+
+
+  // test file system
+  UART_Printf("\n\n ********************* Mount lfs ***********************\n\n");
+  stmlfs_mount(true);
+
+  //---------------------------------------------------------------------------------------------
+  // We'll create 32 files, verify them, rename them, reverify, and delete them.
+  //---------------------------------------------------------------------------------------------
+
+  for (int i = 0; i < 32; i++) {
+
+	  sprintf(fn, fn_templ1,i);                                  	// Create file name string
+
+      int err = stmlfs_file_open(&fp, fn, LFS_O_WRONLY | LFS_O_CREAT);// Create the fp
+      if (err < 0) {
+          UART_Printf("open failed\n");
+          fflush(stdout);
+          Error_Handler();
+      }
+
+      UART_Printf("Write to File %s\n",fn);
+      if ((strlen(fn) + 1) != (uint32_t)stmlfs_file_write(&fp, fn, strlen(fn) + 1)) {// Write the file name to the file
+          UART_Printf("write fails\n");
+          fflush(stdout);
+          Error_Handler();
+      }
+
+      if (stmlfs_file_close(&fp)<0){                          		// flush and close the file
+          UART_Printf("closed failed\n");
+          fflush(stdout);
+          Error_Handler();
+      }
+  }
+
+  dump_dir();														// Show directory
+
+  //stmlfs_unmount();                                               	// Unmount & remount
+  //stmlfs_mount(false);
+
+  struct littlfs_fsstat_t stat;                                   	// Display file system sizes
+  stmlfs_fsstat(&stat);
+  UART_Printf("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
+
+  for (int i = 0; i < 32; i++) {
+  	  sprintf(fn, fn_templ1, i);
+      sprintf(fn2, fn_templ2, i);
+
+      UART_Printf("Rename from %s to %s\n",fn,fn2);
+      if (stmlfs_rename(fn, fn2) < 0) {                           	// rename
+          UART_Printf("rename failed\n");
+          fflush(stdout);
+          Error_Handler();
+      }
+  }
+  dump_dir();														// Show directory
+
+  stmlfs_fsstat(&stat);                                           	// Display file system sizes
+  UART_Printf("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
+
+  char buf[32];
+  for (int i = 0; i < 32; i++) {
+
+      sprintf(fn, fn_templ1, i);
+      sprintf(fn2, fn_templ2, i);
+
+      UART_Printf("Reopen Filename=%s\n",fn2);
+      int err = stmlfs_file_open(&fp, fn2, LFS_O_RDONLY);       	// verify the file's content
+      if (err < 0) {
+          UART_Printf("lfs open failed\n");
+          fflush(stdout);
+          Error_Handler();
+      } else {
+          stmlfs_file_read(&fp, buf, sizeof(buf));
+          if (strcmp(fn, buf) != 0) {
+              UART_Printf("lfs read failed\n");
+              fflush(stdout);
+              Error_Handler();
+          }
+          stmlfs_file_close(&fp);
+
+          if (stmlfs_remove(fn2) < 0) {                             // Delete the file
+              UART_Printf("remove failed\n");
+              fflush(stdout);
+              Error_Handler();
+          } else UART_Printf("File %s removed\n",fn2);
+      }
+  }
+  dump_dir();
+
+  stmlfs_fsstat(&stat);                                         	// Display file system sizes
+  UART_Printf("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
+
+  stmlfs_unmount();                                             	// Release any resources we were using
+  UART_Printf("lfs test done\n");
+  fflush(stdout);
+
+
+  /* USER CODE END 2 */
+
   run_interface();
+
 #if 0
 
 
@@ -163,6 +320,7 @@ int main(void)
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -241,7 +399,7 @@ static void MX_ADC1_Init(void)
   /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = DISABLE;
   hadc1.Init.ContinuousConvMode = DISABLE;
@@ -539,7 +697,7 @@ static void MX_UART4_Init(void)
 
   /* USER CODE END UART4_Init 1 */
   huart4.Instance = UART4;
-  huart4.Init.BaudRate = 38400;
+  huart4.Init.BaudRate = 115200;
   huart4.Init.WordLength = UART_WORDLENGTH_8B;
   huart4.Init.StopBits = UART_STOPBITS_1;
   huart4.Init.Parity = UART_PARITY_NONE;
@@ -809,6 +967,8 @@ static void MX_DMA_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -888,9 +1048,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
+void UART_Printf(const char* format, ...) {
+    char buffer[256];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+    HAL_UART_Transmit(&huart4, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
+}
 
 /* USER CODE END 4 */
 
@@ -906,6 +1076,8 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
   /* USER CODE END 5 */
 }
+
+
 
 /**
   * @brief  Period elapsed callback in non blocking mode
@@ -955,7 +1127,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     ex: UART_Printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
