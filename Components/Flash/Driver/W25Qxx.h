@@ -7,8 +7,6 @@
  ********************************************************************************
  */
 
-#ifndef FLASH_INC_W25QXX_H_
-#define FLASH_INC_W25QXX_H_
 
 /************************************
  * INCLUDES
@@ -39,7 +37,7 @@
 
 #ifndef INC_W25QXX_H_
 #define INC_W25QXX_H_
-
+#define mymac 0
 // Comment out for some extra debugging info
 //#define SPIDEBUG					1
 
@@ -119,5 +117,4 @@ void delay_us(uint16_t us);
 
 #endif /* INC_W25QXX_H_ */
 
-#endif /* EXAMPLE_TASK_HPP_ */
  

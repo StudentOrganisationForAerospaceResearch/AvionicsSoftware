@@ -19,41 +19,22 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "stdio.h"
-#include "W25Qxx.h"
-
-#include <stdarg.h>
-
-
-//#include "GPIO.hpp"
-#include "SystemDefines.hpp"
-//#include "Utils.hpp"
-//#include "Timer.hpp"
-//#include "RocketSM.hpp"
-//#include "SPIFlash.hpp"
-//#include "Data.h"
-#include <string.h>
-#include <stdbool.h>
-
-
-
-//#include "lfs.h"
-//#include "lfs_util.h"
-
-//#include "memorymap.h"
-//#include "spi.h"
-//#include "tim.h"
-//#include "usart.h"
-//#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "RunInterface.hpp"
+#include "SystemDefines.hpp"
 /* USER CODE END Includes */
+#include <cstdio>
+#include <cstring>
+#include "W25Qxx.h"
+#include "lfs.h"
+
+
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+int a = mymac;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -120,7 +101,6 @@ void SOAR_PRINT(const char* format, ...); // Added prototype
 int main(void)
 {
 
-
   /* USER CODE BEGIN 1 */
 	const char* fn_templ1 = "F%u.tst";
 	const char* fn_templ2 = "R%u.tst";
@@ -167,7 +147,7 @@ int main(void)
 
   SOAR_PRINT("\n\nlittlefs version %x\n",LFS_VERSION);
 
-  W25Q_Reset();
+//  W25Q_Reset();
 
   SOAR_PRINT("Flash Identifier = 0x%08lx\n",W25Q_ReadID());
 
@@ -280,14 +260,7 @@ int main(void)
   SOAR_PRINT("lfs test done\n");
   fflush(stdout);
 
-
-  /* USER CODE END 2 */
-
-  run_interface();
-
 #if 0
-
-
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -451,7 +424,7 @@ static void MX_ADC2_Init(void)
   /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
   hadc2.Instance = ADC2;
-  hadc2.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc2.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc2.Init.Resolution = ADC_RESOLUTION_12B;
   hadc2.Init.ScanConvMode = DISABLE;
   hadc2.Init.ContinuousConvMode = ENABLE;
@@ -697,7 +670,7 @@ static void MX_UART4_Init(void)
 
   /* USER CODE END UART4_Init 1 */
   huart4.Instance = UART4;
-  huart4.Init.BaudRate = 115200;
+  huart4.Init.BaudRate = 38400;
   huart4.Init.WordLength = UART_WORDLENGTH_8B;
   huart4.Init.StopBits = UART_STOPBITS_1;
   huart4.Init.Parity = UART_PARITY_NONE;
@@ -1057,7 +1030,7 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the USART1 and Loop until the end of transmission */
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+  HAL_UART_Transmit(&huart4, (uint8_t *)&ch, 1, 0xFFFF);
 
   return ch;
 }
@@ -1076,8 +1049,6 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
   /* USER CODE END 5 */
 }
-
-
 
 /**
   * @brief  Period elapsed callback in non blocking mode
