@@ -33,8 +33,8 @@
  *      Author: hans6
  */
 
-#include "main.h"
 #include "W25Qxx.h"
+#include "main.h"
 
 extern TIM_HandleTypeDef htim1;										// Not used for this demo
 extern SPI_HandleTypeDef hspi1;

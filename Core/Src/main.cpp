@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <W25Qxx.hpp>
 #include "main.h"
 #include "cmsis_os.h"
 
@@ -24,17 +25,19 @@
 /* USER CODE BEGIN Includes */
 #include "RunInterface.hpp"
 #include "SystemDefines.hpp"
-/* USER CODE END Includes */
 #include <cstdio>
 #include <cstring>
-#include "W25Qxx.h"
 #include "lfs.h"
+#include "lfs_util.h"
+#include "W25Qxx.h"
+/* USER CODE END Includes */
+
 
 
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-int a = mymac;
+//int a = mymac;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -143,11 +146,11 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-  HAL_TIM_Base_Start(&htim2);										// Not used
+//  HAL_TIM_Base_Start(&htim2);										// Not used
 
   SOAR_PRINT("\n\nlittlefs version %x\n",LFS_VERSION);
 
-//  W25Q_Reset();
+  W25Q_Reset();
 
   SOAR_PRINT("Flash Identifier = 0x%08lx\n",W25Q_ReadID());
 

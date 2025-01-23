@@ -41,6 +41,11 @@
 // Comment out for some extra debugging info
 //#define SPIDEBUG					1
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define FS_SIZE                 (1024 * 1024 * 8)                   // 8Mbyte
 #define FS_PAGE_SIZE            256									// Winbond W25Qxx 256 Page program
 #define FS_SECTOR_SIZE          4096								// Winbond W25Qxx minimum erase size
@@ -114,6 +119,10 @@ void W25Q_Erase_Sector(uint16_t numsector);
 void write_enable(void);
 void write_disable(void);
 void delay_us(uint16_t us);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_W25QXX_H_ */
 
