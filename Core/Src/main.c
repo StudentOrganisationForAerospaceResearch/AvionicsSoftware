@@ -26,7 +26,7 @@
 
 
 //#include "GPIO.hpp"
-//#include "SystemDefines.hpp"
+#include "SystemDefines.hpp"
 //#include "Utils.hpp"
 //#include "Timer.hpp"
 //#include "RocketSM.hpp"
@@ -1053,13 +1053,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void SOAR_PRINT(const char* format, ...) {
-    char buffer[256];
-    va_list args;
-    va_start(args, format);
-    vsnprintf(buffer, sizeof(buffer), format, args);
-    va_end(args);
-    HAL_UART_Transmit(&huart4, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
+PUTCHAR_PROTOTYPE
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the USART1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
 }
 
 /* USER CODE END 4 */
