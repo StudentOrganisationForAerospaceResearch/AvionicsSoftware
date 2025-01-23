@@ -144,7 +144,7 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
-  /* USER CODE BEGIN 2 */
+  run_interface();
 
 //  HAL_TIM_Base_Start(&htim2);										// Not used
 
@@ -262,6 +262,7 @@ int main(void)
   stmlfs_unmount();                                             	// Release any resources we were using
   SOAR_PRINT("lfs test done\n");
   fflush(stdout);
+
 
 #if 0
   /* USER CODE END 2 */
