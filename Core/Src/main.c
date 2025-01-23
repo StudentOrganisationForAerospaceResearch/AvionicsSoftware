@@ -103,7 +103,7 @@ void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-void UART_Printf(const char* format, ...); // Added prototype
+void SOAR_PRINT(const char* format, ...); // Added prototype
 
 
 /* USER CODE END PFP */
@@ -165,28 +165,28 @@ int main(void)
 
   HAL_TIM_Base_Start(&htim2);										// Not used
 
-  UART_Printf("\n\nlittlefs version %x\n",LFS_VERSION);
+  SOAR_PRINT("\n\nlittlefs version %x\n",LFS_VERSION);
 
   W25Q_Reset();
 
-  UART_Printf("Flash Identifier = 0x%08lx\n",W25Q_ReadID());
+  SOAR_PRINT("Flash Identifier = 0x%08lx\n",W25Q_ReadID());
 
   W25Q_ReadUniqueID();
 
-  UART_Printf("StatusReg1=%02x\n",W25Q_ReadStatus(1));
-  UART_Printf("StatusReg2=%02x\n",W25Q_ReadStatus(2));
-  UART_Printf("StatusReg3=%02x\n",W25Q_ReadStatus(3));
+  SOAR_PRINT("StatusReg1=%02x\n",W25Q_ReadStatus(1));
+  SOAR_PRINT("StatusReg2=%02x\n",W25Q_ReadStatus(2));
+  SOAR_PRINT("StatusReg3=%02x\n",W25Q_ReadStatus(3));
 
-  UART_Printf("\nRead SFDP Table:\n");
+  SOAR_PRINT("\nRead SFDP Table:\n");
   uint8_t sfdp[256]={0};
   W25Q_ReadSFDP(sfdp);
-  UART_Printf("%c %c %c %c ",sfdp[0],sfdp[1],sfdp[2],sfdp[3]);
-  for (int i=4;i<256;i++) UART_Printf("%02x ",sfdp[i]);
-  UART_Printf("\n\n");
+  SOAR_PRINT("%c %c %c %c ",sfdp[0],sfdp[1],sfdp[2],sfdp[3]);
+  for (int i=4;i<256;i++) SOAR_PRINT("%02x ",sfdp[i]);
+  SOAR_PRINT("\n\n");
 
 
   // test file system
-  UART_Printf("\n\n ********************* Mount lfs ***********************\n\n");
+  SOAR_PRINT("\n\n ********************* Mount lfs ***********************\n\n");
   stmlfs_mount(true);
 
   //---------------------------------------------------------------------------------------------
@@ -199,20 +199,20 @@ int main(void)
 
       int err = stmlfs_file_open(&fp, fn, LFS_O_WRONLY | LFS_O_CREAT);// Create the fp
       if (err < 0) {
-          UART_Printf("open failed\n");
+          SOAR_PRINT("open failed\n");
           fflush(stdout);
           Error_Handler();
       }
 
-      UART_Printf("Write to File %s\n",fn);
+      SOAR_PRINT("Write to File %s\n",fn);
       if ((strlen(fn) + 1) != (uint32_t)stmlfs_file_write(&fp, fn, strlen(fn) + 1)) {// Write the file name to the file
-          UART_Printf("write fails\n");
+          SOAR_PRINT("write fails\n");
           fflush(stdout);
           Error_Handler();
       }
 
       if (stmlfs_file_close(&fp)<0){                          		// flush and close the file
-          UART_Printf("closed failed\n");
+          SOAR_PRINT("closed failed\n");
           fflush(stdout);
           Error_Handler();
       }
@@ -225,15 +225,15 @@ int main(void)
 
   struct littlfs_fsstat_t stat;                                   	// Display file system sizes
   stmlfs_fsstat(&stat);
-  UART_Printf("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
+  SOAR_PRINT("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
 
   for (int i = 0; i < 32; i++) {
   	  sprintf(fn, fn_templ1, i);
       sprintf(fn2, fn_templ2, i);
 
-      UART_Printf("Rename from %s to %s\n",fn,fn2);
+      SOAR_PRINT("Rename from %s to %s\n",fn,fn2);
       if (stmlfs_rename(fn, fn2) < 0) {                           	// rename
-          UART_Printf("rename failed\n");
+          SOAR_PRINT("rename failed\n");
           fflush(stdout);
           Error_Handler();
       }
@@ -241,7 +241,7 @@ int main(void)
   dump_dir();														// Show directory
 
   stmlfs_fsstat(&stat);                                           	// Display file system sizes
-  UART_Printf("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
+  SOAR_PRINT("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
 
   char buf[32];
   for (int i = 0; i < 32; i++) {
@@ -249,35 +249,35 @@ int main(void)
       sprintf(fn, fn_templ1, i);
       sprintf(fn2, fn_templ2, i);
 
-      UART_Printf("Reopen Filename=%s\n",fn2);
+      SOAR_PRINT("Reopen Filename=%s\n",fn2);
       int err = stmlfs_file_open(&fp, fn2, LFS_O_RDONLY);       	// verify the file's content
       if (err < 0) {
-          UART_Printf("lfs open failed\n");
+          SOAR_PRINT("lfs open failed\n");
           fflush(stdout);
           Error_Handler();
       } else {
           stmlfs_file_read(&fp, buf, sizeof(buf));
           if (strcmp(fn, buf) != 0) {
-              UART_Printf("lfs read failed\n");
+              SOAR_PRINT("lfs read failed\n");
               fflush(stdout);
               Error_Handler();
           }
           stmlfs_file_close(&fp);
 
           if (stmlfs_remove(fn2) < 0) {                             // Delete the file
-              UART_Printf("remove failed\n");
+              SOAR_PRINT("remove failed\n");
               fflush(stdout);
               Error_Handler();
-          } else UART_Printf("File %s removed\n",fn2);
+          } else SOAR_PRINT("File %s removed\n",fn2);
       }
   }
   dump_dir();
 
   stmlfs_fsstat(&stat);                                         	// Display file system sizes
-  UART_Printf("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
+  SOAR_PRINT("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
 
   stmlfs_unmount();                                             	// Release any resources we were using
-  UART_Printf("lfs test done\n");
+  SOAR_PRINT("lfs test done\n");
   fflush(stdout);
 
 
@@ -1053,7 +1053,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void UART_Printf(const char* format, ...) {
+void SOAR_PRINT(const char* format, ...) {
     char buffer[256];
     va_list args;
     va_start(args, format);
@@ -1127,7 +1127,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: UART_Printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     ex: SOAR_PRINT("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
