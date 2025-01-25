@@ -35,6 +35,7 @@
 
 #include "W25Qxx.h"
 #include "main.h"
+//#include "SystemDefines.hpp"
 
 extern TIM_HandleTypeDef htim1;										// Not used for this demo
 extern SPI_HandleTypeDef hspi1;
@@ -79,6 +80,8 @@ int stmlfs_hal_sync(const struct lfs_config *c)
 
 int stmlfs_mount(bool format)
 {
+//	SOAR_PRINT("mounted");
+
 	int err=-1;
 
 	assert(FS_SIZE<16777216);										// Chip < 16Mbyte, change R/W to 32bits address
@@ -88,6 +91,8 @@ int stmlfs_mount(bool format)
     	err=lfs_format(&lfs,&stmconfig);
 //    	printf("lfs_format - returned: %d\n",err);
     }
+
+
     err=lfs_mount(&lfs,&stmconfig);                              	// mount the filesystem
 //    printf("lfs_mount  - returned: %d\n",err);
     return err;

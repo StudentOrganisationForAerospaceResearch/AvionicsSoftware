@@ -116,7 +116,7 @@ void LFSTask::HandleCommand(Command& cm)
 	  SOAR_PRINT("\n\n ********************* Mount lfs ***********************\n\n");
 	  stmlfs_mount(true);
 
-	  SOAR_PRINT("mounted");
+	  SOAR_PRINT("mounted\n");
 
 	  //---------------------------------------------------------------------------------------------
 	  // We'll create 32 files, verify them, rename them, reverify, and delete them.
