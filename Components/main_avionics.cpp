@@ -55,6 +55,7 @@ void run_main() {
     GPSTask::Inst().InitTask();
     FlashTask::Inst().InitTask();
 
+
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
     SOAR_PRINT("\n-- SOAR AVIONICS --\n");
     SOAR_PRINT("System Reset Reason: [TODO]\n"); //TODO: If we want a system reset reason we need to save it on flash

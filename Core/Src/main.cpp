@@ -146,7 +146,7 @@ int main(void)
 
   run_interface();
 
-//  HAL_TIM_Base_Start(&htim2);										// Not used
+  HAL_TIM_Base_Start(&htim2);										// Not used
 
   SOAR_PRINT("\n\nlittlefs version %x\n",LFS_VERSION);
 
