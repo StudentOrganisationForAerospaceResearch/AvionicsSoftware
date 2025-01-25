@@ -30,6 +30,7 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
+#include "LFSTask.hpp"
 
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
@@ -46,14 +47,16 @@ void run_main() {
     DebugTask::Inst().InitTask();
     BarometerTask::Inst().InitTask();
     IMUTask::Inst().InitTask();
-    HDITask::Inst().InitTask();
+//    HDITask::Inst().InitTask();
     DMBProtocolTask::Inst().InitTask();
     PBBRxProtocolTask::Inst().InitTask();
     TelemetryTask::Inst().InitTask();
     PressureTransducerTask::Inst().InitTask();
     BatteryTask::Inst().InitTask();
     GPSTask::Inst().InitTask();
-    FlashTask::Inst().InitTask();
+//    FlashTask::Inst().InitTask();
+    LFSTask::Inst().InitTask();
+
 
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts

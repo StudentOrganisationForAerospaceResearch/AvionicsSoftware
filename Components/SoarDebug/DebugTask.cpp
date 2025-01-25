@@ -28,6 +28,7 @@
 #include "FlashTask.hpp"
 #include "HDITask.hpp"
 #include "MEVManager.hpp"
+#include "LFSTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -253,6 +254,11 @@ void DebugTask::HandleDebugMessage(const char* msg)
     }
     else if(strcmp(msg, "unmute") == 0) {
         HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::UNMUTE));
+    }
+    else if(strcmp(msg, "lfstest") == 0){
+    	SOAR_PRINT("Dump of sensor data in flash requested\n");
+    	Command cmd((uint16_t)DUMP_FLASH_DATA);
+        LFSTask::Inst().GetEventQueue()->Send(cmd);
     }
     else {
         // Single character command, or unknown command

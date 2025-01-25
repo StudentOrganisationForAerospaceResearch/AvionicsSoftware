@@ -83,12 +83,13 @@ int stmlfs_mount(bool format)
 
 	assert(FS_SIZE<16777216);										// Chip < 16Mbyte, change R/W to 32bits address
 
+
     if (format) {
     	err=lfs_format(&lfs,&stmconfig);
-    	printf("lfs_format - returned: %d\n",err);
+//    	printf("lfs_format - returned: %d\n",err);
     }
     err=lfs_mount(&lfs,&stmconfig);                              	// mount the filesystem
-    printf("lfs_mount  - returned: %d\n",err);
+//    printf("lfs_mount  - returned: %d\n",err);
     return err;
 }
 

@@ -11,6 +11,7 @@
  * INCLUDES
  ************************************/
 #include "LFSTask.hpp"
+#include "FlashTask.hpp"
 #include <W25Qxx.hpp>
 #include "main.h"
 #include "cmsis_os.h"
@@ -24,7 +25,8 @@
 #include "lfs.h"
 #include "lfs_util.h"
 #include "W25Qxx.h"
-/************************************
+
+
 
 LFSTask::LFSTask() : Task(FLASH_TASK_QUEUE_DEPTH_OBJS)
 {
@@ -68,8 +70,8 @@ void LFSTask::Run(void * pvParams)
             HandleCommand(cm);
 
         //Run maintenance on dual sector storages
-        SystemStorage::Inst().Maintain();
-        offsetsStorage_->Maintain();
+//        SystemStorage::Inst().Maintain();
+//        offsetsStorage_->Maintain();
     }
 }
 
@@ -88,7 +90,7 @@ void LFSTask::HandleCommand(Command& cm)
 	lfs_file_t fp;
 
 
-	 HAL_TIM_Base_Start(&htim2);										// Not used
+//	 HAL_TIM_Base_Start(&htim2);										// Not used
 
 	  SOAR_PRINT("\n\nlittlefs version %x\n",LFS_VERSION);
 
@@ -113,6 +115,8 @@ void LFSTask::HandleCommand(Command& cm)
 	  // test file system
 	  SOAR_PRINT("\n\n ********************* Mount lfs ***********************\n\n");
 	  stmlfs_mount(true);
+
+	  SOAR_PRINT("mounted");
 
 	  //---------------------------------------------------------------------------------------------
 	  // We'll create 32 files, verify them, rename them, reverify, and delete them.
@@ -217,62 +221,62 @@ void LFSTask::HandleCommand(Command& cm)
 
 
 }
-
-/**
- * @brief writes data to flash with the size of the data written as the header, increases offset by size + 1 to account for size, currently only handles size < 255
- */
-void LFSTask::WriteLogDataToFlash(uint8_t* data, uint16_t size)
-{
-    uint8_t buff[size + 1];
-
-    buff[0] = (uint8_t)(size & 0xff);
-    memcpy(buff + 1, data, size);
-
-    SPIFlash::Inst().Write(SPI_FLASH_LOGGING_STORAGE_START_ADDR + currentOffsets_.writeDataOffset, buff, size + 1);
-    currentOffsets_.writeDataOffset += size + 1;
-
-    //TODO: Consider adding a readback to check if it was successful
-
-    //If the number of writes since the last offset update has exceeded the threshold, update the offsets in storage
-    if(++writesSinceLastOffsetUpdate_ >= FLASH_OFFSET_WRITES_UPDATE_THRESHOLD)
-        offsetsStorage_->Write(currentOffsets_);
-}
-
-/**
- * @brief reads all data and prints it through UART up until offset read from struct
- *        currently unimplemented
- */
-bool LFSTask::ReadLogDataFromFlash()
-{
-    //unused
-    bool res = true;
-
-    uint8_t length;
-
-    for (unsigned int i = 0; i < currentOffsets_.writeDataOffset + SPI_FLASH_LOGGING_STORAGE_START_ADDR; i++) {
-        W25qxx_ReadByte(&length, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i);
-
-        if (length == sizeof(AccelGyroMagnetismData)) {
-            uint8_t dataRead[sizeof(AccelGyroMagnetismData)];
-            W25qxx_ReadBytes(dataRead, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1, sizeof(AccelGyroMagnetismData));
-            AccelGyroMagnetismData* IMURead = (AccelGyroMagnetismData*)dataRead;
-            SOAR_PRINT("%03d %08d   %04d   %04d   %04d   %04d   %04d   %04d   %04d   %04d   %04d\n",
-                length, IMURead->time, IMURead->accelX_, IMURead->accelY_, IMURead->accelZ_,
-                IMURead->gyroX_, IMURead->gyroY_, IMURead->gyroZ_, IMURead->magnetoX_,
-                IMURead->magnetoY_, IMURead->magnetoZ_);
-        }
-        else if (length == sizeof(BarometerData)) {
-            uint8_t dataRead[sizeof(BarometerData)];
-            W25qxx_ReadBytes(dataRead, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1, sizeof(BarometerData));
-            BarometerData* baroRead = (BarometerData*)dataRead;
-            SOAR_PRINT("%3d %08d   %04d   %04d\n",
-                length, baroRead->time, baroRead->pressure_, baroRead->temperature_);
-        }
-        else {
-            SOAR_PRINT("Unknown length, readback brokedown: %d\n", length);
-        }
-        i = i + length;
-    }
-    return res;
-}
- 
+//
+///**
+// * @brief writes data to flash with the size of the data written as the header, increases offset by size + 1 to account for size, currently only handles size < 255
+// */
+//void LFSTask::WriteLogDataToFlash(uint8_t* data, uint16_t size)
+//{
+//    uint8_t buff[size + 1];
+//
+//    buff[0] = (uint8_t)(size & 0xff);
+//    memcpy(buff + 1, data, size);
+//
+//    SPIFlash::Inst().Write(SPI_FLASH_LOGGING_STORAGE_START_ADDR + currentOffsets_.writeDataOffset, buff, size + 1);
+//    currentOffsets_.writeDataOffset += size + 1;
+//
+//    //TODO: Consider adding a readback to check if it was successful
+//
+//    //If the number of writes since the last offset update has exceeded the threshold, update the offsets in storage
+//    if(++writesSinceLastOffsetUpdate_ >= FLASH_OFFSET_WRITES_UPDATE_THRESHOLD)
+//        offsetsStorage_->Write(currentOffsets_);
+//}
+//
+///**
+// * @brief reads all data and prints it through UART up until offset read from struct
+// *        currently unimplemented
+// */
+//bool LFSTask::ReadLogDataFromFlash()
+//{
+//    //unused
+//    bool res = true;
+//
+//    uint8_t length;
+//
+//    for (unsigned int i = 0; i < currentOffsets_.writeDataOffset + SPI_FLASH_LOGGING_STORAGE_START_ADDR; i++) {
+//        W25qxx_ReadByte(&length, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i);
+//
+//        if (length == sizeof(AccelGyroMagnetismData)) {
+//            uint8_t dataRead[sizeof(AccelGyroMagnetismData)];
+//            W25qxx_ReadBytes(dataRead, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1, sizeof(AccelGyroMagnetismData));
+//            AccelGyroMagnetismData* IMURead = (AccelGyroMagnetismData*)dataRead;
+//            SOAR_PRINT("%03d %08d   %04d   %04d   %04d   %04d   %04d   %04d   %04d   %04d   %04d\n",
+//                length, IMURead->time, IMURead->accelX_, IMURead->accelY_, IMURead->accelZ_,
+//                IMURead->gyroX_, IMURead->gyroY_, IMURead->gyroZ_, IMURead->magnetoX_,
+//                IMURead->magnetoY_, IMURead->magnetoZ_);
+//        }
+//        else if (length == sizeof(BarometerData)) {
+//            uint8_t dataRead[sizeof(BarometerData)];
+//            W25qxx_ReadBytes(dataRead, SPI_FLASH_LOGGING_STORAGE_START_ADDR + i + 1, sizeof(BarometerData));
+//            BarometerData* baroRead = (BarometerData*)dataRead;
+//            SOAR_PRINT("%3d %08d   %04d   %04d\n",
+//                length, baroRead->time, baroRead->pressure_, baroRead->temperature_);
+//        }
+//        else {
+//            SOAR_PRINT("Unknown length, readback brokedown: %d\n", length);
+//        }
+//        i = i + length;
+//    }
+//    return res;
+//}
+//
