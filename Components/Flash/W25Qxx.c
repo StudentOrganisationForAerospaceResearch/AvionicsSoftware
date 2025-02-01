@@ -38,9 +38,9 @@
 //#include "SystemDefines.hpp"
 
 extern TIM_HandleTypeDef htim1;										// Not used for this demo
-extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef hspi2;
 
-#define W25Q_SPI hspi1
+#define W25Q_SPI hspi2
 
 static lfs_t lfs;													// Littlefs
 
