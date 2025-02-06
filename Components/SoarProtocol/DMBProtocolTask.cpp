@@ -148,10 +148,9 @@ void DMBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
     else if(msg.has_ping()) {
         // This is a ping message, respond with an ack
         Proto::ControlMessage ackResponse;
-        Proto::AckNack ack;
-        ack.set_acking_msg_source(msg.get_source());
-        ack.set_acking_sequence_num(msg.get_source_sequence_num());
-        ackResponse.set_ack(ack);
+        Proto::AckNack ping_ack; // changed
+        ping_ack.set_acking_msg_source(msg.get_source())
+        ackResponse.set_ping(ping_ack);
         EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuf;
         ackResponse.serialize(writeBuf);
         DMBProtocolTask::SendProtobufMessage(writeBuf, Proto::MessageID::MSG_CONTROL);
