@@ -66,8 +66,10 @@ void LFSTask::Run(void * pvParams)
         //Process any commands in the queue
         Command cm;
         bool res = qEvtQueue->Receive(cm, MAX_FLASH_TASK_WAIT_TIME_MS);
-        if(res)
+        if(res){
             HandleCommand(cm);
+        	cm.Reset();
+        }
 
         //Run maintenance on dual sector storages
 //        SystemStorage::Inst().Maintain();
@@ -206,8 +208,9 @@ void LFSTask::HandleCommand(Command& cm)
 	  SOAR_PRINT("FS: blocks %d, block size %d, used %d\n", (int)stat.block_count, (int)stat.block_size,(int)stat.blocks_used);
 
 	  stmlfs_unmount();                                             	// Release any resources we were using
-	  SOAR_PRINT("lfs test done\n");
 	  fflush(stdout);
+	  SOAR_PRINT("lfs test done\n");
+
 
 //	  PUTCHAR_PROTOTYPE
 //	  {
