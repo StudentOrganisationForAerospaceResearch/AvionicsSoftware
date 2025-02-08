@@ -36,7 +36,6 @@
 constexpr uint32_t TELEMETRY_DEFAULT_LOGGING_RATE_MS = 100; // Default logging delay for telemetry task
 constexpr uint32_t TELEMETRY_MINIMUM_LOG_PERIOD_MS = 20; // (1000/20 = 50hz) The minimum log period / max log rate
 
-
 /* Task Definitions ------------------------------------------------------------------*/
 /* - Lower priority number means lower priority task ---------------------------------*/
 
@@ -107,6 +106,11 @@ constexpr uint16_t TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS = 512;		// Size of
 constexpr uint8_t BATTERY_TASK_RTOS_PRIORITY = 1;            // Priority of the battery voltage task
 constexpr uint8_t BATTERY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the battery voltage task queue
 constexpr uint16_t BATTERY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the battery voltage task stack
+
+// LFS Task
+constexpr uint8_t LFS_TASK_RTOS_PRIORITY = 1;            // Priority of the lfs task
+constexpr uint8_t LFS_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the lfs queue
+constexpr uint16_t LFS_TASK_STACK_DEPTH_WORDS = 512;        // Size of the lfs stack
 
 
 /* Flash Addresses ------------------------------------------------------------------*/

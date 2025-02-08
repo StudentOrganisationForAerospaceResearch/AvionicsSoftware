@@ -256,9 +256,8 @@ void DebugTask::HandleDebugMessage(const char* msg)
         HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::UNMUTE));
     }
     else if(strcmp(msg, "lfstest") == 0){
-    	SOAR_PRINT("Dump of sensor data in flash requested\n");
-    	Command cmd((uint16_t)DUMP_FLASH_DATA);
-        LFSTask::Inst().GetEventQueue()->Send(cmd);
+    	SOAR_PRINT("Test of Filesystem Requeted\n");
+    	LFSTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, WRITE_DATA_TO_LFS));
     }
     else {
         // Single character command, or unknown command
