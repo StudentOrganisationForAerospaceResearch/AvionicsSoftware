@@ -1,6 +1,6 @@
 /** ********************************************************************************
  * * @file    lfsWrapper.hpp
- * * @author  root
+ * * @author  NoahVickerson, Spiro Douvais
  * * @date    Feb 22, 2025
  * * @brief ******************************************************************************** */
 #ifndef FLASH_INC_LFSWRAPPER_HPP_
@@ -40,6 +40,7 @@ private:
 	lfs_file_t fileptr = nullptr;
 	uint8_t redundancyLevel; // can be used in the future to implement a CRC
 	bool mounted;
+	static bool instantiated;
 };
 /************************************ * FUNCTION DECLARATIONS ************************************/
 #endif /* EXAMPLE_TASK_HPP_ */

@@ -23,7 +23,7 @@ Lfs::Lfs();
  * @brief	mount the lfs file system. Must mount and unmount before and after fast writes/reads
  * @return 	err: LFS_OK corresponds to a successful mount, LFS_MOUNT_FAILED corresponds to a failed mount
  * */
-LFS_ERROR Lfs::mount();
+Lfs::LFS_ERROR Lfs::mount();
 
 /*
  * @brief	umount the lfs file system. Must mount and unmount before and after fast writes/reads
@@ -37,7 +37,7 @@ void Lfs::unmount();
  * @param 	datasize: the number of bytes in the buffer to write
  * @return	err
  * */
-LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t datasize);
+Lfs::LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t datasize);
 
 /*
  * @brief 	read data from an existing file
@@ -46,7 +46,7 @@ LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t da
  * @param	recieverSize: the size of the reciever buffer. Will get a warning if this is smaller than the size of the file
  * @return	err: LFS_RECIEVER_TOO_SMALL_ERROR will still copy the file data to the buffer, just not all of it
  * */
-LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uint32_t recieverSize);
+Lfs::LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uint32_t recieverSize);
 
 /*
  * @brief	write data to a new file. Does not mount and unmount filesystem before an after
@@ -54,7 +54,7 @@ LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uint32_t
  * @param 	buffer: a buffer of the data to write to the file
  * @param 	datasize: the number of bytes in the buffer to write
  * */
-LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t datasize);
+Lfs::LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t datasize);
 
 /*
  * @brief 	read data from an existing file Does not mount and unmount filesystem before an after
@@ -64,13 +64,13 @@ LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t data
  * @param	recieverSize: the size of the reciever buffer. Will get a warning if this is smaller than the size of the file
  * @return	err: LFS_RECIEVER_TOO_SMALL_ERROR will still copy the file data to the buffer, just not all of it
  * */
-LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize);
+Lfs::LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize);
 
 /*
  * @brief	move a file from one location to another
  * @return 	err
  * */
-LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath);
+Lfs::LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath);
 
 /************************************ * FUNCTION DEFINITIONS ************************************/
 
@@ -85,7 +85,7 @@ Lfs::Lfs(rl = 0) : redundancyLevel(rl), mounted(false) {
 	unmount();
 }
 
-LFS_ERROR Lfs::mount(){
+Lfs::LFS_ERROR Lfs::mount(){
 	if(stmlfs_mount(false)){
 		return LFS_MOUNT_FAILED;
 	}
@@ -101,7 +101,7 @@ void Lfs::unmount(){
 	mounted = false;
 }
 
-LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t datasize){
+Lfs::LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t datasize){
 	// mount the filesystem
 	uint8_t err = mount();
 	if(err)
@@ -128,7 +128,7 @@ LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t da
 	return LFS_OK;
 }
 
-LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
+Lfs::LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
 	// mount the filesystem
 	uint8_t err = mount();
 	if(err)
@@ -153,7 +153,7 @@ LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uint32_t
 	return LFS_OK;
 }
 
-LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t datasize){
+Lfs::LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t datasize){
 	// open the file in create mode
 	err = stmlfs_file_open(&fileptr, filepath, LFS_O_WRONLY | LFS_O_CREAT);
 	if(err < 0)
@@ -172,7 +172,7 @@ LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t data
 	return LFS_OK;
 }
 
-LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
+Lfs::LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
 	// open the file in readonly mode
 	err = stmlfs_file_open(&fileptr, filepath, LFS_O_RDONLY);
 	if(err < 0)
@@ -189,7 +189,7 @@ LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t rec
 	return LFS_OK;
 }
 
-LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath){
+Lfs::LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath){
 	uint8_t err;
 	bool justMounted = false;
 
