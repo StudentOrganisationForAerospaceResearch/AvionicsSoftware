@@ -24,7 +24,7 @@ public:
 		LFS_RECIEVER_TOO_SMALL_WARNING = 0,
 	};
 
-	Lfs(uint8_t rl);
+	Lfs(uint8_t rl = 0);
 
 
 	LFS_ERROR mount();
