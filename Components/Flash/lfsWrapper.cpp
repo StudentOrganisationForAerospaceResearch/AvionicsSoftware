@@ -75,6 +75,12 @@ LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath);
 /************************************ * FUNCTION DEFINITIONS ************************************/
 
 Lfs::Lfs(rl = 0) : redundancyLevel(rl), mounted(false) {
+	if(instantiated){
+		SOAR_PRINT("Cannot have more than 1 filesystem\n");
+	}
+
+	instantiated = true;
+
 	stmlfs_mount(true);
 	unmount();
 }
@@ -185,15 +191,20 @@ LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t rec
 
 LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath){
 	uint8_t err;
+	bool justMounted = false;
 
 	if(!mounted)
 		err = mount();
+		justMounted = true;
 		if(err)
 			return err;
 
 	err = stmlfs_rename(filepath, newPath);
 	if(err < 0)
 		return LFS_UNLABELED_ERR;
+
+	if(justMounted)
+		unmount();
 
 	return LFS_OK;
 }
