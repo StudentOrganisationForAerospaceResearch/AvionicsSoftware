@@ -47,6 +47,7 @@ protected:
     void Run(void * pvParams); // Main run code
     void HandleCommand(Command& cm);
     void LFSTest();
+    void WriteTest();
 private:
     // Private Functions
     LFSTask();        // Private constructor
