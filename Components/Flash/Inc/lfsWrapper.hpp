@@ -16,27 +16,26 @@ class Lfs {
 public:
 	enum LFS_ERROR {
 		LFS_OK = 0,
-		LFS_MOUNT_FAILED,
+		LFS_MOUNT_FAILED = 1,
 		LFS_FOPEN_ERR,
 		LFS_FCLOSE_ERR,
+		LFS_INSUFFICIENT_MEMORY_ERR,
 		LFS_UNLABELED_ERR,						// you will have to look through the LFS code to find what this error is
 		LFS_RECIEVER_TOO_SMALL_WARNING = 0,
 	};
 
-	Lfs(uint8_t rl = 0);
+	Lfs(uint8_t rl);
 
 
 	LFS_ERROR mount();
 	void unmount();
 
-	LFS_ERROR writeToFile(const char* filepath, const void* buffer, uint8_t datasize);						// do i have to open a certain directory
-	LFS_ERROR readFromFile(const char* filepath, void* receiverBuffer, uint8_t recieverSize);
+	LFS_ERROR writeToFile(const char* filepath, const void* buffer, uint32_t datasize);						// do i have to open a certain directory
+	LFS_ERROR readFromFile(const char* filepath, void* receiverBuffer, uint32_t recieverSize);
 	LFS_ERROR moveFile(const char* filepath, const char* newPath);
 
-	LFS_ERROR fastWrite(const char* filepath, const void* buffer, uint8_t datasize);
-	LFS_ERROR fastRead(const char* filepath, void* receiverBuffer, uint8_t recieverSize);
-
-	LFS_ERROR moveFile(const char* filepath, const char* newPath);
+	LFS_ERROR fastWrite(const char* filepath, const void* buffer, uint32_t datasize);
+	LFS_ERROR fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize);
 
 private:
 	lfs_file_t fileptr;
