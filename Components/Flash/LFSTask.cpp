@@ -122,10 +122,12 @@ void LFSTask::LFSTest() {
 		   *
 		   */
 		  SOAR_PRINT("\n\n ********************* Mount lfs ***********************\n\n");
-		  stmlfs_mount(true);
+		  if (stmlfs_mount(true))
+			  SOAR_PRINT("Failed to mount\n");
+
 		  SOAR_PRINT("Mounted\n");
 
-		  HAL_Delay(500);
+
 
 		  //---------------------------------------------------------------------------------------------
 		  // We'll create 32 files, verify them, rename them, reverify, and delete them.
@@ -150,7 +152,7 @@ void LFSTask::LFSTest() {
 		          Error_Handler();
 		      }
 		  }
-		  /*
+
 		  dump_dir();														// Show directory
 		  //stmlfs_unmount();                                               	// Unmount & remount
 		  //stmlfs_mount(false);
@@ -201,7 +203,7 @@ void LFSTask::LFSTest() {
 		  stmlfs_unmount();                                             	// Release any resources we were using
 		  SOAR_PRINT("lfs test done\n");
 		  fflush(stdout);
-		  */
+
 }
 
 void LFSTask::Test(void){
