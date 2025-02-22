@@ -14,9 +14,10 @@
 
 /*
  * @brief 	init mounts and formats the filesystem
+ * @param	rl: optional redundancy level for a crc
  * @note 	the format is at the start of W25Qxx.c
  * */
-Lfs::Lfs();
+Lfs::Lfs(uint8_t rl = 0);
 
 
 /*

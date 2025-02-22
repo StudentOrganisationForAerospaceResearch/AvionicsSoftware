@@ -23,6 +23,8 @@ public:
 		LFS_RECIEVER_TOO_SMALL_WARNING = 0,
 	};
 
+	Lfs(uint8_t rl = 0);
+
 
 	LFS_ERROR mount();
 	void unmount();
@@ -37,7 +39,7 @@ public:
 	LFS_ERROR moveFile(const char* filepath, const char* newPath);
 
 private:
-	lfs_file_t fileptr = nullptr;
+	lfs_file_t fileptr;
 	uint8_t redundancyLevel; // can be used in the future to implement a CRC
 	bool mounted;
 	static bool instantiated;
