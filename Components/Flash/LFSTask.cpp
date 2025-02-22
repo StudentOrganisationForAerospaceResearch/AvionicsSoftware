@@ -24,6 +24,7 @@
 #include <W25Qxx.hpp>
 #include "FlashTask.hpp"
 #include "cmsis_os.h"
+#include "lfsWrapper.hpp"
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
@@ -206,8 +207,13 @@ void LFSTask::LFSTest() {
 
 }
 
-void LFSTask::Test(void){
+void LFSTask::WriteTest(void){
 
+	Lfs fs;
+
+	char buff[32];
+	fs.writeToFile("spirofile", buff, 32);
+	fs.readFromFile("spirofile", buff, 32);
 
 
 }
