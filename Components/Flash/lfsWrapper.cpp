@@ -35,6 +35,10 @@ Lfs::Lfs(uint8_t rl) : redundancyLevel(rl), mounted(false) {
  * @return 	err: LFS_OK corresponds to a successful mount, LFS_MOUNT_FAILED corresponds to a failed mount
  * */
 Lfs::LFS_ERROR Lfs::mount(){
+	if(mounted){
+		return LFS_MOUNT_STATE_ERR;
+	}
+
 	if(stmlfs_mount(false)){
 		return LFS_MOUNT_FAILED;
 	}
@@ -47,10 +51,16 @@ Lfs::LFS_ERROR Lfs::mount(){
 /*
  * @brief	umount the lfs file system. Must mount and unmount before and after fast writes/reads
  * */
-void Lfs::unmount(){
+Lfs::LFS_ERROR Lfs::unmount(){
+	if(!mounted){
+		return LFS_MOUNT_STATE_ERR;
+	}
+
 	stmlfs_unmount();
 
 	mounted = false;
+
+	return LFS_OK;
 }
 
 /*
@@ -63,8 +73,10 @@ void Lfs::unmount(){
 Lfs::LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t datasize){
 	// mount the filesystem
 	uint8_t err = mount();
-	if(err)
+	if(err == 1)
 		return LFS_MOUNT_FAILED;
+	else
+		return LFS_MOUNT_STATE_ERR;
 
 	// open the file in create mode
 	err = stmlfs_file_open(&fileptr, filepath, LFS_O_WRONLY | LFS_O_CREAT);
@@ -114,7 +126,9 @@ Lfs::LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uin
 		return LFS_FCLOSE_ERR;
 
 	// unmount the filesystem
-	unmount();
+	err = unmount();
+	if(err)
+		return LFS_MOUNT_STATE_ERR;
 
 	return LFS_OK;
 }
