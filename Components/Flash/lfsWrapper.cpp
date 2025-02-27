@@ -140,6 +140,9 @@ Lfs::LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uin
  * @param 	datasize: the number of bytes in the buffer to write
  * */
 Lfs::LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t datasize){
+	if(!mounted)
+		return LFS_MOUNT_STATE_ERR;
+
 	uint8_t err;
 	// open the file in create mode
 	err = stmlfs_file_open(&fileptr, filepath, LFS_O_WRONLY | LFS_O_CREAT);
@@ -168,6 +171,9 @@ Lfs::LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t
  * @return	err: LFS_RECIEVER_TOO_SMALL_ERROR will still copy the file data to the buffer, just not all of it
  * */
 Lfs::LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
+	if(!mounted)
+		return LFS_MOOUNT_STATE_ERR;
+
 	uint8_t err;
 	// open the file in readonly mode
 	err = stmlfs_file_open(&fileptr, filepath, LFS_O_RDONLY);
