@@ -88,6 +88,11 @@ void LFSTask::HandleCommand(Command& cm)
 						SOAR_PRINT("FlashTask Received Unsupported Data Command: %d\n", cm.GetTaskCommand());
 						break;
 				}
+				if (cm.GetTaskCommand() == WRITE_TEST_DATA) {
+						WriteTest();
+						SOAR_PRINT("FlashTask Received Unsupported Data Command: %d\n", cm.GetTaskCommand());
+						break;
+				}
 			}
 			default:
 				SOAR_PRINT("LFSTask - Received Unsupported Command {%d}\n", cm.GetCommand());
@@ -210,10 +215,26 @@ void LFSTask::LFSTest() {
 void LFSTask::WriteTest(void){
 
 	Lfs fs;
+	char sample[] = "sample text\n";
+	SOAR_PRINT("Writing sample data: %s\n", sample);
+
 
 	char buff[32];
-	fs.writeToFile("spirofile", buff, 32);
+	fs.writeToFile("spirofile", sample, 12);
 	fs.readFromFile("spirofile", buff, 32);
 
+	SOAR_PRINT("Printing buffer data: %s\n", buff);
+
+
+	char pbuff[7];
+
+	fs.readFromFile("spirofile", pbuff, 6);
+	pbuff[6] = 0;
+
+
+	SOAR_PRINT("Printing partial buffer data: %s\n", pbuff);
+
+
+	SOAR_PRINT("write test done\n");
 
 }

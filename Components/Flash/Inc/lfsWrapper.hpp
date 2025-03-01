@@ -41,7 +41,6 @@ private:
 	lfs_file_t fileptr;
 	uint8_t redundancyLevel; // can be used in the future to implement a CRC
 	bool mounted;
-	static bool instantiated;
 };
 /************************************ * FUNCTION DECLARATIONS ************************************/
 #endif /* EXAMPLE_TASK_HPP_ */

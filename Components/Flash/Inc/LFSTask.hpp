@@ -30,6 +30,7 @@
 enum LFS_TASK_COMMANDS {
 		LFS_TASK_NONE = 0,
 		WRITE_DATA_TO_LFS,
+		WRITE_TEST_DATA,
 };
 /************************************
  * CLASS DEFINITIONS
