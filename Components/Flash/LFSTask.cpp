@@ -209,11 +209,21 @@ void LFSTask::LFSTest() {
 
 void LFSTask::WriteTest(void){
 
-	Lfs fs;
+	LFS fs = LFS::getLFS();
 
 	char buff[32];
 	fs.writeToFile("spirofile", buff, 32);
+
+	// read data back from file
 	fs.readFromFile("spirofile", buff, 32);
+
+	char pbuff[6];
+
+	// partially read data back from file
+	fs.readFromFile("spirofile", pbuff, 5);
+	pbuff[5] = 0;
+
+
 
 
 }

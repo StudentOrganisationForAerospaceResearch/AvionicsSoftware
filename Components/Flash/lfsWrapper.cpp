@@ -19,7 +19,7 @@
  * @param	rl: optional redundancy level for a crc
  * @note 	the format is at the start of W25Qxx.c
  * */
-Lfs::Lfs(uint8_t rl) : redundancyLevel(rl), mounted(false) {
+LFS::LFS(uint8_t rl) : redundancyLevel(rl), mounted(false) {
 	if(instantiated){
 		SOAR_PRINT("Cannot have more than 1 filesystem\n");
 	}
@@ -30,11 +30,17 @@ Lfs::Lfs(uint8_t rl) : redundancyLevel(rl), mounted(false) {
 	unmount();
 }
 
+LFS LFS::getLFS(){
+	SOAR_ASSERT(instantiated);
+
+	return filesystem;
+}
+
 /*
  * @brief	mount the lfs file system. Must mount and unmount before and after fast writes/reads
  * @return 	err: LFS_OK corresponds to a successful mount, LFS_MOUNT_FAILED corresponds to a failed mount
  * */
-Lfs::LFS_ERROR Lfs::mount(){
+LFS::LFS_ERROR LFS::mount(){
 	if(mounted){
 		return LFS_MOUNT_STATE_ERR;
 	}
@@ -51,7 +57,7 @@ Lfs::LFS_ERROR Lfs::mount(){
 /*
  * @brief	umount the lfs file system. Must mount and unmount before and after fast writes/reads
  * */
-Lfs::LFS_ERROR Lfs::unmount(){
+LFS::LFS_ERROR LFS::unmount(){
 	if(!mounted){
 		return LFS_MOUNT_STATE_ERR;
 	}
@@ -70,7 +76,7 @@ Lfs::LFS_ERROR Lfs::unmount(){
  * @param 	datasize: the number of bytes in the buffer to write
  * @return	err
  * */
-Lfs::LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32_t datasize){
+LFS::LFS_ERROR LFS::writeToFile(const char* filepath, const void* buffer, uint32_t datasize){
 	// mount the filesystem
 	uint8_t err = mount();
 	if(err == 1)
@@ -106,7 +112,7 @@ Lfs::LFS_ERROR Lfs::writeToFile(const char* filepath, const void* buffer, uint32
  * @param	recieverSize: the size of the reciever buffer. Will get a warning if this is smaller than the size of the file
  * @return	err: LFS_RECIEVER_TOO_SMALL_ERROR will still copy the file data to the buffer, just not all of it
  * */
-Lfs::LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
+LFS::LFS_ERROR LFS::readFromFile(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
 	// mount the filesystem
 	uint8_t err = mount();
 	if(err)
@@ -139,7 +145,7 @@ Lfs::LFS_ERROR Lfs::readFromFile(const char* filepath, void* receiverBuffer, uin
  * @param 	buffer: a buffer of the data to write to the file
  * @param 	datasize: the number of bytes in the buffer to write
  * */
-Lfs::LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t datasize){
+LFS::LFS_ERROR LFS::fastWrite(const char* filepath, const void* buffer, uint32_t datasize){
 	if(!mounted)
 		return LFS_MOUNT_STATE_ERR;
 
@@ -170,9 +176,9 @@ Lfs::LFS_ERROR Lfs::fastWrite(const char* filepath, const void* buffer, uint32_t
  * @param	recieverSize: the size of the reciever buffer. Will get a warning if this is smaller than the size of the file
  * @return	err: LFS_RECIEVER_TOO_SMALL_ERROR will still copy the file data to the buffer, just not all of it
  * */
-Lfs::LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
+LFS::LFS_ERROR LFS::fastRead(const char* filepath, void* receiverBuffer, uint32_t recieverSize){
 	if(!mounted)
-		return LFS_MOOUNT_STATE_ERR;
+		return LFS_MOUNT_STATE_ERR;
 
 	uint8_t err;
 	// open the file in readonly mode
@@ -195,7 +201,7 @@ Lfs::LFS_ERROR Lfs::fastRead(const char* filepath, void* receiverBuffer, uint32_
  * @brief	move a file from one location to another
  * @return 	err
  * */
-Lfs::LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath){
+LFS::LFS_ERROR LFS::moveFile(const char* filepath, const char* newPath){
 	uint8_t err;
 	bool justMounted = false;
 
@@ -214,6 +220,11 @@ Lfs::LFS_ERROR Lfs::moveFile(const char* filepath, const char* newPath){
 		unmount();
 
 	return LFS_OK;
+}
+
+int LFS::getBlockCount(){
+	stmlfs_fsstat(&stat);
+	return (int)stat.block_count;
 }
 
 
