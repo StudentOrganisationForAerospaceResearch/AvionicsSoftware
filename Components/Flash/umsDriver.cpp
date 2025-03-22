@@ -13,8 +13,7 @@
 /************************************ * FUNCTION DEFINITIONS ************************************/
 UMSDriver::UMSDriver()
 {
-	return;
-	//lfs = LFS::getLFS();
+	lfs = LFS::getLFS();
 }
 
 
@@ -169,7 +168,7 @@ uint32_t UMSDriver::getByteRange(uint8_t* command, uint8_t offset, uint8_t range
 	int bytes = 0;
 	for(int i = 0; i < range; i++){
 		uint8_t byteIndex = offset + i;
-		bytes = bytes << 0x1;
+		bytes = bytes << 0x8;
 		bytes += command[byteIndex];
 	}
 
