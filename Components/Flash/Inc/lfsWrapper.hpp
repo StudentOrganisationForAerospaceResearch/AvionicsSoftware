@@ -50,8 +50,11 @@ private:
 	lfs_file_t fileptr;
 	uint8_t redundancyLevel; // can be used in the future to implement a CRC
 	bool mounted;
+<<<<<<< HEAD
 	static bool instantiated;
 	struct littlfs_fsstat_t stat;                                   	// Display file system sizes
+=======
+>>>>>>> 41cec5c31b288429e6a951e7290681af3379e47a
 };
 /************************************ * FUNCTION DECLARATIONS ************************************/
 #endif /* EXAMPLE_TASK_HPP_ */

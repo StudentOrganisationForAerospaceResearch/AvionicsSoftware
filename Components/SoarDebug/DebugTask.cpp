@@ -256,9 +256,13 @@ void DebugTask::HandleDebugMessage(const char* msg)
         HDITask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HDITaskCommands::UNMUTE));
     }
     else if(strcmp(msg, "lfstest") == 0){
-    	SOAR_PRINT("Test of Filesystem Requeted\n");
+    	SOAR_PRINT("Test of Filesystem Requested\n");
     	LFSTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, WRITE_DATA_TO_LFS));
     }
+    else if(strcmp(msg, "writetest") == 0){
+        	SOAR_PRINT("Test of File Writes Requested\n");
+        	LFSTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, WRITE_TEST_DATA));
+        }
     else {
         // Single character command, or unknown command
         switch (msg[0]) {

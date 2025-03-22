@@ -19,6 +19,7 @@
  * @param	rl: optional redundancy level for a crc
  * @note 	the format is at the start of W25Qxx.c
  * */
+<<<<<<< HEAD
 LFS::LFS(uint8_t rl) : redundancyLevel(rl), mounted(false) {
 	if(instantiated){
 		SOAR_PRINT("Cannot have more than 1 filesystem\n");
@@ -26,6 +27,9 @@ LFS::LFS(uint8_t rl) : redundancyLevel(rl), mounted(false) {
 
 	instantiated = true;
 
+=======
+Lfs::Lfs(uint8_t rl) : redundancyLevel(rl), mounted(false) {
+>>>>>>> 41cec5c31b288429e6a951e7290681af3379e47a
 	stmlfs_mount(true);
 	unmount();
 }
