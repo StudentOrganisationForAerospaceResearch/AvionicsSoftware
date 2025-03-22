@@ -102,7 +102,7 @@ void UMSDriver::handleCommand(uint8_t* scsi, uint8_t* data)
 			transferLength = (uint16_t) getByteRange(scsi, 7, 2);
 			control = scsi[9];
 
-
+			respRead10(data, lba, transferLength);
 
 			break;
 		case WRITE10: // 10 byte
@@ -111,7 +111,21 @@ void UMSDriver::handleCommand(uint8_t* scsi, uint8_t* data)
 			transferLength = (uint16_t) getByteRange(scsi, 7, 2);
 			control = scsi[9];
 
-			break;
+			//break;
+		case READ12:
+			lba = getByteRange(scsi, 2, 4);
+			transferLength = (uint16_t) getByteRange(scsi, 6, 4);
+			control = scsi[10];
+			group = scsi[11];
+
+			//break;
+		case WRITE12:
+			lba = getByteRange(scsi, 2, 4);
+			transferLength = (uint16_t) getByteRange(scsi, 6, 4);
+			control = scsi[10];
+			group = scsi[11];
+
+			//break;
 		default:
 			SOAR_PRINT("Unsupported command: %d", opcode);
 	}
@@ -158,10 +172,20 @@ void UMSDriver::respReadCapacity(uint8_t* data){
 	data++;
 }
 
+
+// @Attention: we need a way to convert the requested block adresses for a fatfs filesystem into the dynamically allocated littlefs block addresses
 void UMSDriver::respRead10(uint8_t* data, int lba, int transferLength)
 {
-
+	int blockSize = lfs->getBlockSize();
+	for(int i = 0; i < transferLength; i++){
+		//lfs->cfg->read(lfs->cfg, lba + i, 0, data, blockSize);				// we need a function to find sequential blocks,
+																			// because littlefs doesnt allocate sequentially
+		//data += blocksize;
+	}
 }
+
+
+
 
 uint32_t UMSDriver::getByteRange(uint8_t* command, uint8_t offset, uint8_t range)
 {

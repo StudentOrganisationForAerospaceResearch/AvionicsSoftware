@@ -8,6 +8,7 @@
 /************************************ * INCLUDES ************************************/
 #include "SystemDefines.hpp"
 #include "lfsWrapper.hpp"
+#include "lfs.h"
 /************************************ * MACROS AND DEFINES ************************************/
 
 // CBW layout: 55 53 42 43 (4: ID) (4: Data transfer length in bytes) (1: 0x80 for IN, 0x00 for OUT) (1: LUN) (1: Command length ≤ 16) (command length: SCSI command)
@@ -23,6 +24,8 @@ constexpr int MODSENSE10 = 0x5a;
 constexpr int READCAPACITY = 0x25;
 constexpr int READ10 = 0x28;
 constexpr int WRITE10 = 0x2a;
+constexpr int READ12 = 0xa8;
+constexpr int WRITE12 = 0xaa;
 
 /************************************ * TYPEDEFS ************************************/
 /************************************ * CLASS DEFINITIONS ************************************/
