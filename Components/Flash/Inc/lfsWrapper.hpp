@@ -25,7 +25,7 @@ public:
 		LFS_RECIEVER_TOO_SMALL_WARNING = -7,	// the data buffer to store the filedata in is smaller than the file size, and file data will be truncated
 	};
 
-	static LFS getLFS();
+	static LFS* getLFS();
 
 
 	LFS_ERROR mount();
@@ -42,19 +42,19 @@ public:
 	int getBlockSize();
 
 private:
-	LFS(uint8_t rl = 0);
+	LFS();	// prevent construction
 	LFS(LFS&);	// prevent copy construction
 	LFS& operator= (LFS&); //prevent assignment
 
-	static LFS filesystem;
+	static LFS filesystem;	// singular object
+
 	lfs_file_t fileptr;
 	uint8_t redundancyLevel; // can be used in the future to implement a CRC
-	bool mounted;
-<<<<<<< HEAD
+
+	bool mounted;			// state variables
 	static bool instantiated;
-	struct littlfs_fsstat_t stat;                                   	// Display file system sizes
-=======
->>>>>>> 41cec5c31b288429e6a951e7290681af3379e47a
+
+	struct littlfs_fsstat_t stat; // Display file system sizes
 };
 /************************************ * FUNCTION DECLARATIONS ************************************/
 #endif /* EXAMPLE_TASK_HPP_ */

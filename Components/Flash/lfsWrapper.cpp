@@ -11,6 +11,8 @@
 #include "SystemDefines.hpp"
 /************************************ * PRIVATE MACROS AND DEFINES ************************************/
 /************************************ * VARIABLES ************************************/
+bool LFS::instantiated = false;
+LFS LFS::filesystem;
 /************************************ * FUNCTION DECLARATIONS ************************************/
 /************************************ * FUNCTION DEFINITIONS ************************************/
 
@@ -19,25 +21,21 @@
  * @param	rl: optional redundancy level for a crc
  * @note 	the format is at the start of W25Qxx.c
  * */
-<<<<<<< HEAD
-LFS::LFS(uint8_t rl) : redundancyLevel(rl), mounted(false) {
+LFS::LFS() : redundancyLevel(0), mounted(false) {
 	if(instantiated){
 		SOAR_PRINT("Cannot have more than 1 filesystem\n");
 	}
 
 	instantiated = true;
 
-=======
-Lfs::Lfs(uint8_t rl) : redundancyLevel(rl), mounted(false) {
->>>>>>> 41cec5c31b288429e6a951e7290681af3379e47a
-	stmlfs_mount(true);
-	unmount();
+	stmlfs_mount(false);
+	stmlfs_unmount();
 }
 
-LFS LFS::getLFS(){
+LFS* LFS::getLFS(){
 	SOAR_ASSERT(instantiated);
 
-	return filesystem;
+	return &filesystem;
 }
 
 /*
@@ -229,6 +227,11 @@ LFS::LFS_ERROR LFS::moveFile(const char* filepath, const char* newPath){
 int LFS::getBlockCount(){
 	stmlfs_fsstat(&stat);
 	return (int)stat.block_count;
+}
+
+int LFS::getBlockSize(){
+	stmlfs_fsstat(&stat);
+		return (int)stat.block_size;
 }
 
 

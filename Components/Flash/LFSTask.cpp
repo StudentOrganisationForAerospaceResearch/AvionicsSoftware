@@ -214,46 +214,24 @@ void LFSTask::LFSTest() {
 
 void LFSTask::WriteTest(void){
 
-<<<<<<< HEAD
-	LFS fs = LFS::getLFS();
+	LFS* fs = LFS::getLFS();
 
 	char buff[32];
-	fs.writeToFile("spirofile", buff, 32);
+	fs->writeToFile("spirofile", buff, 32);
 
 	// read data back from file
-	fs.readFromFile("spirofile", buff, 32);
+	fs->readFromFile("spirofile", buff, 32);
 
 	char pbuff[6];
 
 	// partially read data back from file
-	fs.readFromFile("spirofile", pbuff, 5);
+	fs->readFromFile("spirofile", pbuff, 5);
 	pbuff[5] = 0;
-
-
-
-=======
-	Lfs fs;
-	char sample[] = "sample text\n";
-	SOAR_PRINT("Writing sample data: %s\n", sample);
-
-
-	char buff[32];
-	fs.writeToFile("spirofile", sample, 12);
-	fs.readFromFile("spirofile", buff, 32);
-
-	SOAR_PRINT("Printing buffer data: %s\n", buff);
-
-
-	char pbuff[7];
-
-	fs.readFromFile("spirofile", pbuff, 6);
-	pbuff[6] = 0;
 
 
 	SOAR_PRINT("Printing partial buffer data: %s\n", pbuff);
 
 
 	SOAR_PRINT("write test done\n");
->>>>>>> 41cec5c31b288429e6a951e7290681af3379e47a
 
 }

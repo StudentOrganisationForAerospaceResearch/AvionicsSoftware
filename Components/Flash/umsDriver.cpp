@@ -6,6 +6,7 @@
  * ******************************************************************************** */
 /************************************ * INCLUDES ************************************/
 #include "umsDriver.hpp"
+#include "lfs.h"
 /************************************ * PRIVATE MACROS AND DEFINES ************************************/
 /************************************ * VARIABLES ************************************/
 /************************************ * FUNCTION DECLARATIONS ************************************/
@@ -136,8 +137,8 @@ void UMSDriver::respInquiry(uint8_t* data)	// only implemented with example data
 }
 
 void UMSDriver::respReadCapacity(uint8_t* data){
-	int blockCount = lfs.getBlockCount();
-	int blockSize = lfs.getBlockSize();
+	int blockCount = lfs->getBlockCount();
+	int blockSize = lfs->getBlockSize();
 
 	*data = blockCount & 0xff;
 	data++;

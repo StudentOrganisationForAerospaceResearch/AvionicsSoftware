@@ -46,7 +46,7 @@ private:
 	uint32_t getByteRange(uint8_t* data, uint8_t offset, uint8_t range);
 	uint8_t* setByteRange(uint8_t* data, uint8_t* cpy, uint8_t cpylen);
 
-	LFS lfs = LFS::getLFS();
+	LFS* lfs = LFS::getLFS();
 
 };
 /************************************ * FUNCTION DECLARATIONS ************************************/
