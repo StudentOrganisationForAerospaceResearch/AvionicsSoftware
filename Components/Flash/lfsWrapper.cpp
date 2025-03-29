@@ -24,6 +24,7 @@ LFS LFS::filesystem;
 LFS::LFS() : redundancyLevel(0), mounted(false) {
 	if(instantiated){
 		SOAR_PRINT("Cannot have more than 1 filesystem\n");
+		return;
 	}
 
 	instantiated = true;
@@ -234,7 +235,10 @@ int LFS::getBlockSize(){
 		return (int)stat.block_size;
 }
 
-
+void LFS::readBlock(uint32_t block, uint16_t off, uint32_t size, uint8_t* buffer)
+{
+	W25Q_Read(block,off,size,buffer);
+}
 
 
 
