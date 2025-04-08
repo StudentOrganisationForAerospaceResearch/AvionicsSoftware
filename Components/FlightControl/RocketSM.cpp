@@ -189,6 +189,8 @@ RocketState PreLaunch::OnEnter()
     // Make sure the MEV is closed
     MEVManager::MEV_CLOSE();
 
+    GPIO::PowerSelect::UmbilicalPower();
+
     PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_RESET);
     PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_RESET);
 
@@ -912,7 +914,8 @@ RocketState Abort::OnEnter()
     // Make sure the MEV closed and vents are open
 	GPIO::Vent::Open();
 	GPIO::Drain::Open();
-    MEVManager::MEV_CLOSE();
+	MEVManager::MEV_CLOSE();
+	GPIO::PowerSelect::UmbilicalPower();
     return rsStateID;
 }
 
@@ -974,7 +977,8 @@ Test::Test()
 RocketState Test::OnEnter()
 {
 	// Test does not have any entry actions
-    return rsStateID;
+	GPIO::PowerSelect::UmbilicalPower();
+	return rsStateID;
 }
 
 /**
