@@ -71,11 +71,11 @@ namespace GPIO
 
 	namespace PowerSelect
 	{
-		inline void InternalPower() { HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_SET); }
-		inline void UmbilicalPower() { HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_RESET); }
+		inline void InternalPower() { HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_RESET); }
+		inline void UmbilicalPower() { HAL_GPIO_WritePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin, GPIO_PIN_SET); }
 		inline void Toggle() { HAL_GPIO_TogglePin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin); }
 		
-		inline bool IsInternal() { return HAL_GPIO_ReadPin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin) == GPIO_PIN_SET; }
+		inline bool IsInternal() { return HAL_GPIO_ReadPin(BATTERY_EN_GPIO_Port, BATTERY_EN_Pin) == GPIO_PIN_RESET; }
 	}
 }
 
