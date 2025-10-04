@@ -58,6 +58,12 @@ constexpr uint8_t UART_TASK_RTOS_PRIORITY = 3;            // Priority of the uar
 constexpr uint8_t UART_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the uart task queue
 constexpr uint16_t UART_TASK_STACK_DEPTH_WORDS = 512;    // Size of the uart task stack
 
+// LOGGING TASK
+constexpr uint8_t LOGGING_TASK_PRIORITY = 2;            // Priority of the  task
+constexpr uint8_t LOGGING_TASK_DEPTH_OBJS = 10;        // Size of the fsb task queue
+constexpr uint16_t LOGGING_TASK_DEPTH_WORDS = 512;        // Size of the fsb task stack
+
+
 // DEBUG TASK
 constexpr uint8_t TASK_DEBUG_PRIORITY = 1;            // Priority of the debug task
 constexpr uint8_t TASK_DEBUG_QUEUE_DEPTH_OBJS = 10;        // Size of the debug task queue
@@ -67,6 +73,12 @@ constexpr uint16_t TASK_DEBUG_STACK_DEPTH_WORDS = 512;        // Size of the deb
 constexpr uint8_t TASK_BAROMETER_PRIORITY = 2;            // Priority of the barometer task
 constexpr uint8_t TASK_BAROMETER_QUEUE_DEPTH_OBJS = 10;        // Size of the barometer task queue
 constexpr uint16_t TASK_BAROMETER_STACK_DEPTH_WORDS = 512;        // Size of the barometer task stack
+
+//FSB PROTOCOL
+constexpr uint8_t TASK_FSB_PROTOCOL_PRIORITY = 2;            // Priority of the fsb task
+constexpr uint8_t TASK_FSB_PROTOCOL_DEPTH_OBJS = 10;        // Size of the fsb task queue
+constexpr uint16_t TASK_FSB_PROTOCOL_DEPTH_WORDS = 512;        // Size of the fsb task stack
+
 
 // IMU TASK (ACCEL/GYRO/MAGNETO)
 constexpr uint8_t TASK_IMU_PRIORITY = 2;            // Priority of the barometer task

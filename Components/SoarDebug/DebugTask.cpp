@@ -28,6 +28,9 @@
 #include "FlashTask.hpp"
 #include "HDITask.hpp"
 #include "MEVManager.hpp"
+#include "FSBTest.hpp"
+#include "LoggingTest.hpp"
+#include "DataBrokerMessageTypes.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -135,6 +138,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
     }
     else if (strcmp(msg, "sysinfo") == 0) {
         // Print message
+    	SOAR_PRINT("Hello");
         SOAR_PRINT("\n\t-- SOAR System Info --\n");
         SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
         SOAR_PRINT("Lowest Ever Heap Size\t: %d Bytes\n", xPortGetMinimumEverFreeHeapSize());
@@ -146,6 +150,19 @@ void DebugTask::HandleDebugMessage(const char* msg)
         GPIO::LED1::On();
         // TODO: Send to HID task to blink LED, this shouldn't delay
     }
+
+    else if (strcmp(msg, "publish") == 0) {
+    	SOAR_PRINT("Debug 'FSBprotocol' command requested\n");
+    	Command cmd(DATA_COMMAND, PUBLISH_IMU);
+    	FSBProtocolTask::Inst().GetEventQueue()->Send(cmd);
+    }
+
+	else if (strcmp(msg, "receive") == 0) {
+		SOAR_PRINT("Debug 'FSBprotocol' command requested\n");
+		Command cmd(DATA_BROKER_COMMAND, static_cast<uint16_t>(DataBrokerMessageTypes :: IMU_DATA));
+		LoggingTask::Inst().GetEventQueue()->Send(cmd);
+    }
+
     else if (strcmp(msg, "baropoll") == 0) {
         // Send a request to the barometer task to poll the barometer
         SOAR_PRINT("Debug 'Barometer Poll' command requested\n");

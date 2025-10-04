@@ -30,7 +30,8 @@
 #include "PressureTransducerTask.hpp"
 #include "BatteryTask.hpp"
 #include "GPSTask.hpp"
-
+#include "FSBTest.hpp"
+#include "LoggingTest.hpp"
 /* Global Variables ------------------------------------------------------------------*/
 Mutex Global::vaListMutex;
 
@@ -54,6 +55,8 @@ void run_main() {
     BatteryTask::Inst().InitTask();
     GPSTask::Inst().InitTask();
     FlashTask::Inst().InitTask();
+    FSBProtocolTask::Inst().InitTask();
+    LoggingTask::Inst().InitTask();
 
     // Print System Boot Info : Warning, don't queue more than 10 prints before scheduler starts
     SOAR_PRINT("\n-- SOAR AVIONICS --\n");
