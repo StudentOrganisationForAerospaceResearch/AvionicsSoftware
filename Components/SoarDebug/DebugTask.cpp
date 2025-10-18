@@ -159,7 +159,7 @@ void DebugTask::HandleDebugMessage(const char* msg)
 
 	else if (strcmp(msg, "receive") == 0) {
 		SOAR_PRINT("Debug 'FSBprotocol' command requested\n");
-		Command cmd(DATA_BROKER_COMMAND, static_cast<uint16_t>(DataBrokerMessageTypes :: IMU_DATA));
+		Command cmd(DATA_BROKER_COMMAND, static_cast<uint16_t>(DataBrokerMessageTypes :: ACCELEROMETER_DATA));
 		LoggingTask::Inst().GetEventQueue()->Send(cmd);
     }
 

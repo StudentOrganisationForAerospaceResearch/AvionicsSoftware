@@ -21,6 +21,7 @@
 #include "Command.hpp"
 #include "DataBroker.hpp"
 #include "DataBrokerMessageTypes.hpp"
+#include "SensorData.h"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -73,7 +74,7 @@ void LoggingTask::InitTask()
  */
 void LoggingTask::Run(void * pvParams)
 {
-	DataBroker::Subscribe<IMUData>(this);
+	DataBroker::Subscribe<AccelerometerData>(this);
 	DataBroker::Subscribe<PressureData>(this);
 	DataBroker::Subscribe<ThermocoupleData>(this);
 
@@ -112,18 +113,22 @@ void LoggingTask::HandleCommand(Command& cm)
 bool LoggingTask::HandleDataBrokerCommand(Command& cm){
 
 	DataBrokerMessageTypes messageType = DataBroker::getMessageType(cm);
-	IMUData imu_data;
-	PressureData pressure_data;
-	ThermocoupleData thermocouple_data;
+	AccelerometerData accel_data = {};
+	PressureData pressure_data = {};
+	ThermocoupleData thermocouple_data = {};
 
 	switch (messageType){
 
-	case DataBrokerMessageTypes :: IMU_DATA:
-		imu_data = DataBroker::ExtractData<IMUData>(cm);
+	case DataBrokerMessageTypes :: ACCELEROMETER_DATA:
+		accel_data = DataBroker::ExtractData<AccelerometerData>(cm);
+
+
+
+
 		SOAR_PRINT("Data Recieved\n");
-		SOAR_PRINT("accelX: %d\n", imu_data.accelX);
-		SOAR_PRINT("accelY: %d\n", imu_data.accelY);
-		SOAR_PRINT("accelZ: %d\n", imu_data.accelZ);
+		SOAR_PRINT("accelX: %d\n", accel_data.accelX);
+		SOAR_PRINT("accelY: %d\n", accel_data.accelY);
+		SOAR_PRINT("accelZ: %d\n", accel_data.accelZ);
 
 		//access IMU data, then write data to a file in the fs
 		//Use FreeRTOS FATFS wrapper

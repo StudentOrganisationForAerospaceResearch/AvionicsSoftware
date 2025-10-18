@@ -1,0 +1,164 @@
+/**
+ * FILE: SensorData.proto
+ * BRIEF: Message template to be used for any sensor data
+ * AUTHOR: Shivam Desai
+ */
+
+syntax = "proto3";
+package Proto;
+
+/*--------------    SensorData    --------------*/
+
+// The Sensor Data Packet act as a wrapper for any sensor data
+message SensorData {
+    uint32 timestamp = 1;
+
+    oneof message {
+        Gps gpsMessage = 2;
+        Barometer barometerMessage = 3;
+        ImuNineAxis imuNineAxisMessage = 4;
+        ImuSixAxis imuSixAxisMessage = 5;
+        BatteryPack batteryPackMessage = 6;
+        PressureTansducer pressureTransducerMessage = 7;
+        Thermocouple thermocoupleMessage = 8;
+        LoadCell loadCellMessage = 9;
+        ValveStatus valveStatusMessage = 10;
+        RelayStatus relayStatusMessage = 11;
+    }
+}
+
+/*------------------    Definition of Sensor Message Types    ------------------*/
+
+/*--------------    GPS    --------------*/
+message Gps {
+    CoordinateType latitude = 1;
+    CoordinateType longitude = 2;
+
+    AltitudeType antenna_altitude = 3;
+    AltitudeType geo_id_altitude = 4;
+    AltitudeType total_altitude = 5;
+
+    SensorLoggingRate sensorLoggingRate = 6;
+}
+
+message CoordinateType {
+    int32 degrees = 1;
+    int32 minutes = 2;
+}
+
+message AltitudeType {
+    int32 altitude = 1;
+    int32 unit = 2;
+}
+
+
+/*--------------    Barometer    --------------*/
+message Barometer {
+    int32 baro_pressure = 1;
+    int32 baro_temperature = 2;
+    SensorLoggingRate sensorLoggingRate = 3;
+}
+
+/*--------------    9 Axis IMU    --------------*/
+message ImuNineAxis {
+    Accelerometer accelerometer = 1;
+    Gyroscope gyroscope = 2;
+    Magnetometer magnetometer = 3;
+    SensorLoggingRate sensorLoggingRate = 4;
+}
+
+/*--------------    6 Axis IMU    --------------*/
+message ImuSixAxis {
+    Accelerometer accelerometer = 1;
+    Gyroscope gyroscope = 2;
+    SensorLoggingRate sensorLoggingRate = 3;
+}
+
+/*--------------    Accelerometer    --------------*/
+message Accelerometer {
+    int32 accel_x = 1;
+    int32 accel_y = 2;
+    int32 accel_z = 3;
+}
+
+/*--------------    Gyroscope    --------------*/
+message Gyroscope {
+    int32 gyro_x = 1;
+    int32 gyro_y = 2;
+    int32 gyro_z = 3;
+}
+
+/*--------------    Magnetometer    --------------*/
+message Magnetometer {
+    int32 mag_x = 1;
+    int32 mag_y = 2;
+    int32 mag_z = 3;
+}
+
+/*--------------    Battery Pack    --------------*/
+message BatteryPack {
+    uint32 voltage = 1;
+    uint32 currentDraw = 2;
+    uint32 StateOfCharge = 3;
+    uint32 packTemperature = 4;
+    ChargeState chargeState = 5;
+    ChargeSpeed chargeSpeed = 6;
+    IndividualCellVoltages individualCellVoltages = 7;
+    SensorLoggingRate sensorLoggingRate = 8;
+}
+
+message IndividualCellVoltages {
+    uint32 cellOneVoltage = 1;
+    uint32 cellTwoVoltage = 2;
+    uint32 cellThreeVoltage = 3;
+    uint32 cellFourVoltage = 4;
+}
+
+enum ChargeSpeed {
+    INVALID_CHARGE_SPEED = 0;
+    SLOW = 1;
+    MEDIUM = 2;
+    FAST = 3;
+};
+
+enum ChargeState {
+    INVALID_CHARGE_STATE = 0;
+    CHARGING = 1;
+    DISCHARGING = 2;
+};
+
+/*--------------    Pressure    --------------*/
+message PressureTansducer {
+    int32 pressureReading = 1;
+    SensorLoggingRate sensorLoggingRate = 2;
+}
+
+/*--------------    Temperature    --------------*/
+message Thermocouple {
+    int32 thermocoupleReading = 1;
+    SensorLoggingRate sensorLoggingRate = 2;
+}
+
+/*--------------    Load Cell    --------------*/
+message LoadCell {
+    int32 mass = 1;
+    SensorLoggingRate sensorLoggingRate = 2;
+}
+
+/*--------------    Valve Status    --------------*/
+message ValveStatus {
+    bool valveOpen = 1;
+    SensorLoggingRate sensorLoggingRate = 2;
+}
+
+/*--------------    Relay Status    --------------*/
+message RelayStatus {
+    bool relayOn = 1;
+    SensorLoggingRate sensorLoggingRate = 2;
+}
+
+/*--------------    Sensor Logging Rate    --------------*/
+message SensorLoggingRate {
+    bool changeLoggingRate = 1;
+    uint32 newSensorLoggingRate = 2;
+}

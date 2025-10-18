@@ -25,9 +25,10 @@
  ************************************/
 enum class DataBrokerMessageTypes : uint8_t {
   INVALID = 0,
-  IMU_DATA,
+  GYROSCOPE_DATA,
   THERMOCOUPLE_DATA,
   PRESSURE_DATA,
+  ACCELEROMETER_DATA
 };
 
 namespace DataBrokerMessageType {
@@ -42,8 +43,8 @@ std::string ToString(DataBrokerMessageTypes messageType);
 
 inline std::string ToString(DataBrokerMessageTypes messageType) {
   switch (messageType) {
-    case DataBrokerMessageTypes::IMU_DATA: {
-      std::string type{"IMU_DATA"};
+    case DataBrokerMessageTypes::GYROSCOPE_DATA: {
+      std::string type{"GYROSCOPE_DATA"};
       return type;
     }
 
@@ -52,8 +53,11 @@ inline std::string ToString(DataBrokerMessageTypes messageType) {
       return type;
     }
 
-    case DataBrokerMessageTypes::INVALID:
-      [[fallthrough]];
+    case DataBrokerMessageTypes::ACCELEROMETER_DATA: {
+    	std::string type{"ACCELEROMETER_DATA"};
+    	return type;
+    }
+
     default: {
       std::string type{"INVALID"};
       return type;

@@ -176,8 +176,8 @@ class DataBroker {
    */
   template <typename T>
   static constexpr Publisher<T>* getPublisher(void) {
-    if constexpr (matchType<T, IMUData>()) {
-      return &IMU_Data_publisher;
+    if constexpr (matchType<T, AccelerometerData>()) {
+      return &Accelerometer_Data_publisher;
     } else if constexpr (matchType<T, ThermocoupleData>()) {
       return &Thermocouple_Data_publisher;
     } else if constexpr (matchType<T, PressureData>()) {
@@ -189,9 +189,10 @@ class DataBroker {
   }
 
   // List of Publishers
-  inline static Publisher<IMUData> IMU_Data_publisher{DataBrokerMessageTypes::IMU_DATA};
+  inline static Publisher<AccelerometerData> Accelerometer_Data_publisher{DataBrokerMessageTypes::ACCELEROMETER_DATA};
   inline static Publisher<PressureData> Pressure_Data_publisher{DataBrokerMessageTypes::PRESSURE_DATA};
   inline static Publisher<ThermocoupleData> Thermocouple_Data_publisher{DataBrokerMessageTypes::THERMOCOUPLE_DATA};
+  inline static Publisher<GyroscopeData> Gyroscope_Data_publisher{DataBrokerMessageTypes::GYROSCOPE_DATA};
 };
 /************************************
  * FUNCTION DECLARATIONS
