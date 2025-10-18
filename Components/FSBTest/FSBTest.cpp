@@ -18,6 +18,7 @@
 #include "Task.hpp"
 #include "WriteBufferFixedSize.h"
 #include "ReadBufferFixedSize.h"
+#include "cobs.h"
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
@@ -117,13 +118,35 @@ void FSBProtocolTask::HandleCommand(Command& cm){
 
 			EmbeddedProto::Error err = imu_msg.serialize(buffer);
 
+			uint8_t encoded_buffer[130];
+			cobs_encode_result encoded_length = cobs_encode(
+				encoded_buffer,
+				130,
+			    buffer.get_data(),
+			    buffer.get_size()
+			);
+
+			encoded_buffer[encoded_length.out_len++] = 0x00;
+
+			uint8_t decoded_buffer[130];
+			cobs_decode_result decoded_result = cobs_decode(
+			    decoded_buffer,
+			    sizeof(decoded_buffer),
+			    encoded_buffer,
+			    encoded_length.out_len - 1 // exclude 0x00 delimiter
+			);
+
+
+
+
 			//deserialize
 			EmbeddedProto::ReadBufferFixedSize<64> read_buffer;
-			memcpy(read_buffer.get_data(), buffer.get_data(), buffer.get_size());
+			memcpy(read_buffer.get_data(), decoded_buffer, decoded_result.out_len);
 			read_buffer.set_bytes_written(buffer.get_size());
 
 			Proto::ImuSixAxis imu_received;
 			err = imu_received.deserialize(read_buffer);
+
 			if(err == EmbeddedProto::Error::NO_ERRORS)
 			{
 				SOAR_PRINT("Deserialized IMU message:\n");
