@@ -61,6 +61,8 @@ void run_main() {
     SOAR_PRINT("Current System Heap Use: %d Bytes\n", xPortGetFreeHeapSize());
     SOAR_PRINT("Lowest Ever Heap Size: %d Bytes\n\n", xPortGetMinimumEverFreeHeapSize());
     
+    
+
     // Start the Scheduler
     // Guidelines:
     // - Be CAREFUL with race conditions after osKernelStart

@@ -12,7 +12,9 @@
 #include "SPIFlash.hpp"
 #include "SystemStorage.hpp"
 #include "RocketSM.hpp"
+#include "stm32g4xx_hal.h"
 
+IWDG_HandleTypeDef hiwdg;
 /**
  * @brief Constructor for FlightTask
  */
@@ -21,6 +23,18 @@ FlightTask::FlightTask() : Task(FLIGHT_TASK_QUEUE_DEPTH_OBJS)
     rsm_ = nullptr;
     firstStateSent_ = 0;
 }
+
+//Change the values
+void FlightTask::InitWatchdog()
+{
+    hiwdg.Instance = IWDG;
+    hiwdg.Init.Prescaler = IWDG_PRESCALER_32; 
+    hiwdg.Init.Reload = 3999;                   // 4s timeout
+    if (HAL_IWDG_Init(&hiwdg) != HAL_OK) {
+        SOAR_ASSERT(false, "IWDG initialization failed");
+    }
+}
+
 
 /**
  * @brief Initialize the FlightTask
@@ -45,6 +59,7 @@ void FlightTask::InitTask()
  * @brief Instance Run loop for the Flight Task, runs on scheduler start as long as the task is initialized.
  * @param pvParams RTOS Passed void parameters, contains a pointer to the object instance, should not be used
  */
+
 void FlightTask::Run(void * pvParams)
 {
     //Initialize SPI Flash
@@ -56,6 +71,10 @@ void FlightTask::Run(void * pvParams)
     //Get the latest state from the system storage
     SystemState sysState;
     bool stateReadSuccess = SystemStorage::Inst().Read(sysState);
+
+    // Initialize the watchdog
+    InitWatchdog();
+
 
     if (stateReadSuccess == true) {
         // Succeded to read state, initialize the rocket state machine
@@ -77,6 +96,10 @@ void FlightTask::Run(void * pvParams)
     }
 
     while (1) {
+        //Pet the watchdog at the start of the loop
+        HAL_IWDG_Refresh(&hiwdg);
+
+
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task
         // cycle as soon as it gets an event.
@@ -183,3 +206,5 @@ void FlightTask::SendRocketState()
     // Send the control message
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }
+
+
