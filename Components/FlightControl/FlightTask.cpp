@@ -24,12 +24,15 @@ FlightTask::FlightTask() : Task(FLIGHT_TASK_QUEUE_DEPTH_OBJS)
     firstStateSent_ = 0;
 }
 
-//Change the values
+
+
 void FlightTask::InitWatchdog()
 {
     hiwdg.Instance = IWDG;
     hiwdg.Init.Prescaler = IWDG_PRESCALER_32; 
     hiwdg.Init.Reload = 3999;                   // 4s timeout
+
+    //initialize and start watchdog
     if (HAL_IWDG_Init(&hiwdg) != HAL_OK) {
         SOAR_ASSERT(false, "IWDG initialization failed");
     }
