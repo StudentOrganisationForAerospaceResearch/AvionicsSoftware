@@ -13,8 +13,19 @@
 #include "SystemStorage.hpp"
 #include "RocketSM.hpp"
 #include "stm32g4xx_hal.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include <cstring>
 
+
+static char lastTaskToPet[configMAX_TASK_NAME_LEN + 1] = "None";
 IWDG_HandleTypeDef hiwdg;
+
+// Returns name of the last task that petted the watchdog
+const char* GetLastTaskToPetWatchdog() {
+    return lastTaskToPet;
+}
+
 /**
  * @brief Constructor for FlightTask
  */
@@ -98,9 +109,19 @@ void FlightTask::Run(void * pvParams)
         rsm_ = new RocketSM(RS_ABORT, true);
     }
 
+
+void FlightTask::PetWatchdog() {
+    //Refresh watchdog and record which task did it last.
+    const char* taskName = pcTaskGetName(xTaskGetCurrentTaskHandle());
+    strncpy(lastTaskToPet, taskName, sizeof(lastTaskToPet));
+    lastTaskToPet[sizeof(lastTaskToPet) - 1] = '\0';
+    HAL_IWDG_Refresh(&hiwdg);
+}
+
+
     while (1) {
-        //Pet the watchdog at the start of the loop
-        HAL_IWDG_Refresh(&hiwdg);
+        PetWatchdog();
+
 
 
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
@@ -210,4 +231,4 @@ void FlightTask::SendRocketState()
     DMBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }
 
-
+   
